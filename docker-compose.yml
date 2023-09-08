@@ -8,6 +8,8 @@ services:
       context: ./server
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
+    environment:
+      - PORT=${SERVER_PORT}
     restart: unless-stopped
 
   frontend:
