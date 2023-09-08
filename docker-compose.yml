@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-
   server:
     container_name: server
     hostname: server
@@ -9,4 +8,13 @@ services:
       context: ./server
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
+    restart: unless-stopped
+
+  frontend:
+    container_name: frontend
+    hostname: frontend
+    build:
+      context: ./frontend
+    ports:
+      - ${FRONTEND_PORT}:3000
     restart: unless-stopped
