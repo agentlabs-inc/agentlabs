@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+
+  server:
+    container_name: server
+    hostname: server
+    build:
+      context: ./server
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    restart: unless-stopped
