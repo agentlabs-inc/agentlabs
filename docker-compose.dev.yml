@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  server:
+    container_name: server
+    hostname: server
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./server:/app
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    environment:
+      - PORT=${SERVER_PORT}
+    restart: unless-stopped
+
+  frontend:
+    container_name: frontend
+    hostname: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./frontend:/app
+    ports:
+      - ${FRONTEND_PORT}:3000
+    restart: unless-stopped
