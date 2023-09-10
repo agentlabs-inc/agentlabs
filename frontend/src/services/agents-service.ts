@@ -76,7 +76,7 @@ class AgentsService {
 	private socket: Socket;
 
 	constructor() {
-		this.socket = io((env as Record<string, string>).PUBLIC_SERVER_URL, {
+		this.socket = io('/', {
 			extraHeaders: {
 			}
 		});

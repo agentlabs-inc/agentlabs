@@ -10,9 +10,7 @@ services:
     volumes:
       - ./server:/app
     ports:
-      - ${SERVER_PORT}:${SERVER_PORT}
-    environment:
-      - PORT=${SERVER_PORT}
+      - ${SERVER_PORT}:3000
     restart: unless-stopped
 
   frontend:
@@ -36,7 +34,19 @@ services:
     hostname: wikipedia-agent
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - AGENTLABS_SERVER_URL=http://server:${SERVER_PORT}
+      - AGENTLABS_SERVER_URL=http://server:3000
       - DEBUG=*
     depends_on:
+     - server
+
+  nginx:
+    image: nginx:1.25.2-alpine
+    hostname: nginx
+    container_name: rvp
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 8080:80
+    depends_on:
+      - frontend
       - server
