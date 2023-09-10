@@ -1,6 +1,7 @@
 import { Socket, io } from "socket.io-client";
 import type { AgentInfo } from "./agents.types";
 import { env } from '$env/dynamic/public'
+import { nanoid } from "nanoid";
 
 export interface OnChainStartPayload {
 	task: {
@@ -87,7 +88,7 @@ class AgentsService {
 	}
 
 	public addTask(agentId: string, text: string): void {
-		const taskId = crypto.randomUUID();
+		const taskId = nanoid()
 
 		this.socket.emit("agents/add-task", {
 			agentId,
