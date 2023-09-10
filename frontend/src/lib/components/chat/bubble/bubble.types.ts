@@ -1,1 +1,1 @@
-export type BubbleType = "info" | "thought" | "action";
+export type BubbleType = "info" | "thought" | "action" | "error"

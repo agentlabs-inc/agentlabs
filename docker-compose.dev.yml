@@ -26,3 +26,17 @@ services:
     ports:
       - ${FRONTEND_PORT}:3000
     restart: unless-stopped
+    depends_on:
+      - server
+
+  # demo agents
+  wikipedia-agent:
+    build: ./wikipedia-agent
+    container_name: wikipedia-agent
+    hostname: wikipedia-agent
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - AGENTLABS_SERVER_URL=http://server:${SERVER_PORT}
+      - DEBUG=*
+    depends_on:
+      - server

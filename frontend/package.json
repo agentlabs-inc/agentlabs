@@ -51,6 +51,7 @@
   },
   "type": "module",
   "dependencies": {
+    "socket.io-client": "^4.7.2",
     "svelte-hero-icons": "^5.0.0",
     "svelte-twemoji": "^1.0.4"
   }

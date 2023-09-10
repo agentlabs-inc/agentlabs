@@ -8,6 +8,7 @@
 	export let type: "primary" | "secondary" = "primary";
 	export let leftIcon: IconSource = undefined;
 	export let rightIcon: IconSource = undefined;
+	export let submit = false;
 
 	$: typeClassMap = {
 		primary:
@@ -19,6 +20,7 @@
 
 <button
 	on:click={(event) => dispatch("click", event)}
+	type={submit ? "submit" : "button"}
 	class="rounded-[3px] px-5 py-3 text-sm antialiased flex gap-2 items-center {typeClassMap[
 		type
 	]}">
