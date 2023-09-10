@@ -15,6 +15,8 @@ services:
   frontend:
     container_name: frontend
     hostname: frontend
+    environment:
+      - PUBLIC_SERVER_URL=${SERVER_URL}
     build:
       context: ./frontend
     ports:

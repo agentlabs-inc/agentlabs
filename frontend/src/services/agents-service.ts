@@ -1,5 +1,6 @@
 import { Socket, io } from "socket.io-client";
 import type { AgentInfo } from "./agents.types";
+import { env } from '$env/dynamic/public'
 
 export interface OnChainStartPayload {
 	task: {
@@ -74,7 +75,7 @@ class AgentsService {
 	private socket: Socket;
 
 	constructor() {
-		this.socket = io("http://localhost:3001", {
+		this.socket = io((env as Record<string, string>).PUBLIC_SERVER_URL, {
 			extraHeaders: {
 			}
 		});

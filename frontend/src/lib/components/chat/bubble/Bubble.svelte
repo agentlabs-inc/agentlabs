@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Avatar from "$lib/components/common/avatar/Avatar.svelte";
-	import type { ComponentType, SvelteComponent } from "svelte";
+	import type { ComponentType } from "svelte";
 	import type { BubbleType } from "$lib/components/chat/bubble/bubble.types";
 
 	import { A1F9e0, A1F4a1, A1F916 } from "svelte-twitter-emoji";
@@ -10,7 +10,7 @@
 	export let body: string;
 	export let from: "user" | "agent";
 
-	export let type: BubbleType | undefined;
+	export let type: BubbleType = 'info';
 
 	let bubbleClass: string;
 
@@ -20,7 +20,7 @@
 		thinking: A1F9e0,
 		action: A1F916,
 		info: A1F4a1,
-		undefined: A1F4a1
+		error: A1F4a1,
 	};
 </script>
 

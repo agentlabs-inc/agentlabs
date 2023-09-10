@@ -8,6 +8,8 @@ RUN npm ci
 
 COPY . .
 
+RUN npm run check
+
 RUN npm run build
 
 RUN npm prune --production
@@ -22,4 +24,5 @@ COPY package.json .
 
 ENV NODE_ENV=production
 
-CMD [ "node", "build" ]
+
+CMD [ "sh", "-c", "node -r dotenv/config build" ]

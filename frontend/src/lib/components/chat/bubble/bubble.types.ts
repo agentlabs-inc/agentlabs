@@ -1,1 +1,1 @@
-export type BubbleType = "info" | "thought" | "action" | "error"
+export type BubbleType = "info" | "thinking" | "action" | "error"
