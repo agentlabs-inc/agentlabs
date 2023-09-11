@@ -257,7 +257,6 @@ class AgentLabsApp():
         self.server_url = server_url
         self.agentInfo = agentInfo
         self.io = socketio.Client()
-        self.io.on('connect', self.declare)
 
     def on_task(self, fn: Callable[[Task], None]):
         def wrapper(task):
@@ -291,6 +290,7 @@ class AgentLabsApp():
                         transports=['websocket'],
 
                 )
+                self.declare()
 
                 break
             except:

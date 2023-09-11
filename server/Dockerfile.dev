@@ -4,4 +4,4 @@ WORKDIR /app
 
 VOLUME [ "/app" ]
 
-ENTRYPOINT [ "npm", "run", "dev" ]
+ENTRYPOINT [ "sh", "docker-entrypoint.dev.sh" ]

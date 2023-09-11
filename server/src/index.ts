@@ -61,10 +61,6 @@ io.on("connect_error", (err) => {
 });
 
 io.on("connection", async (socket) => {
-	 const results = await databaseService.db.query('SELECT 1')
-
-	 console.log('results', results)
-
 	 const userAgent = socket.handshake.headers['user-agent'];
 
 	 if (userAgent === 'agentlabs-agent') { 
