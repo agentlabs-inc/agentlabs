@@ -72,7 +72,6 @@ services:
       - DEBUG=*
     depends_on:
      - server
-    restart: unless-stopped
 
 volumes:
   postgres-data-dev:

@@ -63,7 +63,6 @@ services:
       - AGENTLABS_SERVER_URL=http://server:3000
     depends_on:
       - server
-    restart: unless-stopped
 
 volumes:
   postgres-data:
