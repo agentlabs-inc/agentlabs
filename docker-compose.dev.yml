@@ -1,20 +1,54 @@
 version: '3.8'
 
 services:
+
+  gateway:
+    image: nginx:1.25.2-alpine
+    hostname: gateway
+    container_name: gateway-dev
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - ${PORT}:80
+    depends_on:
+      - frontend
+      - server
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16rc1-alpine3.18
+    hostname: postgres
+    container_name: postgres-dev
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - ${DEV_POSTGRES_PORT}:5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
   server:
-    container_name: server
+    container_name: server-dev
     hostname: server
     build:
       context: ./server
       dockerfile: Dockerfile.dev
     volumes:
       - ./server:/app
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_HOST=${POSTGRES_HOST}
     ports:
-      - ${SERVER_PORT}:3000
+      - ${DEV_SERVER_PORT}:3000
     restart: unless-stopped
 
   frontend:
-    container_name: frontend
+    container_name: frontend-dev
     hostname: frontend
     build:
       context: ./frontend
@@ -22,15 +56,15 @@ services:
     volumes:
       - ./frontend:/app
     ports:
-      - ${FRONTEND_PORT}:3000
-    restart: unless-stopped
+      - ${DEV_FRONTEND_PORT}:3000
     depends_on:
       - server
+    restart: unless-stopped
 
   # demo agents
   wikipedia-agent:
     build: ./wikipedia-agent
-    container_name: wikipedia-agent
+    container_name: wikipedia-agent-dev
     hostname: wikipedia-agent
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
@@ -38,15 +72,7 @@ services:
       - DEBUG=*
     depends_on:
      - server
+    restart: unless-stopped
 
-  nginx:
-    image: nginx:1.25.2-alpine
-    hostname: nginx
-    container_name: rvp
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-    ports:
-      - 8080:80
-    depends_on:
-      - frontend
-      - server
+volumes:
+  postgres-data:

@@ -1,13 +1,45 @@
 version: '3.8'
 
 services:
+
+  gateway:
+    image: nginx:1.25.2-alpine
+    hostname: gateway
+    container_name: gateway
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - ${PORT}:80
+    depends_on:
+      - frontend
+      - server
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16rc1-alpine3.18
+    hostname: postgres
+    container_name: postgres
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
   server:
     container_name: server
     hostname: server
     build:
       context: ./server
-    ports:
-      - ${SERVER_PORT}:3000
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+    depends_on:
+      - postgres
     restart: unless-stopped
 
   frontend:
@@ -15,23 +47,13 @@ services:
     hostname: frontend
     build:
       context: ./frontend
-    ports:
-      - ${FRONTEND_PORT}:3000
+    depends_on:
+      - server
     restart: unless-stopped
 
-  nginx:
-    image: nginx:1.25.2-alpine
-    hostname: nginx
-    container_name: rvp
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-    ports:
-      - 8080:80
-    depends_on:
-      - frontend
-      - server
-
-  # demo agents
+  # ------------------------------
+  # Demo agents
+  # ------------------------------
   wikipedia-agent:
     build: ./wikipedia-agent
     container_name: wikipedia-agent
@@ -41,3 +63,7 @@ services:
       - AGENTLABS_SERVER_URL=http://server:3000
     depends_on:
       - server
+    restart: unless-stopped
+
+volumes:
+  postgres-data:

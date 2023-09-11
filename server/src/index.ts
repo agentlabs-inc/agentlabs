@@ -1,5 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { AgentManager } from "./agent-manager";
+import { databaseService } from "./database-service";
 
 export interface DeclareAgentPayload {
 	id: string;
@@ -54,11 +55,16 @@ const emitReadyAgentsToClient = (client: Socket) => {
 	client.emit('agents/list', agentsInfo);
 }
 
+
 io.on("connect_error", (err) => {
 	console.log(`connect_error due to ${err.message}`);
 });
 
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
+	 const results = await databaseService.db.query('SELECT 1')
+
+	 console.log('results', results)
+
 	 const userAgent = socket.handshake.headers['user-agent'];
 
 	 if (userAgent === 'agentlabs-agent') { 
