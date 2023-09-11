@@ -1,6 +1,4 @@
 import { Server, Socket } from "socket.io";
-import { AgentManager } from "./agent-manager";
-import { databaseService } from "./database-service";
 
 export interface DeclareAgentPayload {
 	id: string;
