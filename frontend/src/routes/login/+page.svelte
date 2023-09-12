@@ -1,8 +1,7 @@
 <script>
 	import Button from "$lib/components/common/button/Button.svelte";
+	import Input from "$lib/components/common/input/Input.svelte";
 	import AuthProviderButton from "$lib/components/auth/button/AuthProviderButton.svelte";
-
-	const spacingClass = `py-4 px-6`;
 
 	const onClick = () => {};
 </script>
@@ -13,21 +12,22 @@
 		<div class="my-5" />
 		<div class="w-full sm:w-[320px]">
 			<form>
-				<div class="flex flex-col">
-					<input
-						type="email"
-						name="email"
-						id="email"
-						class="bg-input-bg-primary border border-input-stroke-primary text-input-label-primary focus:outline-0 rounded-sm text-sm placeholder-input-label-primary {spacingClass} antialiased"
-						placeholder="Your email address" />
-				</div>
+				<Input error="this is error" type="text" placeholder="Enter your email" />
 				<div class="my-5" />
 				<div class="w-full">
 					<Button submit type="primary" center on:click={onClick}>Request code</Button>
 				</div>
 			</form>
-			<div class="my-5" />
-			<AuthProviderButton provider="google" />
+			<div class="my-7 flex gap-5 justify-between items-center">
+				<hr class="border-stroke-primary grow" />
+				<span class="text-body-color-primary text-sm antialiased">OR</span>
+				<hr class="border-stroke-primary grow" />
+			</div>
+			<div class="flex flex-col gap-3">
+				<AuthProviderButton provider="google" />
+				<AuthProviderButton provider="github" />
+				<AuthProviderButton provider="gitlab" />
+			</div>
 		</div>
 	</div>
 </div>

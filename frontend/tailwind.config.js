@@ -11,6 +11,7 @@ export default {
 			colors: {
 				"body-color-primary": "#FFFFFF",
 				"body-color-subdued": "#C7C7C7",
+				"body-color-error": "#ef434b",
 				"tab-label-primary": "#FFFFFF",
 				"background-primary": "#081018",
 				"background-secondary": "#2C3442",
@@ -30,7 +31,10 @@ export default {
 				"button-label-secondary": "#D2D2D2",
 				"input-bg-primary": "#333333",
 				"input-stroke-primary": "#858585",
-				"input-label-primary": "#ECF4FE"
+				"input-label-primary": "#ECF4FE",
+				"stroke-error": "#ef434b",
+				"icon-error": "#ef434b",
+				"stroke-base": "#858585"
 			}
 		}
 	},
