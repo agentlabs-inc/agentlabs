@@ -3,7 +3,7 @@
 	export let placeholder: string;
 	export let type: "text" | "email" | "password" = "text";
 
-	export let value = "";
+	export let value: string | undefined = undefined;
 
 	export let error: string | undefined = undefined;
 
@@ -15,7 +15,7 @@
 
 	const onInput = (event: Event) => {
 		const target = event.target as HTMLInputElement;
-		dispatch("input", target.value);
+		value = target.value;
 	};
 
 	const spacingClass = `py-4 px-6`;
@@ -30,7 +30,6 @@
 		id={id}
 		placeholder={placeholder}
 		class="bg-input-bg-primary border w-full border-input-stroke-primary text-input-label-primary focus:outline-0 rounded-sm text-sm placeholder-input-label-primary {spacingClass} {strokeClass} antialiased" />
-
 	{#if !!error?.length}
 		<div class="flex items-center gap-2 mt-1">
 			<Icon src={BellAlert} class="w-3 text-icon-error" />

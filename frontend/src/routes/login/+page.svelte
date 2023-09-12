@@ -9,12 +9,12 @@
 	const emailField = field("email", "", [required(), email()], {
 		checkOnInit: false
 	});
+
 	const myForm = form(emailField);
 
 	const onClick = () => {};
 
 	const onSubmit = () => {
-		alert("Form submitted!");
 		myForm.validate();
 	};
 </script>
@@ -28,13 +28,11 @@
 				<Input
 					bind:value={$emailField.value}
 					id="email"
-					error={$myForm.hasError("email.required")
-						? "Email is required"
-						: $myForm.hasError("email.email")
-						? "Email is invalid"
-						: undefined}
 					type="text"
-					placeholder="Enter your email" />
+					placeholder="Enter your email"
+					error={$myForm.hasError("email.email") || $myForm.hasError("email.required")
+						? "Please enter a valid email"
+						: ""} />
 				<div class="my-5" />
 				<div class="w-full">
 					<Button submit type="primary" center on:click={onClick}>Request code</Button>
