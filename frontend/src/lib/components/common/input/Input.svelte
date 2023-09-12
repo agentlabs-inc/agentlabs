@@ -1,8 +1,9 @@
 <script lang="ts">
-	export let name: string;
 	export let id: string;
 	export let placeholder: string;
 	export let type: "text" | "email" | "password" = "text";
+
+	export let value = "";
 
 	export let error: string | undefined = undefined;
 
@@ -18,14 +19,14 @@
 	};
 
 	const spacingClass = `py-4 px-6`;
-	const strokeClass = error?.length ? "border-stroke-error" : "border-stroke-base";
+	$: strokeClass = error?.length ? "border-stroke-error" : "border-stroke-base";
 </script>
 
 <div>
 	<input
+		value={value}
 		on:input={onInput}
 		type={type}
-		name={name}
 		id={id}
 		placeholder={placeholder}
 		class="bg-input-bg-primary border w-full border-input-stroke-primary text-input-label-primary focus:outline-0 rounded-sm text-sm placeholder-input-label-primary {spacingClass} {strokeClass} antialiased" />

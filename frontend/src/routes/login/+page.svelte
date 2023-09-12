@@ -3,7 +3,20 @@
 	import Input from "$lib/components/common/input/Input.svelte";
 	import AuthProviderButton from "$lib/components/auth/button/AuthProviderButton.svelte";
 
+	import { form, field } from "svelte-forms";
+	import { required, email } from "svelte-forms/validators";
+
+	const emailField = field("email", "", [required(), email()], {
+		checkOnInit: false
+	});
+	const myForm = form(emailField);
+
 	const onClick = () => {};
+
+	const onSubmit = () => {
+		alert("Form submitted!");
+		myForm.validate();
+	};
 </script>
 
 <div class="flex min-h-screen items-center justify-center bg-background-primary">
@@ -11,8 +24,17 @@
 		<h1 class="text-body-color-primary text-2xl antialiased">Welcome!</h1>
 		<div class="my-5" />
 		<div class="w-full sm:w-[320px]">
-			<form>
-				<Input error="this is error" type="text" placeholder="Enter your email" />
+			<form on:submit={onSubmit}>
+				<Input
+					bind:value={$emailField.value}
+					id="email"
+					error={$myForm.hasError("email.required")
+						? "Email is required"
+						: $myForm.hasError("email.email")
+						? "Email is invalid"
+						: undefined}
+					type="text"
+					placeholder="Enter your email" />
 				<div class="my-5" />
 				<div class="w-full">
 					<Button submit type="primary" center on:click={onClick}>Request code</Button>
