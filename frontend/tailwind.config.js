@@ -27,7 +27,10 @@ export default {
 				"button-label-primary": "#ECF4FE",
 				"button-stroke-secondary": "#454C59",
 				"button-bg-secondary": "#2C3442",
-				"button-label-secondary": "#D2D2D2"
+				"button-label-secondary": "#D2D2D2",
+				"input-bg-primary": "#333333",
+				"input-stroke-primary": "#858585",
+				"input-label-primary": "#ECF4FE"
 			}
 		}
 	},

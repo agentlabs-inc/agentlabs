@@ -1,5 +1,5 @@
 <script lang="ts">
-	import "../app.css";
+	import "../../app.css";
 	import logo from "$lib/assets/img/logo-white.svg";
 	import Bubble from "$lib/components/chat/bubble/Bubble.svelte";
 	import ProcessingStatus from "$lib/components/chat/processing-status/ProcessingStatus.svelte";
@@ -12,8 +12,8 @@
 	import { Forward } from "svelte-hero-icons";
 	import { chat } from "$lib/store/chat/chat";
 	import { afterUpdate, onMount } from "svelte";
-	import { agentsService } from "../services/agents-service";
-	import type { AgentInfo } from "../services/agents.types";
+	import { agentsService } from "../../services/agents-service";
+	import type { AgentInfo } from "../../services/agents.types";
 
 	let defaultBubbles = [
 		{
