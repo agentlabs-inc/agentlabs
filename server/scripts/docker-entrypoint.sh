@@ -1,3 +1,7 @@
 #! /bin/sh
 
-bun run start:prod:bun
+set -e
+
+npx prisma migrate deploy
+
+npm run start:prod

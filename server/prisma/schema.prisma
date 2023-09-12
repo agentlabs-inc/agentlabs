@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+	id		String   @id @default(uuid())
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt @default(now())
+
+	email		String?	@unique
+	fullName	String?
+}
+
+model AgentConversation {
+	id		String   @id @default(uuid())
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt @default(now())
+	agentId		String
+
+	tasks		AgentTask[]
+}
+
+model AgentTask {
+	id		String   @id @default(uuid())
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt @default(now())
+
+	agentConversationId String
+	agentConversation AgentConversation @relation(fields: [agentConversationId], references: [id])
+	message		AgentTaskMessage[]
+}
+
+model AgentTaskMessage {
+	id		String   @id @default(uuid())
+	createdAt DateTime @default(now())
+
+	agentTaskId String
+	agentTask AgentTask @relation(fields: [agentTaskId], references: [id])
+	message		String
+}
