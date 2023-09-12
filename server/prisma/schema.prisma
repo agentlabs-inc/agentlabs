@@ -15,6 +15,11 @@ model User {
 	createdAt DateTime @default(now())
 	updatedAt DateTime @updatedAt @default(now())
 
+	// As opposed to the user id, this id might be changed if for instance
+	// a JWT token is compromised. That way we can invalidate all tokens at once.
+	// User deserialization should always use this id.
+	lookupId	String	@unique @default(uuid())
+
 	email		String?	@unique
 	fullName	String?
 }

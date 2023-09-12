@@ -18,6 +18,17 @@ export class UsersService {
     });
   }
 
+  deserializeUser(userId: string, lookupId: string): Promise<User | null> {
+    const user = this.prisma.user.findUnique({
+      where: {
+        id: userId,
+        lookupId,
+      },
+    });
+
+    return user;
+  }
+
   async findUserByIdOrThrow(id: string): Promise<User> {
     const user = await this.findUserById(id);
 
