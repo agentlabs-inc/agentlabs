@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let id: string;
+	export let name: string;
 	export let placeholder: string;
 	export let type: "text" | "email" | "password" = "text";
 
@@ -27,7 +27,7 @@
 		value={value}
 		on:input={onInput}
 		type={type}
-		id={id}
+		name={name}
 		placeholder={placeholder}
 		class="bg-input-bg-primary border w-full border-input-stroke-primary text-input-label-primary focus:outline-0 rounded-sm text-sm placeholder-input-label-primary {spacingClass} {strokeClass} antialiased" />
 	{#if !!error?.length}

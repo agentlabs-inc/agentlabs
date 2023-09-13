@@ -2,20 +2,35 @@
 	import Button from "$lib/components/common/button/Button.svelte";
 	import Input from "$lib/components/common/input/Input.svelte";
 	import AuthProviderButton from "$lib/components/auth/button/AuthProviderButton.svelte";
+	import { z } from "zod";
 
-	import { form, field } from "svelte-forms";
-	import { required, email } from "svelte-forms/validators";
+	const form = {
+		email: {
+			value: "",
+			error: ""
+		}
+	};
 
-	const emailField = field("email", "", [required(), email()], {
-		checkOnInit: false
+	const formSchema = z.object({
+		email: z.string().email({
+			message: "Please enter a valid email"
+		})
 	});
 
-	const myForm = form(emailField);
-
-	const onClick = () => {};
+	let isLoading = false;
 
 	const onSubmit = () => {
-		myForm.validate();
+		isLoading = true;
+		const result = formSchema.safeParse({
+			email: form.email.value
+		});
+
+		if (!result.success) {
+			form.email.error = result.error.errors[0].message;
+		} else {
+			form.email.error = "";
+		}
+		isLoading = false;
 	};
 </script>
 
@@ -26,16 +41,15 @@
 		<div class="w-full sm:w-[320px]">
 			<form on:submit={onSubmit}>
 				<Input
-					bind:value={$emailField.value}
-					id="email"
+					bind:value={form.email.value}
+					name="email"
 					type="text"
-					placeholder="Enter your email"
-					error={$myForm.hasError("email.email") || $myForm.hasError("email.required")
-						? "Please enter a valid email"
-						: ""} />
+					error={form.email.error}
+					placeholder="Enter your email" />
 				<div class="my-5" />
 				<div class="w-full">
-					<Button submit type="primary" center on:click={onClick}>Request code</Button>
+					<Button loading={isLoading} submit type="primary" fullWidth center
+						>Request code</Button>
 				</div>
 			</form>
 			<div class="my-7 flex gap-5 justify-between items-center">

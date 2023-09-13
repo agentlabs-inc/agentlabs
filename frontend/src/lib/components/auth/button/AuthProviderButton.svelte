@@ -14,7 +14,7 @@
 	};
 </script>
 
-<Button type="secondary">
+<Button type="secondary" center={false}>
 	<div class="flex items-center gap-5">
 		<svelte:component this={providerIconMap[provider]} />
 		<span>Continue with Google</span>
