@@ -1,17 +1,16 @@
 <script lang="ts">
 	import type { LayoutData } from "./$types";
 	import "../app.css";
-	import AgentLabsLogo from "$lib/components/common/logo/AgentLabsLogo.svelte";
+	import AuthContext from "$lib/context/AuthContext.svelte";
+	import LoadingFrame from "$lib/components/common/loading-frame/LoadingFrame.svelte";
 
 	export let data: LayoutData;
 </script>
 
 {#await data.lazy.context}
-	<div class="min-h-screen bg-background-primary flex items-center justify-center">
-		<div class="flex flex-col animate-pulse">
-			<AgentLabsLogo />
-		</div>
-	</div>
+	<LoadingFrame />
 {:then context}
-	<slot />
+	<AuthContext>
+		<slot />
+	</AuthContext>
 {/await}

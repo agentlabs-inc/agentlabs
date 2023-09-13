@@ -4,6 +4,10 @@
 	import AuthProviderButton from "$lib/components/auth/button/AuthProviderButton.svelte";
 	import { z } from "zod";
 
+	import { getContext } from "svelte";
+	import { goto } from "$app/navigation";
+	const { login, currentUser } = getContext("Auth");
+
 	const form = {
 		email: {
 			value: "",
@@ -19,7 +23,9 @@
 
 	let isLoading = false;
 
-	const onSubmit = () => {
+	const onSubmit = async (event) => {
+		event.preventDefault();
+
 		isLoading = true;
 		const result = formSchema.safeParse({
 			email: form.email.value
@@ -28,6 +34,9 @@
 		if (!result.success) {
 			form.email.error = result.error.errors[0].message;
 		} else {
+			login("John Doe", "pass");
+			console.log("goto!", $currentUser);
+			await goto("/main");
 			form.email.error = "";
 		}
 		isLoading = false;
