@@ -47,6 +47,15 @@ services:
       - server
     restart: unless-stopped
 
+  back-office:
+    container_name: back-office
+    hostname: back-office
+    build:
+      context: console
+    depends_on:
+      - server
+    restart: unless-stopped
+
   # ------------------------------
   # Demo agents
   # ------------------------------
