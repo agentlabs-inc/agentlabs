@@ -5,6 +5,7 @@
 	import { superForm } from "sveltekit-superforms/client";
 	import type { PageData } from "./$types";
 	import { z as zod } from "zod";
+	import ThemeSwitch from "$lib/components/common/theme-switch/ThemeSwitch.svelte";
 	export let data: PageData;
 
 	const { form, errors, validate } = superForm(data.form, {
@@ -29,6 +30,7 @@
 
 <div
 	class="flex min-h-screen items-center justify-center bg-background-primary dark:bg-background-primary-dark">
+	<ThemeSwitch />
 	<div class="p-3 w-full flex flex-col items-center">
 		<h1 class="text-body-accent dark:text-body-accent-dark text-4xl font-bold antialiased">
 			Welcome!
@@ -70,7 +72,7 @@
 			</form>
 			<div class="my-7 flex gap-5 justify-between items-center">
 				<hr class="border-stroke-base dark:border-stroke-base-dark grow" />
-				<span class="text-body-color-primary text-sm antialiased">OR</span>
+				<span class="text-body-base dark:text-body-base-dark text-sm antialiased">OR</span>
 				<hr class="border-stroke-base dark:border-stroke-base-dark grow" />
 			</div>
 			<div class="flex flex-col gap-3">

@@ -42,7 +42,7 @@
 		type={type}
 		name={name}
 		placeholder={placeholder}
-		class="bg-input-bg-primary border w-full border-input-stroke-primary text-input-label-primary focus:outline-0 rounded-sm text-sm placeholder-input-label-primary {spacingClass} {strokeClass} antialiased" />
+		class="bg-background-secondary dark:bg-background-secondary-dark border w-full border-stroke-base dark:border-stroke-base-dark text-input-label-primary focus:outline-0 rounded-sm text-sm placeholder-input-label-primary {spacingClass} {strokeClass} antialiased" />
 	{#if !!errors?.length}
 		<div class="flex items-center gap-2 mt-1">
 			<span class="text-body-error dark:text-body-error-dark text-sm">{errors[0]}</span>
