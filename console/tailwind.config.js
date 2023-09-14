@@ -3,6 +3,7 @@ import defaultTheme from "tailwindcss/defaultTheme";
 /** @type {import('tailwindcss').Config} */
 export default {
 	content: ["./src/**/*.{html,js,svelte,ts}"],
+	darkMode: "class",
 	theme: {
 		extend: {
 			fontFamily: {
@@ -10,32 +11,60 @@ export default {
 			},
 			colors: {
 				// Colors for background in all situations
-				"background-primary": "#141420",
-				"background-secondary": "#161622",
-				"background-tertiary": "#1B1B27",
-				"background-accent": "#272A3A",
+				"background-primary": "#FAFAFF",
+				"background-secondary": "#ffffff",
+				"background-tertiary": "#ffffff",
+				"background-accent": "#F2F2F8",
 				"background-success": "#00C48C",
 				"background-error": "#ef434b",
 				"background-warning": "#FFC82C",
 				"background-info": "#272A3A",
 
+				// Colors for background in all situations
+				"background-primary-dark": "#141420",
+				"background-secondary-dark": "#161622",
+				"background-tertiary-dark": "#1B1B27",
+				"background-accent-dark": "#272A3A",
+				"background-success-dark": "#00C48C",
+				"background-error-dark": "#ef434b",
+				"background-warning-dark": "#FFC82C",
+				"background-info-dark": "#272A3A",
+
 				// Colors for text elements
-				"body-base": "#C5C8D8",
-				"body-secondary": "#C5C8D8",
+				"body-base": "#616A7B",
+				"body-secondary": "#616A7B",
 				"body-subdued": "#616A7B",
-				"body-accent": "#F2F2F8",
+				"body-accent": "#383C4E",
 				"body-info": "#FAFAFF",
 				"body-error": "#DB1A5B",
 				"body-warning": "#F58801",
 				"body-success": "#00C48C",
 
+				// Colors for text elements
+				"body-base-dark": "#C5C8D8",
+				"body-secondary-dark": "#C5C8D8",
+				"body-subdued-dark": "#616A7B",
+				"body-accent-dark": "#F2F2F8",
+				"body-info-dark": "#FAFAFF",
+				"body-error-dark": "#DB1A5B",
+				"body-warning-dark": "#F58801",
+				"body-success-dark": "#00C48C",
+
 				// Colors for borders
-				"stroke-base": "#272A3A",
-				"stroke-accent": "#383C4E",
+				"stroke-base": "#F2F2F8",
+				"stroke-accent": "#d4d4db",
 				"stroke-info": "#016AD4",
 				"stroke-error": "#DB1A5B",
 				"stroke-warning": "#F58801",
 				"stroke-success": "#00C48C",
+
+				// Colors for borders
+				"stroke-base-dark": "#272A3A",
+				"stroke-accent-dark": "#383C4E",
+				"stroke-info-dark": "#016AD4",
+				"stroke-error-dark": "#DB1A5B",
+				"stroke-warning-dark": "#F58801",
+				"stroke-success-dark": "#00C48C",
 
 				// Colors for buttons
 				"button-bg-primary": "#016AD4",
