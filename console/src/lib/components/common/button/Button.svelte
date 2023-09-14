@@ -45,10 +45,19 @@
 	$: if (fullWidth) {
 		typeClassMap[type] += " w-full";
 	}
+
+	const handleClick = (e: Event) => {
+		e.stopPropagation();
+		e.preventDefault();
+
+		if (disabled) return;
+
+		dispatch("click", e);
+	};
 </script>
 
 <button
-	on:click={(event) => dispatch("click", event)}
+	on:click={handleClick}
 	type={submit ? "submit" : "button"}
 	class="rounded-md px-5 py-3 text-sm antialiased flex gap-2 {typeClassMap[type]} {statusClass}">
 	{#if loading}

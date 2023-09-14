@@ -28,7 +28,9 @@
 
 <div>
 	{#if !!label?.length}
-		<label class="text-body-accent dark:text-body-accent-dark text-sm" for={name}
+		<label
+			class="text-body-accent dark:text-body-accent-dark text-sm inline-block mb-2"
+			for={name}
 			>{label}
 			{#if required}
 				<span class="text-body-error dark:text-body-error-dark">*</span>
