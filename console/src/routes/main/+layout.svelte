@@ -29,7 +29,7 @@
 <div class="bg-background-primary dark:bg-background-primary-dark min-h-screen flex flex-col">
 	<div
 		class="bg-background-secondary dark:bg-background-primary-dark sticky flex justify-between items-center px-5 border-b border-stroke-base dark:border-stroke-base-dark h-[60px]">
-		<AgentLabsLogo />
+		<AgentLabsLogo theme={darkMode ? "dark" : "light"} />
 		<div class="flex gap-2 items-center h-full">
 			<button
 				on:click={handleSwitchDarkMode}

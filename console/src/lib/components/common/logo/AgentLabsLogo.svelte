@@ -1,5 +1,8 @@
 <script lang="ts">
-	import logo from "$lib/assets/img/logo-white.svg";
+	import logoDark from "$lib/assets/img/logo-dark.svg";
+	import logoLight from "$lib/assets/img/logo-light.svg";
+
+	export let theme: "dark" | "light" = "dark";
 </script>
 
-<img alt="AgentLabs Logo" src={logo} />
+<img alt="AgentLabs Logo" src={theme === "dark" ? logoDark : logoLight} class="w-32" />
