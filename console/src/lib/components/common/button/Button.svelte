@@ -50,9 +50,7 @@
 <button
 	on:click={(event) => dispatch("click", event)}
 	type={submit ? "submit" : "button"}
-	class="rounded-[3px] px-5 py-3 text-sm antialiased flex gap-2 {typeClassMap[
-		type
-	]} {statusClass}">
+	class="rounded-md px-5 py-3 text-sm antialiased flex gap-2 {typeClassMap[type]} {statusClass}">
 	{#if loading}
 		<Icon class="inline-block animate-spin" src={ArrowPath} size="20" />
 	{/if}
