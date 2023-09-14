@@ -76,6 +76,11 @@
 			<div class="flex flex-col gap-3">
 				<AuthProviderButton provider="google" />
 			</div>
+
+			<div class="text-center mt-10">
+				<span class="text-sm text-center m-auto text-body-base dark:text-body-base-dark"
+					>Already got an account? <a href="/login" class="underline">Sign in</a></span>
+			</div>
 		</div>
 	</div>
 </div>
