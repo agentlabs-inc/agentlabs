@@ -1,4 +1,5 @@
 import defaultTheme from "tailwindcss/defaultTheme";
+import tailwindCssAnimate from "tailwindcss-animate";
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -101,5 +102,5 @@ export default {
 			}
 		}
 	},
-	plugins: []
+	plugins: [tailwindCssAnimate]
 };

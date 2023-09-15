@@ -14,7 +14,7 @@
 		email: string;
 	} | null = null;
 
-	let message: string;
+	let messages: string[] = [];
 
 	const handleNewUser = () => {
 		currentStep = "send-message";
@@ -26,7 +26,7 @@
 	};
 
 	const handleNewMessage = () => {
-		message = "Hello World!";
+		messages = [...messages, "Hello World!"];
 	};
 </script>
 
@@ -37,12 +37,12 @@
 				<div class="text-body-success dark:text-body-success-dark">
 					<Icon src={CheckCircle} width="30" />
 				</div>
-				<Typography type="mainSectionTitle">Your Agent Frontend is ready!</Typography>
+				<Typography type="mainSectionTitle">Your Agent UI is ready!</Typography>
 			</div>
 
 			<div class="mt-3" />
 			<Typography type="subTitle"
-				>You can now test your Agent Frontend to see how it looks.</Typography>
+				>You can now test your Agent UI to see how it looks.</Typography>
 		</section>
 	</TopCover>
 	<div class="w-full">
@@ -83,7 +83,7 @@
 								<Button
 									on:click={handleNewMessage}
 									size="bigger"
-									leftIcon={CursorArrowRays}>Send a message</Button>
+									leftIcon={CursorArrowRays}>Continue</Button>
 							</div>
 							<Spacer size="md" />
 						</div>
@@ -91,9 +91,10 @@
 					<div class="flex items-center justify-center">
 						<div
 							class="bg-background-quaternary dark:bg-background-quaternary-dark rounded-md py-4 px-4 flex flex-col items-center justify-center w-full h-full gap-3 relative">
-							<div class="w-full">
+							<div class="w-full flex flex-col gap-3">
 								{#if !!user}
-									<div class="slide-in">
+									<div
+										class="animate-in duration-700 fade-in slide-in slide-in-from-bottom-20">
 										<Card>
 											<div class="p-4 flex gap-3">
 												<span
@@ -109,6 +110,22 @@
 										</Card>
 									</div>
 								{/if}
+								{#each messages as message}
+									<div
+										class="animate-in duration-700 fade-in slide-in slide-in-from-bottom-20">
+										<Card>
+											<div class="p-4 flex gap-3">
+												<span
+													class="text-body-accent dark:text-body-accent-dark"
+													>New frontend message!
+												</span>
+												<span
+													class="text-body-base dark:text-body-dark font-semibold overflow-ellipsis"
+													>{message}</span>
+											</div>
+										</Card>
+									</div>
+								{/each}
 							</div>
 							<div
 								class="{currentStepIndex < 2
