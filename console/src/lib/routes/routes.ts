@@ -1,3 +1,7 @@
+export const homeRoute = {
+	path: () => "/project/overview"
+};
+
 export const overviewRoute = {
 	path: () => `/project/overview`
 };
