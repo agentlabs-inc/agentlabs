@@ -14,6 +14,7 @@ export default {
 				"background-primary": "#FAFAFF",
 				"background-secondary": "#ffffff",
 				"background-tertiary": "#ffffff",
+				"background-quaternary": "#E5E7EB",
 				"background-accent": "#F2F2F8",
 				"background-success": "#00C48C",
 				"background-error": "#ef434b",
@@ -24,6 +25,7 @@ export default {
 				"background-primary-dark": "#141420",
 				"background-secondary-dark": "#161622",
 				"background-tertiary-dark": "#1B1B27",
+				"background-quaternary-dark": "#2e2e41",
 				"background-accent-dark": "#272A3A",
 				"background-success-dark": "#00C48C",
 				"background-error-dark": "#ef434b",
@@ -67,12 +69,19 @@ export default {
 				"stroke-success-dark": "#00C48C",
 
 				// Colors for buttons
-				"button-bg-primary": "#016AD4",
+				"button-bg-primary": "#1C4ED8",
 				"button-bg-secondary": "#2C3442",
 				"button-bg-disabled": "#454C59",
 				"button-bg-accent": "#ef434b",
 				"button-bg-destructive": "#DB1A5B",
 				"button-bg-success": "#00C48C",
+
+				"button-bg-primary-dark": "#1C4ED8",
+				"button-bg-secondary--dark": "#2C3442",
+				"button-bg-disabled--dark": "#454C59",
+				"button-bg-accent--dark": "#ef434b",
+				"button-bg-destructive--dark": "#DB1A5B",
+				"button-bg-success--dark": "#00C48C",
 
 				// Colors for button-icon
 				"button-icon-primary": "#FFFFFF",

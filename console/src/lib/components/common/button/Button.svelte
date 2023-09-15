@@ -6,11 +6,15 @@
 
 	const dispatch = createEventDispatcher();
 
+	type ButtonSize = "default" | "bigger";
+
 	export let type: "primary" | "secondary" = "primary";
 	export let leftIcon: IconSource = undefined;
 	export let rightIcon: IconSource = undefined;
 	export let submit = false;
 	export let center = true;
+
+	export let size: ButtonSize = "default";
 
 	export let fullWidth = false;
 
@@ -30,6 +34,11 @@
 		disabled: "cursor-not-allowed opacity-50"
 	};
 
+	const buttonSizeClassMap: Record<ButtonSize, string> = {
+		default: "text-sm px-5 py-3",
+		bigger: "text-md px-6 py-4"
+	};
+
 	$: if (center) {
 		typeClassMap[type] += " justify-center";
 	}
@@ -43,8 +52,10 @@
 	$: statusClass = statusClassMap[buttonStatus()];
 
 	$: if (fullWidth) {
-		typeClassMap[type] += " w-full";
+		typeClassMap[type] += ` w-full`;
 	}
+
+	$: sizeClass = buttonSizeClassMap[size];
 
 	const handleClick = (e: Event) => {
 		e.stopPropagation();
@@ -59,7 +70,7 @@
 <button
 	on:click={handleClick}
 	type={submit ? "submit" : "button"}
-	class="rounded-md px-5 py-3 text-sm antialiased flex gap-2 {typeClassMap[type]} {statusClass}">
+	class="rounded-md antialiased flex gap-2 {typeClassMap[type]} {statusClass} {sizeClass}">
 	{#if loading}
 		<Icon class="inline-block animate-spin" src={ArrowPath} size="20" />
 	{/if}
