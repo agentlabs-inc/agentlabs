@@ -28,7 +28,7 @@
 					class="p-10 antialiased min-h-[200px] border-t border-stroke-base dark:border-stroke-base-dark">
 					<div class="grid grid-cols-5 gap-10">
 						<div class="col-span-2">
-							<Typography type="sectionTitle">Integrate our SDK</Typography>
+							<Typography type="sectionTitle">Integrate in your server</Typography>
 							<Typography type="subTitle"
 								>Our SDKs let you control your agent frontend with bidirectionnal
 								streaming and even more features.</Typography>
