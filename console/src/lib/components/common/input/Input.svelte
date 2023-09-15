@@ -11,12 +11,6 @@
 
 	export let errors: any | string[] | undefined = undefined;
 
-	import { BellAlert, Icon } from "svelte-hero-icons";
-
-	import { createEventDispatcher } from "svelte";
-
-	const dispatch = createEventDispatcher();
-
 	const onInput = (event: Event) => {
 		const target = event.target as HTMLInputElement;
 		value = target.value;

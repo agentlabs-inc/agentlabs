@@ -1,5 +1,4 @@
 <script>
-	import { ChartBar, LightBulb, Icon } from "svelte-hero-icons";
 	import TopNav from "$lib/components/common/top-nav/TopNav.svelte";
 	import LeftNav from "$lib/components/common/left-nav/LeftNav.svelte";
 </script>

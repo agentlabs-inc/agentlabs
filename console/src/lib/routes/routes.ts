@@ -1,13 +1,13 @@
 export const overviewRoute = {
-	path: () => "/main"
+	path: () => `/project/overview`
 };
 
 export const authSettingsRoute = {
-	path: () => "/auth/settings"
+	path: () => "/project/auth"
 };
 
 export const settingsRoute = {
-	path: () => "/settings"
+	path: () => "/project/settings"
 };
 
 export const loginRoute = {

@@ -2,6 +2,7 @@
 	import { ChartBar, UserGroup, Icon, Cog } from "svelte-hero-icons";
 	import { page } from "$app/stores";
 	import { authSettingsRoute, overviewRoute, settingsRoute } from "$lib/routes/routes";
+	import { goto } from "$app/navigation";
 
 	const items = [
 		{
@@ -28,6 +29,7 @@
 		<ul class="flex flex-col gap-3 antialiased">
 			{#each items as item}
 				<li
+					on:click={() => goto(item.path)}
 					class="{$page.url.pathname === item.path
 						? 'bg-background-accent dark:bg-background-accent-dark'
 						: ''}

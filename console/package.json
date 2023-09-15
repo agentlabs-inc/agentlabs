@@ -30,6 +30,7 @@
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "@typescript-eslint/parser": "^5.45.0",
     "autoprefixer": "^10.4.15",
+    "dayjs": "^1.11.9",
     "eslint": "^8.28.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-storybook": "^0.6.13",
