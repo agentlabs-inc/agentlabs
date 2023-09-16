@@ -19,7 +19,7 @@ export default {
 				"background-accent": "#F2F2F8",
 				"background-success": "#00C48C",
 				"background-error": "#ef434b",
-				"background-warning": "#FFC82C",
+				"background-warning": "#fff6e0",
 				"background-info": "#272A3A",
 
 				// Colors for background in all situations
@@ -30,7 +30,7 @@ export default {
 				"background-accent-dark": "#272A3A",
 				"background-success-dark": "#00C48C",
 				"background-error-dark": "#ef434b",
-				"background-warning-dark": "#FFC82C",
+				"background-warning-dark": "#342e17",
 				"background-info-dark": "#272A3A",
 
 				// Colors for text elements
@@ -40,7 +40,7 @@ export default {
 				"body-accent": "#383C4E",
 				"body-info": "#FAFAFF",
 				"body-error": "#DB1A5B",
-				"body-warning": "#F58801",
+				"body-warning": "#5d5440",
 				"body-success": "#00C48C",
 
 				// Colors for text elements
@@ -50,7 +50,7 @@ export default {
 				"body-accent-dark": "#F2F2F8",
 				"body-info-dark": "#FAFAFF",
 				"body-error-dark": "#DB1A5B",
-				"body-warning-dark": "#F58801",
+				"body-warning-dark": "#d9d6c9",
 				"body-success-dark": "#00C48C",
 
 				// Colors for borders

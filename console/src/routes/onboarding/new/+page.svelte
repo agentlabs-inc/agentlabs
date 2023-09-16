@@ -4,8 +4,8 @@
 	import Card from "$lib/components/common/card/Card.svelte";
 	import Button from "$lib/components/common/button/Button.svelte";
 	import Input from "$lib/components/common/input/Input.svelte";
-	import type { PageData } from "../../../../.svelte-kit/types/src/routes";
 	import { z as zod } from "zod";
+	import type { PageData } from "$lib/types";
 	import { superForm } from "sveltekit-superforms/client";
 	export let data: PageData;
 
