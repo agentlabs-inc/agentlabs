@@ -3,6 +3,7 @@
 	import Input from "$lib/components/common/input/Input.svelte";
 	import AuthProviderButton from "$lib/components/auth/button/AuthProviderButton.svelte";
 	import { z } from "zod";
+	import { homeRoute } from "$lib/routes";
 
 	import { getContext } from "svelte";
 	import { goto } from "$app/navigation";
@@ -36,7 +37,7 @@
 		} else {
 			login("John Doe", "pass");
 			console.log("goto!", $currentUser);
-			await goto("/main");
+			await goto(homeRoute.path());
 			form.email.error = "";
 		}
 		isLoading = false;

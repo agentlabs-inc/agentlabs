@@ -22,7 +22,11 @@
 			<div
 				class="py-5 px-6 grid grid-cols-5 w-full border-b border-stroke-base dark:border-stroke-base-dark hover:bg-background-accent dark:hover:bg-background-accent-dark cursor-pointer">
 				{#each columns as column}
-					<Typography type="body">{row[column.key]}</Typography>
+					{#if typeof column.format === "function"}
+						<Typography type="body">{column.format(row[column.key])}</Typography>
+					{:else}
+						<Typography type="body">{row[column.key]}</Typography>
+					{/if}
 				{/each}
 			</div>
 		{/each}

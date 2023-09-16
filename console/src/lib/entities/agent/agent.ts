@@ -1,6 +1,6 @@
-export interface User {
+export interface Agent {
 	id: string;
 	name: string;
-	email: string;
 	createdAt: Date;
+	updatedAt: Date;
 }

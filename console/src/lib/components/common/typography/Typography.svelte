@@ -16,7 +16,7 @@
 		mainSectionTitle: "text-body-accent dark:text-body-accent-dark font-medium text-2xl",
 		sectionTitle: "text-body-accent dark:text-body-accent-dark font-medium text-xl",
 		subTitle: "text-sm text-body-base dark:text-body-base-dark",
-		label: "text-body-subdued-dark dark:text-body-subdued-dark uppercase font-medium text-sm",
+		label: "text-body-subdued dark:text-body-subdued-dark uppercase font-medium text-sm",
 		body: "text-sm text-body-base dark:text-body-base-dark"
 	};
 

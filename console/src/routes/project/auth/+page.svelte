@@ -4,32 +4,56 @@
 	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
 	import Button from "$lib/components/common/button/Button.svelte";
 	import Table from "$lib/components/common/table/Table.svelte";
-
-	import { User } from "$lib/entities/user/user";
-
+	import type { User } from "$lib/entities/user/user";
 	import { PlusSmall } from "svelte-hero-icons";
+	import dayjs from "dayjs";
+	import type { TableColumn } from "$lib/components/common/table/types";
 
 	let searchValue = "";
 
 	let users = [
-		new User({
+		{
 			id: "123456789",
 			name: "John Doe",
 			email: "john@doe.com",
 			createdAt: new Date()
-		}),
-		new User({
+		},
+		{
 			id: "123456789",
 			name: "John Doe",
 			email: "john@doe.com",
 			createdAt: new Date()
-		}),
-		new User({
+		},
+		{
 			id: "123456789",
 			name: "John Doe",
 			email: "john@doe.com",
 			createdAt: new Date()
-		})
+		}
+	];
+
+	const columns: TableColumn<User>[] = [
+		{
+			name: "Name",
+			key: "name"
+		},
+		{
+			name: "Email",
+			key: "email"
+		},
+		{
+			name: "Is Verified",
+			key: "isVerified"
+		},
+		{
+			name: "ID",
+			key: "id"
+		},
+		{
+			name: "Created at",
+			key: "createdAt",
+			format: (user: User) => dayjs(user.createdAt).format("MMMM D, YYYY")
+		}
 	];
 </script>
 
@@ -66,31 +90,7 @@
 			</div>
 			<Spacer size="md" />
 
-			<Table
-				totalCount={3}
-				columns={[
-					{
-						name: "Name",
-						key: "name"
-					},
-					{
-						name: "Email",
-						key: "email"
-					},
-					{
-						name: "Is Verified",
-						key: "isVerified"
-					},
-					{
-						name: "ID",
-						key: "id"
-					},
-					{
-						name: "Created at",
-						key: "createdAtForHuman"
-					}
-				]}
-				rows={users} />
+			<Table totalCount={3} columns={columns} rows={users} />
 		</div>
 	</div>
 </div>

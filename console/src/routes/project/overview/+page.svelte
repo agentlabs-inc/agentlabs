@@ -2,6 +2,29 @@
 	import { Icon, DocumentDuplicate, CodeBracket } from "svelte-hero-icons";
 	import TopCover from "$lib/components/common/top-cover/TopCover.svelte";
 	import Typography from "$lib/components/common/typography/Typography.svelte";
+	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
+	import Card from "$lib/components/common/card/Card.svelte";
+	import type { Agent } from "$lib/entities/agent/agent";
+	import dayjs from "dayjs";
+
+	let agents: Agent[] = [
+		{
+			id: "my-agent",
+			name: "My Demo Agent",
+			createdAt: new Date(),
+			updatedAt: new Date()
+		},
+		{
+			id: "my-agent",
+			name: "My Demo Agent",
+			createdAt: new Date(),
+			updatedAt: new Date()
+		}
+	];
+
+	const handleOpenAgent = (agent: Agent) => {
+		console.log(agent);
+	};
 </script>
 
 <div>
@@ -16,7 +39,7 @@
 			</div>
 		</section>
 	</TopCover>
-	<div class="w-full">
+	<div class="w-full p-10 pb-32">
 		<div class="max-w-6xl m-auto mt-10">
 			<div
 				class="w-full rounded-2xl border border-stroke-base dark:border-stroke-base-dark bg-background-tertiary dark:bg-background-tertiary-dark">
@@ -53,6 +76,35 @@
 						</div>
 					</div>
 				</section>
+			</div>
+
+			<Spacer size="lg" />
+
+			<section class="antialiased">
+				<Typography type="mainSectionTitle">Your AI Agents</Typography>
+				<Typography type="subTitle"
+					>Configure a AI agent so you can use it with your frontend.</Typography>
+			</section>
+
+			<Spacer size="md" />
+
+			<div class="grid grid-cols-6 gap-4">
+				{#each agents as agent}
+					<div class="col-span-2">
+						<Card clickable on:click={() => handleOpenAgent(agent)}>
+							<div class="p-8 h-[160px] flex flex-col justify-between">
+								<Typography type="sectionTitle">{agent.name}</Typography>
+								<div>
+									<Typography type="label">Created at</Typography>
+									<Typography type="subTitle"
+										>{dayjs(agent.createdAt).format(
+											"MMMM D, YYYY"
+										)}</Typography>
+								</div>
+							</div>
+						</Card>
+					</div>
+				{/each}
 			</div>
 		</div>
 	</div>

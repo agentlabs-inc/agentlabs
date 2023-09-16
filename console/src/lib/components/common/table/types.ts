@@ -1,6 +1,7 @@
-export type TableColumn = {
+export type TableColumn<T> = {
 	name: string;
 	key: string;
+	format?: (rowValue: T) => string;
 };
 
-export type TableRow = Record<string, any>;
+export type TableRow<T> = Record<string, T>;
