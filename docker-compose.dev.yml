@@ -38,6 +38,7 @@ services:
       dockerfile: Dockerfile.dev
     volumes:
       - ./server:/app
+      - ./typescript-client:/app/../typescript-client
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}
     ports:

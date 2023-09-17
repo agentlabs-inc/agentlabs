@@ -76,7 +76,7 @@
 			</div>
 		</section>
 	</TopCover>
-	<div class="w-full">
+	<div class="w-full p-10 pb-32">
 		<div class="max-w-6xl m-auto mt-10">
 			<div class="flex w-full justify-between items-center">
 				<div class="w-[400px]">

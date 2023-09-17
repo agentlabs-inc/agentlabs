@@ -6,6 +6,7 @@
 	import type { PageData } from "./$types";
 	import { z as zod } from "zod";
 	import ThemeSwitch from "$lib/components/common/theme-switch/ThemeSwitch.svelte";
+	import { registerUser } from "$lib/usecases/users/register";
 	export let data: PageData;
 
 	const { form, errors, validate } = superForm(data.form, {
@@ -17,14 +18,25 @@
 	});
 
 	const handleValidation = async (e: Event) => {
+		console.log("lol");
 		e.preventDefault();
 		const res = await validate();
+
+		console.log("res", res);
 
 		if (!res.valid) {
 			console.log(res);
 			errors.set(res.errors);
 			return;
 		}
+
+		console.log("form", form);
+
+		await registerUser({
+			name: $form.name,
+			email: $form.email,
+			password: $form.password
+		});
 	};
 </script>
 
@@ -67,7 +79,8 @@
 					placeholder="Your password" />
 				<div class="my-5" />
 				<div class="w-full">
-					<Button submit type="primary" fullWidth center>Sign up</Button>
+					<Button submit type="primary" fullWidth center on:click={handleValidation}
+						>Sign up</Button>
 				</div>
 			</form>
 			<div class="my-7 flex gap-5 justify-between items-center">

@@ -32,6 +32,7 @@
 		</label>
 	{/if}
 	<input
+		id={name}
 		value={value}
 		required={required}
 		on:input={onInput}

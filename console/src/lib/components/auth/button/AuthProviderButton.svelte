@@ -4,11 +4,6 @@
 	import GoogleIcon from "$lib/components/auth/GoogleIcon.svelte";
 	import GitlabIcon from "$lib/components/auth/GitlabIcon.svelte";
 	import GithubIcon from "$lib/components/auth/GithubIcon.svelte";
-	import { AgentLabsApp } from "$lib/externals/agentlabs-js-sdk/agentlabs";
-	import { getAuth, signInWithRedirect } from "$lib/externals/agentlabs-js-sdk/auth";
-	import GoogleAuthProvider from "$lib/externals/agentlabs-js-sdk/auth-providers/google";
-	import GitlabAuthProvider from "$lib/externals/agentlabs-js-sdk/auth-providers/gitlab";
-	import GithubAuthProvider from "$lib/externals/agentlabs-js-sdk/auth-providers/github";
 
 	export let provider: AuthProvider;
 
@@ -29,52 +24,7 @@
 		github: "Github"
 	};
 
-	// This will be instantiated in the main layout after fetching project config
-	const app = new AgentLabsApp({
-		project: {
-			id: "",
-			slug: "something",
-			name: "something"
-		},
-		signInMethods: {
-			google: {
-				id: "google",
-				isEnabled: true,
-				oauthSettings: {
-					clientId:
-						"1046622402922-2q425h1v1dmacgg2p4g0bj89f8un67q3.apps.googleusercontent.com"
-				}
-			}
-		}
-	});
-
-	const auth = getAuth(app);
-
-	const providerHandlerMap: Record<AuthProvider, () => void> = {
-		google: () =>
-			signInWithRedirect(
-				auth,
-				new GoogleAuthProvider([], auth.getOAuthSignInMethods().google)
-			),
-		gitlab: () =>
-			signInWithRedirect(
-				auth,
-				new GitlabAuthProvider([], auth.getOAuthSignInMethods().gitlab)
-			),
-		github: () =>
-			signInWithRedirect(
-				auth,
-				new GithubAuthProvider([], auth.getOAuthSignInMethods().github)
-			)
-	};
-
-	const handleLogin = () => {
-		console.log(auth.getOAuthSignInMethods().google);
-
-		providerCurrentlyLoading = provider;
-
-		providerHandlerMap[provider]();
-	};
+	const handleLogin = () => {};
 </script>
 
 <Button

@@ -6,4 +6,8 @@ VOLUME [ "/app" ]
 
 COPY ./scripts/docker-entrypoint.dev.sh /docker-entrypoint.dev.sh
 
+# We install Java because it's needed for OpenAPI CLI Generator to work.
+RUN apk add openjdk11
+
+
 ENTRYPOINT [ "sh", "/docker-entrypoint.dev.sh" ]
