@@ -47,9 +47,9 @@ services:
       - server
     restart: unless-stopped
 
-  back-office:
-    container_name: back-office
-    hostname: back-office
+  console:
+    container_name: console
+    hostname: console
     build:
       context: console
     depends_on:
