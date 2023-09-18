@@ -6,7 +6,7 @@ export const registerUser = async (user: RegisterUserDto): Promise<User> => {
 	const result = await UsersService.register({
 		requestBody: {
 			email: user.email,
-			name: user.name,
+			fullName: user.fullName,
 			password: user.password
 		}
 	});
@@ -17,6 +17,6 @@ export const registerUser = async (user: RegisterUserDto): Promise<User> => {
 		createdAt: new Date(),
 		id: result.id,
 		email: result.email,
-		name: result.name
+		fullName: result.fullName
 	};
 };

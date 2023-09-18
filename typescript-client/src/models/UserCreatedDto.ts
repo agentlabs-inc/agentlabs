@@ -3,9 +3,12 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type SanitizedUserResponse = {
+export type UserCreatedDto = {
     id: string;
     email: string;
-    name: string;
+    fullName: string;
+    isVerified: boolean;
+    lookupId: string;
+    hasPassword: boolean;
 };
 

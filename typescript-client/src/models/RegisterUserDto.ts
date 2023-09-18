@@ -6,6 +6,6 @@
 export type RegisterUserDto = {
     email: string;
     password: string;
-    name: string;
+    fullName: string;
 };
 

@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { RegisterUserDto } from '../models/RegisterUserDto';
-import type { SanitizedUserResponse } from '../models/SanitizedUserResponse';
+import type { UserCreatedDto } from '../models/UserCreatedDto';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -12,19 +12,23 @@ import { request as __request } from '../core/request';
 export class UsersService {
 
     /**
-     * @returns SanitizedUserResponse
+     * @returns UserCreatedDto
      * @throws ApiError
      */
     public static register({
         requestBody,
     }: {
         requestBody: RegisterUserDto,
-    }): CancelablePromise<SanitizedUserResponse> {
+    }): CancelablePromise<UserCreatedDto> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/users/registerUser',
+            url: '/users/register',
             body: requestBody,
             mediaType: 'application/json',
+            errors: {
+                409: `User already exists, please login.`,
+                500: `Something went wrong.`,
+            },
         });
     }
 

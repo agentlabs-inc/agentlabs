@@ -8,7 +8,7 @@ export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
 export type { RegisterUserDto } from './models/RegisterUserDto';
-export type { SanitizedUserResponse } from './models/SanitizedUserResponse';
+export type { UserCreatedDto } from './models/UserCreatedDto';
 
 export { DefaultService } from './services/DefaultService';
 export { UsersService } from './services/UsersService';
