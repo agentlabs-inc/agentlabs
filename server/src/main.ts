@@ -31,16 +31,7 @@ async function bootstrap() {
       },
       fileGeneratorOptions: {
         enabled: true,
-        outputFilePath: './openapi.json',
-      },
-      clientGeneratorOptions: {
-        enabled: true,
-        type: 'typescript-fetch',
-        outputFolderPath: '../typescript-client/src',
-        additionalProperties:
-          'apiPackage=clients,modelPackage=models,withoutPrefixEnums=true,withSeparateModelsAndApi=true',
-        openApiFilePath: './openapi.json',
-        skipValidation: true, // optional, false by default
+        outputFilePath: './openapi.yaml',
       },
     },
     {

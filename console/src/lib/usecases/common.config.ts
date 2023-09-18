@@ -1,6 +1,5 @@
-import { Configuration } from "$lib/services/typescript-client/src";
+import { OpenAPI } from "$lib/services/gen-api";
 
-export const commonApiConfig = new Configuration({
-	// TODO: Check with Aurel how we wants to handle this.
-	basePath: "http://localhost:3001"
-});
+// TODO: change that to the correct base path
+// Or add it directly in the SDK later.
+OpenAPI.BASE = "http://localhost:8080/console/lolilol";

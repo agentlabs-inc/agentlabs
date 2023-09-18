@@ -1,35 +1,37 @@
+const basePath = "/console";
+
 export const homeRoute = {
-	path: () => "/project/overview"
+	path: () => `${basePath}/project/overview`
 };
 
 export const overviewRoute = {
-	path: () => `/project/overview`
+	path: () => `${basePath}/project/overview`
 };
 
 export const authSettingsRoute = {
-	path: () => "/project/auth"
+	path: () => `${basePath}/project/auth`
 };
 
 export const settingsRoute = {
-	path: () => "/project/settings"
+	path: () => `${basePath}/project/settings`
 };
 
 export const loginRoute = {
-	path: () => "/login"
+	path: () => `${basePath}/login`
 };
 
 export const registerRoute = {
-	path: () => "/register"
+	path: () => `${basePath}/register`
 };
 
 export const forgotPasswordRoute = {
-	path: () => "/forgot-password"
+	path: () => `${basePath}/forgot-password`
 };
 
 export const onboardingRoute = {
-	path: () => "/onboarding"
+	path: () => `${basePath}/onboarding`
 };
 
 export const projectOnboardingRoute = {
-	path: (projectId: string) => `/project/${projectId}/onboarding`
+	path: (projectId: string) => `${basePath}/project/${projectId}/onboarding`
 };

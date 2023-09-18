@@ -1,8 +1,0 @@
-apis/DefaultApi.ts
-apis/UsersApi.ts
-apis/index.ts
-index.ts
-models/RegisterUserDto.ts
-models/SanitizedUserResponse.ts
-models/index.ts
-runtime.ts

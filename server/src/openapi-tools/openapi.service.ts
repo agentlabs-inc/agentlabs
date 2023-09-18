@@ -9,10 +9,6 @@ import {
   OpenApiFileGeneratorOptions,
   OpenApiFileGeneratorService,
 } from './openapi-file-generator/openapi-file-generator.service';
-import {
-  OpenApiClientGeneratorOptions,
-  OpenApiClientGeneratorService,
-} from './openapi-client-generator/openapi-client-generator.service';
 
 export interface OpenApiWebServerOptions {
   enabled: boolean;
@@ -20,7 +16,6 @@ export interface OpenApiWebServerOptions {
 }
 
 export interface OpenApiOptions {
-  clientGeneratorOptions?: OpenApiClientGeneratorOptions;
   fileGeneratorOptions?: OpenApiFileGeneratorOptions;
   webServerOptions?: OpenApiWebServerOptions;
 }
@@ -29,7 +24,6 @@ export interface OpenApiOptions {
 export class OpenApiService {
   constructor(
     private readonly openApiFileGenerator: OpenApiFileGeneratorService,
-    private readonly openApiClientGenerator: OpenApiClientGeneratorService,
   ) {}
 
   async configure(
@@ -58,10 +52,6 @@ export class OpenApiService {
         toolsOptions.fileGeneratorOptions,
       );
     }
-
-    if (toolsOptions?.clientGeneratorOptions?.enabled) {
-      await this.generateClient(toolsOptions.clientGeneratorOptions);
-    }
   }
 
   private async enableDocumentationWebServer(
@@ -77,9 +67,5 @@ export class OpenApiService {
     options: OpenApiFileGeneratorOptions,
   ) {
     await this.openApiFileGenerator.generateOpenApiFile(options, document);
-  }
-
-  private async generateClient(options: OpenApiClientGeneratorOptions) {
-    await this.openApiClientGenerator.generateClient(options);
   }
 }
