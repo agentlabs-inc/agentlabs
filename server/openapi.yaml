@@ -1,0 +1,87 @@
+openapi: 3.0.0
+paths:
+  /:
+    get:
+      operationId: getHello
+      parameters: []
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: string
+  /users/register:
+    post:
+      operationId: register
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterUserDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserCreatedDto"
+        "409":
+          description: User already exists, please login.
+        "500":
+          description: Something went wrong.
+      tags:
+        - users
+info:
+  title: AgentLabs API
+  description: Build AI Agents in minutes, not months.
+  version: 1.0.0
+  contact: {}
+tags: []
+servers: []
+components:
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+  schemas:
+    RegisterUserDto:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+          minLength: 6
+        fullName:
+          type: string
+          minLength: 2
+      required:
+        - email
+        - password
+        - fullName
+    UserCreatedDto:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        fullName:
+          type: string
+        isVerified:
+          type: boolean
+        lookupId:
+          type: string
+        hasPassword:
+          type: boolean
+      required:
+        - id
+        - email
+        - fullName
+        - isVerified
+        - lookupId
+        - hasPassword

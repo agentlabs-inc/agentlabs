@@ -12,6 +12,7 @@ services:
       - ${PORT}:80
     depends_on:
       - frontend
+      - console
       - server
     restart: unless-stopped
 
@@ -53,6 +54,20 @@ services:
       - ./frontend:/app
     ports:
       - ${DEV_FRONTEND_PORT}:3000
+    depends_on:
+      - server
+    restart: unless-stopped
+
+  console:
+    container_name: console-dev
+    hostname: console
+    build:
+      context: ./console
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./console:/app
+    ports:
+      - ${DEV_CONSOLE_PORT}:3000
     depends_on:
       - server
     restart: unless-stopped

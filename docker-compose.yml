@@ -47,6 +47,15 @@ services:
       - server
     restart: unless-stopped
 
+  console:
+    container_name: console
+    hostname: console
+    build:
+      context: console
+    depends_on:
+      - server
+    restart: unless-stopped
+
   # ------------------------------
   # Demo agents
   # ------------------------------
