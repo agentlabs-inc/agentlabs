@@ -10,6 +10,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model PasswordHashConfig {
+    id          String @id @default(uuid())
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt @default(now())
+
+    user        User @relation(fields: [userId], references: [id])
+    userId      String @unique
+
+    algorithm   String
+    memCost     Int
+    keyLength   Int
+    salt        String
+}
+
 model User {
 	id		String   @id @default(uuid())
 	createdAt DateTime @default(now())
@@ -20,8 +34,14 @@ model User {
 	// User deserialization should always use this id.
 	lookupId	String	@unique @default(uuid())
 
-	email		String?	@unique
-	fullName	String?
+	email		String	@unique
+	fullName	String
+	isVerified  Boolean	@default(false)
+
+	password    String?
+	passwordHash String?
+	passwordHashConfig PasswordHashConfig?
+	hasPassword Boolean @default(false)
 }
 
 model AgentConversation {
