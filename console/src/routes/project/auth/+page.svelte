@@ -7,26 +7,26 @@
 	import type { User } from "$lib/entities/user/user";
 	import { PlusSmall } from "svelte-hero-icons";
 	import dayjs from "dayjs";
-	import type { TableColumn } from "$lib/components/common/table/types";
+	import type { TableColumn, TableRow } from "$lib/components/common/table/types";
 
 	let searchValue = "";
 
-	let users = [
+	let users: TableRow<User>[] = [
 		{
 			id: "123456789",
-			name: "John Doe",
+			fullName: "John Doe",
 			email: "john@doe.com",
 			createdAt: new Date()
 		},
 		{
 			id: "123456789",
-			name: "John Doe",
+			fullName: "John Doe",
 			email: "john@doe.com",
 			createdAt: new Date()
 		},
 		{
 			id: "123456789",
-			name: "John Doe",
+			fullName: "John Doe",
 			email: "john@doe.com",
 			createdAt: new Date()
 		}
@@ -35,7 +35,7 @@
 	const columns: TableColumn<User>[] = [
 		{
 			name: "Name",
-			key: "name"
+			key: "fullName"
 		},
 		{
 			name: "Email",

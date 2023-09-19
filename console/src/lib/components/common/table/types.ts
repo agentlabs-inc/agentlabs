@@ -4,4 +4,4 @@ export type TableColumn<T> = {
 	format?: (rowValue: T) => string;
 };
 
-export type TableRow<T> = Record<string, T>;
+export type TableRow<T> = T;

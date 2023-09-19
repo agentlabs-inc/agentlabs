@@ -4,10 +4,9 @@
 	import AuthProviderButton from "$lib/components/auth/button/AuthProviderButton.svelte";
 	import { z } from "zod";
 	import { homeRoute } from "$lib/routes";
-
-	import { getContext } from "svelte";
+	import { getAuthContext } from "$lib/context/auth.context";
 	import { goto } from "$app/navigation";
-	const { login, currentUser } = getContext("Auth");
+	const { login, currentUser } = getAuthContext();
 
 	const form = {
 		email: {

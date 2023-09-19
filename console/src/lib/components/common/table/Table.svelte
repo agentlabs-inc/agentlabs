@@ -4,8 +4,9 @@
 
 	import type { TableRow, TableColumn } from "$lib/components/common/table/types.js";
 
-	export let columns: TableColumn[];
-	export let rows: TableRow[];
+	type T = $$Generic;
+	export let columns: TableColumn<T>[];
+	export let rows: TableRow<T>[];
 
 	export let totalCount: number;
 </script>

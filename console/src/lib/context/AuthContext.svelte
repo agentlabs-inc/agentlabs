@@ -1,16 +1,20 @@
 <script lang="ts">
 	import { writable } from "svelte/store";
 	import { setContext } from "svelte";
+	import { AUTH_CONTEXT_KEY } from "$lib/context/auth.context";
+	import type { User } from "$lib/entities/user/user";
 
-	const userStore = writable<{ name: string; email: string } | null>(null);
+	const userStore = writable<User | null>(null);
 
 	// const auth = onUserStateChanged()...
 
 	const login = (email: string, password: string) => {
 		// mocked
 		userStore.set({
-			name: "John",
-			email: email
+			id: "1",
+			email: "",
+			fullName: "John Doe",
+			createdAt: new Date()
 		});
 	};
 
@@ -18,7 +22,7 @@
 		userStore.set(null);
 	};
 
-	setContext("Auth", { currentUser: userStore, login, logout });
+	setContext(AUTH_CONTEXT_KEY, { currentUser: userStore, login, logout });
 </script>
 
 <slot />

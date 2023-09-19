@@ -33,7 +33,7 @@
 		console.log("form", form);
 
 		await registerUser({
-			name: $form.name,
+			fullName: $form.name,
 			email: $form.email,
 			password: $form.password
 		});

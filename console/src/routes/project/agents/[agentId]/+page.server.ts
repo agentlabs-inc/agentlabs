@@ -10,8 +10,6 @@ const schema = z.object({
 export const load: Load = async (event) => {
 	const form = await superValidate(schema);
 	return {
-		form: {
-			name: "My super cool agent"
-		}
+		form
 	};
 };

@@ -5,7 +5,7 @@
 	import Button from "$lib/components/common/button/Button.svelte";
 	import Input from "$lib/components/common/input/Input.svelte";
 	import { z as zod } from "zod";
-	import type { PageData } from "$lib/types";
+	import type { PageData } from "./$types";
 	import { superForm } from "sveltekit-superforms/client";
 	export let data: PageData;
 

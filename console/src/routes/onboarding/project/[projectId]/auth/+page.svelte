@@ -2,7 +2,7 @@
 	import TopCover from "$lib/components/common/top-cover/TopCover.svelte";
 	import Typography from "$lib/components/common/typography/Typography.svelte";
 	import Card from "$lib/components/common/card/Card.svelte";
-	import type { PageData } from "../../../../../.svelte-kit/types/src/routes";
+	import type { PageData } from "./$types";
 	import { z as zod } from "zod";
 	import { superForm } from "sveltekit-superforms/client";
 	import { Icon, Envelope } from "svelte-hero-icons";

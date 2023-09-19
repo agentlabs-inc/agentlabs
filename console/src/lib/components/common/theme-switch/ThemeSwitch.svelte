@@ -5,7 +5,7 @@
 
 	import { theme } from "$lib/store/theme";
 
-	let darkMode = $theme;
+	let darkMode = $theme === "dark";
 
 	function handleSwitchDarkMode() {
 		darkMode = !darkMode;
