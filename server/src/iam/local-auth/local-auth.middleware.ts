@@ -1,5 +1,5 @@
-import { Injectable, Logger, NestMiddleware, Param } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
+import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
+import { NextFunction, Request, Response } from 'express';
 import { UsersService } from 'src/users/users.service';
 import { AuthenticatedRequest } from '../iam.types';
 
@@ -46,10 +46,7 @@ export class LocalAuthMiddleware implements NestMiddleware {
     }
 
     const { user: decodedUser } = this.decodeToken(token);
-    const user = await this.usersService.deserializeUser(
-      decodedUser.id,
-      decodedUser.lookupId,
-    );
+    const user = await this.usersService.deserializeUser(decodedUser.id);
 
     if (!user) {
       this.logger.error(

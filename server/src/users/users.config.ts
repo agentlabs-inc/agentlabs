@@ -5,6 +5,7 @@ import { validateEnv } from 'src/config/validate-env';
 export interface UsersConfig {
   accessTokenSecret: string;
   accessTokenExpirationTime: string;
+  defaultOrganizationName: string;
 }
 
 export const usersConfig = registerAs<UsersConfig>(
@@ -15,6 +16,7 @@ export const usersConfig = registerAs<UsersConfig>(
     return {
       accessTokenSecret: env.USERS_ACCESS_TOKEN_SECRET,
       accessTokenExpirationTime: '3h',
+      defaultOrganizationName: 'My organization',
     };
   },
 );

@@ -27,7 +27,6 @@ export class UsersService {
       fullName: user.fullName,
       hasPassword: user.hasPassword,
       isVerified: user.isVerified,
-      lookupId: user.lookupId,
     };
   }
 
@@ -84,13 +83,25 @@ export class UsersService {
         data: {
           email: dto.email,
           passwordHash: this.generatePasswordHash(dto.password, hashConfig),
+          fullName: dto.fullName,
+          isVerified: false,
           passwordHashConfig: {
             create: {
               ...hashConfig,
             },
           },
-          fullName: dto.fullName,
-          isVerified: false,
+          organizations: {
+            create: [
+              {
+                role: 'ADMIN',
+                organization: {
+                  create: {
+                    name: this.usersConfig.defaultOrganizationName,
+                  },
+                },
+              },
+            ],
+          },
         },
         include: {
           passwordHashConfig: false,
@@ -103,7 +114,6 @@ export class UsersService {
         fullName: result.fullName,
         hasPassword: result.hasPassword,
         isVerified: result.isVerified,
-        lookupId: result.lookupId,
       });
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
@@ -169,11 +179,10 @@ export class UsersService {
     });
   }
 
-  deserializeUser(userId: string, lookupId: string): Promise<User | null> {
+  deserializeUser(userId: string): Promise<User | null> {
     const user = this.prisma.user.findUnique({
       where: {
         id: userId,
-        lookupId,
       },
     });
 

@@ -13,9 +13,6 @@ export class SanitizedUserResponseDto {
   @IsBoolean()
   isVerified: boolean;
 
-  @IsString()
-  lookupId: string;
-
   @IsBoolean()
   hasPassword: boolean;
 }

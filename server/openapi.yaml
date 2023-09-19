@@ -98,8 +98,6 @@ components:
           type: string
         isVerified:
           type: boolean
-        lookupId:
-          type: string
         hasPassword:
           type: boolean
       required:
@@ -107,7 +105,6 @@ components:
         - email
         - fullName
         - isVerified
-        - lookupId
         - hasPassword
     LoginUserDto:
       type: object
@@ -131,8 +128,6 @@ components:
           type: string
         isVerified:
           type: boolean
-        lookupId:
-          type: string
         hasPassword:
           type: boolean
       required:
@@ -140,7 +135,6 @@ components:
         - email
         - fullName
         - isVerified
-        - lookupId
         - hasPassword
     LoginResponseDto:
       type: object
