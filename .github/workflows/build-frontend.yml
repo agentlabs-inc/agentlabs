@@ -5,7 +5,6 @@ env:
 name: Build frontend
 on:
   push:
-    branches: ['*']
 
 jobs:
   build:
