@@ -1,8 +1,8 @@
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/console
+  IMAGE_NAME: ${{ github.repository }}/backend
 
-name: Build console
+name: Build backend
 on:
   push:
     branches:
@@ -46,7 +46,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: backend
+          context: server
           push: ${{ startsWith(github.ref, 'refs/tags/') }}
           tags: |
             ${{ steps.meta.outputs.tags }}
