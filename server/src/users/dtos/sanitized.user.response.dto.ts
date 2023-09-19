@@ -1,6 +1,6 @@
 import { IsBoolean, IsEmail, IsString } from 'class-validator';
 
-export class UserCreatedDto {
+export class SanitizedUserResponseDto {
   @IsString()
   id: string;
 

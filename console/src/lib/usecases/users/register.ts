@@ -17,6 +17,6 @@ export const registerUser = async (user: RegisterUserDto): Promise<User> => {
 		createdAt: new Date(),
 		id: result.id,
 		email: result.email,
-		fullName: result.fullName
+		name: result.fullName
 	};
 };

@@ -1,17 +1,57 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { randomBytes, scryptSync } from 'crypto';
+import * as jose from 'jose';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Result, err, ok } from '../common/result';
+import { LoginResponseDto } from './dtos/login.response.dto';
 import { RegisterUserDto } from './dtos/register.user.dto';
-import { UserCreatedDto } from './responses/user.created.dto';
-import { RegisterUserError } from './users.service.errors';
+import { SanitizedUserResponseDto } from './dtos/sanitized.user.response.dto';
+import { UserCreatedResponseDto } from './dtos/user.created.response.dto';
+import { InjectUsersConfig, UsersConfig } from './users.config';
+import { LoginUserError, RegisterUserError } from './users.service.errors';
 import { CreatePasswordHashConfig } from './users.types';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {
-    //
+  constructor(
+    private readonly prisma: PrismaService,
+    @InjectUsersConfig()
+    private readonly usersConfig: UsersConfig,
+  ) {}
+
+  private sanitizeUser(user: User): SanitizedUserResponseDto {
+    return {
+      id: user.id,
+      email: user.email,
+      fullName: user.fullName,
+      hasPassword: user.hasPassword,
+      isVerified: user.isVerified,
+      lookupId: user.lookupId,
+    };
+  }
+
+  private async generateAccessToken(user: User): Promise<string> {
+    return this.signAccessToken({
+      sub: user.id,
+      email: user.email,
+      fullName: user.fullName,
+    });
+  }
+
+  private signAccessToken(
+    payload: Record<string, string | number>,
+  ): Promise<string> {
+    const secret = new TextEncoder().encode(this.usersConfig.accessTokenSecret);
+    return new jose.SignJWT(payload)
+      .setProtectedHeader({
+        alg: 'HS256',
+      })
+      .setIssuer('https://agentlabs.dev')
+      .setAudience('https://agentlabs.dev')
+      .setExpirationTime(this.usersConfig.accessTokenExpirationTime)
+      .setIssuedAt()
+      .sign(secret);
   }
 
   private generatePasswordHashConfig(): CreatePasswordHashConfig {
@@ -36,7 +76,7 @@ export class UsersService {
 
   async registerWithEmailAndPassword(
     dto: RegisterUserDto,
-  ): Promise<Result<UserCreatedDto, RegisterUserError>> {
+  ): Promise<Result<UserCreatedResponseDto, RegisterUserError>> {
     const hashConfig = this.generatePasswordHashConfig();
 
     try {
@@ -57,8 +97,6 @@ export class UsersService {
         },
       });
 
-      // TODO: send validation email
-
       return ok({
         id: result.id,
         email: result.email,
@@ -76,8 +114,47 @@ export class UsersService {
 
       console.error('Error while registering user', e);
 
-      return err('UnknownError');
+      throw e;
     }
+  }
+
+  async loginWithEmailAndPassword(
+    email: string,
+    password: string,
+  ): Promise<Result<LoginResponseDto, LoginUserError>> {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+      include: {
+        passwordHashConfig: true,
+      },
+    });
+
+    if (!user) {
+      return err('UserNotFound');
+    }
+
+    if (!user.hasPassword) {
+      return err('UserDoesNotHavePassword');
+    }
+
+    if (!user.passwordHashConfig) {
+      return err('UserDoesNotHavePasswordHashConfig');
+    }
+
+    const hash = this.generatePasswordHash(password, user.passwordHashConfig);
+
+    if (hash !== user.passwordHash) {
+      return err('InvalidPassword');
+    }
+
+    const accessToken = await this.generateAccessToken(user);
+
+    return ok({
+      accessToken,
+      user: this.sanitizeUser(user),
+    });
   }
 
   findAllUsers(): Promise<User[]> {

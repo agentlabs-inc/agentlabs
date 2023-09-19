@@ -27,9 +27,33 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserCreatedDto"
+                $ref: "#/components/schemas/UserCreatedResponseDto"
         "409":
           description: User already exists, please login.
+        "500":
+          description: Something went wrong.
+      tags:
+        - users
+  /users/login:
+    post:
+      operationId: login
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginUserDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponseDto"
+        "401":
+          description: The provided credentials are invalid or the user does not have a
+            password configured.
         "500":
           description: Something went wrong.
       tags:
@@ -63,7 +87,7 @@ components:
         - email
         - password
         - fullName
-    UserCreatedDto:
+    UserCreatedResponseDto:
       type: object
       properties:
         id:
@@ -85,3 +109,46 @@ components:
         - isVerified
         - lookupId
         - hasPassword
+    LoginUserDto:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+          minLength: 6
+      required:
+        - email
+        - password
+    SanitizedUserResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        fullName:
+          type: string
+        isVerified:
+          type: boolean
+        lookupId:
+          type: string
+        hasPassword:
+          type: boolean
+      required:
+        - id
+        - email
+        - fullName
+        - isVerified
+        - lookupId
+        - hasPassword
+    LoginResponseDto:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        user:
+          $ref: "#/components/schemas/SanitizedUserResponseDto"
+      required:
+        - accessToken
+        - user

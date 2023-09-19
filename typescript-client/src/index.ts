@@ -7,8 +7,11 @@ export { CancelablePromise, CancelError } from './core/CancelablePromise';
 export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
+export type { LoginResponseDto } from './models/LoginResponseDto';
+export type { LoginUserDto } from './models/LoginUserDto';
 export type { RegisterUserDto } from './models/RegisterUserDto';
-export type { UserCreatedDto } from './models/UserCreatedDto';
+export type { SanitizedUserResponseDto } from './models/SanitizedUserResponseDto';
+export type { UserCreatedResponseDto } from './models/UserCreatedResponseDto';
 
 export { DefaultService } from './services/DefaultService';
 export { UsersService } from './services/UsersService';

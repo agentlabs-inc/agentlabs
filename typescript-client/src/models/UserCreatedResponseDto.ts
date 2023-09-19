@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type UserCreatedDto = {
+export type UserCreatedResponseDto = {
     id: string;
     email: string;
     fullName: string;
