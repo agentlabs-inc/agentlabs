@@ -1,6 +1,6 @@
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ gituhb.repository }}-frontend
+  IMAGE_NAME: ${{ github.repository }}-frontend
 
 name: Build frontend
 on:
