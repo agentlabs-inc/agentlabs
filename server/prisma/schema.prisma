@@ -25,23 +25,127 @@ model PasswordHashConfig {
 }
 
 model User {
-	id		String   @id @default(uuid())
+	id        String   @id @default(uuid())
 	createdAt DateTime @default(now())
 	updatedAt DateTime @updatedAt @default(now())
 
-	// As opposed to the user id, this id might be changed if for instance
-	// a JWT token is compromised. That way we can invalidate all tokens at once.
-	// User deserialization should always use this id.
-	lookupId	String	@unique @default(uuid())
+	email      String  @unique
+	fullName   String
+	isVerified Boolean @default(false)
 
-	email		String	@unique
-	fullName	String
-	isVerified  Boolean	@default(false)
-
-	password    String?
-	passwordHash String?
+	password           String?
+	passwordHash       String?
 	passwordHashConfig PasswordHashConfig?
-	hasPassword Boolean @default(false)
+	hasPassword        Boolean @default(false)
+
+	organizations OrganizationUser[]
+}
+
+model Organization {
+	id						String   @id @default(uuid())
+	createdAt 		DateTime @default(now())
+	updatedAt 		DateTime @updatedAt @default(now())
+
+	name					String
+
+	users					OrganizationUser[]
+}
+
+enum OrganizationUserRole {
+	USER
+	ADMIN
+}
+
+model OrganizationUser {
+	createdAt 		DateTime @default(now())
+	updatedAt 		DateTime @updatedAt @default(now())
+
+	organization	Organization @relation(fields: [organizationId], references: [id])
+	organizationId	String
+
+	user					User @relation(fields: [userId], references: [id])
+	userId				String
+
+	role					OrganizationUserRole @default(ADMIN)
+
+	@@id([organizationId, userId])
+}
+
+model Project {
+	id						String   @id @default(uuid())
+	createdAt 		DateTime @default(now())
+	updatedAt 		DateTime @updatedAt @default(now())
+
+	name					String
+	slug					String	@unique
+
+	agents				Agent[]
+	members				Member[]
+	sdkSecrets		SdkSecret[]
+}
+
+model SdkSecret {
+	id						String   @id @default(uuid())
+	createdAt 		DateTime @default(now())
+	updatedAt 		DateTime @updatedAt @default(now())
+
+	secret				String	@unique
+	description		String?
+
+	projectId			String
+	project				Project @relation(fields: [projectId], references: [id])
+}
+
+model Agent {
+	id						String   @id @default(uuid())
+	createdAt 		DateTime @default(now())
+	updatedAt 		DateTime @updatedAt @default(now())
+
+	name					String
+
+	project				Project @relation(fields: [projectId], references: [id])
+	projectId			String
+}
+
+model Member {
+	id						String   @id @default(uuid())
+	createdAt 		DateTime @default(now())
+	updatedAt 		DateTime @updatedAt @default(now())
+
+	firstName			String?
+	lastName			String?
+	email					String
+
+	project				Project @relation(fields: [projectId], references: [id])
+	projectId			String
+
+	identities		MemberIdentity[]
+}
+
+enum IdentityProvider {
+	EMAIL
+	GOOGLE
+	GITHUB
+	GITLAB
+	FACEBOOK
+	TWITTER
+	APPLE
+}
+
+model MemberIdentity {
+	id						String   @id @default(uuid())
+	createdAt 		DateTime @default(now())
+	updatedAt 		DateTime @updatedAt @default(now())
+
+	provider			IdentityProvider
+
+	memberId			String
+	member				Member @relation(fields: [memberId], references: [id])
+
+	accessToken		String
+	refreshToken	String?
+	accessTokenExpiresAt			DateTime?
+	refreshTokenExpiresAt			DateTime?
 }
 
 model AgentConversation {
