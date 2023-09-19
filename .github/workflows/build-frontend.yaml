@@ -1,0 +1,26 @@
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ gituhb.repository }}-frontend
+
+name: Build frontend
+on:
+  push:
+    branches: ['*']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: build SDK clients
+        run: sh ./build-clients.sh
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: frontend
+          push: false
+          #tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
