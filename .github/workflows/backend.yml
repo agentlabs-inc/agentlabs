@@ -16,9 +16,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Build SDK clients
-        run: sh ./build-clients.sh
-
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
@@ -49,7 +46,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: console
+          context: backend
           push: ${{ startsWith(github.ref, 'refs/tags/') }}
           tags: |
             ${{ steps.meta.outputs.tags }}
