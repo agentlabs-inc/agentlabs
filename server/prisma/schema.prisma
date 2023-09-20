@@ -40,6 +40,7 @@ model User {
 
 	organizations 		OrganizationUser[]
 	projectCreated	 	Project[]
+	agentCreated			Agent[]
 }
 
 model Organization {
@@ -110,6 +111,9 @@ model Agent {
 	updatedAt 		DateTime @updatedAt @default(now())
 
 	name					String
+
+	creator				User @relation(fields: [creatorId], references: [id])
+	creatorId			String
 
 	project				Project @relation(fields: [projectId], references: [id])
 	projectId			String

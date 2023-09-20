@@ -95,6 +95,40 @@ paths:
                 $ref: "#/components/schemas/ListProjectsResultDto"
       tags:
         - projects
+  /agents/create:
+    post:
+      operationId: createAgent
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAgentDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatedAgentDto"
+  "/agents/list_for_project/{projectId}":
+    post:
+      operationId: listForProject
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAgentDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListAgentsResponseDto"
 info:
   title: AgentLabs API
   description: Build AI Agents in minutes, not months.
@@ -257,6 +291,76 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ListProjectItemDto"
+        total:
+          type: number
+      required:
+        - items
+        - total
+    CreateAgentDto:
+      type: object
+      properties:
+        name:
+          type: string
+        projectId:
+          type: string
+      required:
+        - name
+        - projectId
+    CreatedAgentDto:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        projectId:
+          type: string
+        creatorId:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - id
+        - name
+        - projectId
+        - creatorId
+        - createdAt
+        - updatedAt
+    ListAgentItem:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        projectId:
+          type: string
+        creatorId:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - id
+        - name
+        - projectId
+        - creatorId
+        - createdAt
+        - updatedAt
+    ListAgentsResponseDto:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ListAgentItem"
         total:
           type: number
       required:
