@@ -38,7 +38,8 @@ model User {
 	passwordHashConfig PasswordHashConfig?
 	hasPassword        Boolean @default(false)
 
-	organizations OrganizationUser[]
+	organizations 		OrganizationUser[]
+	projectCreated	 	Project[]
 }
 
 model Organization {
@@ -49,6 +50,7 @@ model Organization {
 	name					String
 
 	users					OrganizationUser[]
+	projects			Project[]
 }
 
 enum OrganizationUserRole {
@@ -78,6 +80,12 @@ model Project {
 
 	name					String
 	slug					String	@unique
+
+	creator				User @relation(fields: [creatorId], references: [id])
+	creatorId			String
+
+	organization		Organization @relation(fields: [organizationId], references: [id])
+	organizationId	String
 
 	agents				Agent[]
 	members				Member[]

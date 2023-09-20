@@ -8,7 +8,6 @@ export type SanitizedUserResponseDto = {
     email: string;
     fullName: string;
     isVerified: boolean;
-    lookupId: string;
     hasPassword: boolean;
 };
 

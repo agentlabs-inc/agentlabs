@@ -58,6 +58,43 @@ paths:
           description: Something went wrong.
       tags:
         - users
+  /projects/create:
+    post:
+      operationId: createProject
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProjectDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatedProjectDto"
+      tags:
+        - projects
+  "/projects/list_for_organization/{organizationId}":
+    get:
+      operationId: listOrganizationProjects
+      parameters:
+        - name: organizationId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListProjectsResultDto"
+      tags:
+        - projects
 info:
   title: AgentLabs API
   description: Build AI Agents in minutes, not months.
@@ -146,3 +183,82 @@ components:
       required:
         - accessToken
         - user
+    CreateProjectDto:
+      type: object
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
+        organizationId:
+          type: string
+      required:
+        - name
+        - slug
+        - organizationId
+    CreatedProjectDto:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        organizationId:
+          type: string
+        creatorId:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - id
+        - name
+        - slug
+        - organizationId
+        - creatorId
+        - createdAt
+        - updatedAt
+    ListProjectItemDto:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        organizationId:
+          type: string
+        creatorId:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - id
+        - name
+        - slug
+        - organizationId
+        - creatorId
+        - createdAt
+        - updatedAt
+    ListProjectsResultDto:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ListProjectItemDto"
+        total:
+          type: number
+      required:
+        - items
+        - total
