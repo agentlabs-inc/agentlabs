@@ -77,6 +77,8 @@ paths:
                 $ref: "#/components/schemas/CreatedProjectDto"
       tags:
         - projects
+      security:
+        - bearer: []
   "/projects/list_for_organization/{organizationId}":
     get:
       operationId: listOrganizationProjects
@@ -95,6 +97,28 @@ paths:
                 $ref: "#/components/schemas/ListProjectsResultDto"
       tags:
         - projects
+      security:
+        - bearer: []
+  "/projects/exists/{slug}":
+    get:
+      operationId: projectExists
+      parameters:
+        - name: slug
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectExistsResponseDto"
+      tags:
+        - projects
+      security:
+        - bearer: []
   /agents/create:
     post:
       operationId: createAgent
@@ -296,6 +320,13 @@ components:
       required:
         - items
         - total
+    ProjectExistsResponseDto:
+      type: object
+      properties:
+        exists:
+          type: boolean
+      required:
+        - exists
     CreateAgentDto:
       type: object
       properties:

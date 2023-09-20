@@ -8,13 +8,17 @@ import {
   Req,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RequireAuthMethod } from '../iam/iam.decorators';
 import { LocalAuthenticatedRequest } from '../iam/iam.types';
 import { CreateProjectDto } from './dtos/create.project.dto';
+import { CreatedProjectDto } from './dtos/created.project.dto';
+import { ListProjectsResultDto } from './dtos/list.projects.result.dto';
+import { ProjectExistsResponseDto } from './dtos/project.exists.response.dto';
 import { ProjectsService } from './projects.service';
 
 @ApiTags('projects')
+@ApiBearerAuth()
 @Controller('projects')
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
@@ -24,7 +28,7 @@ export class ProjectsController {
   async createProject(
     @Req() req: LocalAuthenticatedRequest,
     @Body() dto: CreateProjectDto,
-  ) {
+  ): Promise<CreatedProjectDto> {
     const { user } = req;
 
     const result = await this.projectsService.createProject({
@@ -62,7 +66,7 @@ export class ProjectsController {
   async listOrganizationProjects(
     @Req() req: LocalAuthenticatedRequest,
     @Param('organizationId') organizationId: string,
-  ) {
+  ): Promise<ListProjectsResultDto> {
     const { user } = req;
 
     const result = await this.projectsService.listOrganizationProjects({
@@ -87,5 +91,18 @@ export class ProjectsController {
           message: 'Not an organization user',
         });
     }
+  }
+
+  @RequireAuthMethod('local')
+  @Get('/exists/:slug')
+  async projectExists(
+    @Req() req: LocalAuthenticatedRequest,
+    @Param('slug') slug: string,
+  ): Promise<ProjectExistsResponseDto> {
+    const exists = await this.projectsService.projectExists(slug);
+
+    return {
+      exists,
+    };
   }
 }

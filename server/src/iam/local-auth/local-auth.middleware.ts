@@ -10,11 +10,7 @@ export class LocalAuthMiddleware implements NestMiddleware {
   constructor(private readonly usersService: UsersService) {}
 
   private extractToken(req: Request): string | null {
-    console.error(
-      'Missing extractToken implementation. Returning a null token.',
-    );
-
-    return null;
+    return req.header('authorization')?.replace('Bearer ', '') ?? null;
   }
 
   private isTokenValid(token: string): boolean {
@@ -26,7 +22,7 @@ export class LocalAuthMiddleware implements NestMiddleware {
   private decodeToken(token: string): any {
     return {
       user: {
-        id: 1,
+        id: token, // TODO: replace with actual user id
         lookupId: '1234567890',
       },
     };

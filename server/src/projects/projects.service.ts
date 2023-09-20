@@ -121,4 +121,17 @@ export class ProjectsService {
       total: projects.length,
     });
   }
+
+  async projectExists(slug: string) {
+    const project = await this.prisma.project.findFirst({
+      where: {
+        slug,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    return !!project;
+  }
 }
