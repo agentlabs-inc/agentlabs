@@ -17,10 +17,15 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux]
     steps:
       - uses: actions/checkout@v3
 
+      # Required to compile the client SDKS on runners without built-in node suppot
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '>= 20'
+      
       - name: Compile SDKs
         run: sh ./build-clients.sh
 

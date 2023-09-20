@@ -1,0 +1,19 @@
+env:
+  BUILD_CONTEXT: server
+
+name: Check backend
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  build:
+    runs-on: [self-hosted, linux]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ env.BUILD_CONTEXT }}
+          push: false
