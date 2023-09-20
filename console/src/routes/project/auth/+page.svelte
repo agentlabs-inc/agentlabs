@@ -16,23 +16,26 @@
 			id: "123456789",
 			fullName: "John Doe",
 			email: "john@doe.com",
+			isVerified: false,
 			createdAt: new Date()
 		},
 		{
 			id: "123456789",
 			fullName: "John Doe",
 			email: "john@doe.com",
+			isVerified: false,
 			createdAt: new Date()
 		},
 		{
 			id: "123456789",
 			fullName: "John Doe",
 			email: "john@doe.com",
+			isVerified: false,
 			createdAt: new Date()
 		}
 	];
 
-	const columns: TableColumn<User>[] = [
+	const columns: TableColumn<User, keyof User>[] = [
 		{
 			name: "Name",
 			key: "fullName"

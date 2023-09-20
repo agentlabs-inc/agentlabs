@@ -5,7 +5,8 @@
 	import type { TableRow, TableColumn } from "$lib/components/common/table/types.js";
 
 	type T = $$Generic;
-	export let columns: TableColumn<T>[];
+	type K = keyof T;
+	export let columns: TableColumn<T, K>[];
 	export let rows: TableRow<T>[];
 
 	export let totalCount: number;
@@ -24,7 +25,7 @@
 				class="py-5 px-6 grid grid-cols-5 w-full border-b border-stroke-base dark:border-stroke-base-dark hover:bg-background-accent dark:hover:bg-background-accent-dark cursor-pointer">
 				{#each columns as column}
 					{#if typeof column.format === "function"}
-						<Typography type="body">{column.format(row[column.key])}</Typography>
+						<Typography type="body">{column.format(row)}</Typography>
 					{:else}
 						<Typography type="body">{row[column.key]}</Typography>
 					{/if}

@@ -1,6 +1,6 @@
-export type TableColumn<T> = {
+export type TableColumn<T, K extends keyof T> = {
 	name: string;
-	key: string;
+	key: K;
 	format?: (rowValue: T) => string;
 };
 

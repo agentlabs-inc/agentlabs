@@ -1,4 +1,4 @@
-import { OpenAPI } from './index.ts';
+import { OpenAPI } from './index';
 
 /* We can overwrite the default configuration by exporting a getToken function.
  * This function will be called before each request to get a token.
