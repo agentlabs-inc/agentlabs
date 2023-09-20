@@ -1,24 +1,19 @@
 <script lang="ts">
-	import { writable } from "svelte/store";
-	import { setContext } from "svelte";
+	import { onMount, setContext } from "svelte";
+	import { setCurrentUser } from "$lib/context/auth.context";
+	import type { User } from "$lib/entities/user/user";
 
-	const userStore = writable<{ name: string; email: string } | null>(null);
+	onMount(() => {
+		const user: User = {
+			id: "my-id",
+			fullName: "John Doe",
+			email: "",
+			isVerified: true,
+			createdAt: new Date()
+		};
 
-	// const auth = onUserStateChanged()...
-
-	const login = (email: string, password: string) => {
-		// mocked
-		userStore.set({
-			name: "John",
-			email: email
-		});
-	};
-
-	const logout = () => {
-		userStore.set(null);
-	};
-
-	setContext("Auth", { currentUser: userStore, login, logout });
+		setCurrentUser(user);
+	});
 </script>
 
 <slot />

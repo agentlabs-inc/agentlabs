@@ -1,9 +1,9 @@
-<script>
+<script lang="ts">
 	import Button from "$lib/components/common/button/Button.svelte";
 	import Input from "$lib/components/common/input/Input.svelte";
 	import AuthProviderButton from "$lib/components/auth/button/AuthProviderButton.svelte";
 	import { z } from "zod";
-	import { homeRoute } from "$lib/routes";
+	import { homeRoute } from "$lib/routes/routes";
 	import { getAuthContext } from "$lib/context/auth.context";
 	import { goto } from "$app/navigation";
 	const { login, currentUser } = getAuthContext();
@@ -23,7 +23,7 @@
 
 	let isLoading = false;
 
-	const onSubmit = async (event) => {
+	const onSubmit = async (event: Event) => {
 		event.preventDefault();
 
 		isLoading = true;

@@ -41,6 +41,7 @@
 				id: "google",
 				isEnabled: true,
 				oauthSettings: {
+					hasClientSecret: false,
 					clientId:
 						"1046622402922-2q425h1v1dmacgg2p4g0bj89f8un67q3.apps.googleusercontent.com"
 				}
@@ -56,16 +57,8 @@
 				auth,
 				new GoogleAuthProvider([], auth.getOAuthSignInMethods().google)
 			),
-		gitlab: () =>
-			signInWithRedirect(
-				auth,
-				new GitlabAuthProvider([], auth.getOAuthSignInMethods().gitlab)
-			),
-		github: () =>
-			signInWithRedirect(
-				auth,
-				new GithubAuthProvider([], auth.getOAuthSignInMethods().github)
-			)
+		gitlab: () => signInWithRedirect(auth, new GitlabAuthProvider([])),
+		github: () => signInWithRedirect(auth, new GithubAuthProvider([]))
 	};
 
 	const handleLogin = () => {
