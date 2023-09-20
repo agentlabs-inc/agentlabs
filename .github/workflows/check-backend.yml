@@ -1,5 +1,4 @@
 env:
-  TARGET_NAME: server
   BUILD_CONTEXT: server
 
 name: Check backend

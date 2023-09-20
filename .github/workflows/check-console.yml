@@ -1,0 +1,26 @@
+env:
+  BUILD_CONTEXT: console
+
+name: Check console
+on:
+  push
+
+jobs:
+  build:
+    runs-on: [self-hosted, linux]
+    steps:
+      - uses: actions/checkout@v3
+
+      # Required to compile the client SDKS on runners without built-in node suppot
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '>= 20'
+      
+      - name: Compile SDKs
+        run: sh ./build-clients.sh
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ env.BUILD_CONTEXT }}
+          push: false
