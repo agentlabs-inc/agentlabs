@@ -5,11 +5,14 @@ import {
   Req,
   UnauthorizedException,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { RequireAuthMethod } from '../iam/iam.decorators';
 import { LocalAuthenticatedRequest } from '../iam/iam.types';
 import { AgentsService } from './agents.service';
 import { CreateAgentDto } from './dtos/create.agent.dto';
 
+@ApiBearerAuth()
+@ApiTags('agents')
 @Controller('agents')
 export class AgentsController {
   constructor(private readonly agentsService: AgentsService) {}

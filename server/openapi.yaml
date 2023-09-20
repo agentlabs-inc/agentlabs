@@ -136,6 +136,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreatedAgentDto"
+      tags:
+        - agents
+      security:
+        - bearer: []
   "/agents/list_for_project/{projectId}":
     post:
       operationId: listForProject
@@ -153,6 +157,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListAgentsResponseDto"
+      tags:
+        - agents
+      security:
+        - bearer: []
 info:
   title: AgentLabs API
   description: Build AI Agents in minutes, not months.
