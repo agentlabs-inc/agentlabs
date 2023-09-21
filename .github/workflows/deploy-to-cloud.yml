@@ -1,6 +1,10 @@
 name: Deploy to cloud
+
 on:
   workflow_dispatch:
+  push:
+    tags:
+      - "v*.*.*"
 
 jobs:
   build:
@@ -8,12 +12,11 @@ jobs:
     steps:
       - name: Setup ssh
         run: |
-          mkdir -p ~/.ssh
-          echo ${{ secrets.DEPLOY_SSH_PRIVATE_KEY_B64 }} | base64 -d > ~/.ssh/id_rsa
-          chmod 400 ~/.ssh/id_rsa
+          echo ${{ secrets.DEPLOY_SSH_PRIVATE_KEY_B64 }} | base64 -d > /tmp/privkey
+          chmod 400 /tmp/privkey
 
       - name: Pull latest images
-        run: ssh -o StrictHostKeyChecking=no main@${{ secrets.DEPLOY_HOST }} 'cd agentlabs && docker compose pull'
+        run: ssh -i /tmp/privkey -o StrictHostKeyChecking=no main@${{ secrets.DEPLOY_HOST }} 'cd agentlabs && docker compose pull'
 
       - name: Up
-        run: ssh -o StrictHostKeyChecking=no main@${{ secrets.DEPLOY_HOST }} 'cd agentlabs && docker compose up -d'
+        run: ssh -i /tmp/privkey -o StrictHostKeyChecking=no main@${{ secrets.DEPLOY_HOST }} 'cd agentlabs && docker compose up -d'
