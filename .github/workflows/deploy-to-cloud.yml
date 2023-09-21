@@ -13,7 +13,7 @@ jobs:
           chmod 400 ~/.ssh/id_rsa
 
       - name: Pull latest images
-        run: ssh -o StrictHostKeyChecking=no main@${{ secrets.DEPLOY_HOST }} cd agentlabs && docker compose pull
+        run: ssh -o StrictHostKeyChecking=no main@${{ secrets.DEPLOY_HOST }} 'cd agentlabs && docker compose pull'
 
       - name: Up
-        run: ssh -o StrictHostKeyChecking=no main@${{ secrets.DEPLOY_HOST }} cd agentlabs && docker compose up -d
+        run: ssh -o StrictHostKeyChecking=no main@${{ secrets.DEPLOY_HOST }} 'cd agentlabs && docker compose up -d'
