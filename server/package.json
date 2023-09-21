@@ -34,7 +34,8 @@
     "jose": "^4.14.6",
     "nodemailer": "^6.9.5",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "yaml": "^2.3.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

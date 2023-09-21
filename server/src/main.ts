@@ -1,22 +1,18 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder } from '@nestjs/swagger';
+import { AppModule } from './app.module';
 import { validateEnv } from './config/validate-env';
 import { OpenApiNestFactory } from './openapi-tools';
-import { DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
+  const shouldPrintOasAndExit = !!process.env.PRINT_OAS_AND_EXIT;
   const app = await NestFactory.create(AppModule, {
     // TODO: remove this after aurelien changed the docker config
     cors: true,
   });
-  const env = validateEnv(process.env);
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-    }),
-  );
+  const env = validateEnv(process.env);
 
   await OpenApiNestFactory.configure(
     app,
@@ -37,6 +33,16 @@ async function bootstrap() {
     {
       operationIdFactory: (c: string, method: string) => method,
     },
+  );
+
+  if (shouldPrintOasAndExit) {
+    process.exit(0);
+  }
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+    }),
   );
 
   await app.listen(env.PORT ?? '3000');
