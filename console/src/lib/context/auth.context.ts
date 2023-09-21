@@ -1,40 +1,39 @@
 import { getContext, setContext } from "svelte";
 import type { User } from "$lib/entities/user/user";
 import type { Writable } from "svelte/store";
+import { persist, createLocalStorage } from "@macfja/svelte-persistent-store";
 import { writable } from "svelte/store";
 
 export const AUTH_CONTEXT_KEY = "auth";
+export const AUTH_STORE_KEY = "auth-store";
 
 export const userStore = writable<User | null>(null);
+export const authStore = persist(
+	writable({
+		accessToken: ""
+	}),
+	createLocalStorage(),
+	AUTH_STORE_KEY
+);
 
-const login = (email: string, password: string) => {
-	// mocked
-	userStore.set({
-		id: "1",
-		email: "",
-		fullName: "John Doe",
-		verifiedAt: null,
-		createdAt: new Date()
+export const login = (user: User, accessToken: string) => {
+	userStore.set(user);
+	authStore.set({
+		accessToken
 	});
 };
 
 const logout = () => {
 	userStore.set(null);
+	authStore.set({
+		accessToken: ""
+	});
 };
 
 export interface AuthContext {
 	currentUser: Writable<User | null>;
-	login: typeof login;
-	logout: typeof logout;
 }
 
 export const getAuthContext = () => getContext<AuthContext>(AUTH_CONTEXT_KEY);
 
 export const setAuthContext = (ctx: AuthContext) => setContext(AUTH_CONTEXT_KEY, ctx);
-
-export const setCurrentUser = (user: User | null) =>
-	setAuthContext({
-		login,
-		logout,
-		currentUser: writable(user)
-	});

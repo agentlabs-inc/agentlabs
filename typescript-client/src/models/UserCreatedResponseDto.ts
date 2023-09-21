@@ -8,6 +8,5 @@ export type UserCreatedResponseDto = {
     email: string;
     fullName: string;
     verifiedAt: string | null;
-    hasPassword: boolean;
 };
 

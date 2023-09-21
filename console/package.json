@@ -15,6 +15,7 @@
     "build-storybook": "storybook build"
   },
   "devDependencies": {
+    "@macfja/svelte-persistent-store": "^2.4.0",
     "@storybook/addon-essentials": "^7.4.0",
     "@storybook/addon-interactions": "^7.4.0",
     "@storybook/addon-links": "^7.4.0",
@@ -29,6 +30,7 @@
     "@sveltejs/kit": "^1.20.4",
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "@typescript-eslint/parser": "^5.45.0",
+    "@zerodevx/svelte-toast": "^0.9.5",
     "autoprefixer": "^10.4.15",
     "dayjs": "^1.11.9",
     "eslint": "^8.28.0",

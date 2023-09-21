@@ -25,7 +25,6 @@ export class UsersService {
       id: user.id,
       email: user.email,
       fullName: user.fullName,
-      hasPassword: user.hasPassword,
       verifiedAt: user.verifiedAt,
     };
   }
@@ -112,7 +111,6 @@ export class UsersService {
         id: result.id,
         email: result.email,
         fullName: result.fullName,
-        hasPassword: result.hasPassword,
         verifiedAt: result.verifiedAt,
       });
     } catch (e) {
@@ -145,7 +143,7 @@ export class UsersService {
       return err('UserNotFound');
     }
 
-    if (!user.hasPassword) {
+    if (!user.passwordHash) {
       return err('UserDoesNotHavePassword');
     }
 

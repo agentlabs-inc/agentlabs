@@ -12,4 +12,5 @@ export const getToken = () => {
 
 OpenAPI.TOKEN = getToken;
 
-OpenAPI.BASE = process.env.BACKEND_URL ?? "http://localhost:3001";
+// TODO: change this to the backend url
+OpenAPI.BASE = "http://localhost:3001";

@@ -12,7 +12,6 @@ import type {
 
 type UserAuth = {
 	email: string;
-	hasPassword: boolean;
 };
 
 type UserCustomFields = Record<string, string>;

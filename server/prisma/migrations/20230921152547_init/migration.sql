@@ -32,7 +32,6 @@ CREATE TABLE "User" (
     "bannedAt" TIMESTAMP(3),
     "password" TEXT,
     "passwordHash" TEXT,
-    "hasPassword" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );

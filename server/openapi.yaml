@@ -244,14 +244,11 @@ components:
           format: date-time
           type: string
           nullable: true
-        hasPassword:
-          type: boolean
       required:
         - id
         - email
         - fullName
         - verifiedAt
-        - hasPassword
     LoginUserDto:
       type: object
       properties:
@@ -276,14 +273,11 @@ components:
           format: date-time
           type: string
           nullable: true
-        hasPassword:
-          type: boolean
       required:
         - id
         - email
         - fullName
         - verifiedAt
-        - hasPassword
     LoginResponseDto:
       type: object
       properties:

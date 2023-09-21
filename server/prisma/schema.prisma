@@ -43,7 +43,6 @@ model User {
 	password           String?
 	passwordHash       String?
 	passwordHashConfig PasswordHashConfig?
-	hasPassword        Boolean @default(false)
 
 	organizations 		OrganizationUser[]
 	projectCreated	 	Project[]

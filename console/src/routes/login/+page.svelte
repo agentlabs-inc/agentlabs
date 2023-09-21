@@ -6,7 +6,14 @@
 	import type { PageData } from "./$types";
 	import { z as zod } from "zod";
 	import ThemeSwitch from "$lib/components/common/theme-switch/ThemeSwitch.svelte";
+	import { loginUser } from "$lib/usecases/users/login";
+	import { toastError } from "$lib/utils/toast";
+	import { homeRoute, registerRoute } from "$lib/routes/routes";
+	import { goto } from "$app/navigation";
+
 	export let data: PageData;
+
+	let submitting = false;
 
 	const { form, errors, validate } = superForm(data.form, {
 		validators: zod.object({
@@ -20,9 +27,18 @@
 		const res = await validate();
 
 		if (!res.valid) {
-			console.log(res);
 			errors.set(res.errors);
 			return;
+		}
+		try {
+			submitting = true;
+			await loginUser({ email: $form.email, password: $form.password });
+
+			goto(homeRoute.path());
+		} catch (e: any) {
+			toastError(e?.message ?? "Something went wrong");
+		} finally {
+			submitting = false;
 		}
 	};
 </script>
@@ -56,7 +72,13 @@
 					placeholder="Your password" />
 				<div class="my-5" />
 				<div class="w-full mb-3">
-					<Button submit type="primary" fullWidth center>Sign in</Button>
+					<Button
+						on:click={handleValidation}
+						loading={submitting}
+						submit
+						type="primary"
+						fullWidth
+						center>Sign in</Button>
 				</div>
 				<span class="text-sm text-center m-auto text-body-base dark:text-body-base-dark"
 					><a href="/forgot-password" class="underline">Forgot password?</a></span>
@@ -72,7 +94,9 @@
 
 			<div class="text-center mt-10">
 				<span class="text-sm text-center m-auto text-body-base dark:text-body-base-dark"
-					>No account? <a href="/register" class="underline">Register for free</a></span>
+					>No account? <a href={registerRoute.path()} class="underline"
+						>Register for free</a
+					></span>
 			</div>
 		</div>
 	</div>

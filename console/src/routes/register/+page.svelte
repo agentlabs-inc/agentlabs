@@ -7,7 +7,13 @@
 	import { z as zod } from "zod";
 	import ThemeSwitch from "$lib/components/common/theme-switch/ThemeSwitch.svelte";
 	import { registerUser } from "$lib/usecases/users/register";
+	import { toast } from "@zerodevx/svelte-toast";
+	import { toastError } from "$lib/utils/toast";
+	import { loginRoute } from "$lib/routes/routes";
+
 	export let data: PageData;
+
+	let submitting = false;
 
 	const { form, errors, validate } = superForm(data.form, {
 		validators: zod.object({
@@ -22,21 +28,24 @@
 		e.preventDefault();
 		const res = await validate();
 
-		console.log("res", res);
-
 		if (!res.valid) {
 			console.log(res);
 			errors.set(res.errors);
 			return;
 		}
 
-		console.log("form", form);
-
-		await registerUser({
-			fullName: $form.name,
-			email: $form.email,
-			password: $form.password
-		});
+		try {
+			submitting = true;
+			await registerUser({
+				fullName: $form.name,
+				email: $form.email,
+				password: $form.password
+			});
+		} catch (e: any) {
+			toastError(e?.message ?? "Something went wrong");
+		} finally {
+			submitting = false;
+		}
 	};
 </script>
 
@@ -79,8 +88,13 @@
 					placeholder="Your password" />
 				<div class="my-5" />
 				<div class="w-full">
-					<Button submit type="primary" fullWidth center on:click={handleValidation}
-						>Sign up</Button>
+					<Button
+						loading={submitting}
+						submit
+						type="primary"
+						fullWidth
+						center
+						on:click={handleValidation}>Sign up</Button>
 				</div>
 			</form>
 			<div class="my-7 flex gap-5 justify-between items-center">
@@ -94,7 +108,9 @@
 
 			<div class="text-center mt-10">
 				<span class="text-sm text-center m-auto text-body-base dark:text-body-base-dark"
-					>Already got an account? <a href="/login" class="underline">Sign in</a></span>
+					>Already got an account? <a href={loginRoute.path()} class="underline"
+						>Sign in</a
+					></span>
 			</div>
 		</div>
 	</div>
