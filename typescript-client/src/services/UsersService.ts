@@ -6,6 +6,7 @@ import type { LoginResponseDto } from '../models/LoginResponseDto';
 import type { LoginUserDto } from '../models/LoginUserDto';
 import type { RegisterUserDto } from '../models/RegisterUserDto';
 import type { UserCreatedResponseDto } from '../models/UserCreatedResponseDto';
+import type { WhoAmIResultDto } from '../models/WhoAmIResultDto';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -50,6 +51,20 @@ export class UsersService {
             mediaType: 'application/json',
             errors: {
                 401: `The provided credentials are invalid or the user does not have a password configured.`,
+                500: `Something went wrong.`,
+            },
+        });
+    }
+
+    /**
+     * @returns WhoAmIResultDto
+     * @throws ApiError
+     */
+    public static whoami(): CancelablePromise<WhoAmIResultDto> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/users/whoami',
+            errors: {
                 500: `Something went wrong.`,
             },
         });

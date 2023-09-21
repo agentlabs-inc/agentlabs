@@ -3,18 +3,24 @@ import {
   ConflictException,
   Controller,
   Post,
+  Req,
   UnauthorizedException,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiConflictResponse,
   ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { RequireAuthMethod } from '../iam/iam.decorators';
+import { LocalAuthenticatedRequest } from '../iam/iam.types';
 import { LoginResponseDto } from './dtos/login.response.dto';
 import { LoginUserDto } from './dtos/login.user.dto';
 import { RegisterUserDto } from './dtos/register.user.dto';
 import { UserCreatedResponseDto } from './dtos/user.created.response.dto';
+import { WhoAmIResultDto } from './dtos/whoami.result.dto';
 import { UsersService } from './users.service';
 
 @ApiTags('users')
@@ -82,6 +88,30 @@ export class UsersController {
           throw new UnauthorizedException({
             message: 'User does not have a password hash config',
             code: 'UserDoesNotHavePasswordHashConfig',
+          });
+      }
+    }
+
+    return result.value;
+  }
+
+  @RequireAuthMethod('local')
+  @ApiBearerAuth()
+  @ApiNotFoundResponse({
+    description: 'User not found',
+  })
+  @Post('/whoami')
+  async whoami(
+    @Req() req: LocalAuthenticatedRequest,
+  ): Promise<WhoAmIResultDto> {
+    const result = await this.usersService.getWhoAmI(req.user.id);
+
+    if (!result.ok) {
+      switch (result.error) {
+        case 'UserNotFound':
+          throw new UnauthorizedException({
+            message: 'User not found, please sign up',
+            code: 'UserNotFound',
           });
       }
     }

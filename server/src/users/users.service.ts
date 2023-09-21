@@ -3,13 +3,18 @@ import { Prisma, User } from '@prisma/client';
 import { randomBytes, scryptSync } from 'crypto';
 import * as jose from 'jose';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Result, err, ok } from '../common/result';
+import { PResult, Result, err, ok } from '../common/result';
 import { LoginResponseDto } from './dtos/login.response.dto';
 import { RegisterUserDto } from './dtos/register.user.dto';
 import { SanitizedUserResponseDto } from './dtos/sanitized.user.response.dto';
 import { UserCreatedResponseDto } from './dtos/user.created.response.dto';
+import { WhoAmIResultDto } from './dtos/whoami.result.dto';
 import { InjectUsersConfig, UsersConfig } from './users.config';
-import { LoginUserError, RegisterUserError } from './users.service.errors';
+import {
+  LoginUserError,
+  RegisterUserError,
+  WhoAmIError,
+} from './users.service.errors';
 import { CreatePasswordHashConfig } from './users.types';
 
 @Injectable()
@@ -124,6 +129,54 @@ export class UsersService {
 
       throw e;
     }
+  }
+
+  async getWhoAmI(userId: string): PResult<WhoAmIResultDto, WhoAmIError> {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      include: {
+        projectCreated: {
+          select: {
+            id: true,
+          },
+        },
+        organizations: {
+          include: {
+            organization: {
+              select: {
+                id: true,
+              },
+              include: {
+                projects: {
+                  select: {
+                    id: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      return err('UserNotFound');
+    }
+
+    return ok({
+      id: user.id,
+      email: user.email,
+      fullName: user.fullName,
+      verifiedAt: user.verifiedAt,
+      organizationCount: user.organizations.length,
+      projectCount: user.organizations.reduce(
+        (acc, org) => acc + org.organization.projects.length,
+        0,
+      ),
+      projectCreatedCount: user.projectCreated.length,
+    });
   }
 
   async loginWithEmailAndPassword(
