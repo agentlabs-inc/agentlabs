@@ -10,6 +10,7 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           echo ${{ secrets.DEPLOY_SSH_PRIVATE_KEY_B64 }} | base64 -d > ~/.ssh/id_rsa
+          chmod 400 ~/.ssh/id_rsa
 
       - name: Pull latest images
         run: ssh -o StrictHostKeyChecking=no main@${{ secrets.DEPLOY_HOST }} cd agentlabs && docker compose pull
