@@ -20,7 +20,6 @@ jobs:
         run: |
           docker build -f ./server/print-oas.Dockerfile -t print-oas ./server
           docker run --rm print-oas > ./server/openapi.yaml
-          # dispose of the image to avoid bloating the runner (especially if self hosted)
           docker rmi print-oas
           sh build-clients.sh
 
