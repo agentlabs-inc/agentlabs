@@ -4,10 +4,12 @@ import { err, ok, PResult } from '../common/result';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   CreateAuthMethodError,
+  ListAuthMethodsError,
   VerifyIfIsProjectUserError,
 } from './auth-methods.errors';
 import { CreateAuthMethodDto } from './dtos/create.auth-method.dto';
 import { CreatedAuthMethodDto } from './dtos/created.auth-method.dto';
+import { ListAuthMethodResponseDto } from './dtos/list.auth-method.response.dto';
 
 @Injectable()
 export class AuthMethodsService {
@@ -84,5 +86,26 @@ export class AuthMethodsService {
       }
       throw e;
     }
+  }
+
+  async listAuthMethodsForProject(params: {
+    userId: string;
+    projectId: string;
+  }): PResult<ListAuthMethodResponseDto, ListAuthMethodsError> {
+    const verifyResult = await this.verifyIfProjectUser(params);
+    if (!verifyResult.ok) {
+      return err(verifyResult.error);
+    }
+
+    const authMethods = await this.prisma.authMethod.findMany({
+      where: {
+        projectId: params.projectId,
+      },
+    });
+
+    return ok({
+      items: authMethods.map((authMethod) => ({ ...authMethod })),
+      total: authMethods.length,
+    });
   }
 }

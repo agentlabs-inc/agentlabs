@@ -182,6 +182,26 @@ paths:
         - auth-methods
       security:
         - bearer: []
+  "/auth-methods/list_for_project/{projectId}":
+    post:
+      operationId: listAuthMethods
+      parameters:
+        - name: projectId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListAuthMethodResponseDto"
+      tags:
+        - auth-methods
+      security:
+        - bearer: []
 info:
   title: AgentLabs API
   description: Build AI Agents in minutes, not months.
@@ -522,3 +542,66 @@ components:
         - scopes
         - createdAt
         - updatedAt
+    ListAuthMethodItem:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - OAUTH2
+            - API_KEY
+            - PASSWORDLESS_EMAIL
+            - PASSWORDLESS_SMS
+        provider:
+          type: string
+          enum:
+            - EMAIL
+            - GOOGLE
+            - GITHUB
+            - GITLAB
+            - MICROSOFT
+            - FACEBOOK
+            - TWITTER
+            - APPLE
+        projectId:
+          type: string
+        isEnabled:
+          type: boolean
+        clientId:
+          type: string
+          nullable: true
+        clientSecret:
+          type: string
+          nullable: true
+        scopes:
+          type: array
+          items:
+            type: string
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - type
+        - provider
+        - projectId
+        - isEnabled
+        - clientId
+        - clientSecret
+        - scopes
+        - createdAt
+        - updatedAt
+    ListAuthMethodResponseDto:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ListAuthMethodItem"
+        total:
+          type: number
+      required:
+        - items
+        - total

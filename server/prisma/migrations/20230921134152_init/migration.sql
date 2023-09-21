@@ -73,7 +73,6 @@ CREATE TABLE "Project" (
 
 -- CreateTable
 CREATE TABLE "AuthMethod" (
-    "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "provider" "IdentityProvider" NOT NULL,
@@ -85,7 +84,7 @@ CREATE TABLE "AuthMethod" (
     "hasClientSecret" BOOLEAN,
     "scopes" TEXT[],
 
-    CONSTRAINT "AuthMethod_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "AuthMethod_pkey" PRIMARY KEY ("projectId","provider")
 );
 
 -- CreateTable

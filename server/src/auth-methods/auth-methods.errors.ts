@@ -11,3 +11,6 @@ export const CreateAuthMethodErrors = [
   'AuthMethodAlreadyExists',
 ] as const;
 export type CreateAuthMethodError = (typeof CreateAuthMethodErrors)[number];
+
+export const ListAuthMethodsErrors = [...VerifyIfIsProjectUserErrors] as const;
+export type ListAuthMethodsError = (typeof ListAuthMethodsErrors)[number];

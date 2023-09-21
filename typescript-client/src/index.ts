@@ -15,6 +15,8 @@ export type { CreatedProjectDto } from './models/CreatedProjectDto';
 export type { CreateProjectDto } from './models/CreateProjectDto';
 export type { ListAgentItem } from './models/ListAgentItem';
 export type { ListAgentsResponseDto } from './models/ListAgentsResponseDto';
+export type { ListAuthMethodItem } from './models/ListAuthMethodItem';
+export type { ListAuthMethodResponseDto } from './models/ListAuthMethodResponseDto';
 export type { ListProjectItemDto } from './models/ListProjectItemDto';
 export type { ListProjectsResultDto } from './models/ListProjectsResultDto';
 export type { LoginResponseDto } from './models/LoginResponseDto';
