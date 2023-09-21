@@ -1,0 +1,18 @@
+name: Deploy to cloud
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: [self-hosted, linux]
+    steps:
+      - name: Setup ssh
+        run: |
+          mkdir -p ~/.ssh
+          echo ${{ secrets.DEPLOY_SSH_PRIVATE_KEY_B64 }} | base64 -d > ~/.ssh/id_rsa
+
+      - name: Pull latest images
+        run: ssh -o StrictHostKeyChecking=no main@${{ secrets.DEPLOY_HOST }} cd agentlabs && docker compose pull
+
+      - name: Up
+        run: ssh -o StrictHostKeyChecking=no main@${{ secrets.DEPLOY_HOST }} cd agentlabs && docker compose up -d
