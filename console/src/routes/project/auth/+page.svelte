@@ -16,21 +16,21 @@
 			id: "123456789",
 			fullName: "John Doe",
 			email: "john@doe.com",
-			isVerified: false,
+			verifiedAt: null,
 			createdAt: new Date()
 		},
 		{
 			id: "123456789",
 			fullName: "John Doe",
 			email: "john@doe.com",
-			isVerified: false,
+			verifiedAt: null,
 			createdAt: new Date()
 		},
 		{
 			id: "123456789",
 			fullName: "John Doe",
 			email: "john@doe.com",
-			isVerified: false,
+			verifiedAt: null,
 			createdAt: new Date()
 		}
 	];
@@ -46,7 +46,8 @@
 		},
 		{
 			name: "Is Verified",
-			key: "isVerified"
+			key: "verifiedAt",
+			format: (user: User) => (user.verifiedAt ? "Yes" : "No")
 		},
 		{
 			name: "ID",

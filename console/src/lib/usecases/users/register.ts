@@ -1,6 +1,7 @@
 import { UsersService } from "$lib/services/gen-api";
 import type { RegisterUserDto } from "$lib/services/gen-api";
 import type { User } from "$lib/entities/user/user";
+import dayjs from "dayjs";
 
 export const registerUser = async (user: RegisterUserDto): Promise<User> => {
 	const result = await UsersService.register({
@@ -18,6 +19,6 @@ export const registerUser = async (user: RegisterUserDto): Promise<User> => {
 		id: result.id,
 		email: result.email,
 		fullName: result.fullName,
-		verifiedAt: result.verifiedAt
+		verifiedAt: dayjs(result.verifiedAt).toDate()
 	};
 };

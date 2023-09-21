@@ -13,7 +13,7 @@ const login = (email: string, password: string) => {
 		id: "1",
 		email: "",
 		fullName: "John Doe",
-		isVerified: false,
+		verifiedAt: null,
 		createdAt: new Date()
 	});
 };
