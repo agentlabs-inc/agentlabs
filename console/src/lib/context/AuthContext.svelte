@@ -8,7 +8,7 @@
 			id: "my-id",
 			fullName: "John Doe",
 			email: "",
-			isVerified: true,
+
 			createdAt: new Date()
 		};
 

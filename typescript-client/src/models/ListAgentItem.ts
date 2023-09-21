@@ -3,11 +3,12 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type SanitizedUserResponseDto = {
+export type ListAgentItem = {
     id: string;
-    email: string;
-    fullName: string;
-    verifiedAt: string | null;
-    hasPassword: boolean;
+    name: string;
+    projectId: string;
+    creatorId: string;
+    createdAt: string;
+    updatedAt: string;
 };
 

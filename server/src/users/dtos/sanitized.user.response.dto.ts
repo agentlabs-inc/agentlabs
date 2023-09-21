@@ -1,4 +1,4 @@
-import { IsBoolean, IsEmail, IsString } from 'class-validator';
+import { IsBoolean, IsDate, IsEmail, IsString } from 'class-validator';
 
 export class SanitizedUserResponseDto {
   @IsString()
@@ -10,8 +10,8 @@ export class SanitizedUserResponseDto {
   @IsString()
   fullName: string;
 
-  @IsBoolean()
-  isVerified: boolean;
+  @IsDate()
+  verifiedAt: Date | null;
 
   @IsBoolean()
   hasPassword: boolean;

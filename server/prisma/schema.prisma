@@ -31,7 +31,14 @@ model User {
 
 	email      String  @unique
 	fullName   String
-	isVerified Boolean @default(false)
+
+	// If these fields are null, it means they are falsy
+	verifiedAt DateTime?
+	bannedAt   DateTime?
+
+	// Note: we will always prefer Hard Delete over Soft Delete.
+	// This is crucial to comply with GDPR.
+	// deletedAt		DateTime? << DO NOT DO THIS.
 
 	password           String?
 	passwordHash       String?
@@ -91,6 +98,34 @@ model Project {
 	agents				Agent[]
 	members				Member[]
 	sdkSecrets		SdkSecret[]
+	authMethods		AuthMethod[]
+}
+
+enum AuthMethodType {
+	OAUTH2
+	API_KEY
+	PASSWORDLESS_EMAIL
+	PASSWORDLESS_SMS
+}
+
+model AuthMethod {
+	createdAt 		DateTime @default(now())
+	updatedAt 		DateTime @updatedAt @default(now())
+
+	provider			IdentityProvider
+	type					AuthMethodType
+	isEnabled			Boolean @default(false)
+
+	project				Project @relation(fields: [projectId], references: [id])
+	projectId			String
+
+	// Only applicable for OAuth2
+	clientId				String?
+	clientSecret		String?
+	hasClientSecret	Boolean?
+	scopes					String[]
+
+	@@id([projectId, provider])
 }
 
 model SdkSecret {
@@ -124,6 +159,14 @@ model Member {
 	createdAt 		DateTime @default(now())
 	updatedAt 		DateTime @updatedAt @default(now())
 
+	// If these fields are null, it means they are falsy
+	verifiedAt		DateTime?
+	bannedAt			DateTime?
+
+	// Note: we will always prefer Hard Delete over Soft Delete.
+	// This is crucial to comply with GDPR.
+	// deletedAt		DateTime? << DO NOT DO THIS.
+
 	firstName			String?
 	lastName			String?
 	email					String
@@ -139,6 +182,7 @@ enum IdentityProvider {
 	GOOGLE
 	GITHUB
 	GITLAB
+	MICROSOFT
 	FACEBOOK
 	TWITTER
 	APPLE
@@ -154,7 +198,9 @@ model MemberIdentity {
 	memberId			String
 	member				Member @relation(fields: [memberId], references: [id])
 
-	accessToken		String
+	lastSignedInAt	DateTime?
+
+	accessToken		String?
 	refreshToken	String?
 	accessTokenExpiresAt			DateTime?
 	refreshTokenExpiresAt			DateTime?

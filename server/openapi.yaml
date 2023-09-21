@@ -161,6 +161,27 @@ paths:
         - agents
       security:
         - bearer: []
+  /auth-methods/create:
+    post:
+      operationId: createAuthMethod
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAuthMethodDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatedAuthMethodDto"
+      tags:
+        - auth-methods
+      security:
+        - bearer: []
 info:
   title: AgentLabs API
   description: Build AI Agents in minutes, not months.
@@ -199,15 +220,17 @@ components:
           type: string
         fullName:
           type: string
-        isVerified:
-          type: boolean
+        verifiedAt:
+          format: date-time
+          type: string
+          nullable: true
         hasPassword:
           type: boolean
       required:
         - id
         - email
         - fullName
-        - isVerified
+        - verifiedAt
         - hasPassword
     LoginUserDto:
       type: object
@@ -229,15 +252,17 @@ components:
           type: string
         fullName:
           type: string
-        isVerified:
-          type: boolean
+        verifiedAt:
+          format: date-time
+          type: string
+          nullable: true
         hasPassword:
           type: boolean
       required:
         - id
         - email
         - fullName
-        - isVerified
+        - verifiedAt
         - hasPassword
     LoginResponseDto:
       type: object
@@ -405,3 +430,95 @@ components:
       required:
         - items
         - total
+    CreateAuthMethodDto:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - OAUTH2
+            - API_KEY
+            - PASSWORDLESS_EMAIL
+            - PASSWORDLESS_SMS
+        provider:
+          type: string
+          enum:
+            - EMAIL
+            - GOOGLE
+            - GITHUB
+            - GITLAB
+            - MICROSOFT
+            - FACEBOOK
+            - TWITTER
+            - APPLE
+        projectId:
+          type: string
+        isEnabled:
+          type: boolean
+        clientId:
+          type: string
+        clientSecret:
+          type: string
+        scopes:
+          type: array
+          items:
+            type: string
+      required:
+        - type
+        - provider
+        - projectId
+        - isEnabled
+        - clientId
+        - clientSecret
+        - scopes
+    CreatedAuthMethodDto:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - OAUTH2
+            - API_KEY
+            - PASSWORDLESS_EMAIL
+            - PASSWORDLESS_SMS
+        provider:
+          type: string
+          enum:
+            - EMAIL
+            - GOOGLE
+            - GITHUB
+            - GITLAB
+            - MICROSOFT
+            - FACEBOOK
+            - TWITTER
+            - APPLE
+        projectId:
+          type: string
+        isEnabled:
+          type: boolean
+        clientId:
+          type: string
+          nullable: true
+        clientSecret:
+          type: string
+          nullable: true
+        scopes:
+          type: array
+          items:
+            type: string
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - type
+        - provider
+        - projectId
+        - isEnabled
+        - clientId
+        - clientSecret
+        - scopes
+        - createdAt
+        - updatedAt

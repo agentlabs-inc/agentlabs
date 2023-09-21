@@ -26,7 +26,7 @@ export class UsersService {
       email: user.email,
       fullName: user.fullName,
       hasPassword: user.hasPassword,
-      isVerified: user.isVerified,
+      verifiedAt: user.verifiedAt,
     };
   }
 
@@ -84,7 +84,7 @@ export class UsersService {
           email: dto.email,
           passwordHash: this.generatePasswordHash(dto.password, hashConfig),
           fullName: dto.fullName,
-          isVerified: false,
+          verifiedAt: null,
           passwordHashConfig: {
             create: {
               ...hashConfig,
@@ -113,7 +113,7 @@ export class UsersService {
         email: result.email,
         fullName: result.fullName,
         hasPassword: result.hasPassword,
-        isVerified: result.isVerified,
+        verifiedAt: result.verifiedAt,
       });
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {

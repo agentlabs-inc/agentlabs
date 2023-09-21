@@ -18,6 +18,6 @@ export const registerUser = async (user: RegisterUserDto): Promise<User> => {
 		id: result.id,
 		email: result.email,
 		fullName: result.fullName,
-		isVerified: result.isVerified
+		verifiedAt: result.verifiedAt
 	};
 };

@@ -1,7 +1,7 @@
 export type User = {
 	id: string;
 	fullName: string;
-	isVerified: boolean;
+	verifiedAt: Date | null;
 	email: string;
 	createdAt: Date;
 };

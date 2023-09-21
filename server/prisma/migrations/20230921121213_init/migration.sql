@@ -2,7 +2,10 @@
 CREATE TYPE "OrganizationUserRole" AS ENUM ('USER', 'ADMIN');
 
 -- CreateEnum
-CREATE TYPE "IdentityProvider" AS ENUM ('EMAIL', 'GOOGLE', 'GITHUB', 'GITLAB', 'FACEBOOK', 'TWITTER', 'APPLE');
+CREATE TYPE "AuthMethodType" AS ENUM ('OAUTH2', 'API_KEY', 'PASSWORDLESS_EMAIL', 'PASSWORDLESS_SMS');
+
+-- CreateEnum
+CREATE TYPE "IdentityProvider" AS ENUM ('EMAIL', 'GOOGLE', 'GITHUB', 'GITLAB', 'MICROSOFT', 'FACEBOOK', 'TWITTER', 'APPLE');
 
 -- CreateTable
 CREATE TABLE "PasswordHashConfig" (
@@ -25,7 +28,8 @@ CREATE TABLE "User" (
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "email" TEXT NOT NULL,
     "fullName" TEXT NOT NULL,
-    "isVerified" BOOLEAN NOT NULL DEFAULT false,
+    "verifiedAt" TIMESTAMP(3),
+    "bannedAt" TIMESTAMP(3),
     "password" TEXT,
     "passwordHash" TEXT,
     "hasPassword" BOOLEAN NOT NULL DEFAULT false,
@@ -68,6 +72,23 @@ CREATE TABLE "Project" (
 );
 
 -- CreateTable
+CREATE TABLE "AuthMethod" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "provider" "IdentityProvider" NOT NULL,
+    "type" "AuthMethodType" NOT NULL,
+    "isEnabled" BOOLEAN NOT NULL DEFAULT false,
+    "projectId" TEXT NOT NULL,
+    "clientId" TEXT,
+    "clientSecret" TEXT,
+    "hasClientSecret" BOOLEAN,
+    "scopes" TEXT[],
+
+    CONSTRAINT "AuthMethod_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "SdkSecret" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -96,6 +117,8 @@ CREATE TABLE "Member" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "verifiedAt" TIMESTAMP(3),
+    "bannedAt" TIMESTAMP(3),
     "firstName" TEXT,
     "lastName" TEXT,
     "email" TEXT NOT NULL,
@@ -111,7 +134,8 @@ CREATE TABLE "MemberIdentity" (
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "provider" "IdentityProvider" NOT NULL,
     "memberId" TEXT NOT NULL,
-    "accessToken" TEXT NOT NULL,
+    "lastSignedInAt" TIMESTAMP(3),
+    "accessToken" TEXT,
     "refreshToken" TEXT,
     "accessTokenExpiresAt" TIMESTAMP(3),
     "refreshTokenExpiresAt" TIMESTAMP(3),
@@ -175,6 +199,9 @@ ALTER TABLE "Project" ADD CONSTRAINT "Project_creatorId_fkey" FOREIGN KEY ("crea
 
 -- AddForeignKey
 ALTER TABLE "Project" ADD CONSTRAINT "Project_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "AuthMethod" ADD CONSTRAINT "AuthMethod_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "SdkSecret" ADD CONSTRAINT "SdkSecret_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

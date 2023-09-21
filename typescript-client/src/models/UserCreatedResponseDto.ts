@@ -7,7 +7,7 @@ export type UserCreatedResponseDto = {
     id: string;
     email: string;
     fullName: string;
-    isVerified: boolean;
+    verifiedAt: string | null;
     hasPassword: boolean;
 };
 
