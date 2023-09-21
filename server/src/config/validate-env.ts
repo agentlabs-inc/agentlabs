@@ -1,7 +1,7 @@
 import { plainToClass } from 'class-transformer';
 import { IsOptional, IsPort, IsString, validateSync } from 'class-validator';
 
-class Environment {
+export class Environment {
   @IsOptional()
   @IsPort()
   PORT?: string;
@@ -12,6 +12,11 @@ class Environment {
 
 export const validateEnv = (env: NodeJS.ProcessEnv) => {
   const validatedEnv = plainToClass(Environment, env);
+
+  if (env.SKIP_ENV_VALIDATION) {
+    return validatedEnv;
+  }
+
   const validationErrors = validateSync(validatedEnv, {
     skipMissingProperties: false,
   });

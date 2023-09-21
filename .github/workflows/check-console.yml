@@ -15,9 +15,13 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '>= 20'
-      
+
       - name: Compile SDKs
-        run: sh ./build-clients.sh
+        run: |
+          docker build -f ./server/print-oas.Dockerfile -t print-oas ./server
+          docker run --rm print-oas > ./server/openapi.yaml
+          docker rmi print-oas
+          sh build-clients.sh
 
       - name: Build and push
         uses: docker/build-push-action@v5
