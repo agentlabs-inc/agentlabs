@@ -25,6 +25,7 @@ export type { ProjectExistsResponseDto } from './models/ProjectExistsResponseDto
 export type { RegisterUserDto } from './models/RegisterUserDto';
 export type { SanitizedUserResponseDto } from './models/SanitizedUserResponseDto';
 export type { UserCreatedResponseDto } from './models/UserCreatedResponseDto';
+export type { WhoAmIResultDto } from './models/WhoAmIResultDto';
 
 export { AgentsService } from './services/AgentsService';
 export { AuthMethodsService } from './services/AuthMethodsService';

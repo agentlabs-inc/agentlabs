@@ -7,7 +7,6 @@
 	export const csr = true;
 
 	onMount(async () => {
-		console.log("GOTO MAIN");
 		await goto(homeRoute.path());
 	});
 </script>

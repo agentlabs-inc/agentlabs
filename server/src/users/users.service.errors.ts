@@ -8,3 +8,6 @@ export const LoginUserErrors = [
   'UserDoesNotHavePassword',
 ] as const;
 export type LoginUserError = (typeof LoginUserErrors)[number];
+
+export const WhoAmIErrors = ['UserNotFound'] as const;
+export type WhoAmIError = (typeof WhoAmIErrors)[number];

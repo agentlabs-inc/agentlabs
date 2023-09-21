@@ -58,6 +58,25 @@ paths:
           description: Something went wrong.
       tags:
         - users
+  /users/whoami:
+    post:
+      operationId: whoami
+      parameters: []
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WhoAmIResultDto"
+        "404":
+          description: User not found
+        "500":
+          description: Something went wrong.
+      tags:
+        - users
+      security:
+        - bearer: []
   /projects/create:
     post:
       operationId: createProject
@@ -288,6 +307,33 @@ components:
       required:
         - accessToken
         - user
+    WhoAmIResultDto:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        fullName:
+          type: string
+        verifiedAt:
+          format: date-time
+          type: string
+          nullable: true
+        organizationCount:
+          type: number
+        projectCount:
+          type: number
+        projectCreatedCount:
+          type: number
+      required:
+        - id
+        - email
+        - fullName
+        - verifiedAt
+        - organizationCount
+        - projectCount
+        - projectCreatedCount
     CreateProjectDto:
       type: object
       properties:

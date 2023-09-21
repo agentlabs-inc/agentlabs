@@ -7,7 +7,6 @@
 	import { z as zod } from "zod";
 	import ThemeSwitch from "$lib/components/common/theme-switch/ThemeSwitch.svelte";
 	import { registerUser } from "$lib/usecases/users/register";
-	import { toast } from "@zerodevx/svelte-toast";
 	import { toastError } from "$lib/utils/toast";
 	import { loginRoute } from "$lib/routes/routes";
 
@@ -24,12 +23,10 @@
 	});
 
 	const handleValidation = async (e: Event) => {
-		console.log("lol");
 		e.preventDefault();
 		const res = await validate();
 
 		if (!res.valid) {
-			console.log(res);
 			errors.set(res.errors);
 			return;
 		}
