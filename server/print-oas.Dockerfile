@@ -16,9 +16,6 @@ RUN npm prune --production
 
 FROM node:20-alpine3.17 as release
 
-ENV SKIP_ENV_VALIDATION=true
-ENV PRINT_OAS_AND_EXIT=true
-
 WORKDIR /app
 
 COPY --from=build /app/dist ./dist

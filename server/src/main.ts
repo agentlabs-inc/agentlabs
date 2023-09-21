@@ -6,7 +6,7 @@ import { validateEnv } from './config/validate-env';
 import { OpenApiNestFactory } from './openapi-tools';
 
 async function bootstrap() {
-  const shouldPrintOasAndExit = !!process.env.PRINT_OAS_AND_EXIT;
+  const isDryRun = !!process.env.DRY_RUN;
   const app = await NestFactory.create(AppModule, {
     // TODO: remove this after aurelien changed the docker config
     cors: true,
@@ -35,7 +35,8 @@ async function bootstrap() {
     },
   );
 
-  if (shouldPrintOasAndExit) {
+  if (isDryRun) {
+    console.log('Dry run, exiting...');
     process.exit(0);
   }
 
