@@ -7,7 +7,12 @@
 	import { z as zod } from "zod";
 	import type { PageData } from "./$types";
 	import { superForm } from "sveltekit-superforms/client";
+	import { createProject } from "$lib/usecases/projects/create";
+	import slugify from "slugify";
+	import { organizationStore } from "$lib/stores/organization";
 	export let data: PageData;
+
+	$: slug = $form.name ? slugify($form.name) : "my-project-id";
 
 	const { form, errors, validate } = superForm(data.form, {
 		validators: zod.object({
@@ -24,6 +29,12 @@
 			errors.set(res.errors);
 			return;
 		}
+
+		await createProject({
+			name: $form.name,
+			slug: slug,
+			organizationId: $organizationStore.selected.id
+		});
 	};
 </script>
 
@@ -46,6 +57,11 @@
 							errors={$errors?.name}
 							type="text"
 							placeholder="Project name" />
+						<div class="my-5" />
+						<div
+							class="inline-block bg-background-accent dark:bg-background-accent-dark border border-stroke-accent dark:border-stroke-accent-dark rounded-full px-4 py-2 antialiased text-body-base dark:text-body-base-dark text-sm">
+							<span>{slug}</span>
+						</div>
 						<div class="my-5" />
 						<div class="w-full">
 							<Button

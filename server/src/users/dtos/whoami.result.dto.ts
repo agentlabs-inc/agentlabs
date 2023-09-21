@@ -16,6 +16,9 @@ export class WhoAmIResultDto {
   @IsNumber()
   organizationCount: number;
 
+  @IsString()
+  defaultOrganizationId: string | null;
+
   @IsNumber()
   projectCount: number;
 

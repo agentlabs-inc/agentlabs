@@ -55,6 +55,7 @@
     "prettier": "^2.8.8",
     "prettier-plugin-organize-imports": "^3.2.3",
     "prisma": "^5.3.1",
+    "slugify": "^1.6.6",
     "source-map-support": "^0.5.21",
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.0",

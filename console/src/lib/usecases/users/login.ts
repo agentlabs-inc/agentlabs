@@ -2,7 +2,7 @@ import { UsersService } from "$lib/services/gen-api";
 import type { LoginUserDto } from "$lib/services/gen-api/models/LoginUserDto";
 import type { User } from "$lib/entities/user/user";
 import dayjs from "dayjs";
-import { login } from "$lib/context/auth.context";
+import { login } from "$lib/stores/auth";
 
 export const loginUser = async (user: LoginUserDto): Promise<User> => {
 	const result = await UsersService.login({

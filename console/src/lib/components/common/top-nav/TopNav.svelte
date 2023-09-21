@@ -1,5 +1,5 @@
 <script>
-	import { theme } from "$lib/store/theme";
+	import { themeStore } from "$lib/stores/theme";
 	import Avatar from "$lib/components/common/avatar/Avatar.svelte";
 	import ThemeSwitch from "$lib/components/common/theme-switch/ThemeSwitch.svelte";
 	import AgentLabsLogo from "$lib/components/common/logo/AgentLabsLogo.svelte";
@@ -7,7 +7,7 @@
 
 <div
 	class="bg-background-secondary dark:bg-background-primary-dark sticky top-0 flex justify-between items-center px-5 border-b border-stroke-base dark:border-stroke-base-dark h-[60px]">
-	<AgentLabsLogo theme={$theme} />
+	<AgentLabsLogo theme={$themeStore} />
 	<div class="flex gap-2 items-center h-full">
 		<ThemeSwitch />
 		<div

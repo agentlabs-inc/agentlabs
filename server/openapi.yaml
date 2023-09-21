@@ -98,7 +98,7 @@ paths:
         - projects
       security:
         - bearer: []
-  "/projects/list_for_organization/{organizationId}":
+  /projects/list_for_organization/{organizationId}:
     get:
       operationId: listOrganizationProjects
       parameters:
@@ -118,7 +118,7 @@ paths:
         - projects
       security:
         - bearer: []
-  "/projects/exists/{slug}":
+  /projects/exists/{slug}:
     get:
       operationId: projectExists
       parameters:
@@ -159,7 +159,7 @@ paths:
         - agents
       security:
         - bearer: []
-  "/agents/list_for_project/{projectId}":
+  /agents/list_for_project/{projectId}:
     post:
       operationId: listForProject
       parameters: []
@@ -201,7 +201,7 @@ paths:
         - auth-methods
       security:
         - bearer: []
-  "/auth-methods/list_for_project/{projectId}":
+  /auth-methods/list_for_project/{projectId}:
     post:
       operationId: listAuthMethods
       parameters:
@@ -322,6 +322,9 @@ components:
           nullable: true
         organizationCount:
           type: number
+        defaultOrganizationId:
+          type: string
+          nullable: true
         projectCount:
           type: number
         projectCreatedCount:
@@ -332,6 +335,7 @@ components:
         - fullName
         - verifiedAt
         - organizationCount
+        - defaultOrganizationId
         - projectCount
         - projectCreatedCount
     CreateProjectDto:

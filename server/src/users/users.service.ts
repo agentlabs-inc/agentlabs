@@ -170,6 +170,7 @@ export class UsersService {
       email: user.email,
       fullName: user.fullName,
       verifiedAt: user.verifiedAt,
+      defaultOrganizationId: user.organizations[0]?.organization.id ?? null,
       organizationCount: user.organizations.length,
       projectCount: user.organizations.reduce(
         (acc, org) => acc + org.organization.projects.length,

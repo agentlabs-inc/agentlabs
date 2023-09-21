@@ -1,14 +1,11 @@
 <script lang="ts">
-	import type { LayoutData } from "./$types";
-	import "../app.css";
 	import LoadingFrame from "$lib/components/common/loading-frame/LoadingFrame.svelte";
+	import { logout } from "$lib/stores/auth";
 	import AuthOnly from "$lib/gates/AuthOnly.svelte";
 
-	export let data: LayoutData;
+	logout();
 </script>
 
-{#await data.lazy.context}
+<AuthOnly>
 	<LoadingFrame />
-{:then context}
-	<slot />
-{/await}
+</AuthOnly>

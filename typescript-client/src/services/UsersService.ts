@@ -65,6 +65,7 @@ export class UsersService {
             method: 'POST',
             url: '/users/whoami',
             errors: {
+                404: `User not found`,
                 500: `Something went wrong.`,
             },
         });
