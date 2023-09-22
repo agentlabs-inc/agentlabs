@@ -4,11 +4,13 @@ import { writable } from "svelte/store";
 
 export const AUTH_STORE_KEY = "agentlabs/client/auth-store";
 
+export type AuthStore = {
+	accessToken: string;
+	user: User | null;
+};
+
 export const authStore = persist(
-	writable<{
-		accessToken: string;
-		user: User | null;
-	}>({
+	writable<AuthStore>({
 		accessToken: "",
 		user: null
 	}),
@@ -16,7 +18,7 @@ export const authStore = persist(
 	AUTH_STORE_KEY
 );
 
-export const login = (user: User, accessToken: string) => {
+export const setUserAuth = (user: User, accessToken: string) => {
 	authStore.set({
 		accessToken,
 		user
@@ -25,16 +27,13 @@ export const login = (user: User, accessToken: string) => {
 
 export const getAccessTokenPromise = async (): Promise<string> => {
 	return new Promise((resolve) => {
-		const unsubscribe = authStore.subscribe((store) => {
-			if (store.accessToken) {
-				resolve(store.accessToken ?? "");
-				unsubscribe();
-			}
+		authStore.subscribe((store) => {
+			resolve(store.accessToken ?? "");
 		});
 	});
 };
 
-export const logout = () => {
+export const forgetUser = () => {
 	authStore.set({
 		accessToken: "",
 		user: null

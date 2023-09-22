@@ -2,7 +2,6 @@
 	import type { LayoutData } from "./$types";
 	import "../app.css";
 	import LoadingFrame from "$lib/components/common/loading-frame/LoadingFrame.svelte";
-	import AuthOnly from "$lib/gates/AuthOnly.svelte";
 
 	export let data: LayoutData;
 </script>

@@ -41,7 +41,6 @@ export class UsersService {
       fullName: user.fullName,
     });
   }
-
   private signAccessToken(
     payload: Record<string, string | number>,
   ): Promise<string> {
@@ -75,6 +74,15 @@ export class UsersService {
     });
 
     return hash.toString('hex');
+  }
+
+  public async verifyAccessToken(jwt: string) {
+    const secret = new TextEncoder().encode(this.usersConfig.accessTokenSecret);
+    const { payload } = await jose.jwtVerify(jwt, secret);
+
+    console.log('payload', payload);
+
+    return payload;
   }
 
   async registerWithEmailAndPassword(
@@ -137,23 +145,12 @@ export class UsersService {
         id: userId,
       },
       include: {
-        projectCreated: {
-          select: {
-            id: true,
-          },
-        },
+        projectCreated: true,
         organizations: {
           include: {
             organization: {
-              select: {
-                id: true,
-              },
               include: {
-                projects: {
-                  select: {
-                    id: true,
-                  },
-                },
+                projects: true,
               },
             },
           },

@@ -29,9 +29,9 @@ export const forgotPasswordRoute = {
 };
 
 export const onboardingRoute = {
-	path: () => `${basePath}/onboarding`
+	path: () => `${basePath}/onboarding/new`
 };
 
 export const projectOnboardingRoute = {
-	path: (projectId: string) => `${basePath}/project/${projectId}/onboarding`
+	path: (projectId: string) => `${basePath}/onboarding/project/${projectId}/auth`
 };

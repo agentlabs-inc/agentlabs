@@ -2,17 +2,19 @@ import { UsersService } from "$lib/services/gen-api";
 import type { LoginUserDto } from "$lib/services/gen-api/models/LoginUserDto";
 import type { User } from "$lib/entities/user/user";
 import dayjs from "dayjs";
-import { login } from "$lib/stores/auth";
+import { setUserAuth } from "$lib/stores/auth";
 
 export const loginUser = async (user: LoginUserDto): Promise<User> => {
+	console.log("LOL");
 	const result = await UsersService.login({
 		requestBody: {
 			email: user.email,
 			password: user.password
 		}
+	}).catch((err) => {
+		console.error("Error logging in", err);
+		throw err;
 	});
-
-	console.log("Got result", result);
 
 	const loggedUser: User = {
 		createdAt: new Date(),
@@ -22,7 +24,7 @@ export const loginUser = async (user: LoginUserDto): Promise<User> => {
 		verifiedAt: dayjs(result.user.verifiedAt).toDate()
 	};
 
-	login(loggedUser, result.accessToken);
+	setUserAuth(loggedUser, result.accessToken);
 
 	return loggedUser;
 };
