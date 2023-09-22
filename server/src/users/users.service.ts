@@ -150,7 +150,14 @@ export class UsersService {
           include: {
             organization: {
               include: {
-                projects: true,
+                projects: {
+                  orderBy: {
+                    createdAt: 'desc',
+                  },
+                  include: {
+                    authMethods: true,
+                  },
+                },
               },
             },
           },
@@ -162,12 +169,15 @@ export class UsersService {
       return err('UserNotFound');
     }
 
+    const organization = user.organizations[0]?.organization;
+
     return ok({
       id: user.id,
       email: user.email,
       fullName: user.fullName,
       verifiedAt: user.verifiedAt,
-      defaultOrganizationId: user.organizations[0]?.organization.id ?? null,
+      defaultOrganizationId: organization.id ?? null,
+      defaultProjectId: organization.projects[0]?.id ?? null,
       organizationCount: user.organizations.length,
       projectCount: user.organizations.reduce(
         (acc, org) => acc + org.organization.projects.length,

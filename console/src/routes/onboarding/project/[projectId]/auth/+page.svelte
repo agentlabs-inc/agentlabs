@@ -9,9 +9,13 @@
 	import GithubIcon from "$lib/components/auth/GithubIcon.svelte";
 	import MicrosoftIcon from "$lib/components/auth/MicrosoftIcon.svelte";
 	import type { MultiSelectItem } from "$lib/components/common/multi-select/types";
+	import { initProjectAuthMethods } from "$lib/usecases/projects/initProjectAuthMethod";
 	import MultiSelect from "$lib/components/common/multi-select/MultiSelect.svelte";
 	import Button from "$lib/components/common/button/Button.svelte";
 	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
+	import { page } from "$app/stores";
+	import { goto } from "$app/navigation";
+	import { projectLastOnboardingStepRoute } from "$lib/routes/routes";
 
 	const availableAuthMethods: MultiSelectItem[] = [
 		{
@@ -56,15 +60,25 @@
 
 	$: canContinue = selectedItems.length > 0;
 
+	let submitting = false;
+
 	let selectedItems: MultiSelectItem[] = [];
 
 	const handleSelect = (items: CustomEvent<MultiSelectItem[]>) => {
 		selectedItems = items.detail;
 	};
 
-	const handleContinue = () => {
-		initProjectAuthMethod(projectId, selectedItems);
-		console.log(selectedItems);
+	const handleContinue = async () => {
+		submitting = true;
+		try {
+			const { projectId } = $page.params;
+			await initProjectAuthMethods(projectId, selectedItems);
+			await goto(projectLastOnboardingStepRoute.path(projectId));
+		} catch (e) {
+			console.error(e);
+		} finally {
+			submitting = false;
+		}
 	};
 </script>
 
@@ -124,6 +138,7 @@
 					<div>
 						<Spacer size="md" />
 						<Button
+							loading={submitting}
 							on:click={handleContinue}
 							disabled={!canContinue}
 							leftIcon={ArrowRight}>Continue</Button>

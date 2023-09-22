@@ -9,6 +9,7 @@ export type WhoAmIResultDto = {
     fullName: string;
     verifiedAt: string | null;
     organizationCount: number;
+    defaultProjectId: string | null;
     defaultOrganizationId: string | null;
     projectCount: number;
     projectCreatedCount: number;

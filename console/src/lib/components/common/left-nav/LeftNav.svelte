@@ -3,22 +3,23 @@
 	import { page } from "$app/stores";
 	import { authSettingsRoute, overviewRoute, settingsRoute } from "$lib/routes/routes";
 	import { goto } from "$app/navigation";
+	import { projectStore } from "$lib/stores/project";
 
 	const items = [
 		{
 			name: "Overview",
 			icon: ChartBar,
-			path: overviewRoute.path()
+			path: overviewRoute.path($projectStore.currentProjectId)
 		},
 		{
 			name: "Authentication",
 			icon: UserGroup,
-			path: authSettingsRoute.path()
+			path: authSettingsRoute.path($projectStore.currentProjectId)
 		},
 		{
 			name: "Settings",
 			icon: Cog,
-			path: settingsRoute.path()
+			path: settingsRoute.path($projectStore.currentProjectId)
 		}
 	];
 </script>

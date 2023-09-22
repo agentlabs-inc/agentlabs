@@ -343,6 +343,9 @@ components:
           nullable: true
         organizationCount:
           type: number
+        defaultProjectId:
+          type: string
+          nullable: true
         defaultOrganizationId:
           type: string
           nullable: true
@@ -356,6 +359,7 @@ components:
         - fullName
         - verifiedAt
         - organizationCount
+        - defaultProjectId
         - defaultOrganizationId
         - projectCount
         - projectCreatedCount
