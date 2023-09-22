@@ -4,6 +4,8 @@
 /* eslint-disable */
 import type { CreateAuthMethodDto } from '../models/CreateAuthMethodDto';
 import type { CreatedAuthMethodDto } from '../models/CreatedAuthMethodDto';
+import type { CreatedDemoAuthMethodsDto } from '../models/CreatedDemoAuthMethodsDto';
+import type { CreateDemoAuthMethodsDto } from '../models/CreateDemoAuthMethodsDto';
 import type { ListAuthMethodResponseDto } from '../models/ListAuthMethodResponseDto';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -30,6 +32,23 @@ export class AuthMethodsService {
     }
 
     /**
+     * @returns CreatedDemoAuthMethodsDto
+     * @throws ApiError
+     */
+    public static createDemoAuthMethod({
+        requestBody,
+    }: {
+        requestBody: CreateDemoAuthMethodsDto,
+    }): CancelablePromise<CreatedDemoAuthMethodsDto> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/auth-methods/create_demo_methods',
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+
+    /**
      * @returns ListAuthMethodResponseDto
      * @throws ApiError
      */
@@ -39,7 +58,7 @@ export class AuthMethodsService {
         projectId: string,
     }): CancelablePromise<ListAuthMethodResponseDto> {
         return __request(OpenAPI, {
-            method: 'POST',
+            method: 'GET',
             url: '/auth-methods/list_for_project/{projectId}',
             path: {
                 'projectId': projectId,

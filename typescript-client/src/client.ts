@@ -6,10 +6,7 @@ import { getAccessTokenPromise } from "$lib/stores/auth";
  * See: https://github.com/ferdikoomen/openapi-typescript-codegen/blob/master/docs/authorization.md
  */
 export const getToken = async () => {
-    console.log('Getting token')
-    const token = await getAccessTokenPromise();
-    console.log('Got token', token);
-    return token;
+    return await getAccessTokenPromise();
 };
 
 OpenAPI.TOKEN = getToken;
