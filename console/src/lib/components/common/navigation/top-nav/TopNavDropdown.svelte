@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { page } from "$app/stores";
 	import type { NavItemType } from "$lib/components/common/navigation/nav-item/types";
-	import { getAllProjects } from "$lib/stores/project.js";
-	import { logoutRoute, projectOverviewRoute } from "$lib/routes/routes.js";
+	import { getAllProjects } from "$lib/stores/project";
+	import { logoutRoute, projectOverviewRoute } from "$lib/routes/routes";
 	import NavItem from "$lib/components/common/navigation/nav-item/NavItem.svelte";
 	import { ArrowRightOnRectangle, Plus } from "svelte-hero-icons";
 	import { clickOutside } from "$lib/utils/clickOutside";

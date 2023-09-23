@@ -85,8 +85,6 @@ export class UsersService {
     const secret = new TextEncoder().encode(this.usersConfig.accessTokenSecret);
     const { payload } = await jose.jwtVerify(jwt, secret);
 
-    console.log('payload', payload);
-
     return payload;
   }
 

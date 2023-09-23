@@ -4,20 +4,22 @@
 	import { authSettingsRoute, overviewRoute, settingsRoute } from "$lib/routes/routes";
 	import NavItem from "$lib/components/common/navigation/nav-item/NavItem.svelte";
 
-	export let projectId: string;
+	export let projectId: string | undefined | null;
 
-	const items = [
-		{
-			label: "Overview",
-			icon: ChartBar,
-			path: overviewRoute.path(projectId)
-		},
-		{
-			label: "Authentication",
-			icon: UserGroup,
-			path: authSettingsRoute.path(projectId)
-		}
-	];
+	const items = projectId
+		? [
+				{
+					label: "Overview",
+					icon: ChartBar,
+					path: overviewRoute.path(projectId)
+				},
+				{
+					label: "Authentication",
+					icon: UserGroup,
+					path: authSettingsRoute.path(projectId)
+				}
+		  ]
+		: [];
 </script>
 
 <div

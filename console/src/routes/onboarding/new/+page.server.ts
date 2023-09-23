@@ -4,8 +4,7 @@ import type { Load } from "@sveltejs/kit";
 import { superValidate } from "sveltekit-superforms/server";
 
 const schema = z.object({
-	name: z.string(),
-	slug: z.string().min(3).max(20)
+	name: z.string()
 });
 
 export const load: Load = async (event) => {
