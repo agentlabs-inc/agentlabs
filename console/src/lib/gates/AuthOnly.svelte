@@ -35,7 +35,7 @@
 				return await goto(projectOnboardingUseApplicationRoute.path(onboarding.projectId));
 			}
 
-			return await goto(projectOverviewRoute.path(onboarding.projectId));
+			// return await goto(projectOverviewRoute.path(onboarding.projectId));
 		} catch (e: any) {
 			if (e.status === 401) {
 				forgetUser();

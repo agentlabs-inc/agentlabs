@@ -9,6 +9,9 @@
 	import { z as zod } from "zod";
 	import { superForm } from "sveltekit-superforms/client";
 	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
+	import { fetchAgentDetails } from "$lib/usecases/agents/fetchAgentDetails";
+	import { page } from "$app/stores";
+	import MainTitleSkeleton from "$lib/components/common/skeleton/MainTitleSkeleton.svelte";
 	export let data: PageData;
 
 	const { form, errors, validate } = superForm(data.form, {
@@ -27,18 +30,26 @@
 			return;
 		}
 	};
+
+	const agentPromise = fetchAgentDetails($page.params.agentId);
 </script>
 
 <div>
 	<TopCover>
 		<section class="p-12 flex items-center gap-4">
-			<span class="text-body-accent dark:text-body-accent-dark font-semibold text-2xl"
-				>My super cool agent</span>
-			<div
-				class="bg-background-accent dark:bg-background-accent-dark flex items-center gap-2 border border-stroke-accent dark:border-stroke-accent-dark rounded-full py-1.5 px-5 text-body-base dark:text-body-base-dark text-sm antialiased">
-				<Icon src={DocumentDuplicate} width="15" />
-				Copy Agent ID
-			</div>
+			{#await agentPromise}
+				<div class="w-[300px]">
+					<MainTitleSkeleton />
+				</div>
+			{:then agent}
+				<span class="text-body-accent dark:text-body-accent-dark font-semibold text-2xl"
+					>{agent.name}</span>
+				<div
+					class="bg-background-accent dark:bg-background-accent-dark flex items-center gap-2 border border-stroke-accent dark:border-stroke-accent-dark rounded-full py-1.5 px-5 text-body-base dark:text-body-base-dark text-sm antialiased">
+					<Icon src={DocumentDuplicate} width="15" />
+					{agent.id}
+				</div>
+			{/await}
 		</section>
 	</TopCover>
 	<div class="w-full p-10 pb-32">
