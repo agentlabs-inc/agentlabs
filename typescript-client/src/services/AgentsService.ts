@@ -34,15 +34,16 @@ export class AgentsService {
      * @throws ApiError
      */
     public static listForProject({
-        requestBody,
+        projectId,
     }: {
-        requestBody: CreateAgentDto,
+        projectId: string,
     }): CancelablePromise<ListAgentsResponseDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/agents/list_for_project/{projectId}',
-            body: requestBody,
-            mediaType: 'application/json',
+            path: {
+                'projectId': projectId,
+            },
         });
     }
 

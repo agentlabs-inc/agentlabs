@@ -47,3 +47,8 @@ export const projectOverviewRoute = {
 export const logoutRoute = {
 	path: () => `${basePath}/logout`
 };
+
+export const agentOverviewRoute = {
+	path: (projectId: string, agentId: string) =>
+		`${basePath}/project/${projectId}/agent/${agentId}`
+};

@@ -4,39 +4,22 @@
 	import Typography from "$lib/components/common/typography/Typography.svelte";
 	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
 	import Card from "$lib/components/common/card/Card.svelte";
-	import type { Agent } from "$lib/entities/agent/agent";
-	import dayjs from "dayjs";
+	import AgentsGrid from "$lib/components/project/agents/agents-grid/AgentsGrid.svelte";
+	import { page } from "$app/stores";
+	import { getCurrentProject } from "$lib/stores/project";
+	import CopiableTag from "$lib/components/common/copiable/CopiableTag.svelte";
 
-	let agents: Agent[] = [
-		{
-			id: "my-agent",
-			name: "My Demo Agent",
-			createdAt: new Date(),
-			updatedAt: new Date()
-		},
-		{
-			id: "my-agent",
-			name: "My Demo Agent",
-			createdAt: new Date(),
-			updatedAt: new Date()
-		}
-	];
+	const { projectId } = $page.params;
 
-	const handleOpenAgent = (agent: Agent) => {
-		console.log(agent);
-	};
+	const project = getCurrentProject();
 </script>
 
 <div>
 	<TopCover>
 		<section class="p-12 flex items-center gap-4">
 			<span class="text-body-accent dark:text-body-accent-dark font-semibold text-2xl"
-				>My Project Name</span>
-			<div
-				class="bg-background-accent dark:bg-background-accent-dark flex items-center gap-2 border border-stroke-accent dark:border-stroke-accent-dark rounded-full py-1.5 px-5 text-body-base dark:text-body-base-dark text-sm antialiased">
-				<Icon src={DocumentDuplicate} width="15" />
-				Project ID
-			</div>
+				>{project?.name}</span>
+			<CopiableTag value={project.id} />
 		</section>
 	</TopCover>
 	<div class="w-full p-10 pb-32">
@@ -87,24 +70,7 @@
 
 			<Spacer size="md" />
 
-			<div class="grid grid-cols-6 gap-4">
-				{#each agents as agent}
-					<div class="col-span-2">
-						<Card clickable on:click={() => handleOpenAgent(agent)}>
-							<div class="p-8 h-[160px] flex flex-col justify-between">
-								<Typography type="sectionTitle">{agent.name}</Typography>
-								<div>
-									<Typography type="label">Created at</Typography>
-									<Typography type="subTitle"
-										>{dayjs(agent.createdAt).format(
-											"MMMM D, YYYY"
-										)}</Typography>
-								</div>
-							</div>
-						</Card>
-					</div>
-				{/each}
-			</div>
+			<AgentsGrid projectId={projectId} />
 		</div>
 	</div>
 </div>

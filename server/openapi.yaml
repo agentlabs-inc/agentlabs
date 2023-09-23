@@ -162,13 +162,12 @@ paths:
   /agents/list_for_project/{projectId}:
     post:
       operationId: listForProject
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateAgentDto"
+      parameters:
+        - name: projectId
+          required: true
+          in: path
+          schema:
+            type: string
       responses:
         "201":
           description: ""
@@ -176,6 +175,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListAgentsResponseDto"
+        "401":
+          description: You are not authorized to access this resource
       tags:
         - agents
       security:

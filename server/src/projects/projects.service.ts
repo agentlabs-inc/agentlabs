@@ -83,6 +83,18 @@ export class ProjectsService {
             },
           },
           onboardings: connectOnboardingQuery,
+          agents: {
+            create: [
+              {
+                name: 'My First Agent',
+                creator: {
+                  connect: {
+                    id: creatorId,
+                  },
+                },
+              },
+            ],
+          },
           organization: {
             connect: {
               id: organizationId,
