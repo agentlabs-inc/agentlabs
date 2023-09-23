@@ -17,7 +17,7 @@
 	}
 
 	if (browser) {
-		if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+		if (darkMode) {
 			document.documentElement.classList.add("dark");
 			darkMode = true;
 		} else {

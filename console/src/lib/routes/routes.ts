@@ -43,3 +43,7 @@ export const projectOnboardingUseApplicationRoute = {
 export const projectOverviewRoute = {
 	path: (projectId: string) => `${basePath}/project/${projectId}/overview`
 };
+
+export const logoutRoute = {
+	path: () => `${basePath}/logout`
+};

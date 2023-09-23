@@ -1,6 +1,6 @@
 <script>
-	import TopNav from "$lib/components/common/top-nav/TopNav.svelte";
-	import LeftNav from "$lib/components/common/left-nav/LeftNav.svelte";
+	import TopNav from "$lib/components/common/navigation/top-nav/TopNav.svelte";
+	import LeftNav from "$lib/components/common/navigation/left-nav/LeftNav.svelte";
 	import AuthOnly from "$lib/gates/AuthOnly.svelte";
 </script>
 

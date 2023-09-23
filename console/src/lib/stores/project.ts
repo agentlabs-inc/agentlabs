@@ -1,5 +1,6 @@
 import { writable } from "svelte/store";
 import type { Project } from "$lib/entities/project/project";
+import { get } from "svelte/store";
 
 export const projectStore = writable<{
 	currentProjectId: string | null;
@@ -21,4 +22,13 @@ export const setProjectList = (list: Project[]) => {
 		store.list = list;
 		return store;
 	});
+};
+
+export const getCurrentProject = () => {
+	const store = get(projectStore);
+	return store.list.find((project) => project.id === store.currentProjectId);
+};
+
+export const getAllProjects = () => {
+	return get(projectStore).list;
 };

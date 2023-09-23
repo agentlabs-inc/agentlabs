@@ -4,20 +4,21 @@
 	import { authSettingsRoute, overviewRoute, settingsRoute } from "$lib/routes/routes";
 	import { goto } from "$app/navigation";
 	import { projectStore } from "$lib/stores/project";
+	import NavItem from "$lib/components/common/navigation/nav-item/NavItem.svelte";
 
 	const items = [
 		{
-			name: "Overview",
+			label: "Overview",
 			icon: ChartBar,
 			path: overviewRoute.path($projectStore.currentProjectId)
 		},
 		{
-			name: "Authentication",
+			label: "Authentication",
 			icon: UserGroup,
 			path: authSettingsRoute.path($projectStore.currentProjectId)
 		},
 		{
-			name: "Settings",
+			label: "Settings",
 			icon: Cog,
 			path: settingsRoute.path($projectStore.currentProjectId)
 		}
@@ -29,15 +30,7 @@
 	<section class="p-5">
 		<ul class="flex flex-col gap-3 antialiased">
 			{#each items as item}
-				<li
-					on:click={() => goto(item.path)}
-					class="{$page.url.pathname === item.path
-						? 'bg-background-accent dark:bg-background-accent-dark'
-						: ''}
-					hover:bg-background-accent dark:hover:bg-background-accent-dark text-sm text-body-base dark:text-body-base-dark py-3 px-4 rounded-lg flex gap-2 items-center cursor-pointer">
-					<Icon src={item.icon} class="w-4" />
-					{item.name}
-				</li>
+				<NavItem isActive={$page.url.pathname === item.path} item={item} />
 			{/each}
 		</ul>
 	</section>

@@ -1,8 +1,9 @@
 import type { User } from "$lib/entities/user/user";
 import { persist, createLocalStorage } from "@macfja/svelte-persistent-store";
-import { writable } from "svelte/store";
+import { get, writable } from "svelte/store";
+import { genStoreKey } from "$lib/utils/genStoreKey";
 
-export const AUTH_STORE_KEY = "agentlabs/client/auth-store";
+export const AUTH_STORE_KEY = genStoreKey("auth-store");
 
 export type AuthStore = {
 	accessToken: string;
@@ -23,6 +24,10 @@ export const setUserAuth = (user: User, accessToken: string) => {
 		accessToken,
 		user
 	});
+};
+
+export const getCurrentUser = (): User | null => {
+	return get(authStore).user;
 };
 
 export const getAccessTokenPromise = async (): Promise<string> => {
