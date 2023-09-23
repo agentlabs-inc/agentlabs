@@ -8,7 +8,9 @@
 	import ThemeSwitch from "$lib/components/common/theme-switch/ThemeSwitch.svelte";
 	import { registerUser } from "$lib/usecases/users/register";
 	import { toastError } from "$lib/utils/toast";
-	import { loginRoute } from "$lib/routes/routes";
+	import { loginRoute, onboardingRoute } from "$lib/routes/routes";
+	import { loginUser } from "$lib/usecases/users/login";
+	import { goto } from "$app/navigation";
 
 	export let data: PageData;
 
@@ -38,6 +40,13 @@
 				email: $form.email,
 				password: $form.password
 			});
+
+			await loginUser({
+				email: $form.email,
+				password: $form.password
+			});
+
+			await goto(onboardingRoute.path());
 		} catch (e: any) {
 			toastError(e?.message ?? "Something went wrong");
 		} finally {

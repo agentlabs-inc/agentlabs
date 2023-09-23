@@ -98,7 +98,7 @@ paths:
         - projects
       security:
         - bearer: []
-  "/projects/list_for_organization/{organizationId}":
+  /projects/listForOrganization/{organizationId}:
     get:
       operationId: listOrganizationProjects
       parameters:
@@ -118,7 +118,7 @@ paths:
         - projects
       security:
         - bearer: []
-  "/projects/exists/{slug}":
+  /projects/exists/{slug}:
     get:
       operationId: projectExists
       parameters:
@@ -159,16 +159,15 @@ paths:
         - agents
       security:
         - bearer: []
-  "/agents/list_for_project/{projectId}":
+  /agents/listForProject/{projectId}:
     post:
       operationId: listForProject
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateAgentDto"
+      parameters:
+        - name: projectId
+          required: true
+          in: path
+          schema:
+            type: string
       responses:
         "201":
           description: ""
@@ -176,11 +175,35 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListAgentsResponseDto"
+        "401":
+          description: You are not authorized to access this resource
       tags:
         - agents
       security:
         - bearer: []
-  /auth-methods/create:
+  /agents/getById/{agentId}:
+    post:
+      operationId: getById
+      parameters:
+        - name: agentId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAgentResponseDto"
+        "401":
+          description: You are not authorized to access this resource
+      tags:
+        - agents
+      security:
+        - bearer: []
+  /authMethods/create:
     post:
       operationId: createAuthMethod
       parameters: []
@@ -198,11 +221,32 @@ paths:
               schema:
                 $ref: "#/components/schemas/CreatedAuthMethodDto"
       tags:
-        - auth-methods
+        - authMethods
       security:
         - bearer: []
-  "/auth-methods/list_for_project/{projectId}":
+  /authMethods/createDemoAuthMethods:
     post:
+      operationId: createDemoAuthMethod
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDemoAuthMethodsDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatedDemoAuthMethodsDto"
+      tags:
+        - authMethods
+      security:
+        - bearer: []
+  /authMethods/listForProject/{projectId}:
+    get:
       operationId: listAuthMethods
       parameters:
         - name: projectId
@@ -211,14 +255,14 @@ paths:
           schema:
             type: string
       responses:
-        "201":
+        "200":
           description: ""
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListAuthMethodResponseDto"
       tags:
-        - auth-methods
+        - authMethods
       security:
         - bearer: []
 info:
@@ -322,6 +366,14 @@ components:
           nullable: true
         organizationCount:
           type: number
+        defaultProjectId:
+          type: string
+          nullable: true
+        defaultOrganizationId:
+          type: string
+          nullable: true
+        onboarding:
+          type: object
         projectCount:
           type: number
         projectCreatedCount:
@@ -332,6 +384,9 @@ components:
         - fullName
         - verifiedAt
         - organizationCount
+        - defaultProjectId
+        - defaultOrganizationId
+        - onboarding
         - projectCount
         - projectCreatedCount
     CreateProjectDto:
@@ -490,6 +545,30 @@ components:
       required:
         - items
         - total
+    GetAgentResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        projectId:
+          type: string
+        creatorId:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - id
+        - name
+        - projectId
+        - creatorId
+        - createdAt
+        - updatedAt
     CreateAuthMethodDto:
       type: object
       properties:
@@ -582,6 +661,25 @@ components:
         - scopes
         - createdAt
         - updatedAt
+    CreateDemoAuthMethodsDto:
+      type: object
+      properties:
+        methodTypes:
+          type: array
+          items:
+            type: object
+        projectId:
+          type: string
+      required:
+        - methodTypes
+        - projectId
+    CreatedDemoAuthMethodsDto:
+      type: object
+      properties:
+        success:
+          type: boolean
+      required:
+        - success
     ListAuthMethodItem:
       type: object
       properties:

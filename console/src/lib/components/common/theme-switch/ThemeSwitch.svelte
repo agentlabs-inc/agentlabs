@@ -3,13 +3,13 @@
 
 	import { browser } from "$app/environment";
 
-	import { theme } from "$lib/store/theme";
+	import { themeStore } from "$lib/stores/theme";
 
-	let darkMode = $theme === "dark";
+	let darkMode = $themeStore === "dark";
 
 	function handleSwitchDarkMode() {
 		darkMode = !darkMode;
-		theme.set(darkMode ? "dark" : "light");
+		themeStore.set(darkMode ? "dark" : "light");
 
 		darkMode
 			? document.documentElement.classList.add("dark")
@@ -17,7 +17,7 @@
 	}
 
 	if (browser) {
-		if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+		if (darkMode) {
 			document.documentElement.classList.add("dark");
 			darkMode = true;
 		} else {

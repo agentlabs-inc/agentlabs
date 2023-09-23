@@ -2,31 +2,82 @@
 	import TopCover from "$lib/components/common/top-cover/TopCover.svelte";
 	import Typography from "$lib/components/common/typography/Typography.svelte";
 	import Card from "$lib/components/common/card/Card.svelte";
-	import type { PageData } from "./$types";
-	import { z as zod } from "zod";
-	import { superForm } from "sveltekit-superforms/client";
-	import { Icon, Envelope } from "svelte-hero-icons";
+	import { ArrowRight, Envelope, Icon } from "svelte-hero-icons";
 	import Avatar from "$lib/components/common/avatar/Avatar.svelte";
 	import GoogleIcon from "$lib/components/auth/GoogleIcon.svelte";
 	import GitlabIcon from "$lib/components/auth/GitlabIcon.svelte";
 	import GithubIcon from "$lib/components/auth/GithubIcon.svelte";
+	import MicrosoftIcon from "$lib/components/auth/MicrosoftIcon.svelte";
+	import type { MultiSelectItem } from "$lib/components/common/multi-select/types";
+	import { initProjectAuthMethods } from "$lib/usecases/projects/initProjectAuthMethod";
+	import MultiSelect from "$lib/components/common/multi-select/MultiSelect.svelte";
+	import Button from "$lib/components/common/button/Button.svelte";
+	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
+	import { page } from "$app/stores";
+	import { goto } from "$app/navigation";
+	import { projectOnboardingUseApplicationRoute } from "$lib/routes/routes";
 
-	export let data: PageData;
+	const availableAuthMethods: MultiSelectItem[] = [
+		{
+			id: "passwordless-email",
+			label: "Passwordless email",
+			value: "passwordless-email",
+			heroIcon: Envelope
+		},
+		{
+			id: "google",
+			label: "Google / Gmail",
+			value: "google",
+			customIcon: GoogleIcon,
+			disabled: true,
+			disabledLabel: "Coming soon"
+		},
+		{
+			id: "github",
+			label: "Github",
+			value: "github",
+			customIcon: GithubIcon,
+			disabled: true,
+			disabledLabel: "Coming soon"
+		},
+		{
+			id: "gitlab",
+			label: "Gitlab",
+			value: "gitlab",
+			customIcon: GitlabIcon,
+			disabled: true,
+			disabledLabel: "Coming soon"
+		},
+		{
+			id: "microsoft",
+			label: "Microsoft / Outlook",
+			value: "microsoft",
+			customIcon: MicrosoftIcon,
+			disabled: true,
+			disabledLabel: "Coming soon"
+		}
+	];
 
-	const { form, errors, validate } = superForm(data.form, {
-		validators: zod.object({
-			name: zod.string().min(3).max(20)
-		}),
-		validationMethod: "oninput"
-	});
+	$: canContinue = selectedItems.length > 0;
 
-	const handleValidation = async (e: Event) => {
-		e.preventDefault();
-		const res = await validate();
+	let submitting = false;
 
-		if (!res.valid) {
-			errors.set(res.errors);
-			return;
+	let selectedItems: MultiSelectItem[] = [];
+
+	const handleSelect = (items: CustomEvent<MultiSelectItem[]>) => {
+		selectedItems = items.detail;
+	};
+
+	const handleContinue = async () => {
+		submitting = true;
+		try {
+			const { projectId } = $page.params;
+			await initProjectAuthMethods(projectId, selectedItems);
+			await goto(projectOnboardingUseApplicationRoute.path(projectId));
+		} catch (e) {
+			console.error(e);
+		} finally {
+			submitting = false;
 		}
 	};
 </script>
@@ -46,58 +97,12 @@
 			<Card>
 				<section class="p-10 antialiased min-h-[200px] grid grid-cols-2 gap-3">
 					<div>
-						<Typography type="sectionTitle">Branding</Typography>
-						<Typography type="subTitle">
-							Configure the branding of the authentication page.
-						</Typography>
-						<div class="my-10" />
 						<Typography type="sectionTitle">Sign in methods</Typography>
 						<Typography type="subTitle">
 							Choose the methods your users can use to login.
 						</Typography>
 						<div class="my-10" />
-						<div class="grid grid-cols-2 gap-3">
-							<div
-								class="antialiased border rounded-md p-3 border-stroke-base dark:border-stroke-base-dark flex items-center justify-left gap-3 text-body-base dark:text-body-base-dark hover:bg-background-accent dark:hover:bg-background-accent-dark cursor-pointer">
-								<div
-									class="rounded-full border border-stroke-base dark:border-stroke-base-dark p-3 bg-background-secondary dark:bg-background-secondary-dark">
-									<Icon src={Envelope} width="20" class="text-body-subdued" />
-								</div>
-								<div>Anonymous</div>
-							</div>
-							<div
-								class="antialiased border rounded-md p-3 border-stroke-base dark:border-stroke-base-dark flex items-center justify-left gap-3 text-body-base dark:text-body-base-dark hover:bg-background-accent dark:hover:bg-background-accent-dark cursor-pointer">
-								<div
-									class="rounded-full border border-stroke-base dark:border-stroke-base-dark p-3 bg-background-secondary dark:bg-background-secondary-dark">
-									<Icon src={Envelope} width="20" class="text-body-subdued" />
-								</div>
-								<div>Passwordless email</div>
-							</div>
-							<div
-								class="antialiased border rounded-md p-3 border-stroke-base dark:border-stroke-base-dark flex items-center justify-left gap-3 text-body-base dark:text-body-base-dark hover:bg-background-accent dark:hover:bg-background-accent-dark cursor-pointer">
-								<div
-									class="rounded-full border border-stroke-base dark:border-stroke-base-dark p-3 bg-background-secondary dark:bg-background-secondary-dark">
-									<Icon src={Envelope} width="20" class="text-body-subdued" />
-								</div>
-								<div>Email and password</div>
-							</div>
-							<div
-								class="antialiased border rounded-md p-3 border-stroke-base dark:border-stroke-base-dark flex items-center justify-left gap-3 text-body-base dark:text-body-base-dark hover:bg-background-accent dark:hover:bg-background-accent-dark cursor-pointer">
-								<div
-									class="rounded-full border border-stroke-base dark:border-stroke-base-dark p-3 bg-background-secondary dark:bg-background-secondary-dark">
-									<Icon src={Envelope} width="20" class="text-body-subdued" />
-								</div>
-								<div>Google / Gmail</div>
-							</div>
-							<div
-								class="antialiased border rounded-md p-3 border-stroke-base dark:border-stroke-base-dark flex items-center justify-left gap-3 text-body-base dark:text-body-base-dark hover:bg-background-accent dark:hover:bg-background-accent-dark cursor-pointer">
-								<div
-									class="rounded-full border border-stroke-base dark:border-stroke-base-dark p-3 bg-background-secondary dark:bg-background-secondary-dark">
-									<Icon src={Envelope} width="20" class="text-body-subdued" />
-								</div>
-								<div>Microsoft</div>
-							</div>
-						</div>
+						<MultiSelect items={availableAuthMethods} on:change={handleSelect} />
 					</div>
 					<div class="flex items-center justify-center">
 						<div
@@ -113,16 +118,30 @@
 									Sign in
 								</div>
 								<div class="w-[100px] bg-[#F5F5F5] h-3 rounded-full" />
-								<div
-									class="w-[200px] bg-gray-200 py-2 rounded-md flex items-center justify-center">
-									<GoogleIcon />
-								</div>
-								<div
-									class="w-[200px] bg-gray-200 py-2 rounded-md flex items-center justify-center">
-									<GitlabIcon />
-								</div>
+								{#each selectedItems as item}
+									<div
+										class="w-[200px] bg-gray-200 py-2 rounded-md flex items-center justify-center">
+										{#if item.customIcon}
+											<svelte:component this={item.customIcon} />
+										{/if}
+										{#if item.heroIcon}
+											<Icon
+												src={item.heroIcon}
+												width="20"
+												class="text-body-subdued" />
+										{/if}
+									</div>
+								{/each}
 							</div>
 						</div>
+					</div>
+					<div>
+						<Spacer size="md" />
+						<Button
+							loading={submitting}
+							on:click={handleContinue}
+							disabled={!canContinue}
+							leftIcon={ArrowRight}>Continue</Button>
 					</div>
 				</section>
 			</Card>

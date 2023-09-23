@@ -4,11 +4,14 @@ import { err, ok, PResult } from '../common/result';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   CreateAuthMethodError,
+  CreateDemoAuthMethodsError,
   ListAuthMethodsError,
   VerifyIfIsProjectUserError,
 } from './auth-methods.errors';
 import { CreateAuthMethodDto } from './dtos/create.auth-method.dto';
+import { CreateDemoAuthMethodsDto } from './dtos/create.demo.auth-method.dto';
 import { CreatedAuthMethodDto } from './dtos/created.auth-method.dto';
+import { CreatedDemoAuthMethodsDto } from './dtos/created.demo.auth-method.dto';
 import { ListAuthMethodResponseDto } from './dtos/list.auth-method.response.dto';
 
 @Injectable()
@@ -107,5 +110,77 @@ export class AuthMethodsService {
       items: authMethods.map((authMethod) => ({ ...authMethod })),
       total: authMethods.length,
     });
+  }
+
+  async createDemoAuthMethods(
+    params: CreateDemoAuthMethodsDto & { userId: string },
+  ): PResult<CreatedDemoAuthMethodsDto, CreateDemoAuthMethodsError> {
+    const verifyResult = await this.verifyIfProjectUser({
+      userId: params.userId,
+      projectId: params.projectId,
+    });
+
+    if (!verifyResult.ok) {
+      return err(verifyResult.error);
+    }
+
+    const emailProvider = params.methodTypes.find(
+      (type) => type === 'PASSWORDLESS_EMAIL',
+    );
+
+    if (!emailProvider) {
+      return err('OnlyEmailMethodAcceptedAtTheMoment');
+    }
+
+    const onboarding = await this.prisma.onboarding.findUnique({
+      where: {
+        userId: params.userId,
+        projectId: params.projectId,
+      },
+    });
+
+    // At the moment we only support passwordless email but we'll support more soon.
+    try {
+      await this.prisma.$transaction(async (tx) => {
+        await tx.authMethod.create({
+          data: {
+            type: 'PASSWORDLESS_EMAIL',
+            provider: 'EMAIL',
+            isEnabled: true,
+            scopes: [],
+            hasClientSecret: false,
+            clientId: null,
+            clientSecret: null,
+            project: {
+              connect: {
+                id: params.projectId,
+              },
+            },
+          },
+        });
+
+        if (onboarding?.id && !onboarding.hasAddedAuthMethod) {
+          await tx.onboarding.update({
+            where: {
+              id: onboarding.id,
+            },
+            data: {
+              hasAddedAuthMethod: true,
+            },
+          });
+        }
+      });
+    } catch (e: any) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e.code === 'P2002') {
+          // We want it to be idempotent if it exists already.
+          return ok({ success: true });
+        }
+
+        console.error('Error while creating auth method', e);
+      }
+    }
+
+    return ok({ success: true });
   }
 }

@@ -5,15 +5,15 @@ export const homeRoute = {
 };
 
 export const overviewRoute = {
-	path: () => `${basePath}/project/overview`
+	path: (projectId: string) => `${basePath}/project/${projectId}/overview`
 };
 
 export const authSettingsRoute = {
-	path: () => `${basePath}/project/auth`
+	path: (projectId: string) => `${basePath}/project/${projectId}/auth`
 };
 
 export const settingsRoute = {
-	path: () => `${basePath}/project/settings`
+	path: (projectId: string) => `${basePath}/project/${projectId}/settings`
 };
 
 export const loginRoute = {
@@ -29,9 +29,26 @@ export const forgotPasswordRoute = {
 };
 
 export const onboardingRoute = {
-	path: () => `${basePath}/onboarding`
+	path: () => `${basePath}/onboarding/new`
 };
 
-export const projectOnboardingRoute = {
-	path: (projectId: string) => `${basePath}/project/${projectId}/onboarding`
+export const projectOnboardingAuthMethodRoute = {
+	path: (projectId: string) => `${basePath}/onboarding/project/${projectId}/auth`
+};
+
+export const projectOnboardingUseApplicationRoute = {
+	path: (projectId: string) => `${basePath}/onboarding/project/${projectId}/ready`
+};
+
+export const projectOverviewRoute = {
+	path: (projectId: string) => `${basePath}/project/${projectId}/overview`
+};
+
+export const logoutRoute = {
+	path: () => `${basePath}/logout`
+};
+
+export const agentOverviewRoute = {
+	path: (projectId: string, agentId: string) =>
+		`${basePath}/project/${projectId}/agent/${agentId}`
 };

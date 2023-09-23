@@ -1,8 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { err, ok, PResult } from '../common/result';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateAgentError, VerifyIfIsProjectUserError } from './agents.errors';
+import {
+  CreateAgentError,
+  GetAgentByIdError,
+  VerifyIfIsProjectUserError,
+} from './agents.errors';
 import { CreatedAgentDto } from './dtos/created.agent.dto';
+import { GetAgentResponseDto } from './dtos/get.agent.response.dto';
 import { ListAgentsResponseDto } from './dtos/list.agents.response.dto';
 
 @Injectable()
@@ -98,5 +103,35 @@ export class AgentsService {
       items: agents.map((agent) => ({ ...agent })),
       total: agents.length,
     });
+  }
+
+  async getAgentById(params: {
+    userId: string;
+    agentId: string;
+  }): PResult<GetAgentResponseDto, GetAgentByIdError> {
+    const { userId, agentId } = params;
+
+    const agent = await this.prisma.agent.findUnique({
+      where: {
+        id: agentId,
+      },
+    });
+
+    if (!agent) {
+      return err('AgentNotFound');
+    }
+
+    const projectId = agent.projectId;
+
+    const verifyResult = await this.verifyIfProjectUser({
+      userId,
+      projectId,
+    });
+
+    if (!verifyResult.ok) {
+      return err(verifyResult.error);
+    }
+
+    return ok(agent);
   }
 }

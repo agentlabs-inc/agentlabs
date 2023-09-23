@@ -4,6 +4,7 @@
 /* eslint-disable */
 import type { CreateAgentDto } from '../models/CreateAgentDto';
 import type { CreatedAgentDto } from '../models/CreatedAgentDto';
+import type { GetAgentResponseDto } from '../models/GetAgentResponseDto';
 import type { ListAgentsResponseDto } from '../models/ListAgentsResponseDto';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -34,15 +35,40 @@ export class AgentsService {
      * @throws ApiError
      */
     public static listForProject({
-        requestBody,
+        projectId,
     }: {
-        requestBody: CreateAgentDto,
+        projectId: string,
     }): CancelablePromise<ListAgentsResponseDto> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/agents/list_for_project/{projectId}',
-            body: requestBody,
-            mediaType: 'application/json',
+            url: '/agents/listForProject/{projectId}',
+            path: {
+                'projectId': projectId,
+            },
+            errors: {
+                401: `You are not authorized to access this resource`,
+            },
+        });
+    }
+
+    /**
+     * @returns GetAgentResponseDto
+     * @throws ApiError
+     */
+    public static getById({
+        agentId,
+    }: {
+        agentId: string,
+    }): CancelablePromise<GetAgentResponseDto> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/agents/getById/{agentId}',
+            path: {
+                'agentId': agentId,
+            },
+            errors: {
+                401: `You are not authorized to access this resource`,
+            },
         });
     }
 

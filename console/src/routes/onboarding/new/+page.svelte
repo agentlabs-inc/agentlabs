@@ -7,7 +7,18 @@
 	import { z as zod } from "zod";
 	import type { PageData } from "./$types";
 	import { superForm } from "sveltekit-superforms/client";
+	import { createProject } from "$lib/usecases/projects/create";
+	import { toastError } from "$lib/utils/toast";
+	import slugify from "slugify";
+	import { organizationStore } from "$lib/stores/organization";
+	import { projectOnboardingAuthMethodRoute } from "$lib/routes/routes";
+	import { goto } from "$app/navigation";
+
 	export let data: PageData;
+
+	let submitting = false;
+
+	$: slug = $form.name ? slugify($form.name).toLowerCase() : "my-project-id";
 
 	const { form, errors, validate } = superForm(data.form, {
 		validators: zod.object({
@@ -18,11 +29,33 @@
 
 	const handleValidation = async (e: Event) => {
 		e.preventDefault();
+		e.stopPropagation();
+
 		const res = await validate();
+
+		console.log(res);
 
 		if (!res.valid) {
 			errors.set(res.errors);
 			return;
+		}
+
+		submitting = true;
+		try {
+			if (!$organizationStore.currentOrganizationId) {
+				return;
+			}
+
+			const project = await createProject({
+				name: $form.name,
+				slug: slug,
+				organizationId: $organizationStore.currentOrganizationId
+			});
+			goto(projectOnboardingAuthMethodRoute.path(project.id));
+		} catch (e: any) {
+			toastError(e?.message ?? "Something went wrong");
+		} finally {
+			submitting = false;
 		}
 	};
 </script>
@@ -47,8 +80,15 @@
 							type="text"
 							placeholder="Project name" />
 						<div class="my-5" />
+						<div
+							class="inline-block bg-background-accent dark:bg-background-accent-dark border border-stroke-accent dark:border-stroke-accent-dark rounded-full px-4 py-2 antialiased text-body-base dark:text-body-base-dark text-sm">
+							<span>Project ID: {slug}</span>
+						</div>
+						<div class="my-5" />
 						<div class="w-full">
 							<Button
+								on:click={handleValidation}
+								loading={submitting}
 								disabled={!$form.name || !!$errors?.name}
 								submit
 								type="primary"

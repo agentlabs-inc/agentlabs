@@ -3,6 +3,7 @@ import { Prisma, User } from '@prisma/client';
 import { randomBytes, scryptSync } from 'crypto';
 import * as jose from 'jose';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { v4 as uuid } from 'uuid';
 import { PResult, Result, err, ok } from '../common/result';
 import { LoginResponseDto } from './dtos/login.response.dto';
 import { RegisterUserDto } from './dtos/register.user.dto';
@@ -41,7 +42,6 @@ export class UsersService {
       fullName: user.fullName,
     });
   }
-
   private signAccessToken(
     payload: Record<string, string | number>,
   ): Promise<string> {
@@ -77,39 +77,75 @@ export class UsersService {
     return hash.toString('hex');
   }
 
+  private generateOrganizationId() {
+    return uuid();
+  }
+
+  public async verifyAccessToken(jwt: string) {
+    const secret = new TextEncoder().encode(this.usersConfig.accessTokenSecret);
+    const { payload } = await jose.jwtVerify(jwt, secret);
+
+    return payload;
+  }
+
   async registerWithEmailAndPassword(
     dto: RegisterUserDto,
   ): Promise<Result<UserCreatedResponseDto, RegisterUserError>> {
     const hashConfig = this.generatePasswordHashConfig();
 
     try {
-      const result = await this.prisma.user.create({
-        data: {
-          email: dto.email,
-          passwordHash: this.generatePasswordHash(dto.password, hashConfig),
-          fullName: dto.fullName,
-          verifiedAt: null,
-          passwordHashConfig: {
-            create: {
-              ...hashConfig,
+      const result = await this.prisma.$transaction(async (tx) => {
+        // We generate the organization id here so we know the id during the transaction.
+        const organizationId = this.generateOrganizationId();
+
+        const userResult = await tx.user.create({
+          data: {
+            email: dto.email,
+            passwordHash: this.generatePasswordHash(dto.password, hashConfig),
+            fullName: dto.fullName,
+            verifiedAt: null,
+            passwordHashConfig: {
+              create: {
+                ...hashConfig,
+              },
             },
-          },
-          organizations: {
-            create: [
-              {
-                role: 'ADMIN',
-                organization: {
-                  create: {
-                    name: this.usersConfig.defaultOrganizationName,
+            organizations: {
+              create: [
+                {
+                  role: 'ADMIN',
+                  organization: {
+                    create: {
+                      id: organizationId,
+                      name: this.usersConfig.defaultOrganizationName,
+                    },
                   },
                 },
-              },
-            ],
+              ],
+            },
           },
-        },
-        include: {
-          passwordHashConfig: false,
-        },
+          include: {
+            passwordHashConfig: false,
+          },
+        });
+
+        await tx.onboarding.create({
+          data: {
+            hasAddedAuthMethod: false,
+            hasUsedTheApplication: false,
+            organization: {
+              connect: {
+                id: organizationId,
+              },
+            },
+            user: {
+              connect: {
+                id: userResult.id,
+              },
+            },
+          },
+        });
+
+        return userResult;
       });
 
       return ok({
@@ -137,21 +173,18 @@ export class UsersService {
         id: userId,
       },
       include: {
-        projectCreated: {
-          select: {
-            id: true,
-          },
-        },
+        projectCreated: true,
+        onboardings: true,
         organizations: {
           include: {
             organization: {
-              select: {
-                id: true,
-              },
               include: {
                 projects: {
-                  select: {
-                    id: true,
+                  orderBy: {
+                    createdAt: 'desc',
+                  },
+                  include: {
+                    authMethods: true,
                   },
                 },
               },
@@ -165,12 +198,18 @@ export class UsersService {
       return err('UserNotFound');
     }
 
+    const organization = user.organizations[0]?.organization;
+    const onboarding = user.onboardings[0];
+
     return ok({
       id: user.id,
       email: user.email,
       fullName: user.fullName,
       verifiedAt: user.verifiedAt,
+      defaultOrganizationId: organization.id ?? null,
+      defaultProjectId: organization.projects[0]?.id ?? null,
       organizationCount: user.organizations.length,
+      onboarding,
       projectCount: user.organizations.reduce(
         (acc, org) => acc + org.organization.projects.length,
         0,

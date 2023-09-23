@@ -57,6 +57,22 @@ export class ProjectsService {
         return err(verifyResult.error);
       }
 
+      const onboarding = await this.prisma.onboarding.findUnique({
+        where: {
+          userId: creatorId,
+          organizationId,
+        },
+      });
+
+      let connectOnboardingQuery = undefined;
+      if (onboarding?.id && !onboarding.projectId) {
+        connectOnboardingQuery = {
+          connect: {
+            id: onboarding.id,
+          },
+        };
+      }
+
       const project = await this.prisma.project.create({
         data: {
           name,
@@ -65,6 +81,19 @@ export class ProjectsService {
             connect: {
               id: creatorId,
             },
+          },
+          onboardings: connectOnboardingQuery,
+          agents: {
+            create: [
+              {
+                name: 'My First Agent',
+                creator: {
+                  connect: {
+                    id: creatorId,
+                  },
+                },
+              },
+            ],
           },
           organization: {
             connect: {

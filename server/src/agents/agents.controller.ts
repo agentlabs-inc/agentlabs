@@ -1,15 +1,22 @@
 import {
   Body,
   Controller,
+  Param,
   Post,
   Req,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { RequireAuthMethod } from '../iam/iam.decorators';
 import { LocalAuthenticatedRequest } from '../iam/iam.types';
 import { AgentsService } from './agents.service';
 import { CreateAgentDto } from './dtos/create.agent.dto';
+import { GetAgentResponseDto } from './dtos/get.agent.response.dto';
+import { ListAgentsResponseDto } from './dtos/list.agents.response.dto';
 
 @ApiBearerAuth()
 @ApiTags('agents')
@@ -51,15 +58,18 @@ export class AgentsController {
   }
 
   @RequireAuthMethod('local')
-  @Post('/list_for_project/:projectId')
+  @ApiUnauthorizedResponse({
+    description: 'You are not authorized to access this resource',
+  })
+  @Post('/listForProject/:projectId')
   async listForProject(
     @Req() req: LocalAuthenticatedRequest,
-    @Body() dto: CreateAgentDto,
-  ) {
+    @Param('projectId') projectId: string,
+  ): Promise<ListAgentsResponseDto> {
     const { user } = req;
 
     const result = await this.agentsService.listProjectAgents({
-      projectId: dto.projectId,
+      projectId,
       userId: user.id,
     });
 
@@ -68,6 +78,46 @@ export class AgentsController {
     }
 
     switch (result.error) {
+      case 'ProjectNotFound':
+        throw new UnauthorizedException({
+          code: 'ProjectNotFound',
+          message: 'Project not found',
+        });
+
+      case 'NotAProjectUser':
+        throw new UnauthorizedException({
+          code: 'NotAProjectUser',
+          message: 'Not a project user',
+        });
+    }
+  }
+
+  @RequireAuthMethod('local')
+  @ApiUnauthorizedResponse({
+    description: 'You are not authorized to access this resource',
+  })
+  @Post('/getById/:agentId')
+  async getById(
+    @Req() req: LocalAuthenticatedRequest,
+    @Param('agentId') agentId: string,
+  ): Promise<GetAgentResponseDto> {
+    const { user } = req;
+
+    const result = await this.agentsService.getAgentById({
+      userId: user.id,
+      agentId,
+    });
+
+    if (result.ok) {
+      return result.value;
+    }
+
+    switch (result.error) {
+      case 'AgentNotFound':
+        throw new UnauthorizedException({
+          code: 'AgentNotFound',
+          message: 'Agent not found',
+        });
       case 'ProjectNotFound':
         throw new UnauthorizedException({
           code: 'ProjectNotFound',

@@ -12,8 +12,6 @@ export const registerUser = async (user: RegisterUserDto): Promise<User> => {
 		}
 	});
 
-	console.log("Got result", result);
-
 	return {
 		createdAt: new Date(),
 		id: result.id,
