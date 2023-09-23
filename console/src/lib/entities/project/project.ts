@@ -4,6 +4,6 @@ export type Project = {
 	organizationId: string;
 	slug: string;
 
-	createAt: Date;
-	updateAt: Date;
+	createdAt: Date;
+	updatedAt: Date;
 };

@@ -62,7 +62,7 @@ export class ProjectsController {
   }
 
   @RequireAuthMethod('local')
-  @Get(`/list_for_organization/:organizationId`)
+  @Get(`/listForOrganization/:organizationId`)
   async listOrganizationProjects(
     @Req() req: LocalAuthenticatedRequest,
     @Param('organizationId') organizationId: string,

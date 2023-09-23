@@ -2,25 +2,20 @@
 	import { ChartBar, UserGroup, Icon, Cog } from "svelte-hero-icons";
 	import { page } from "$app/stores";
 	import { authSettingsRoute, overviewRoute, settingsRoute } from "$lib/routes/routes";
-	import { goto } from "$app/navigation";
-	import { projectStore } from "$lib/stores/project";
 	import NavItem from "$lib/components/common/navigation/nav-item/NavItem.svelte";
+
+	export let projectId: string;
 
 	const items = [
 		{
 			label: "Overview",
 			icon: ChartBar,
-			path: overviewRoute.path($projectStore.currentProjectId)
+			path: overviewRoute.path(projectId)
 		},
 		{
 			label: "Authentication",
 			icon: UserGroup,
-			path: authSettingsRoute.path($projectStore.currentProjectId)
-		},
-		{
-			label: "Settings",
-			icon: Cog,
-			path: settingsRoute.path($projectStore.currentProjectId)
+			path: authSettingsRoute.path(projectId)
 		}
 	];
 </script>

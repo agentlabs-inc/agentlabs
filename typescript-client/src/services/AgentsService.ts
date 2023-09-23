@@ -40,9 +40,12 @@ export class AgentsService {
     }): CancelablePromise<ListAgentsResponseDto> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/agents/list_for_project/{projectId}',
+            url: '/agents/listForProject/{projectId}',
             path: {
                 'projectId': projectId,
+            },
+            errors: {
+                401: `You are not authorized to access this resource`,
             },
         });
     }

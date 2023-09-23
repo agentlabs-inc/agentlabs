@@ -13,7 +13,7 @@ export const createProject = async (project: CreateProjectDto): Promise<Project>
 		name: result.name,
 		organizationId: result.organizationId,
 		slug: result.slug,
-		createAt: dayjs(result.createdAt).toDate(),
-		updateAt: dayjs(result.updatedAt).toDate()
+		createdAt: dayjs(result.createdAt).toDate(),
+		updatedAt: dayjs(result.updatedAt).toDate()
 	};
 };

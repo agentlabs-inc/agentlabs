@@ -3,5 +3,7 @@
 	import { goto } from "$app/navigation";
 	import { projectOverviewRoute } from "$lib/routes/routes";
 
-	goto(projectOverviewRoute.path($projectStore.currentProjectId));
+	if ($projectStore.currentProjectId) {
+		goto(projectOverviewRoute.path($projectStore.currentProjectId));
+	}
 </script>

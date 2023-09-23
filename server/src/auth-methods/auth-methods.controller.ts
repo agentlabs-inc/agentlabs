@@ -19,9 +19,9 @@ import { CreatedAuthMethodDto } from './dtos/created.auth-method.dto';
 import { CreatedDemoAuthMethodsDto } from './dtos/created.demo.auth-method.dto';
 import { ListAuthMethodResponseDto } from './dtos/list.auth-method.response.dto';
 
-@ApiTags('auth-methods')
+@ApiTags('authMethods')
 @ApiBearerAuth()
-@Controller('auth-methods')
+@Controller('authMethods')
 export class AuthMethodsController {
   constructor(private readonly authMethodsService: AuthMethodsService) {}
 
@@ -62,7 +62,7 @@ export class AuthMethodsController {
   }
 
   @RequireAuthMethod('local')
-  @Post('/create_demo_methods')
+  @Post('/createDemoAuthMethods')
   async createDemoAuthMethod(
     @Req() req: LocalAuthenticatedRequest,
     @Body() dto: CreateDemoAuthMethodsDto,
@@ -98,7 +98,7 @@ export class AuthMethodsController {
   }
 
   @RequireAuthMethod('local')
-  @Get('/list_for_project/:projectId')
+  @Get('/listForProject/:projectId')
   async listAuthMethods(
     @Req() req: LocalAuthenticatedRequest,
     @Param('projectId') projectId: string,

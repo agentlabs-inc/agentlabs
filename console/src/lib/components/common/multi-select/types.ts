@@ -1,4 +1,4 @@
-import type { SvelteComponent } from "svelte";
+import type { ComponentType } from "svelte";
 import type { IconSource } from "svelte-hero-icons";
 
 export type MultiSelectItem = {
@@ -6,5 +6,7 @@ export type MultiSelectItem = {
 	label: string;
 	value: string;
 	heroIcon?: IconSource;
-	customIcon?: SvelteComponent;
+	customIcon?: ComponentType;
+	disabled?: boolean;
+	disabledLabel?: string;
 };

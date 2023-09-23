@@ -22,7 +22,8 @@
 
 	const { form, errors, validate } = superForm(data.form, {
 		validators: zod.object({
-			name: zod.string().min(3).max(20)
+			name: zod.string().min(3).max(20),
+			slug: zod.string().min(3).max(20)
 		}),
 		validationMethod: "oninput"
 	});
@@ -42,6 +43,10 @@
 
 		submitting = true;
 		try {
+			if (!$organizationStore.currentOrganizationId) {
+				return;
+			}
+
 			const project = await createProject({
 				name: $form.name,
 				slug: slug,

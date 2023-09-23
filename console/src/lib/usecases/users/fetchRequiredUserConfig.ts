@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import type { UserConfig } from "$lib/entities/user/userConfig";
 import { setCurrentOrganizationId } from "$lib/stores/organization";
 import { setCurrentProjectId, setProjectList } from "$lib/stores/project";
+import type { Project } from "$lib/entities/project/project";
 
 export const fetchRequiredUserConfig = async (): Promise<UserConfig> => {
 	const result = await UsersService.whoami();
@@ -29,12 +30,21 @@ export const fetchRequiredUserConfig = async (): Promise<UserConfig> => {
 	setCurrentOrganizationId(config.defaultOrganizationId);
 
 	if (config.defaultProjectId && config.defaultOrganizationId) {
-		const projects = await ProjectsService.listOrganizationProjects({
+		const res = await ProjectsService.listOrganizationProjects({
 			organizationId: config.defaultOrganizationId
 		});
 
-		setProjectList(projects.items);
-		setCurrentProjectId(projects.items[0]?.id ?? null);
+		const projects: Project[] = res.items.map((item) => ({
+			id: item.id,
+			name: item.name,
+			slug: item.slug,
+			organizationId: item.organizationId,
+			createdAt: dayjs(item.createdAt).toDate(),
+			updatedAt: dayjs(item.updatedAt).toDate()
+		}));
+
+		setProjectList(projects);
+		setCurrentProjectId(res.items[0]?.id ?? null);
 	}
 
 	return config;

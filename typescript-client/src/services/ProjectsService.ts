@@ -41,7 +41,7 @@ export class ProjectsService {
     }): CancelablePromise<ListProjectsResultDto> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/projects/list_for_organization/{organizationId}',
+            url: '/projects/listForOrganization/{organizationId}',
             path: {
                 'organizationId': organizationId,
             },

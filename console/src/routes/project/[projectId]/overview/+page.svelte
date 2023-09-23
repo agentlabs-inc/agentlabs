@@ -19,7 +19,7 @@
 		<section class="p-12 flex items-center gap-4">
 			<span class="text-body-accent dark:text-body-accent-dark font-semibold text-2xl"
 				>{project?.name}</span>
-			<CopiableTag value={project.id} />
+			<CopiableTag value={project?.id ?? "Project ID"} />
 		</section>
 	</TopCover>
 	<div class="w-full p-10 pb-32">

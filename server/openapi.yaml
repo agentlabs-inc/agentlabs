@@ -98,7 +98,7 @@ paths:
         - projects
       security:
         - bearer: []
-  /projects/list_for_organization/{organizationId}:
+  /projects/listForOrganization/{organizationId}:
     get:
       operationId: listOrganizationProjects
       parameters:
@@ -159,7 +159,7 @@ paths:
         - agents
       security:
         - bearer: []
-  /agents/list_for_project/{projectId}:
+  /agents/listForProject/{projectId}:
     post:
       operationId: listForProject
       parameters:
@@ -181,7 +181,7 @@ paths:
         - agents
       security:
         - bearer: []
-  /auth-methods/create:
+  /authMethods/create:
     post:
       operationId: createAuthMethod
       parameters: []
@@ -199,10 +199,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/CreatedAuthMethodDto"
       tags:
-        - auth-methods
+        - authMethods
       security:
         - bearer: []
-  /auth-methods/create_demo_methods:
+  /authMethods/createDemoAuthMethods:
     post:
       operationId: createDemoAuthMethod
       parameters: []
@@ -220,10 +220,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/CreatedDemoAuthMethodsDto"
       tags:
-        - auth-methods
+        - authMethods
       security:
         - bearer: []
-  /auth-methods/list_for_project/{projectId}:
+  /authMethods/listForProject/{projectId}:
     get:
       operationId: listAuthMethods
       parameters:
@@ -240,7 +240,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ListAuthMethodResponseDto"
       tags:
-        - auth-methods
+        - authMethods
       security:
         - bearer: []
 info:
@@ -619,9 +619,9 @@ components:
       type: object
       properties:
         methodTypes:
-          type: string
-          enum:
-            - PASSWORDLESS_EMAIL
+          type: array
+          items:
+            type: object
         projectId:
           type: string
       required:

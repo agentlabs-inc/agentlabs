@@ -59,7 +59,7 @@ export class AgentsController {
   @ApiUnauthorizedResponse({
     description: 'You are not authorized to access this resource',
   })
-  @Post('/list_for_project/:projectId')
+  @Post('/listForProject/:projectId')
   async listForProject(
     @Req() req: LocalAuthenticatedRequest,
     @Param('projectId') projectId: string,

@@ -9,6 +9,8 @@
 </script>
 
 <li
+	role="menuitem"
+	on:keydown={() => {}}
 	on:click={() => goto(item.path)}
 	class="{isActive ? 'bg-background-accent dark:bg-background-accent-dark' : ''}
 					hover:bg-background-accent dark:hover:bg-background-accent-dark text-sm text-body-base dark:text-body-base-dark py-3 px-4 rounded-lg flex gap-2 items-center cursor-pointer">

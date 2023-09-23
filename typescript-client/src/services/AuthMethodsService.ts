@@ -25,7 +25,7 @@ export class AuthMethodsService {
     }): CancelablePromise<CreatedAuthMethodDto> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/auth-methods/create',
+            url: '/authMethods/create',
             body: requestBody,
             mediaType: 'application/json',
         });
@@ -42,7 +42,7 @@ export class AuthMethodsService {
     }): CancelablePromise<CreatedDemoAuthMethodsDto> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/auth-methods/create_demo_methods',
+            url: '/authMethods/createDemoAuthMethods',
             body: requestBody,
             mediaType: 'application/json',
         });
@@ -59,7 +59,7 @@ export class AuthMethodsService {
     }): CancelablePromise<ListAuthMethodResponseDto> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/auth-methods/list_for_project/{projectId}',
+            url: '/authMethods/listForProject/{projectId}',
             path: {
                 'projectId': projectId,
             },
