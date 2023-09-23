@@ -46,7 +46,7 @@
 				password: $form.password
 			});
 
-			goto(onboardingRoute.path());
+			await goto(onboardingRoute.path());
 		} catch (e: any) {
 			toastError(e?.message ?? "Something went wrong");
 		} finally {

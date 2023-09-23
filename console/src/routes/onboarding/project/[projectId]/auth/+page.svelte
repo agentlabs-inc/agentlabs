@@ -15,7 +15,7 @@
 	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
 	import { page } from "$app/stores";
 	import { goto } from "$app/navigation";
-	import { projectLastOnboardingStepRoute } from "$lib/routes/routes";
+	import { projectOnboardingUseApplicationRoute } from "$lib/routes/routes";
 
 	const availableAuthMethods: MultiSelectItem[] = [
 		{
@@ -73,7 +73,7 @@
 		try {
 			const { projectId } = $page.params;
 			await initProjectAuthMethods(projectId, selectedItems);
-			await goto(projectLastOnboardingStepRoute.path(projectId));
+			await goto(projectOnboardingUseApplicationRoute.path(projectId));
 		} catch (e) {
 			console.error(e);
 		} finally {

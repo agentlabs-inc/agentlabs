@@ -2,7 +2,7 @@ import { ProjectsService, UsersService } from "$lib/services/gen-api";
 import dayjs from "dayjs";
 import type { UserConfig } from "$lib/entities/user/userConfig";
 import { setCurrentOrganizationId } from "$lib/stores/organization";
-import { setCurrentProjectId } from "$lib/stores/project";
+import { setCurrentProjectId, setProjectList } from "$lib/stores/project";
 
 export const fetchRequiredUserConfig = async (): Promise<UserConfig> => {
 	const result = await UsersService.whoami();
@@ -17,7 +17,13 @@ export const fetchRequiredUserConfig = async (): Promise<UserConfig> => {
 		id: result.id,
 		email: result.email,
 		fullName: result.fullName,
-		verifiedAt: dayjs(result.verifiedAt).toDate()
+		verifiedAt: dayjs(result.verifiedAt).toDate(),
+		onboarding: {
+			hasAddedAuthMethod: result.onboarding.hasAddedAuthMethod,
+			hasUsedTheApplication: result.onboarding.hasUsedTheApplication,
+			projectId: result.onboarding.projectId,
+			organizationId: result.onboarding.organizationId
+		}
 	};
 
 	setCurrentOrganizationId(config.defaultOrganizationId);
@@ -27,6 +33,7 @@ export const fetchRequiredUserConfig = async (): Promise<UserConfig> => {
 			organizationId: config.defaultOrganizationId
 		});
 
+		setProjectList(projects.items);
 		setCurrentProjectId(projects.items[0]?.id ?? null);
 	}
 

@@ -24,6 +24,24 @@ model PasswordHashConfig {
     salt        String
 }
 
+model Onboarding {
+	id        String   @id @default(uuid())
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt @default(now())
+
+	hasAddedAuthMethod 		Boolean @default(false)
+	hasUsedTheApplication 	Boolean @default(false)
+
+	organization	Organization @relation(fields: [organizationId], references: [id])
+	organizationId	String @unique
+
+	project				Project? @relation(fields: [projectId], references: [id])
+	projectId			String?
+
+	user					User @relation(fields: [userId], references: [id])
+	userId				String @unique
+}
+
 model User {
 	id        String   @id @default(uuid())
 	createdAt DateTime @default(now())
@@ -47,6 +65,7 @@ model User {
 	organizations 		OrganizationUser[]
 	projectCreated	 	Project[]
 	agentCreated			Agent[]
+	onboardings				Onboarding[]
 }
 
 model Organization {
@@ -58,6 +77,8 @@ model Organization {
 
 	users					OrganizationUser[]
 	projects			Project[]
+
+	onboardings		Onboarding[]
 }
 
 enum OrganizationUserRole {
@@ -98,6 +119,7 @@ model Project {
 	members				Member[]
 	sdkSecrets		SdkSecret[]
 	authMethods		AuthMethod[]
+	onboardings		Onboarding[]
 }
 
 enum AuthMethodType {

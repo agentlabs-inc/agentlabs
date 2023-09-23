@@ -349,6 +349,8 @@ components:
         defaultOrganizationId:
           type: string
           nullable: true
+        onboarding:
+          type: object
         projectCount:
           type: number
         projectCreatedCount:
@@ -361,6 +363,7 @@ components:
         - organizationCount
         - defaultProjectId
         - defaultOrganizationId
+        - onboarding
         - projectCount
         - projectCreatedCount
     CreateProjectDto:

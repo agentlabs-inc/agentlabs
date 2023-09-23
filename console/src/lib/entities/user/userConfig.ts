@@ -9,4 +9,10 @@ export type UserConfig = {
 	defaultProjectId: string | null;
 	projectCount: number;
 	projectCreatedCount: number;
+	onboarding: {
+		hasAddedAuthMethod: boolean;
+		hasUsedTheApplication: boolean;
+		projectId: string | null;
+		organizationId: string;
+	};
 };

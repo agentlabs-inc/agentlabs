@@ -1,9 +1,14 @@
 <script lang="ts">
-	import { beforeUpdate, onMount } from "svelte";
+	import { onMount } from "svelte";
 	import LoadingFrame from "$lib/components/common/loading-frame/LoadingFrame.svelte";
 	import { authStore, forgetUser } from "$lib/stores/auth";
-	import { projectStore } from "$lib/stores/project";
-	import { loginRoute, onboardingRoute, projectOverviewRoute } from "$lib/routes/routes";
+	import {
+		loginRoute,
+		onboardingRoute,
+		projectOnboardingAuthMethodRoute,
+		projectOnboardingUseApplicationRoute,
+		projectOverviewRoute
+	} from "$lib/routes/routes";
 	import { goto } from "$app/navigation";
 	import { fetchRequiredUserConfig } from "$lib/usecases/users/fetchRequiredUserConfig";
 
@@ -16,11 +21,21 @@
 		}
 
 		try {
-			const { projectCount } = await fetchRequiredUserConfig();
-			if (projectCount === 0) {
+			const { onboarding } = await fetchRequiredUserConfig();
+
+			if (!onboarding?.projectId) {
 				return await goto(onboardingRoute.path());
 			}
-			// return await goto(projectOverviewRoute.path($projectStore.currentProjectId));
+
+			if (!onboarding?.hasAddedAuthMethod) {
+				return await goto(projectOnboardingAuthMethodRoute.path(onboarding.projectId));
+			}
+
+			if (!onboarding?.hasUsedTheApplication) {
+				return await goto(projectOnboardingUseApplicationRoute.path(onboarding.projectId));
+			}
+
+			return await goto(projectOverviewRoute.path(onboarding.projectId));
 		} catch (e: any) {
 			if (e.status === 401) {
 				forgetUser();

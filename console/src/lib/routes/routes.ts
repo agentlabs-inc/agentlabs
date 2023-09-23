@@ -32,11 +32,11 @@ export const onboardingRoute = {
 	path: () => `${basePath}/onboarding/new`
 };
 
-export const projectOnboardingRoute = {
+export const projectOnboardingAuthMethodRoute = {
 	path: (projectId: string) => `${basePath}/onboarding/project/${projectId}/auth`
 };
 
-export const projectLastOnboardingStepRoute = {
+export const projectOnboardingUseApplicationRoute = {
 	path: (projectId: string) => `${basePath}/onboarding/project/${projectId}/ready`
 };
 

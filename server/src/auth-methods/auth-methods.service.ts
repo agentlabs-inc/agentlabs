@@ -132,23 +132,43 @@ export class AuthMethodsService {
       return err('OnlyEmailMethodAcceptedAtTheMoment');
     }
 
+    const onboarding = await this.prisma.onboarding.findUnique({
+      where: {
+        userId: params.userId,
+        projectId: params.projectId,
+      },
+    });
+
     // At the moment we only support passwordless email but we'll support more soon.
     try {
-      await this.prisma.authMethod.create({
-        data: {
-          type: 'PASSWORDLESS_EMAIL',
-          provider: 'EMAIL',
-          isEnabled: true,
-          scopes: [],
-          hasClientSecret: false,
-          clientId: null,
-          clientSecret: null,
-          project: {
-            connect: {
-              id: params.projectId,
+      await this.prisma.$transaction(async (tx) => {
+        await tx.authMethod.create({
+          data: {
+            type: 'PASSWORDLESS_EMAIL',
+            provider: 'EMAIL',
+            isEnabled: true,
+            scopes: [],
+            hasClientSecret: false,
+            clientId: null,
+            clientSecret: null,
+            project: {
+              connect: {
+                id: params.projectId,
+              },
             },
           },
-        },
+        });
+
+        if (onboarding?.id && !onboarding.hasAddedAuthMethod) {
+          await tx.onboarding.update({
+            where: {
+              id: onboarding.id,
+            },
+            data: {
+              hasAddedAuthMethod: true,
+            },
+          });
+        }
       });
     } catch (e: any) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {

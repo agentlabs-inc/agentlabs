@@ -22,6 +22,20 @@ CREATE TABLE "PasswordHashConfig" (
 );
 
 -- CreateTable
+CREATE TABLE "Onboarding" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "hasAddedAuthMethod" BOOLEAN NOT NULL DEFAULT false,
+    "hasUsedTheApplication" BOOLEAN NOT NULL DEFAULT false,
+    "organizationId" TEXT NOT NULL,
+    "projectId" TEXT,
+    "userId" TEXT NOT NULL,
+
+    CONSTRAINT "Onboarding_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -175,6 +189,12 @@ CREATE TABLE "AgentTaskMessage" (
 CREATE UNIQUE INDEX "PasswordHashConfig_userId_key" ON "PasswordHashConfig"("userId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Onboarding_organizationId_key" ON "Onboarding"("organizationId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Onboarding_userId_key" ON "Onboarding"("userId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
@@ -185,6 +205,15 @@ CREATE UNIQUE INDEX "SdkSecret_secret_key" ON "SdkSecret"("secret");
 
 -- AddForeignKey
 ALTER TABLE "PasswordHashConfig" ADD CONSTRAINT "PasswordHashConfig_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Onboarding" ADD CONSTRAINT "Onboarding_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Onboarding" ADD CONSTRAINT "Onboarding_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Onboarding" ADD CONSTRAINT "Onboarding_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "OrganizationUser" ADD CONSTRAINT "OrganizationUser_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
