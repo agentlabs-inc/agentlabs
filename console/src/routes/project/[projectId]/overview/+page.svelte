@@ -1,17 +1,17 @@
 <script lang="ts">
-	import { Icon, DocumentDuplicate, CodeBracket } from "svelte-hero-icons";
+	import { Icon, CodeBracket } from "svelte-hero-icons";
 	import TopCover from "$lib/components/common/top-cover/TopCover.svelte";
 	import Typography from "$lib/components/common/typography/Typography.svelte";
 	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
 	import Card from "$lib/components/common/card/Card.svelte";
 	import AgentsGrid from "$lib/components/project/agents/agents-grid/AgentsGrid.svelte";
 	import { page } from "$app/stores";
-	import { getCurrentProject } from "$lib/stores/project";
+	import { projectStore } from "$lib/stores/project";
 	import CopiableTag from "$lib/components/common/copiable/CopiableTag.svelte";
 
 	const { projectId } = $page.params;
 
-	const project = getCurrentProject();
+	$: project = $projectStore.currentProject;
 </script>
 
 <div>

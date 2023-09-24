@@ -5,14 +5,23 @@ import { get } from "svelte/store";
 export const projectStore = writable<{
 	currentProjectId: string | null;
 	list: Project[];
+	currentProject: Project | null;
 }>({
 	currentProjectId: null,
+	currentProject: null,
 	list: []
 });
 
 export const setCurrentProjectId = (id: string | null) => {
 	projectStore.update((store) => {
+		const project = store.list.find((project) => project.id === id);
+
+		if (!project) {
+			console.error("Project not in store");
+		}
+
 		store.currentProjectId = id;
+		store.currentProject = project ?? null;
 		return store;
 	});
 };
@@ -22,13 +31,4 @@ export const setProjectList = (list: Project[]) => {
 		store.list = list;
 		return store;
 	});
-};
-
-export const getCurrentProject = () => {
-	const store = get(projectStore);
-	return store.list.find((project) => project.id === store.currentProjectId);
-};
-
-export const getAllProjects = () => {
-	return get(projectStore).list;
 };

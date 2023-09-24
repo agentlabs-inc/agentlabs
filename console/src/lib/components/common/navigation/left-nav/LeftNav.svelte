@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { ChartBar, UserGroup, Icon, Cog } from "svelte-hero-icons";
+	import { ChartBar, UserGroup } from "svelte-hero-icons";
 	import { page } from "$app/stores";
-	import { authSettingsRoute, overviewRoute, settingsRoute } from "$lib/routes/routes";
+	import { authSettingsRoute, overviewRoute } from "$lib/routes/routes";
 	import NavItem from "$lib/components/common/navigation/nav-item/NavItem.svelte";
 
-	export let projectId: string | undefined | null;
+	export let projectId: string | null;
 
-	const items = projectId
+	$: items = projectId
 		? [
 				{
 					label: "Overview",

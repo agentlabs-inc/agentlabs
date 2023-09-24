@@ -1,19 +1,20 @@
 <script lang="ts">
 	import { page } from "$app/stores";
 	import type { NavItemType } from "$lib/components/common/navigation/nav-item/types";
-	import { getAllProjects } from "$lib/stores/project";
-	import { logoutRoute, projectOverviewRoute } from "$lib/routes/routes";
+	import { projectStore } from "$lib/stores/project";
+	import { createProjectRoute, logoutRoute, projectOverviewRoute } from "$lib/routes/routes";
 	import NavItem from "$lib/components/common/navigation/nav-item/NavItem.svelte";
 	import { ArrowRightOnRectangle, Plus } from "svelte-hero-icons";
 	import { clickOutside } from "$lib/utils/clickOutside";
 	import { createEventDispatcher } from "svelte";
+	import type { Project } from "$lib/entities/project/project";
 
-	const allProjects = getAllProjects();
+	const allProjects = $projectStore.list;
 
 	export let visible = false;
 
 	let items: NavItemType[] = [
-		...allProjects.map((p) => ({
+		...allProjects.map((p: Project) => ({
 			label: p.name,
 			path: projectOverviewRoute.path(p.id)
 		}))
@@ -46,7 +47,7 @@
 			<NavItem
 				isActive={false}
 				item={{
-					path: "#not-implemented",
+					path: createProjectRoute.path(),
 					label: "New project",
 					icon: Plus
 				}} />

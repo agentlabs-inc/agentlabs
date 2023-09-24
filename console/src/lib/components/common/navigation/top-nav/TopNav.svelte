@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getCurrentUser } from "$lib/stores/auth";
-	import { getCurrentProject } from "$lib/stores/project";
+	import { projectStore } from "$lib/stores/project";
 	import { ChevronDown, Icon } from "svelte-hero-icons";
 	import TopNavDropdown from "$lib/components/common/navigation/top-nav/TopNavDropdown.svelte";
 	import Avatar from "$lib/components/common/avatar/Avatar.svelte";
@@ -9,7 +9,7 @@
 	import { themeStore } from "$lib/stores/theme";
 
 	$: userName = getCurrentUser()?.fullName ?? getCurrentUser()?.email ?? "Guest";
-	$: projectName = getCurrentProject()?.name ?? "Select a project";
+	$: projectName = $projectStore.currentProject?.name ?? "No Project Selected";
 
 	let isDropdownVisible = false;
 	const toggleDropdown = () => {

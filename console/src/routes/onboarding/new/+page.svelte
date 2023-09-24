@@ -33,8 +33,6 @@
 
 		const res = await validate();
 
-		console.log(res);
-
 		if (!res.valid) {
 			errors.set(res.errors);
 			return;
@@ -63,7 +61,7 @@
 <div>
 	<TopCover>
 		<section class="p-12 flex items-center max-w-2xl m-auto justify-center">
-			<Typography type="mainTitle">Create your first project</Typography>
+			<Typography type="mainTitle">Create a new project</Typography>
 		</section>
 	</TopCover>
 	<div class="w-full">

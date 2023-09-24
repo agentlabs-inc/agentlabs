@@ -62,8 +62,6 @@ export class LocalAuthMiddleware implements NestMiddleware {
 
     const { isValid, payload } = await this.isTokenValid(token);
 
-    console.log('isValid', isValid, payload);
-
     if (!isValid) {
       this.logger.warn('Invalid token found in request');
       return next();

@@ -44,6 +44,10 @@ export const projectOverviewRoute = {
 	path: (projectId: string) => `${basePath}/project/${projectId}/overview`
 };
 
+export const createProjectRoute = {
+	path: () => `${basePath}/onboarding/new`
+};
+
 export const logoutRoute = {
 	path: () => `${basePath}/logout`
 };
