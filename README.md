@@ -27,13 +27,33 @@ Focus on your AI Agent backend, we handle the rest for you.
 </a>
 </p>
 
+<p align="center">
+.
+</p>
+
+<h3 align="center">
+🌟 Give us some love by starring this repository! 🌟  
+</h3>
+
+<p align="center">
+.
+</p>
+
+
 # AgentLabs - Open-Source Universal AI Agent Frontend
 
 AgentLabs is <b>fully open-sourced (Apache 2.0)</b> and AgentLabs Inc. offers cloud hosting and dedicated enterprise grade support.
 
+## How it works
 
 <p align="center">
   <a href="https://agentlabs.dev"><img src="./imgs/how-it-works.jpg" alt="agentlabs.dev"></a>
+</p>
+
+## Python SDK example
+
+<p align="center">
+  <a href="https://agentlabs.dev"><img src="./imgs/python-sdk-example.jpeg" alt="agentlabs.dev"></a>
 </p>
 
 ## Status
@@ -53,33 +73,3 @@ Subscribe to [agentlabs.dev](https://agentlabs.dev) to get notified when the fir
 <p align="center">
 .
 </p>
-
-## Getting started
-
-### Configure environment
-
-Copy env sample to a proper `.env` file:
-
-```shell
-cp .env.example .env
-```
-
-In the copied file fill the missing values or change defaults as needed.
-
-### Development
-
-```shell
-docker compose -f docker-compose.dev.yml up --build -d
-```
-
-In development mode both the frontend and server folds will be bind-mounted inside their respective docker containers.
-That means that any change made on the local filesystem will reload the running application.
-
-For the svelte frontend, note that this can slow down things if you are not running Linux as the filesystem instructions have to be translated.
-In case that's not manageable running the frontend separately and connecting it to the server manually is probably the best alternative.
-
-### Production
-
-```shell
-docker compose up --build -d
-```
