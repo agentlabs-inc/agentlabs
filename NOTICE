@@ -3,5 +3,11 @@ Copyright (c) 2023 AgentLabs, Inc
 Source code in this repository is licensed under the Apache License
 Version 2.0. Please see LICENSE for more information.
 
+Every file is under copyright (c) 2023 AgentLabs, Inc unless otherwise
+specified.
+
 * For a copy of the Apache License Version 2.0, please see LICENSE
   as included in this repository's top-level directory.
+
+* All third party components incorporated into the AgentLabs Software are licensed
+  under the original license provided by the owner of the applicable component.
