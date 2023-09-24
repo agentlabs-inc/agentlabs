@@ -56,3 +56,11 @@ export const agentOverviewRoute = {
 	path: (projectId: string, agentId: string) =>
 		`${basePath}/project/${projectId}/agent/${agentId}`
 };
+
+export const projectMembersRoute = {
+	path: (projectId: string) => `${basePath}/project/${projectId}/auth/members`
+};
+
+export const projectAuthMethodsRoute = {
+	path: (projectId: string) => `${basePath}/project/${projectId}/auth/methods`
+};

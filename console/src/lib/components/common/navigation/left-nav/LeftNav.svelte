@@ -27,7 +27,7 @@
 	<section class="p-5">
 		<ul class="flex flex-col gap-3 antialiased">
 			{#each items as item}
-				<NavItem isActive={$page.url.pathname === item.path} item={item} />
+				<NavItem isActive={$page.url.pathname.includes(item.path)} item={item} />
 			{/each}
 		</ul>
 	</section>
