@@ -36,7 +36,7 @@ AgentLabs is <b>fully open-sourced (Apache 2.0)</b> and AgentLabs Inc. offers cl
   <a href="https://agentlabs.dev"><img src="./imgs/how-it-works.jpg" alt="agentlabs.dev"></a>
 </p>
 
-## Important notice
+## Status
 
 This repository is under active development, a first stable release is planned for the next few weeks.
 
