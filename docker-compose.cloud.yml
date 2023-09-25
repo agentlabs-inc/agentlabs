@@ -2,22 +2,37 @@ version: '3.8'
 
 services:
 
-  caddy:
-    image: caddy:2.7.4-alpine
-    hostname: caddy
-    container_name: caddy
+  cloud-proxy:
+    build:
+      context: cloud-proxy
+    hostname: cloud-proxy
+    container_name: cloud-proxy
+    volumes:
+      - ./cloud-proxy/Caddyfile:/etc/caddy/Caddyfile
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - gateway
+    environment:
+      - CLOUD_CONSOLE_URL=${CLOUD_CONSOLE_URL}
+      - CLOUD_APP_WILDCARD_DOMAIN=${CLOUD_APP_WILDCARD_DOMAIN}
+      - CLOUD_APP_WILDCARD_DOMAIN_DNS_API_KEY=${CLOUD_APP_WILDCARD_DOMAIN_DNS_API_KEY}
+    restart: unless-stopped
+
+  gateway:
+    image: ${CADDY_IMAGE}
+    hostname: gateway
+    container_name: gateway
     volumes:
       - ./caddy/config/Caddyfile:/etc/caddy/Caddyfile
-    environment:
-      - AGENTLABS_URL=${AGENTLABS_URL}
-      - AGENTLABS_CONSOLE_URL=${AGENTLABS_CONSOLE_URL}
     depends_on:
       - frontend
       - server
     restart: unless-stopped
 
   postgres:
-    image: postgres:16rc1-alpine3.18
+    image: ${POSTGRES_IMAGE}
     hostname: postgres
     container_name: postgres
     environment:
