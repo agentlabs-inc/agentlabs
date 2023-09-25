@@ -2,14 +2,17 @@ version: '3.8'
 
 services:
 
-  gateway:
-    image: nginx:1.25.2-alpine
-    hostname: gateway
-    container_name: gateway
+  caddy:
+    image: caddy:2.7.4-alpine
+    hostname: caddy
+    container_name: caddy
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./caddy/config/Caddyfile:/etc/caddy/Caddyfile
     ports:
       - ${PORT}:80
+    environment:
+      - AGENTLABS_URL=${AGENTLABS_URL}
+      - AGENTLABS_CONSOLE_URL=${AGENTLABS_CONSOLE_URL}
     depends_on:
       - frontend
       - server
