@@ -3,13 +3,11 @@ version: '3.8'
 services:
 
   caddy:
-    build:
-      context: ./caddy
+    image: caddy:2.7.4-alpine
     hostname: caddy
     container_name: caddy
     volumes:
-      - ./caddy/data:/data
-      - ./caddy/config:/config
+      - ./caddy/config/Caddyfile:/etc/caddy/Caddyfile
     ports:
       - ${PORT}:80
     environment:
