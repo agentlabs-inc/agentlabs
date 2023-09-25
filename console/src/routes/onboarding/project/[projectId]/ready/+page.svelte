@@ -6,31 +6,63 @@
 	import Button from "$lib/components/common/button/Button.svelte";
 	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
 	import Monaco from "svelte-monaco";
-	import { onboardingPythonCode } from "$lib/components/project/agents/code-snippets/onboarding.snippet";
+	import { PUBLIC_AI_AGENT_DOMAIN } from "$env/static/public";
+
+	import {
+		onboardingPythonCode,
+		onboardingTypescriptCode
+	} from "$lib/components/project/agents/code-snippets/onboarding.snippet";
+	import Tabs from "$lib/components/common/tabs/Tabs.svelte";
+	import { projectStore } from "$lib/stores/project";
 
 	let currentStep: "open-frontend" | "authentication" | "send-message" = "open-frontend";
-	$: currentStepIndex = ["open-frontend", "authentication", "send-message"].indexOf(currentStep);
 
-	let pythonCodeSnippet = onboardingPythonCode;
+	let pythonCodeSnippet = onboardingPythonCode({
+		projectId: $projectStore.currentProjectId,
+		slug: $projectStore.currentProject?.slug,
+		agentId: "the-agent-id"
+	});
+	let typescriptCodeSnippet = onboardingTypescriptCode({
+		projectId: $projectStore.currentProjectId,
+		slug: $projectStore.currentProject?.slug,
+		// TODO: replace with the real agent id
+		agentId: "the-agent-id"
+	});
 
-	let user: {
-		name: string;
-		email: string;
-	} | null = null;
+	let selectedTab = "python";
 
-	let messages: string[] = [];
+	const tabItems: {
+		value: string;
+		id: string;
+		label: string;
+	}[] = [
+		{
+			id: "python",
+			label: "Python",
+			value: "python"
+		},
+		{
+			id: "typescript",
+			label: "Typescript",
+			value: "typescript"
+		}
+	];
+
+	$: snippetValue = selectedTab === "python" ? pythonCodeSnippet : typescriptCodeSnippet;
+
+	$: projectSlug = $projectStore.currentProject?.slug;
 
 	const handleNewUser = () => {
 		currentStep = "send-message";
-
-		user = {
-			name: "John Doe",
-			email: "john@doe.com"
-		};
 	};
 
 	const completeOnboarding = () => {
 		// not implemented
+	};
+
+	const openFrontend = () => {
+		window.open(`http://${projectSlug}.${PUBLIC_AI_AGENT_DOMAIN}`, "_blank");
+		currentStep = "authentication";
 	};
 </script>
 
@@ -58,10 +90,8 @@
 							<Typography type="label">Step 1</Typography>
 							<Typography type="sectionTitle">Test your Agent UI</Typography>
 							<Spacer size="sm" />
-							<Button
-								on:click={() => (currentStep = "authentication")}
-								size="bigger"
-								leftIcon={CursorArrowRays}>Open the demo Agent</Button>
+							<Button on:click={openFrontend} size="bigger" leftIcon={CursorArrowRays}
+								>Open the demo Agent</Button>
 							<Spacer size="md" />
 						</div>
 						<div class={currentStep === "authentication" ? "" : "disabled opacity-20"}>
@@ -92,7 +122,11 @@
 					</div>
 					<div class="flex items-center justify-center col-span-4">
 						<div
-							class="bg-background-quaternary dark:bg-background-quaternary-dark rounded-md py-4 px-4 flex flex-col items-center justify-center w-full h-full gap-3 relative">
+							class="bg-background-quaternary dark:bg-background-quaternary-dark rounded-md py-4 px-4 flex flex-col items-left justify-center w-full h-full relative">
+							<Tabs
+								on:change={(event) => (selectedTab = event.detail.item.id)}
+								defaultActive="python"
+								items={tabItems} />
 							<div class="w-full h-full rounded-md overflow-hidden">
 								<div id="editor" class="h-full">
 									<!-- event.detail is the monaco instance. All options are reactive! -->
@@ -111,7 +145,7 @@
 										}}
 										theme="vs-dark"
 										on:ready={(event) => console.log(event.detail)}
-										bind:value={pythonCodeSnippet} />
+										bind:value={snippetValue} />
 								</div>
 							</div>
 						</div>

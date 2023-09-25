@@ -59,6 +59,9 @@ services:
 
   console:
     container_name: console-dev
+    hostname: console
+    environment:
+      - PUBLIC_AI_AGENT_DOMAIN=${PUBLIC_AI_AGENT_DOMAIN}
     build:
       context: ./console
       dockerfile: Dockerfile.dev

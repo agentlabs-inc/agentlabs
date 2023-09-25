@@ -1,4 +1,46 @@
-const onboardingPythonB64 =
-	"ZnJvbSBhZ2VudGxhYnMgaW1wb3J0IEF0dGFjaG1lbnQsIFByb2plY3QsIEluY29taW5nQ2hhdE1lc3NhZ2UKCmRlZiBoYW5kbGVfY2hhdF9tZXNzYWdlKG1lc3NhZ2U6IEluY29taW5nQ2hhdE1lc3NhZ2UpOgogICAgaWYgbWVzc2FnZS50ZXh0ICE9ICdwaW5nJzoKICAgICAgICBwaW5nX3BvbmdfcnVsZXMgPSBBdHRhY2htZW50LmZyb21fcGF0aCgncnVsZXMubWQnKQogICAgICAgIG1lc3NhZ2UucmVwbHkoJ1NvcnJ5IGJ1dCBJIGNhbm5vdCBoYW5kbGUgdGhhdC4nLCBhdHRhY2htZW50cz1bcGluZ19wb25nX3J1bGVzXSkKICAgICAgICByZXR1cm4gOwogICAgbWVzc2FnZS5yZXBseSgncG9uZyEnKQoKcHJvamVjdCA9IFByb2plY3QoewogICAgImFnZW50bGFic191cmwiOiAiaHR0cHM6Ly9waW5ncG9uZy5hZ2VudGxhYnMuYWkiLAogICAgInByb2plY3RfaWQiOiAnMjM5NDAzNDU5MzA5MzA0OTQwMzkxJywKfSkKCmFnZW50ID0gcHJvamVjdC5hZ2VudChpZD0icGluZy1wb25nIikKYWdlbnQub25fY2hhdF9tZXNzYWdlKGhhbmRsZV9jaGF0X21lc3NhZ2UpCg==";
+export const onboardingTypescriptCode = (params: {
+	projectId: string;
+	projectSlug: string;
+	agentId: string;
+}) => `import { Attachment, Project, IncomingChatMessage } from 'agentlabs';
 
-export const onboardingPythonCode = atob(onboardingPythonB64);
+function handleChatMessage(message: IncomingChatMessage): void {
+    if (message.text !== 'ping') {
+        const pingPongRules = Attachment.fromPath('rules.md');
+        message.reply('Sorry but I cannot handle that.', [pingPongRules]);
+        return;
+    }
+    message.reply('pong!');
+}
+
+const projectConfig = {
+    agentlabs_url: "https://${params.projectSlug}.agentlabs.ai",
+    project_id: "${params.projectId}",
+};
+
+const project = new Project(projectConfig);
+
+const agent = project.agent({ id: "${params.agentId}" });
+agent.onChatMessage(handleChatMessage);
+`;
+
+export const onboardingPythonCode = (params: {
+	projectId: string;
+	projectSlug: string;
+	agentId: string;
+}) => `from agentlabs import Attachment, Project, IncomingChatMessage
+
+def handle_chat_message(message: IncomingChatMessage):
+    if message.text != 'ping':
+        ping_pong_rules = Attachment.from_path('rules.md')
+        message.reply('Sorry but I cannot handle that.', attachments=[ping_pong_rules])
+        return ;
+    message.reply('pong!')
+
+project = Project({
+    "agentlabs_url": "https://${params.projectSlug}.app.agentlabs.dev",
+    "project_id": "${params.projectId}",
+})
+
+agent = project.agent(id="${params.agentId}")
+agent.on_chat_message(handle_chat_message)`;
