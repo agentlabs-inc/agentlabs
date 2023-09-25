@@ -3,5 +3,4 @@
 node_modules
 
 gen-api
-caddy/config
 caddy/data
