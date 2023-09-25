@@ -5,6 +5,8 @@
 	import { projectStore } from "$lib/stores/project";
 
 	onMount(async () => {
+		if (!$projectStore.currentProjectId) return;
+
 		await goto(projectMembersRoute.path($projectStore.currentProjectId));
 	});
 </script>

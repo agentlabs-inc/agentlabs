@@ -22,21 +22,24 @@
 			fullName: "John Doe",
 			email: "john@doe.com",
 			verifiedAt: null,
-			createdAt: new Date()
+			createdAt: new Date(),
+			updatedAt: new Date()
 		},
 		{
 			id: "123456789",
 			fullName: "John Doe",
 			email: "john@doe.com",
 			verifiedAt: null,
-			createdAt: new Date()
+			createdAt: new Date(),
+			updatedAt: new Date()
 		},
 		{
 			id: "123456789",
 			fullName: "John Doe",
 			email: "john@doe.com",
 			verifiedAt: null,
-			createdAt: new Date()
+			createdAt: new Date(),
+			updatedAt: new Date()
 		}
 	];
 
@@ -64,6 +67,19 @@
 			format: (member: Member) => dayjs(member.createdAt).format("MMMM D, YYYY")
 		}
 	];
+
+	$: navItems = $projectStore.currentProjectId
+		? [
+				{
+					label: "Members",
+					path: projectMembersRoute.path($projectStore.currentProjectId)
+				},
+				{
+					label: "Auth methods",
+					path: projectAuthMethodsRoute.path($projectStore.currentProjectId)
+				}
+		  ]
+		: [];
 </script>
 
 <div>
@@ -72,17 +88,7 @@
 			<span class="text-body-accent dark:text-body-accent-dark font-semibold text-2xl"
 				>Authentication</span>
 
-			<TabNav
-				items={[
-					{
-						label: "Members",
-						path: projectMembersRoute.path($projectStore.currentProjectId)
-					},
-					{
-						label: "Auth methods",
-						path: projectAuthMethodsRoute.path($projectStore.currentProjectId)
-					}
-				]} />
+			<TabNav items={navItems} />
 		</section>
 	</TopCover>
 	<div class="w-full p-10 pb-32">
