@@ -1,24 +1,22 @@
 version: '3.8'
 
+volumes:
+  postgres-data-dev:
+
 services:
 
   gateway:
-    image: nginx:1.25.2-alpine
-    hostname: gateway
+    image: ${CADDY_IMAGE}
     container_name: gateway-dev
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-    ports:
-      - ${PORT}:80
+      - ./caddy/config/Caddyfile:/etc/caddy/Caddyfile
     depends_on:
       - frontend
-      - console
       - server
     restart: unless-stopped
 
   postgres:
-    image: postgres:16rc1-alpine3.18
-    hostname: postgres
+    image: ${POSTGRES_IMAGE}
     container_name: postgres-dev
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
@@ -32,7 +30,6 @@ services:
 
   server:
     container_name: server-dev
-    hostname: server
     build:
       context: ./server
       dockerfile: Dockerfile.dev
@@ -47,7 +44,6 @@ services:
 
   frontend:
     container_name: frontend-dev
-    hostname: frontend
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev
@@ -61,7 +57,6 @@ services:
 
   console:
     container_name: console-dev
-    hostname: console
     build:
       context: ./console
       dockerfile: Dockerfile.dev
@@ -72,6 +67,3 @@ services:
     depends_on:
       - server
     restart: unless-stopped
-
-volumes:
-  postgres-data-dev:
