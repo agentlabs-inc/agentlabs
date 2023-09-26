@@ -1,27 +1,35 @@
 version: '3.8'
 
+volumes:
+  postgres-data:
+
 services:
 
-  caddy:
-    image: caddy:2.7.4-alpine
-    hostname: caddy
-    container_name: caddy
+  gateway:
+    image: ${CADDY_IMAGE}
     volumes:
       - ./caddy/config/Caddyfile:/etc/caddy/Caddyfile
     ports:
       - ${PORT}:80
-    environment:
-      - AGENTLABS_URL=${AGENTLABS_URL}
-      - AGENTLABS_CONSOLE_URL=${AGENTLABS_CONSOLE_URL}
     depends_on:
       - frontend
       - server
     restart: unless-stopped
 
+  frontend:
+    image: ${FRONTEND_IMAGE}
+    depends_on:
+      - server
+    restart: unless-stopped
+
+  console:
+    image: ${CONSOLE_IMAGE}
+    depends_on:
+      - server
+    restart: unless-stopped
+
   postgres:
-    image: postgres:16rc1-alpine3.18
-    hostname: postgres
-    container_name: postgres
+    image: ${POSTGRES_IMAGE}
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_USER=${POSTGRES_USER}
@@ -31,8 +39,6 @@ services:
     restart: unless-stopped
 
   server:
-    container_name: server
-    hostname: server
     image: ${SERVER_IMAGE}
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}
@@ -40,22 +46,3 @@ services:
     depends_on:
       - postgres
     restart: unless-stopped
-
-  frontend:
-    container_name: frontend
-    hostname: frontend
-    image: ${FRONTEND_IMAGE}
-    depends_on:
-      - server
-    restart: unless-stopped
-
-  console:
-    container_name: console
-    hostname: console
-    image: ${CONSOLE_IMAGE}
-    depends_on:
-      - server
-    restart: unless-stopped
-
-volumes:
-  postgres-data:

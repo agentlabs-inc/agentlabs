@@ -1,0 +1,30 @@
+{$CLOUD_APP_WILDCARD_DOMAIN}:443 {
+	tls {
+		dns godaddy {$CLOUD_APP_WILDCARD_DOMAIN_DNS_API_KEY}
+	}
+
+	reverse_proxy gateway
+}
+
+{$CLOUD_CONSOLE_URL}:443 {
+		@console {
+			path /console/*
+		}
+
+		@api {
+			path /api/*
+		}
+
+		handle @console {
+			reverse_proxy gateway
+		}
+
+		handle @api {
+			reverse_proxy gateway
+		}
+
+		handle {
+			rewrite * /console{path}
+			reverse_proxy gateway
+		}
+}
