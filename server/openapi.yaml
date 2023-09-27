@@ -265,6 +265,23 @@ paths:
         - authMethods
       security:
         - bearer: []
+  /members/requestPasswordlessEmail:
+    post:
+      operationId: registerWithPasswordlessEmail
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestPasswordlessEmailDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegisterResponseDto"
 info:
   title: AgentLabs API
   description: Build AI Agents in minutes, not months.
@@ -743,3 +760,28 @@ components:
       required:
         - items
         - total
+    RequestPasswordlessEmailDto:
+      type: object
+      properties:
+        email:
+          type: string
+        projectId:
+          type: string
+      required:
+        - email
+        - projectId
+    RegisterResponseDto:
+      type: object
+      properties:
+        email:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - email
+        - createdAt
+        - updatedAt

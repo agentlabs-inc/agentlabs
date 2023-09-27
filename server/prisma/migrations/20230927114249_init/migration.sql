@@ -44,7 +44,6 @@ CREATE TABLE "User" (
     "fullName" TEXT NOT NULL,
     "verifiedAt" TIMESTAMP(3),
     "bannedAt" TIMESTAMP(3),
-    "password" TEXT,
     "passwordHash" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
@@ -125,6 +124,33 @@ CREATE TABLE "Agent" (
 );
 
 -- CreateTable
+CREATE TABLE "MemberAuthVerificationCode" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "code" TEXT NOT NULL,
+    "expiresAt" TIMESTAMP(3) NOT NULL,
+    "memberId" TEXT NOT NULL,
+
+    CONSTRAINT "MemberAuthVerificationCode_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "MemberAuth" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "passwordHash" TEXT,
+    "memberId" TEXT NOT NULL,
+    "algorithm" TEXT NOT NULL,
+    "memCost" INTEGER NOT NULL,
+    "keyLength" INTEGER NOT NULL,
+    "salt" TEXT NOT NULL,
+
+    CONSTRAINT "MemberAuth_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Member" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -141,10 +167,10 @@ CREATE TABLE "Member" (
 
 -- CreateTable
 CREATE TABLE "MemberIdentity" (
-    "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "provider" "IdentityProvider" NOT NULL,
+    "providerUserId" TEXT NOT NULL,
     "memberId" TEXT NOT NULL,
     "lastSignedInAt" TIMESTAMP(3),
     "accessToken" TEXT,
@@ -152,7 +178,7 @@ CREATE TABLE "MemberIdentity" (
     "accessTokenExpiresAt" TIMESTAMP(3),
     "refreshTokenExpiresAt" TIMESTAMP(3),
 
-    CONSTRAINT "MemberIdentity_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "MemberIdentity_pkey" PRIMARY KEY ("memberId","provider")
 );
 
 -- CreateTable
@@ -203,6 +229,15 @@ CREATE UNIQUE INDEX "Project_slug_key" ON "Project"("slug");
 -- CreateIndex
 CREATE UNIQUE INDEX "SdkSecret_secret_key" ON "SdkSecret"("secret");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "MemberAuthVerificationCode_code_key" ON "MemberAuthVerificationCode"("code");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "MemberAuthVerificationCode_memberId_key" ON "MemberAuthVerificationCode"("memberId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "MemberAuth_memberId_key" ON "MemberAuth"("memberId");
+
 -- AddForeignKey
 ALTER TABLE "PasswordHashConfig" ADD CONSTRAINT "PasswordHashConfig_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -238,6 +273,12 @@ ALTER TABLE "Agent" ADD CONSTRAINT "Agent_creatorId_fkey" FOREIGN KEY ("creatorI
 
 -- AddForeignKey
 ALTER TABLE "Agent" ADD CONSTRAINT "Agent_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "MemberAuthVerificationCode" ADD CONSTRAINT "MemberAuthVerificationCode_memberId_fkey" FOREIGN KEY ("memberId") REFERENCES "Member"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "MemberAuth" ADD CONSTRAINT "MemberAuth_memberId_fkey" FOREIGN KEY ("memberId") REFERENCES "Member"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Member" ADD CONSTRAINT "Member_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

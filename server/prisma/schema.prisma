@@ -58,7 +58,6 @@ model User {
 	// This is crucial to comply with GDPR.
 	// deletedAt		DateTime? << DO NOT DO THIS.
 
-	password           String?
 	passwordHash       String?
 	passwordHashConfig PasswordHashConfig?
 
@@ -175,6 +174,34 @@ model Agent {
 	projectId			String
 }
 
+model MemberAuthVerificationCode {
+	id						String   @id @default(uuid())
+	createdAt 		DateTime @default(now())
+	updatedAt 		DateTime @updatedAt @default(now())
+
+	code					String	@unique
+	expiresAt			DateTime
+
+	member				Member @relation(fields: [memberId], references: [id])
+	memberId			String @unique
+}
+
+model MemberAuth {
+	id 								 String @id @default(uuid())
+	createdAt   DateTime @default(now())
+	updatedAt   DateTime @updatedAt @default(now())
+
+	passwordHash       String?
+
+	member        Member @relation(fields: [memberId], references: [id])
+	memberId      String @unique
+
+	algorithm   String
+	memCost     Int
+	keyLength   Int
+	salt        String
+}
+
 model Member {
 	id						String   @id @default(uuid())
 	createdAt 		DateTime @default(now())
@@ -195,7 +222,9 @@ model Member {
 	project				Project @relation(fields: [projectId], references: [id])
 	projectId			String
 
-	identities		MemberIdentity[]
+	auth 				  		MemberAuth?
+	identities				MemberIdentity[]
+	verificationCode	MemberAuthVerificationCode?
 }
 
 enum IdentityProvider {
@@ -210,11 +239,13 @@ enum IdentityProvider {
 }
 
 model MemberIdentity {
-	id						String   @id @default(uuid())
 	createdAt 		DateTime @default(now())
 	updatedAt 		DateTime @updatedAt @default(now())
 
 	provider			IdentityProvider
+
+	// if the provider is EMAIL, then the id is the email address
+	providerUserId		String
 
 	memberId			String
 	member				Member @relation(fields: [memberId], references: [id])
@@ -225,6 +256,8 @@ model MemberIdentity {
 	refreshToken	String?
 	accessTokenExpiresAt			DateTime?
 	refreshTokenExpiresAt			DateTime?
+
+	@@id([memberId, provider])
 }
 
 model AgentConversation {

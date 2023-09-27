@@ -17,18 +17,6 @@
 
 	let currentStep: "open-frontend" | "authentication" | "send-message" = "open-frontend";
 
-	let pythonCodeSnippet = onboardingPythonCode({
-		projectId: $projectStore.currentProjectId,
-		slug: $projectStore.currentProject?.slug,
-		agentId: "the-agent-id"
-	});
-	let typescriptCodeSnippet = onboardingTypescriptCode({
-		projectId: $projectStore.currentProjectId,
-		slug: $projectStore.currentProject?.slug,
-		// TODO: replace with the real agent id
-		agentId: "the-agent-id"
-	});
-
 	let selectedTab = "python";
 
 	const tabItems: {
@@ -48,7 +36,19 @@
 		}
 	];
 
-	$: snippetValue = selectedTab === "python" ? pythonCodeSnippet : typescriptCodeSnippet;
+	$: snippetValue =
+		selectedTab === "python"
+			? onboardingPythonCode({
+					projectId: $projectStore.currentProjectId,
+					slug: $projectStore.currentProject?.slug,
+					agentId: "the-agent-id"
+			  })
+			: onboardingTypescriptCode({
+					projectId: $projectStore.currentProjectId,
+					slug: $projectStore.currentProject?.slug,
+					// TODO: replace with the real agent id
+					agentId: "the-agent-id"
+			  });
 
 	$: projectSlug = $projectStore.currentProject?.slug;
 
