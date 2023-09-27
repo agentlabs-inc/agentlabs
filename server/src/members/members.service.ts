@@ -1,19 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { AuthMethodType } from '@prisma/client';
+import { AuthMethodType, Member } from '@prisma/client';
 import * as dayjs from 'dayjs';
-import { err, ok, PResult } from '../common/result';
+import * as jose from 'jose';
+import { PResult, err, ok } from '../common/result';
 import { PrismaService } from '../prisma/prisma.service';
+import { LoginMemberResponseDto } from './dtos/login.member.response.dto';
 import { RegisterResponseDto } from './dtos/register.response.dto';
+import { InjectMembersConfig, MembersConfig } from './members.config';
 import {
   RegisterMemberVerifyAuthMethodError,
   RegisterPasswordlessEmailError,
+  VerifyPasswordlessEmailError,
 } from './members.errors';
-
-export const AUTH_CODE_EXPIRATION_DELAY_MINUTES = 15;
 
 @Injectable()
 export class MembersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @InjectMembersConfig()
+    private readonly membersConfig: MembersConfig,
+  ) {}
 
   private async verifyProjectAuthMethod(params: {
     projectId: string;
@@ -58,7 +64,9 @@ export class MembersService {
   }
 
   private random6DigitCodeExpiration(): Date {
-    return dayjs().add(AUTH_CODE_EXPIRATION_DELAY_MINUTES, 'minute').toDate();
+    return dayjs()
+      .add(this.membersConfig.authCodeExpirationDelayInMinutes, 'minute')
+      .toDate();
   }
 
   private generateVerificationCode() {
@@ -66,6 +74,36 @@ export class MembersService {
       code: this.random6DigitCode(),
       expiresAt: this.random6DigitCodeExpiration(),
     };
+  }
+
+  private async generateAccessToken(member: Member): Promise<string> {
+    return this.signAccessToken({
+      sub: member.id,
+      email: member.email,
+      firstName: member.firstName,
+      lastName: member.lastName,
+      projectId: member.projectId,
+    });
+  }
+  private signAccessToken(payload: {
+    sub: string;
+    email: string;
+    firstName: string | null;
+    lastName: string | null;
+    projectId: string;
+  }): Promise<string> {
+    const secret = new TextEncoder().encode(
+      this.membersConfig.accessTokenSecret,
+    );
+    return new jose.SignJWT(payload)
+      .setProtectedHeader({
+        alg: 'HS256',
+      })
+      .setIssuer('https://agentlabs.dev')
+      .setAudience('https://agentlabs.dev')
+      .setExpirationTime(this.membersConfig.accessTokenExpirationTime)
+      .setIssuedAt()
+      .sign(secret);
   }
 
   async requestPasswordlessEmail(params: {
@@ -102,7 +140,11 @@ export class MembersService {
               firstName: null,
               lastName: null,
               verificationCode: {
-                create: verificationCode,
+                create: {
+                  projectId,
+                  code: verificationCode.code,
+                  expiresAt: verificationCode.expiresAt,
+                },
               },
               identities: {
                 create: [
@@ -150,9 +192,13 @@ export class MembersService {
             verificationCode: {
               connectOrCreate: {
                 where: {
-                  memberId: member.id,
+                  projectId_memberId: {
+                    projectId: projectId,
+                    memberId: member.id,
+                  },
                 },
                 create: {
+                  projectId: projectId,
                   code: verificationCode.code,
                   expiresAt: verificationCode.expiresAt,
                 },
@@ -167,5 +213,94 @@ export class MembersService {
     );
 
     return ok(memberCreatedOrUpdated);
+  }
+
+  async verifyPasswordlessEmail(params: {
+    projectId: string;
+    email: string;
+    code: string;
+  }): PResult<LoginMemberResponseDto, VerifyPasswordlessEmailError> {
+    const { email, code } = params;
+
+    const verificationCode =
+      await this.prisma.memberAuthVerificationCode.findFirst({
+        where: {
+          projectId: params.projectId,
+          code,
+          member: {
+            email,
+          },
+        },
+        include: {
+          member: true,
+        },
+      });
+
+    if (!verificationCode) {
+      return err('CodeNotFound');
+    }
+
+    if (verificationCode.expiresAt < new Date()) {
+      return err('CodeExpired');
+    }
+
+    if (!verificationCode.member) {
+      return err('MemberNotFound');
+    }
+
+    if (!!verificationCode.member.bannedAt) {
+      return err('MemberBanned');
+    }
+
+    const member = verificationCode.member;
+
+    const accessToken = await this.generateAccessToken(member);
+
+    await this.prisma.$transaction(async () => {
+      await this.prisma.memberAuthVerificationCode.delete({
+        where: {
+          projectId_memberId: {
+            projectId: params.projectId,
+            memberId: member.id,
+          },
+        },
+      });
+
+      await this.prisma.memberIdentity.update({
+        where: {
+          memberId_provider: {
+            memberId: member.id,
+            provider: 'EMAIL',
+          },
+        },
+        data: {
+          lastSignedInAt: new Date(),
+        },
+      });
+
+      if (!member.verifiedAt) {
+        await this.prisma.member.update({
+          where: {
+            id: member.id,
+          },
+          data: {
+            verifiedAt: new Date(),
+          },
+        });
+      }
+    });
+
+    return ok({
+      accessToken,
+      member: {
+        id: member.id,
+        email: member.email,
+        firstName: member.firstName,
+        lastName: member.lastName,
+        verifiedAt: member.verifiedAt,
+        createdAt: member.createdAt,
+        updatedAt: member.updatedAt,
+      },
+    });
   }
 }

@@ -119,6 +119,7 @@ model Project {
 	sdkSecrets		SdkSecret[]
 	authMethods		AuthMethod[]
 	onboardings		Onboarding[]
+	memberAuthVerificationCodes MemberAuthVerificationCode[]
 }
 
 enum AuthMethodType {
@@ -175,15 +176,19 @@ model Agent {
 }
 
 model MemberAuthVerificationCode {
-	id						String   @id @default(uuid())
 	createdAt 		DateTime @default(now())
 	updatedAt 		DateTime @updatedAt @default(now())
 
-	code					String	@unique
+	code					String
 	expiresAt			DateTime
+
+	project				Project @relation(fields: [projectId], references: [id])
+	projectId			String
 
 	member				Member @relation(fields: [memberId], references: [id])
 	memberId			String @unique
+
+	@@id([projectId, memberId])
 }
 
 model MemberAuth {

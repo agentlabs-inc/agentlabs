@@ -125,14 +125,14 @@ CREATE TABLE "Agent" (
 
 -- CreateTable
 CREATE TABLE "MemberAuthVerificationCode" (
-    "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "code" TEXT NOT NULL,
     "expiresAt" TIMESTAMP(3) NOT NULL,
+    "projectId" TEXT NOT NULL,
     "memberId" TEXT NOT NULL,
 
-    CONSTRAINT "MemberAuthVerificationCode_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "MemberAuthVerificationCode_pkey" PRIMARY KEY ("projectId","memberId")
 );
 
 -- CreateTable
@@ -230,9 +230,6 @@ CREATE UNIQUE INDEX "Project_slug_key" ON "Project"("slug");
 CREATE UNIQUE INDEX "SdkSecret_secret_key" ON "SdkSecret"("secret");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "MemberAuthVerificationCode_code_key" ON "MemberAuthVerificationCode"("code");
-
--- CreateIndex
 CREATE UNIQUE INDEX "MemberAuthVerificationCode_memberId_key" ON "MemberAuthVerificationCode"("memberId");
 
 -- CreateIndex
@@ -273,6 +270,9 @@ ALTER TABLE "Agent" ADD CONSTRAINT "Agent_creatorId_fkey" FOREIGN KEY ("creatorI
 
 -- AddForeignKey
 ALTER TABLE "Agent" ADD CONSTRAINT "Agent_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "MemberAuthVerificationCode" ADD CONSTRAINT "MemberAuthVerificationCode_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "MemberAuthVerificationCode" ADD CONSTRAINT "MemberAuthVerificationCode_memberId_fkey" FOREIGN KEY ("memberId") REFERENCES "Member"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
