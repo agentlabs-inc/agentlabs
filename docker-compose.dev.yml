@@ -13,6 +13,8 @@ services:
     depends_on:
       - frontend
       - server
+    ports:
+      - ${PORT}:80
     restart: unless-stopped
 
   postgres:

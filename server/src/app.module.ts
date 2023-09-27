@@ -8,9 +8,10 @@ import { UsersModule } from './users/users.module';
 import { ProjectsModule } from './projects/projects.module';
 import { AgentsModule } from './agents/agents.module';
 import { AuthMethodsModule } from './auth-methods/auth-methods.module';
+import { AgentConnectionManagerModule } from './agent-connection-manager/agent-connection-manager.module';
 
 @Module({
-  imports: [ConfigModule, PrismaModule, UsersModule, IamModule, ProjectsModule, AgentsModule, AuthMethodsModule],
+  imports: [ConfigModule, PrismaModule, UsersModule, IamModule, ProjectsModule, AgentsModule, AuthMethodsModule, AgentConnectionManagerModule],
   controllers: [AppController],
   providers: [AppService],
 })
