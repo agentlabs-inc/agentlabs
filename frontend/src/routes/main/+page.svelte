@@ -8,12 +8,12 @@
 	import CardBody from "$lib/components/common/card/CardBody.svelte";
 	import Card from "$lib/components/common/card/Card.svelte";
 	import Button from "$lib/components/common/button/Button.svelte";
-	import { Forward } from "svelte-hero-icons";
+	import { Forward, PaperAirplane } from "svelte-hero-icons";
 	import { chat } from "$lib/store/chat/chat";
 	import { afterUpdate, onMount } from "svelte";
 	import { agentsService } from "../../services/agents-service";
 	import type { AgentInfo } from "../../services/agents.types";
-	import AuthOnly from "$lib/gates/AuthOnly.svelte";
+	import ChatInput from "$lib/components/chat/chat-input/ChatInput.svelte";
 
 	let defaultBubbles = [
 		{
@@ -171,118 +171,69 @@
 	});
 
 	$: console.log(agentInfos);
+
+	let inputValue = "";
 </script>
 
-<AuthOnly>
-	<div class="flex min-h-screen bg-background-primary">
-		<div class="shrink-0 relative min-h-full w-[290px]">
-			<Sidebar position="left">
-				<div class="sticky top-0">
-					<div class="py-5 px-5 flex items-center">
-						<img alt="AgentLabs Logo" src={logo} />
-					</div>
-					<SidebarHeader>Available agents</SidebarHeader>
-					<div>
-						{#each agentInfos as agentInfo}
-							<button
-								on:click={() => handleAgentSelection(agentInfo)}
-								class="border-b border-stroke-primary py-3 px-3 flex items-center gap-3 font-medium text-tab-label-primary antialiased hover:opacity-80 w-full">
-								<img
-									alt="avatar"
-									class="w-6 h-6 rounded-full"
-									src={agentInfo.logoUrl} />
-								<div class="flex flex-col">
-									<div class="text-sm">{agentInfo.name}</div>
-								</div>
-							</button>
-						{/each}
-					</div>
-				</div>
-			</Sidebar>
-		</div>
-
-		<div class="flex flex-col grow bg-background-primary">
-			{#if selectedAgentInfo}
-				<div class="flex flex-col grow gap-4 py-4 px-3 items-start">
-					{#if chatBubbles.length > 0}
-						{#each chatBubbles as bubble}
-							<div class="w-full">
-								<Bubble
-									from={bubble.from}
-									title={bubble.title}
-									time={bubble.time}
-									body={bubble.body}
-									type={bubble.type} />
-							</div>
-						{/each}
-					{:else}
-						<div class="flex items-center justify-center w-full">
-							<h2 class="text-white antialiased text-xl mt-24">
-								Add your first task to get started.
-							</h2>
+<div class="flex h-full flex-col justify-between">
+	<div class="flex flex-col grow bg-background-primary dark:bg-background-secondary-dark">
+		{#if selectedAgentInfo}
+			<div class="flex flex-col grow gap-4 py-4 px-3 items-start">
+				{#if defaultBubbles.length > 0}
+					{#each defaultBubbles as bubble}
+						<div class="w-full">
+							<Bubble
+								from={bubble.from}
+								title={bubble.title}
+								time={bubble.time}
+								body={bubble.body}
+								type={bubble.type} />
 						</div>
-					{/if}
-				</div>
-			{/if}
-			{#if !selectedAgentInfo}
-				<div class="flex flex-col grow gap-4 py-4 items-start">
-					<div class="w-full flex items-center flex-col mt-48 relative">
-						<div class="flex items-center">
-							<h2 class="font-semibold text-white text-3xl antialiased">AgentLabs</h2>
-							<div class="bg-white/90 ml-3 font-semibold rounded-md px-2">POC</div>
-						</div>
-						<p class="text-white/90 antialiased mt-4">
-							Select an agent on your left to get started.
-						</p>
+					{/each}
+				{:else}
+					<div class="flex items-center justify-center w-full">
+						<h2 class="text-white antialiased text-xl mt-24">
+							Add your first task to get started.
+						</h2>
 					</div>
+				{/if}
+			</div>
+		{/if}
+		{#if !selectedAgentInfo}
+			<div class="flex flex-col grow gap-4 py-4 items-start">
+				<div class="w-full flex items-center flex-col mt-48 relative">
+					<div class="flex items-center">
+						<h2
+							class="font-semibold text-body-accent dark:text-body-accent-dark text-3xl antialiased">
+							AgentLabs
+						</h2>
+						<div
+							class="text-body-subdued dark:text-body-subdued-dark ml-3 font-semibold rounded-md px-2 bg-background-tertiary dark:bg-background-tertiary-dark">
+							POC
+						</div>
+					</div>
+					<p class="text-body-subdued dark:text-body-subdued antialiased mt-4">
+						Select an agent on your left to get started.
+					</p>
 				</div>
-			{/if}
-
-			<div
-				class="shrink-0 py-3 px-3 w-full sticky bottom-0 border-t border-stroke-primary bg-background-primary flex justify-between items-center"
-				class:opacity-50={!selectedAgentInfo}>
-				<div>
-					<Button on:click={chat.interrupt} type="secondary"
-						>Interrupt with Feedback</Button>
+			</div>
+		{/if}
+	</div>
+	<!-- -->
+	<div
+		class="flex items-center justify-center py-3 px-3 border-t border-stroke-base dark:border-stroke-base-dark bg-background-secondary dark:bg-background-primary-dark flex-grow-0">
+		<div class="flex-grow max-w-4xl">
+			<div class="flex items-center justify-between gap-3">
+				<div class="w-full">
+					<ChatInput
+						bind:value={inputValue}
+						name="chat-input"
+						placeholder="Send a message" />
 				</div>
-				<div class="flex items-center gap-3">
-					<Button on:click={chat.continue}>Continue</Button>
-					<Button on:click={chat.activateContinuous} type="secondary" leftIcon={Forward}
-						>Continuous mode</Button>
+				<div class="h-full flex">
+					<Button rightIcon={PaperAirplane} />
 				</div>
 			</div>
 		</div>
-
-		<div class="shrink-0 relative min-h-full w-[490px]">
-			<Sidebar position="right">
-				<div class="sticky top-0">
-					<div class="py-3 px-3 flex justify-end">
-						<Avatar
-							alt="avatar"
-							src="https://media.licdn.com/dms/image/D4E03AQFXJiFpNFWE0A/profile-displayphoto-shrink_100_100/0/1680893451739?e=1699488000&v=beta&t=WiNliB67TjMHbaIycm8u55JDrX82xu9I20jw-b10u4A" />
-					</div>
-					<SidebarHeader>Tasks</SidebarHeader>
-					<div class="flex flex-col py-3 px-3 gap-3">
-						<form
-							class="flex items-center gap-x-4"
-							on:submit|preventDefault={handleTaskSubmission}>
-							<input
-								bind:value={currentTaskInputValue}
-								placeholder="New task"
-								type="text"
-								class="text-sm w-full border border-stroke-primary bg-card-bg-primary text-card-body-primary rounded-md py-3 px-3" />
-							<Button submit type="primary">Add</Button>
-						</form>
-						{#each tasks as task (task.text)}
-							<Card>
-								<CardBody>
-									{task.text}
-								</CardBody>
-							</Card>
-						{/each}
-					</div>
-				</div>
-			</Sidebar>
-		</div>
 	</div>
-</AuthOnly>
+</div>

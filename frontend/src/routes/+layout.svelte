@@ -1,16 +1,14 @@
 <script lang="ts">
 	import type { LayoutData } from "./$types";
 	import "../app.css";
-	import AuthContext from "$lib/context/AuthContext.svelte";
 	import LoadingFrame from "$lib/components/common/loading-frame/LoadingFrame.svelte";
+	import { themeStore } from "$lib/stores/theme";
 
 	export let data: LayoutData;
 </script>
 
 {#await data.lazy.context}
-	<LoadingFrame />
+	<LoadingFrame theme={$themeStore} />
 {:then context}
-	<AuthContext>
-		<slot />
-	</AuthContext>
+	<slot />
 {/await}
