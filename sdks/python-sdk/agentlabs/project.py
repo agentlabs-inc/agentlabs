@@ -17,4 +17,8 @@ class Project:
             raise Exception(f"Agent with id {id} already registered")
         self.registered_agent_ids.append(id)
 
-        return Agent(id)
+        return Agent({
+            'agent_id': id,
+            'project_id': self.config['project_id'],
+            'agentlabs_url': self.config['agentlabs_url']
+        })
