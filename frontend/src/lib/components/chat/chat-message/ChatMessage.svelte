@@ -11,7 +11,7 @@
 	$: bubbleClass =
 		from === "user"
 			? "bg-background-primary dark:bg-background-primary-dark"
-			: "bg-background-secondary dark:bg-background-secondary-dark";
+			: "bg-background-secondary dark:bg-[#282833]";
 </script>
 
 <div class={`${bubbleClass} rounded-md py-5 px-5 antialiased`}>
