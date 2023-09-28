@@ -1,17 +1,16 @@
 <script lang="ts">
-	import { ChartBar, User, UserGroup } from "svelte-hero-icons";
-	import { page } from "$app/stores";
-	import NavItem from "$lib/components/common/navigation/nav-item/NavItem.svelte";
+	import { ChatBubbleLeft, Icon, User, UserGroup } from "svelte-hero-icons";
 	import SidebarHeader from "$lib/components/sidebar/header/SidebarHeader.svelte";
+	import { goto } from "$app/navigation";
 
 	$: items = [
 		{
-			label: "Agent A",
+			label: "How to use the dashboard the right way",
 			icon: User,
 			path: ""
 		},
 		{
-			label: "Agent B",
+			label: "How to use AgentLabs?",
 			icon: User,
 			path: ""
 		}
@@ -21,13 +20,19 @@
 <div
 	class="sticky top-0 min-h-full border-r border-stroke-base dark:border-stroke-base-dark w-[250px] bg-background-secondary dark:bg-background-primary-dark">
 	<section>
-		<SidebarHeader>Available Agents</SidebarHeader>
+		<SidebarHeader>Discussions</SidebarHeader>
 	</section>
-	<section class="p-5">
-		<ul class="flex flex-col gap-3 antialiased">
+	<section class="py-5 px-3">
+		<div class="flex flex-col gap-3 antialiased">
 			{#each items as item}
-				<NavItem isActive={false} item={item} />
+				<div
+					on:keydown={() => {}}
+					on:click={() => goto(item.path)}
+					class="text-ellipsis overflow-ellipsis flex gap-2 items-center justify-start hover:bg-background-accent dark:hover:bg-background-accent-dark text-sm text-body-base dark:text-body-base-dark py-3 px-2 rounded-lg cursor-pointer">
+					<Icon src={ChatBubbleLeft} class="w-4 flex-shrink-0" />
+					<span class="block h-5 truncate grow-0">{item.label}</span>
+				</div>
 			{/each}
-		</ul>
+		</div>
 	</section>
 </div>

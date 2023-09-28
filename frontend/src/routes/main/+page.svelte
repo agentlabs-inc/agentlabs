@@ -1,17 +1,9 @@
 <script lang="ts">
 	import "../../app.css";
-	import logo from "$lib/assets/img/logo-white.svg";
 	import Bubble from "$lib/components/chat/bubble/Bubble.svelte";
-	import Sidebar from "$lib/components/sidebar/Sidebar.svelte";
-	import SidebarHeader from "$lib/components/sidebar/header/SidebarHeader.svelte";
-	import Avatar from "$lib/components/common/avatar/Avatar.svelte";
-	import CardBody from "$lib/components/common/card/CardBody.svelte";
-	import Card from "$lib/components/common/card/Card.svelte";
 	import Button from "$lib/components/common/button/Button.svelte";
-	import { Forward, PaperAirplane } from "svelte-hero-icons";
-	import { chat } from "$lib/store/chat/chat";
+	import { PaperAirplane } from "svelte-hero-icons";
 	import { afterUpdate, onMount } from "svelte";
-	import { agentsService } from "../../services/agents-service";
 	import type { AgentInfo } from "../../services/agents.types";
 	import ChatInput from "$lib/components/chat/chat-input/ChatInput.svelte";
 
@@ -60,117 +52,11 @@
 		}
 	] as const;
 
-	let chatBubbles = [] as any[];
-
-	let tasks = [] as any[];
-
-	let agentInfos: AgentInfo[] = [];
 	let selectedAgentInfo: AgentInfo | null = null;
-
-	const handleAgentSelection = (agentInfo: AgentInfo) => {
-		selectedAgentInfo = agentInfo;
-	};
-
-	let currentTaskInputValue = "";
-
-	const handleTaskSubmission = () => {
-		tasks = [...tasks, { text: currentTaskInputValue, status: "queued" }];
-		agentsService.addTask(selectedAgentInfo!.id, currentTaskInputValue);
-		currentTaskInputValue = "";
-	};
-
-	onMount(() => {
-		agentsService.onAgentListChange((infos) => {
-			agentInfos = infos;
-		});
-
-		agentsService.onTaskError((payload) => {
-			chatBubbles = [
-				...chatBubbles,
-				{
-					from: "agent",
-					title: "Task errored",
-					time: "11:00 PM",
-					body: payload.data.error,
-					type: "info"
-				}
-			];
-		});
-
-		agentsService.onLlmStart((payload) => {
-			chatBubbles = [
-				...chatBubbles,
-				{
-					from: "agent",
-					title: "Thinking...",
-					time: "11:00 PM",
-					body: "Thinking...",
-					type: "thinking",
-					isThinking: true
-				}
-			];
-		});
-
-		agentsService.onLlmEnd((payload) => {
-			const thinkingBubble = chatBubbles.findLast((bubble) => bubble.isThinking);
-
-			if (!thinkingBubble) {
-				throw new Error("No thinking bubble found");
-			}
-
-			const bubble = {
-				...thinkingBubble,
-				title: "Thought",
-				body: payload.data.text,
-				isThinking: false
-			};
-
-			chatBubbles = [...chatBubbles.filter((bubble) => bubble !== thinkingBubble), bubble];
-		});
-
-		agentsService.onToolStart((payload) => {
-			chatBubbles = [
-				...chatBubbles,
-				{
-					from: "agent",
-					title: "Using " + payload.data.tool_name + " tool",
-					time: "11:00 PM",
-					body:
-						'Starting tool "' +
-						payload.data.tool_name +
-						'"' +
-						" with input " +
-						payload.data.tool_input +
-						'".',
-					type: "action",
-					isUsingTool: true
-				}
-			];
-		});
-
-		agentsService.onToolEnd((payload) => {
-			const usingToolBubble = chatBubbles.findLast((bubble) => bubble.isUsingTool);
-
-			if (!usingToolBubble) {
-				throw new Error("No using tool bubble found");
-			}
-
-			const bubble = {
-				...usingToolBubble,
-				title: "Tool finished",
-				body: payload.data.tool_output,
-				isUsingTool: false
-			};
-
-			chatBubbles = [...chatBubbles.filter((bubble) => bubble !== usingToolBubble), bubble];
-		});
-	});
 
 	afterUpdate(() => {
 		window.scrollTo(0, document.body.scrollHeight);
 	});
-
-	$: console.log(agentInfos);
 
 	let inputValue = "";
 </script>
