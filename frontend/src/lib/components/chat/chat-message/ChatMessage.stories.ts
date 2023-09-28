@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/svelte";
 
-import Bubble from "./Bubble.svelte";
+import Message from "./ChatMessage.svelte";
 
 // More on how to set up stories at: https://storybook.js.org/docs/svelte/writing-stories/introduction
 const meta = {
-	title: "Chat/Bubble",
-	component: Bubble,
+	title: "Chat/Message",
+	component: Message,
 	tags: ["autodocs"],
 	argTypes: {
 		from: {
@@ -13,7 +13,7 @@ const meta = {
 			options: ["user", "agent"]
 		}
 	}
-} satisfies Meta<Bubble>;
+} satisfies Meta<Message>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

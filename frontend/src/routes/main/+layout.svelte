@@ -5,11 +5,11 @@
 </script>
 
 <AgentContext>
-	<div class="bg-background-primary dark:bg-background-primary-dark min-h-screen flex flex-col">
+	<div class="bg-background-primary dark:bg-background-primary-dark h-screen flex flex-col">
 		<TopNav />
-		<div class="flex flex-row grow">
+		<div class="flex flex-row flex-grow">
 			<LeftNav />
-			<div class="grow">
+			<div class="flex-grow">
 				<slot />
 			</div>
 		</div>

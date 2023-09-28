@@ -20,7 +20,7 @@
 <div
 	class="sticky top-0 min-h-full border-r border-stroke-base dark:border-stroke-base-dark w-[250px] bg-background-secondary dark:bg-background-primary-dark">
 	<section>
-		<SidebarHeader>Discussions</SidebarHeader>
+		<SidebarHeader>Conversations</SidebarHeader>
 	</section>
 	<section class="py-5 px-3">
 		<div class="flex flex-col gap-3 antialiased">

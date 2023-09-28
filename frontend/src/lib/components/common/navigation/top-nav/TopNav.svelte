@@ -6,8 +6,8 @@
 	import AgentLabsLogo from "$lib/components/common/logo/AgentLabsLogo.svelte";
 	import { themeStore } from "$lib/stores/theme";
 
-	$: userName = "Guest";
-	$: projectName = "Project Name";
+	$: userName = "Kevin Piacentini";
+	$: projectName = "My First Agent";
 
 	let isDropdownVisible = false;
 	const toggleDropdown = () => {
@@ -16,7 +16,7 @@
 </script>
 
 <div
-	class="bg-background-secondary dark:bg-background-primary-dark sticky top-0 flex justify-between items-center border-b border-stroke-base dark:border-stroke-base-dark h-[60px] z-20">
+	class="shrink-0 bg-background-secondary dark:bg-background-primary-dark sticky top-0 flex justify-between items-center border-b border-stroke-base dark:border-stroke-base-dark h-[60px] z-20">
 	<div class="pl-5">
 		<AgentLabsLogo theme={$themeStore} />
 	</div>
