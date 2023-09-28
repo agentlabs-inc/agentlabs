@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "agentlabs"
+version = "0.1.0"
+description = ""
+authors = ["Aurélien Brabant <main@aurelienbrabant.fr>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+websocket-client = "^1.6.3"
+python-socketio = "^5.9.0"
+requests = "^2.31.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
