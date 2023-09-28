@@ -1,5 +1,7 @@
 import os
-from typing import Callable, Set, TypedDict
+from typing import Any, Callable, Set, TypedDict
+
+from agentlabs.logger import AgentLogger
 
 from .server import emit, agent_namespace, emit_sync
 from .attachment import Attachment
@@ -44,13 +46,19 @@ class IncomingChatMessage:
 class Agent:
     is_connected: bool = False
 
-    def _echo_event(self, data):
-        print(data)
+    def _log_message(self, data: dict[str, Any]):
+        message = data.get('message', None)
+
+        if not message is None:
+            self._server_logger.info(message)
 
     def __init__(self, config: AgentConfig):
         self.is_debug_enabled = bool(os.environ.get('DEBUG', False))
         self.config = config
         self.io = socketio.Client(logger=self.is_debug_enabled, engineio_logger=self.is_debug_enabled)
+        self.io.on('message', self._log_message, namespace=agent_namespace)
+        self._client_logger = AgentLogger(agent_id=config['agent_id'], name="Client")
+        self._server_logger = AgentLogger(agent_id=config['agent_id'], name="Server")
 
     def on_chat_message(self, fn: Callable[[IncomingChatMessage], None]):
         self.io.on('chat-message', fn, namespace=agent_namespace)
@@ -62,14 +70,13 @@ class Agent:
         self.io.on('heartbeat', wrapper, namespace=agent_namespace)
 
     def connect(self):
-        self.io.connect(url=self.config['agentlabs_url'], namespaces=[agent_namespace], transports=['websocket'])
+        self._client_logger.info("Connecting to AgentLabs server...")
+        self.io.connect(url=self.config['agentlabs_url'], namespaces=[agent_namespace], transports=['websocket'], headers={
+            "x-agentlabs-project-id": self.config['project_id'],
+            "x-agentlabs-agent-id": self.config['agent_id'],
+            "user-agent": "agentlabs-python-sdk"
+            })
         self.is_connected = True
-        ack = emit_sync(self.io, 'register', {
-            "projectId": self.config['project_id'],
-            "agentId": self.config['agent_id']
-        })
-        print("register ack", ack)
-
 
     # Blocks the main thread until the agent is disconnected
     # Useful if you have only one agent and want to keep the program running
@@ -77,6 +84,7 @@ class Agent:
     def wait(self):
         if not self.is_connected:
             raise Exception("Agent is not connected, please call connect() before calling wait().")
+        self._client_logger.info("Blocking main thread until agent is disconnected.")
         self.io.wait()
 
     # Abruptly disconnects the agent from the server
