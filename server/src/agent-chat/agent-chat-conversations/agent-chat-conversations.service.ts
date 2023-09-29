@@ -7,6 +7,10 @@ import { CreateAgentChatConversationPayload } from './agent-chat-conversations.t
 export class AgentChatConversationsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async findAllConversations(): Promise<AgentConversation[]> {
+    return await this.prisma.agentConversation.findMany();
+  }
+
   async createConversation(
     payload: CreateAgentChatConversationPayload,
   ): Promise<AgentConversation> {
@@ -24,6 +28,19 @@ export class AgentChatConversationsService {
     const conversation = await this.prisma.agentConversation.findUnique({
       where: {
         id,
+      },
+    });
+
+    return conversation;
+  }
+
+  async findConversationByIdWithMessages(id: string) {
+    const conversation = await this.prisma.agentConversation.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        messages: true,
       },
     });
 
