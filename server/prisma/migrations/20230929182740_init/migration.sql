@@ -7,6 +7,9 @@ CREATE TYPE "AuthMethodType" AS ENUM ('OAUTH2', 'API_KEY', 'PASSWORDLESS_EMAIL',
 -- CreateEnum
 CREATE TYPE "IdentityProvider" AS ENUM ('EMAIL', 'GOOGLE', 'GITHUB', 'GITLAB', 'MICROSOFT', 'FACEBOOK', 'TWITTER', 'APPLE');
 
+-- CreateEnum
+CREATE TYPE "AgentMessageSource" AS ENUM ('USER', 'AGENT', 'SYSTEM');
+
 -- CreateTable
 CREATE TABLE "PasswordHashConfig" (
     "id" TEXT NOT NULL,
@@ -161,28 +164,21 @@ CREATE TABLE "AgentConversation" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "agentId" TEXT NOT NULL,
+    "memberId" TEXT NOT NULL,
 
     CONSTRAINT "AgentConversation_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "AgentTask" (
+CREATE TABLE "AgentMessage" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "agentConversationId" TEXT NOT NULL,
+    "updateAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "source" "AgentMessageSource" NOT NULL,
+    "text" TEXT NOT NULL,
+    "conversationId" TEXT NOT NULL,
 
-    CONSTRAINT "AgentTask_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "AgentTaskMessage" (
-    "id" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "agentTaskId" TEXT NOT NULL,
-    "message" TEXT NOT NULL,
-
-    CONSTRAINT "AgentTaskMessage_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "AgentMessage_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -246,7 +242,10 @@ ALTER TABLE "Member" ADD CONSTRAINT "Member_projectId_fkey" FOREIGN KEY ("projec
 ALTER TABLE "MemberIdentity" ADD CONSTRAINT "MemberIdentity_memberId_fkey" FOREIGN KEY ("memberId") REFERENCES "Member"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "AgentTask" ADD CONSTRAINT "AgentTask_agentConversationId_fkey" FOREIGN KEY ("agentConversationId") REFERENCES "AgentConversation"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "AgentConversation" ADD CONSTRAINT "AgentConversation_agentId_fkey" FOREIGN KEY ("agentId") REFERENCES "Agent"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "AgentTaskMessage" ADD CONSTRAINT "AgentTaskMessage_agentTaskId_fkey" FOREIGN KEY ("agentTaskId") REFERENCES "AgentTask"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "AgentConversation" ADD CONSTRAINT "AgentConversation_memberId_fkey" FOREIGN KEY ("memberId") REFERENCES "Member"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "AgentMessage" ADD CONSTRAINT "AgentMessage_conversationId_fkey" FOREIGN KEY ("conversationId") REFERENCES "AgentConversation"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

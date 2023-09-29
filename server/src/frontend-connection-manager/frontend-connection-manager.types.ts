@@ -6,12 +6,18 @@ export interface FrontendConnection {
   agentId: string;
   createdAt: Date;
   key: string;
-  userId: string;
+  memberId: string;
 }
 
 export interface RegisterFrontendConnectionPayload {
   projectId: string;
   agentId: string;
   socket: Socket;
-  userId: string;
+  memberId: string;
+}
+
+export interface ComputeFrontendConnectionKeyPayload {
+  projectId: string;
+  agentId: string;
+  memberId: string;
 }
