@@ -2,74 +2,102 @@
 	import Button from "$lib/components/common/button/Button.svelte";
 	import Input from "$lib/components/common/input/Input.svelte";
 	import AuthProviderButton from "$lib/components/auth/button/AuthProviderButton.svelte";
-	import { z } from "zod";
-	import { homeRoute } from "$lib/routes/routes";
-	import { getAuthContext } from "$lib/context/auth.context";
+	import { superForm } from "sveltekit-superforms/client";
+	import type { PageData } from "./$types";
+	import { z as zod } from "zod";
+	import ThemeSwitch from "$lib/components/common/theme-switch/ThemeSwitch.svelte";
+	import { verifyPasswordlessEmail } from "$lib/usecases/members/verifyPasswordlessEmail";
+	import { toastError } from "$lib/utils/toast";
+	import { homeRoute, registerRoute, verifyPasswordlessEmailRoute } from "$lib/routes/routes";
 	import { goto } from "$app/navigation";
-	const { login, currentUser } = getAuthContext();
+	import { requestPasswordlessEmail } from "$lib/usecases/members/requestPasswordlessEmail";
+	import { getMainContextStore } from "$lib/stores/main-context";
 
-	const form = {
-		email: {
-			value: "",
-			error: ""
-		}
-	};
+	export let data: PageData;
 
-	const formSchema = z.object({
-		email: z.string().email({
-			message: "Please enter a valid email"
+	const projectConfig = getMainContextStore().publicProjectConfig;
+
+	if (!projectConfig) {
+		throw new Error("Project config not found");
+	}
+
+	let submitting = false;
+
+	const { form, errors, validate } = superForm(data.form, {
+		validators: zod.object({
+			email: zod.string().email()
 		})
 	});
 
-	let isLoading = false;
+	const handleValidation = async (e: Event) => {
+		e.preventDefault();
+		const res = await validate();
 
-	const onSubmit = async (event: Event) => {
-		event.preventDefault();
-
-		isLoading = true;
-		const result = formSchema.safeParse({
-			email: form.email.value
-		});
-
-		if (!result.success) {
-			form.email.error = result.error.errors[0].message;
-		} else {
-			login("John Doe", "pass");
-			console.log("goto!", $currentUser);
-			await goto(homeRoute.path());
-			form.email.error = "";
+		if (!res.valid) {
+			errors.set(res.errors);
+			return;
 		}
-		isLoading = false;
+		try {
+			submitting = true;
+			await requestPasswordlessEmail({
+				projectId: projectConfig.id,
+				email: $form.email
+			});
+
+			goto(verifyPasswordlessEmailRoute.path($form.email));
+		} catch (e: any) {
+			toastError(e?.message ?? "Something went wrong");
+		} finally {
+			submitting = false;
+		}
 	};
 </script>
 
-<div class="flex min-h-screen items-center justify-center bg-background-primary">
+<div
+	class="flex min-h-screen items-center justify-center bg-background-primary dark:bg-background-primary-dark">
+	<ThemeSwitch />
 	<div class="p-3 w-full flex flex-col items-center">
-		<h1 class="text-body-color-primary text-2xl antialiased">Welcome!</h1>
+		<h1 class="text-body-accent dark:text-body-accent-dark text-4xl font-bold antialiased">
+			Welcome back!
+		</h1>
 		<div class="my-5" />
 		<div class="w-full sm:w-[320px]">
-			<form on:submit={onSubmit}>
+			<form on:submit={handleValidation}>
 				<Input
-					bind:value={form.email.value}
+					bind:value={$form.email}
+					label="Email"
+					required
 					name="email"
+					errors={$errors?.email}
 					type="text"
-					error={form.email.error}
-					placeholder="Enter your email" />
+					placeholder="Your email" />
 				<div class="my-5" />
-				<div class="w-full">
-					<Button loading={isLoading} submit type="primary" fullWidth center
-						>Request code</Button>
+				<div class="w-full mb-3">
+					<Button
+						on:click={handleValidation}
+						loading={submitting}
+						submit
+						type="primary"
+						fullWidth
+						center>Sign in</Button>
 				</div>
+				<span class="text-sm text-center m-auto text-body-base dark:text-body-base-dark"
+					><a href="/forgot-password" class="underline">Forgot password?</a></span>
 			</form>
 			<div class="my-7 flex gap-5 justify-between items-center">
-				<hr class="border-stroke-primary grow" />
-				<span class="text-body-color-primary text-sm antialiased">OR</span>
-				<hr class="border-stroke-primary grow" />
+				<hr class="border-stroke-base dark:border-stroke-base-dark grow" />
+				<span class="text-body-base dark:text-body-base-dark text-sm antialiased">OR</span>
+				<hr class="border-stroke-base dark:border-stroke-base-dark grow" />
 			</div>
 			<div class="flex flex-col gap-3">
 				<AuthProviderButton provider="google" />
-				<AuthProviderButton provider="github" />
-				<AuthProviderButton provider="gitlab" />
+			</div>
+
+			<div class="text-center mt-10">
+				<span class="text-sm text-center m-auto text-body-base dark:text-body-base-dark"
+					>No account? <a href={registerRoute.path()} class="underline"
+						>Register for free</a
+					></span>
 			</div>
 		</div>
 	</div>

@@ -1,9 +1,12 @@
 #!/bin/bash
 set -e
 
-echo "Generating typescript client..."
-
 cd typescript-client
-sh ./build.sh
 
-echo "Typescript client generated!"
+echo "🚀 Generating typescript client for console..."
+sh ./build_for_console.sh
+echo "✅ Done!\n"
+
+echo "🚀 Generating typescript client for frontend..."
+sh ./build_for_frontend.sh
+echo "✅ Done!"

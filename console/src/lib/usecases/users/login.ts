@@ -5,7 +5,6 @@ import dayjs from "dayjs";
 import { setUserAuth } from "$lib/stores/auth";
 
 export const loginUser = async (user: LoginUserDto): Promise<User> => {
-	console.log("LOL");
 	const result = await UsersService.login({
 		requestBody: {
 			email: user.email,

@@ -1,5 +1,11 @@
 import { plainToClass } from 'class-transformer';
-import { IsOptional, IsPort, IsString, validateSync } from 'class-validator';
+import {
+  IsNumber,
+  IsOptional,
+  IsPort,
+  IsString,
+  validateSync,
+} from 'class-validator';
 
 export class Environment {
   @IsOptional()
@@ -8,10 +14,18 @@ export class Environment {
 
   @IsString()
   USERS_ACCESS_TOKEN_SECRET: string;
+
+  @IsString()
+  MEMBERS_ACCESS_TOKEN_SECRET: string;
+
+  @IsNumber()
+  MEMBERS_AUTH_CODE_EXPIRATION_DELAY_IN_MINUTES: number;
 }
 
 export const validateEnv = (env: NodeJS.ProcessEnv) => {
-  const validatedEnv = plainToClass(Environment, env);
+  const validatedEnv = plainToClass(Environment, env, {
+    enableImplicitConversion: true,
+  });
 
   if (env.SKIP_ENV_VALIDATION) {
     return validatedEnv;

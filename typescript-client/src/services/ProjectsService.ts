@@ -6,6 +6,7 @@ import type { CreatedProjectDto } from '../models/CreatedProjectDto';
 import type { CreateProjectDto } from '../models/CreateProjectDto';
 import type { ListProjectsResultDto } from '../models/ListProjectsResultDto';
 import type { ProjectExistsResponseDto } from '../models/ProjectExistsResponseDto';
+import type { PublicProjectConfigDto } from '../models/PublicProjectConfigDto';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -62,6 +63,27 @@ export class ProjectsService {
             url: '/projects/exists/{slug}',
             path: {
                 'slug': slug,
+            },
+        });
+    }
+
+    /**
+     * @returns PublicProjectConfigDto
+     * @throws ApiError
+     */
+    public static getPublicConfig({
+        hostname,
+    }: {
+        hostname: string,
+    }): CancelablePromise<PublicProjectConfigDto> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/projects/getPublicConfig',
+            query: {
+                'hostname': hostname,
+            },
+            errors: {
+                422: `Unprocessable hostname or unknown project`,
             },
         });
     }
