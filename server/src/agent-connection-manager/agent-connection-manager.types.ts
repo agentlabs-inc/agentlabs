@@ -8,7 +8,7 @@ export interface AgentConnection {
   createdAt: Date;
 }
 
-export interface RegisterConnectionPayload {
+export interface RegisterAgentConnectionPayload {
   socket: Socket;
   agentId: string;
   projectId: string;

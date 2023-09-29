@@ -24,8 +24,24 @@ export class FrontendConnectionGateway
   handleConnection(client: Socket) {
     const projectId = client.handshake.headers['x-agentlabs-project-id'];
     const agentId = client.handshake.headers['x-agentlabs-agent-id'];
+    const userId = client.handshake.headers['x-agentlabs-user-id'];
 
-    this.logger.debug(`Frontend client connected: ${projectId} ${agentId}`);
+    this.logger.debug(
+      `Frontend client connected: project=${projectId} agent=${agentId} user=${userId}`,
+    );
+
+    if (typeof userId !== 'string') {
+      const message =
+        'Failed to identify frontend client: Missing user ID. Expected header: x-agentlabs-user-id';
+
+      this.logger.error(message);
+      client.send({
+        message,
+      });
+      client.disconnect(true);
+
+      return;
+    }
 
     if (typeof projectId !== 'string') {
       const message =
@@ -57,6 +73,7 @@ export class FrontendConnectionGateway
       socket: client,
       agentId,
       projectId,
+      userId,
     });
 
     client.send('Connected to server, waiting for messages...');

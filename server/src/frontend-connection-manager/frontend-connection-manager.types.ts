@@ -5,11 +5,13 @@ export interface FrontendConnection {
   projectId: string;
   agentId: string;
   createdAt: Date;
-  agentKey: string;
+  key: string;
+  userId: string;
 }
 
 export interface RegisterFrontendConnectionPayload {
   projectId: string;
   agentId: string;
   socket: Socket;
+  userId: string;
 }

@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { RegisterConnectionPayload } from 'src/agent-connection-manager/agent-connection-manager.types';
-import { FrontendConnection } from './frontend-connection-manager.types';
+import {
+  FrontendConnection,
+  RegisterFrontendConnectionPayload,
+} from './frontend-connection-manager.types';
 
 @Injectable()
 export class FrontendConnectionManagerService {
@@ -17,7 +19,7 @@ export class FrontendConnectionManagerService {
     }, 10_000);
   }
 
-  private computeAgentKey(projectId: string, agentId: string) {
+  private computeKey(projectId: string, agentId: string) {
     return `${projectId}:${agentId}`;
   }
 
@@ -29,18 +31,20 @@ export class FrontendConnectionManagerService {
     socket,
     agentId,
     projectId,
-  }: RegisterConnectionPayload) {
-    const agentKey = this.computeAgentKey(projectId, agentId);
+    userId,
+  }: RegisterFrontendConnectionPayload) {
+    const key = this.computeKey(projectId, agentId);
     const connection: FrontendConnection = {
       agentId,
       projectId,
       socket,
       createdAt: new Date(),
-      agentKey,
+      key: key,
+      userId,
     };
 
     this.sidToConnection.set(socket.id, connection);
-    this.agentKeyToConnection.set(agentKey, connection);
+    this.agentKeyToConnection.set(key, connection);
   }
 
   removeConnectionBySid(sid: string): boolean {
@@ -51,7 +55,7 @@ export class FrontendConnectionManagerService {
     }
 
     this.sidToConnection.delete(sid);
-    this.agentKeyToConnection.delete(connection.agentKey);
+    this.agentKeyToConnection.delete(connection.key);
 
     return true;
   }
