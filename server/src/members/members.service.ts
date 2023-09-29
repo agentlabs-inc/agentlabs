@@ -190,12 +190,14 @@ export class MembersService {
               ],
             },
             verificationCode: {
-              connectOrCreate: {
+              upsert: {
                 where: {
-                  projectId_memberId: {
-                    projectId: projectId,
-                    memberId: member.id,
-                  },
+                  projectId: projectId,
+                  memberId: member.id,
+                },
+                update: {
+                  code: verificationCode.code,
+                  expiresAt: verificationCode.expiresAt,
                 },
                 create: {
                   projectId: projectId,
