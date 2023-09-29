@@ -39,7 +39,7 @@ export class LocalAuthMiddleware implements NestMiddleware {
         payload: null,
       };
     } catch (e) {
-      console.log('IMpossible', e);
+      console.error('Invalid token', e);
       return {
         isValid: false,
         payload: null,
