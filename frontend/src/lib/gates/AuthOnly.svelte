@@ -9,9 +9,9 @@
 
 	onMount(async () => {
 		if (!$authStore.member) {
-			console.log("Not logged in.");
 			return await goto(loginRoute.path());
 		}
+		loading = false;
 	});
 </script>
 
