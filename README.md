@@ -58,14 +58,13 @@ AgentLabs is <b>fully open-sourced (Apache 2.0)</b> and AgentLabs Inc. offers cl
 
 ## Status (UNDER ACTIVE DEVELOPMENT 🏗️)
 
-This repository is under active development, a first stable release is planned for the next few weeks.
+This repository is under active development, an Alpha release is planned for mid-october.
 
 Subscribe to [agentlabs.dev](https://agentlabs.dev) to get notified when the first stable release is out!
 
 ### Alpha Release
 
-The first Alpha release is under active development planned for mid october.
-Here's what will be included.
+Here's what will be included in the Alpha release (planned for mid-october).
 
 | Component     | Status | Features                                                                                                                                           |
 |:--------------|:------:|----------------------------------------------------------------------------------------------------------------------------------------------------|
