@@ -66,11 +66,15 @@
 		<div class="max-w-md">
 			<Card>
 				<div class="px-10 py-14 flex items-center justify-center flex-col">
-					<Typography type="mainSectionTitle">Enter your verification code</Typography>
-					<Spacer size="xs" />
-					<Typography type="subTitle"
-						>Please enter the magic code we have sent by email to {email}
-					</Typography>
+					<div class="text-center">
+						<Typography type="mainSectionTitle"
+							>Enter your verification code</Typography>
+						<Spacer size="xs" />
+						<Typography type="subTitle"
+							>Please enter the magic code we have sent by email to {email}
+						</Typography>
+					</div>
+
 					<div class="my-5" />
 					<div class="w-full sm:w-[320px]">
 						<form on:submit={handleValidation}>

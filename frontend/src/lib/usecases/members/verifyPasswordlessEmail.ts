@@ -25,7 +25,7 @@ export const verifyPasswordlessEmail = async (params: {
 		email: result.member.email,
 		firstName: result.member.firstName,
 		lastName: result.member.lastName,
-		verifiedAt: result.member.verifiedAt
+		verifiedAt: dayjs(result.member.verifiedAt).toDate()
 	};
 
 	setMemberAuth(loggedMember, result.accessToken);

@@ -3,58 +3,10 @@
 	import ChatMessage from "$lib/components/chat/chat-message/ChatMessage.svelte";
 	import Button from "$lib/components/common/button/Button.svelte";
 	import { PaperAirplane } from "svelte-hero-icons";
-	import { afterUpdate, onMount } from "svelte";
-	import type { AgentInfo } from "../../services/agents.types";
+	import { afterUpdate } from "svelte";
 	import ChatInput from "$lib/components/chat/chat-input/ChatInput.svelte";
 	import dayjs from "dayjs";
 	import type { Message } from "$lib/entities/message/message";
-
-	let defaultBubbles = [
-		{
-			from: "user",
-			title: "Feedback",
-			time: "11:00 PM",
-			body: "You must stop this now",
-			type: undefined
-		},
-		{
-			from: "user",
-			title: "Feedback",
-			time: "11:00 PM",
-			body: "You must stop this now",
-			type: undefined
-		},
-		{
-			from: "user",
-			title: "Feedback",
-			time: "11:00 PM",
-			body: "You must stop this now",
-			type: undefined
-		},
-		{
-			from: "agent",
-			title: "Task Added - Find more relevant articles",
-			time: "11:00 PM",
-			body: "You must stop this now",
-			type: "info"
-		},
-		{
-			from: "agent",
-			title: "Thinking - Trying to plan new posts",
-			time: "11:00 PM",
-			body: "You must stop this now",
-			type: "thinking"
-		},
-		{
-			from: "agent",
-			title: "Action - Searching on Google",
-			time: "11:00 PM",
-			body: "Based on the result I found on Google it seems Hacker News is a great source to find new ideas. I am about to post a new artice there.",
-			type: "action"
-		}
-	] as const;
-
-	let selectedAgentInfo: AgentInfo | null = null;
 
 	afterUpdate(() => {
 		window.scrollTo(0, document.body.scrollHeight);
@@ -67,8 +19,7 @@
 			senderId: "1",
 			from: "user",
 			createdAt: new Date(),
-			id: "1",
-			seen: false
+			id: "1"
 		},
 		{
 			text:
@@ -84,8 +35,7 @@
 			senderId: "1",
 			from: "agent",
 			createdAt: new Date(),
-			id: "1",
-			seen: false
+			id: "1"
 		}
 	];
 
@@ -103,8 +53,7 @@
 				senderId: "1",
 				from: "user",
 				createdAt: new Date(),
-				id: "1",
-				seen: false
+				id: "1"
 			}
 		];
 		inputValue = "";
