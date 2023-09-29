@@ -9,9 +9,12 @@ import { ProjectsModule } from './projects/projects.module';
 import { AgentsModule } from './agents/agents.module';
 import { AuthMethodsModule } from './auth-methods/auth-methods.module';
 import { AgentConnectionManagerModule } from './agent-connection-manager/agent-connection-manager.module';
+import { FrontendConnectionManagerModule } from './frontend-connection-manager/frontend-connection-manager.module';
+import { AgentConnectionModule } from './agent-connection/agent-connection.module';
+import { FrontendConnectionModule } from './frontend-connection/frontend-connection.module';
 
 @Module({
-  imports: [ConfigModule, PrismaModule, UsersModule, IamModule, ProjectsModule, AgentsModule, AuthMethodsModule, AgentConnectionManagerModule],
+  imports: [ConfigModule, PrismaModule, UsersModule, IamModule, ProjectsModule, AgentsModule, AuthMethodsModule, AgentConnectionManagerModule, FrontendConnectionManagerModule, AgentConnectionModule, FrontendConnectionModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import {
   AgentConnection,
-  RegisterConnectionPayload,
+  RegisterAgentConnectionPayload,
 } from './agent-connection-manager.types';
 
 @Injectable()
@@ -44,7 +44,7 @@ export class AgentConnectionManagerService {
     socket,
     projectId,
     agentId,
-  }: RegisterConnectionPayload): void {
+  }: RegisterAgentConnectionPayload): void {
     const key = this.computeAgentKey(projectId, agentId);
     const connection: AgentConnection = {
       projectId,

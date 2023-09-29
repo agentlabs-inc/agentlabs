@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
-import { AgentConnectionManagerGateway } from './agent-connection-manager.gateway';
+import { FrontendConnectionManagerModule } from 'src/frontend-connection-manager/frontend-connection-manager.module';
 import { AgentConnectionManagerService } from './agent-connection-manager.service';
 
 @Module({
-  providers: [AgentConnectionManagerGateway, AgentConnectionManagerService]
+  imports: [FrontendConnectionManagerModule],
+  providers: [AgentConnectionManagerService],
+  exports: [AgentConnectionManagerService],
 })
 export class AgentConnectionManagerModule {}
