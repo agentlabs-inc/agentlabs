@@ -7,6 +7,7 @@
 	export let data: LayoutData;
 
 	import { browser } from "$app/environment";
+	import { SvelteToast } from "@zerodevx/svelte-toast";
 
 	let darkMode = $themeStore === "dark";
 
@@ -21,8 +22,9 @@
 	}
 </script>
 
-{#await data.lazy.context}
+{#await data.mainLayoutLazy.isLoaded}
 	<LoadingFrame theme={$themeStore} />
 {:then context}
 	<slot />
+	<SvelteToast />
 {/await}

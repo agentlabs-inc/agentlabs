@@ -7,6 +7,13 @@
 	import { onMount } from "svelte";
 	import { goto } from "$app/navigation";
 	import { agentChatRoute } from "$lib/routes/routes";
+	import { getMainContextStore } from "$lib/stores/main-context";
+
+	const projectConfig = getMainContextStore().publicProjectConfig;
+
+	if (!projectConfig) {
+		throw new Error("Project config not found");
+	}
 
 	const onAgentSelected = (agent: Agent) => {
 		setSelectedAgent(agent);
@@ -16,7 +23,7 @@
 	let loading = false;
 	onMount(async () => {
 		loading = true;
-		await fetchAgents();
+		await fetchAgents(projectConfig.id);
 		loading = false;
 	});
 

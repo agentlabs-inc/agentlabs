@@ -138,6 +138,28 @@ paths:
         - projects
       security:
         - bearer: []
+  /projects/getPublicConfig:
+    get:
+      operationId: getPublicConfig
+      parameters:
+        - name: hostname
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicProjectConfigDto"
+        "422":
+          description: Unprocessable hostname or unknown project
+      tags:
+        - projects
+      security:
+        - bearer: []
   /agents/create:
     post:
       operationId: createAgent
@@ -267,7 +289,7 @@ paths:
         - bearer: []
   /members/p/{projectId}/requestPasswordlessEmail:
     post:
-      operationId: registerWithPasswordlessEmail
+      operationId: requestPasswordlessEmail
       parameters:
         - name: projectId
           required: true
@@ -288,7 +310,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/RegisterResponseDto"
       tags:
-        - members
+        - Members
   /members/p/{projectId}/verifyPasswordlessEmail:
     post:
       operationId: verifyPasswordlessEmail
@@ -312,7 +334,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/LoginMemberResponseDto"
       tags:
-        - members
+        - Members
 info:
   title: AgentLabs API
   description: Build AI Agents in minutes, not months.
@@ -523,6 +545,25 @@ components:
           type: boolean
       required:
         - exists
+    PublicProjectConfigDto:
+      type: object
+      properties:
+        hostname:
+          type: string
+        id:
+          type: string
+        slug:
+          type: string
+        name:
+          type: string
+        organizationId:
+          type: string
+      required:
+        - hostname
+        - id
+        - slug
+        - name
+        - organizationId
     CreateAgentDto:
       type: object
       properties:

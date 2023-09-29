@@ -1,7 +1,7 @@
 const basePath = "";
 
 export const homeRoute = {
-	path: () => `${basePath}/project/overview`
+	path: () => `${basePath}/main`
 };
 
 export const selectAgentRoute = {
@@ -14,4 +14,16 @@ export const agentChatRoute = {
 
 export const logoutRoute = {
 	path: () => `${basePath}/logout`
+};
+
+export const loginRoute = {
+	path: () => `${basePath}/login`
+};
+
+export const registerRoute = {
+	path: () => `${basePath}/register`
+};
+
+export const verifyPasswordlessEmailRoute = {
+	path: (email: string) => `${basePath}/register/verify?email=${email}`
 };

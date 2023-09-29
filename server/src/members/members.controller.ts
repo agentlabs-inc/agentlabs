@@ -12,13 +12,13 @@ import { RequestPasswordlessEmailDto } from './dtos/request.passwordless-email.d
 import { VerifyPasswordlessEmailDto } from './dtos/verify-passwordless-email.dto';
 import { MembersService } from './members.service';
 
-@ApiTags('members')
+@ApiTags('Members')
 @Controller('members')
 export class MembersController {
   constructor(private readonly membersService: MembersService) {}
 
   @Post('/p/:projectId/requestPasswordlessEmail')
-  async registerWithPasswordlessEmail(
+  async requestPasswordlessEmail(
     @Param('projectId') projectId: string,
     @Body() dto: RequestPasswordlessEmailDto,
   ): Promise<RegisterResponseDto> {
