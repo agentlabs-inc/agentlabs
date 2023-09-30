@@ -168,6 +168,7 @@ export class FrontendConnectionGateway
         conversationId,
         agentId: frontendConnection.agentId,
         messageId: message.id,
+        memberId: frontendConnection.memberId,
       },
     });
 
