@@ -15,5 +15,6 @@
 			"plugins": [ "prettier-plugin-svelte" ]
 		}
 	} ],
-	"pluginSearchDirs": [ "." ]
+	"pluginSearchDirs": [ "." ],
+	"plugins": ["prettier-plugin-organize-imports"]
 }

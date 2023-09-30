@@ -4,8 +4,10 @@ import { err, ok, PResult } from '../common/result';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatedProjectDto } from './dtos/created.project.dto';
 import { ListProjectsResultDto } from './dtos/list.projects.result.dto';
+import { PublicProjectConfigDto } from './dtos/public.project.config.dto';
 import {
   CreateProjectError,
+  GetPublicConfigError,
   ListOrganizationProjectsError,
   VerifyIfIsOrganizationUserError,
 } from './projects.errors';
@@ -162,5 +164,40 @@ export class ProjectsService {
     });
 
     return !!project;
+  }
+
+  async getPublicConfig(
+    hostname: string,
+  ): PResult<PublicProjectConfigDto, GetPublicConfigError> {
+    const slug = hostname.split('.')[0];
+
+    if (!slug) {
+      return err('UnprocessableHostname');
+    }
+
+    const project = await this.prisma.project.findUnique({
+      where: {
+        slug,
+      },
+      include: {
+        organization: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+
+    if (!project) {
+      return err('ProjectNotFound');
+    }
+
+    return ok({
+      hostname,
+      id: project.id,
+      slug: project.slug,
+      name: project.name,
+      organizationId: project.organization.id,
+    });
   }
 }

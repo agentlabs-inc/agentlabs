@@ -16,3 +16,10 @@ export const ListOrganizationProjectsErrors = [
 ] as const;
 export type ListOrganizationProjectsError =
   (typeof ListOrganizationProjectsErrors)[number];
+
+export const GetPublicConfigErrors = [
+  'UnprocessableHostname',
+  'ProjectNotFound',
+] as const;
+
+export type GetPublicConfigError = (typeof GetPublicConfigErrors)[number];

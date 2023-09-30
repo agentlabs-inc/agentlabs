@@ -1,19 +1,19 @@
-const basePath = "/console";
+const basePath = "";
 
 export const homeRoute = {
-	path: () => `${basePath}/project/overview`
+	path: () => `${basePath}/main`
 };
 
-export const overviewRoute = {
-	path: () => `${basePath}/project/overview`
+export const selectAgentRoute = {
+	path: () => `${basePath}/agents`
 };
 
-export const authSettingsRoute = {
-	path: () => `${basePath}/project/auth`
+export const agentChatRoute = {
+	path: () => `${basePath}/main`
 };
 
-export const settingsRoute = {
-	path: () => `${basePath}/project/settings`
+export const logoutRoute = {
+	path: () => `${basePath}/logout`
 };
 
 export const loginRoute = {
@@ -24,14 +24,6 @@ export const registerRoute = {
 	path: () => `${basePath}/register`
 };
 
-export const forgotPasswordRoute = {
-	path: () => `${basePath}/forgot-password`
-};
-
-export const onboardingRoute = {
-	path: () => `${basePath}/onboarding`
-};
-
-export const projectOnboardingRoute = {
-	path: (projectId: string) => `${basePath}/project/${projectId}/onboarding`
+export const verifyPasswordlessEmailRoute = {
+	path: (email: string) => `${basePath}/register/verify?email=${email}`
 };

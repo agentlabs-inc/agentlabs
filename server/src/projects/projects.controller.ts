@@ -5,16 +5,24 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Req,
   UnauthorizedException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiTags,
+  ApiUnprocessableEntityResponse,
+} from '@nestjs/swagger';
 import { RequireAuthMethod } from '../iam/iam.decorators';
 import { LocalAuthenticatedRequest } from '../iam/iam.types';
 import { CreateProjectDto } from './dtos/create.project.dto';
 import { CreatedProjectDto } from './dtos/created.project.dto';
+import { GetPublicConfigDto } from './dtos/get.public.config.dto';
 import { ListProjectsResultDto } from './dtos/list.projects.result.dto';
 import { ProjectExistsResponseDto } from './dtos/project.exists.response.dto';
+import { PublicProjectConfigDto } from './dtos/public.project.config.dto';
 import { ProjectsService } from './projects.service';
 
 @ApiTags('projects')
@@ -104,5 +112,36 @@ export class ProjectsController {
     return {
       exists,
     };
+  }
+
+  @ApiUnprocessableEntityResponse({
+    description: 'Unprocessable hostname or unknown project',
+  })
+  @Get('/getPublicConfig')
+  async getPublicConfig(
+    @Query() queryParams: GetPublicConfigDto,
+  ): Promise<PublicProjectConfigDto> {
+    console.log('params', queryParams);
+    const config = await this.projectsService.getPublicConfig(
+      queryParams.hostname,
+    );
+
+    if (config.ok) {
+      return config.value;
+    }
+
+    switch (config.error) {
+      case 'UnprocessableHostname':
+        throw new UnprocessableEntityException({
+          code: 'UnprocessableHostname',
+          message: 'Unprocessable hostname',
+        });
+
+      case 'ProjectNotFound':
+        throw new UnprocessableEntityException({
+          code: 'ProjectNotFound',
+          message: 'Project not found',
+        });
+    }
   }
 }

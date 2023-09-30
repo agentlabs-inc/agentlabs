@@ -56,11 +56,25 @@ AgentLabs is <b>fully open-sourced (Apache 2.0)</b> and AgentLabs Inc. offers cl
   <a href="https://agentlabs.dev"><img src="./imgs/python-sdk-example.jpeg" alt="agentlabs.dev"></a>
 </p>
 
-## Status
+## Status (UNDER ACTIVE DEVELOPMENT 🏗️)
 
-This repository is under active development, a first stable release is planned for the next few weeks.
+This repository is under active development, an Alpha release is planned for mid-october.
 
 Subscribe to [agentlabs.dev](https://agentlabs.dev) to get notified when the first stable release is out!
+
+### Alpha Release
+
+Here's what will be included in the Alpha release (planned for mid-october).
+
+| Component     | Status | Features                                                                                                                                        |
+|:--------------|:------:|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| Backoffice    |  🏗️   | <ul><li>Manage your projects</li><li>Configure basic auth methods for users</li><li>Manage agents</li><li>Manage your users</li></ul>           |
+| Agent UI      |  🏗️   | <ul><li>Authentication / Registration</li><li>Basic multi-agent support</li><li>Chat-based UI</li><li>Realtime request/response streaming</li></ul> |
+| SDKs          |  🏗️   | <ul><li>Python Streaming backend SDK</li><li>Typescript Streaming backend SDK</li></ul>                                                         |
+| Cloud hosting |   🏗️   | Basic support for cloud hosted version                                                                                                          |
+| Self hosting  |   🏗️   | Self hosted version with `docker-compose`                                                                                                       |
+| Documentation |   🏗️   | Everything will be documented so you can get started either with the cloud version or the self hosted version.                                  |
+
 
 <p align="center">
 .
