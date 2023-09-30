@@ -1,14 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { AgentConversation } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateAgentChatConversationPayload } from './agent-chat-conversations.types';
+import {
+  CreateAgentChatConversationPayload,
+  FindAllConversationsPayload,
+} from './agent-chat-conversations.types';
 
 @Injectable()
 export class AgentChatConversationsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAllConversations(): Promise<AgentConversation[]> {
-    return await this.prisma.agentConversation.findMany();
+  async findAllConversations({
+    memberId,
+    agentId,
+  }: FindAllConversationsPayload): Promise<AgentConversation[]> {
+    return await this.prisma.agentConversation.findMany({
+      where: {
+        agentId,
+        memberId,
+      },
+    });
   }
 
   async createConversation(

@@ -1,15 +1,31 @@
-import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Query,
+} from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { AgentChatConversationsService } from './agent-chat-conversations.service';
+import { GetAllConversationsDto } from './dto/get-all-conversations.dto';
 
-@Controller('agent-chat-conversations')
+@ApiTags('Agent Chat Conversations')
+@Controller('conversations')
 export class AgentChatConversationsController {
   constructor(
     private readonly conversationsService: AgentChatConversationsService,
   ) {}
 
   @Get('')
-  async getAllConversations() {
-    return await this.conversationsService.findAllConversations();
+  async getAllConversations(
+    @Query() { memberId, agentId }: GetAllConversationsDto,
+  ) {
+    const conversations = await this.conversationsService.findAllConversations({
+      agentId,
+      memberId,
+    });
+
+    return conversations;
   }
 
   // TODO: only return the N most recent messages for the specified conversation

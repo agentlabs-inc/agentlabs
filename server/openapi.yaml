@@ -265,14 +265,26 @@ paths:
         - authMethods
       security:
         - bearer: []
-  /agent-chat-conversations:
+  /conversations:
     get:
       operationId: getAllConversations
-      parameters: []
+      parameters:
+        - name: agentId
+          required: true
+          in: query
+          schema:
+            type: string
+        - name: memberId
+          required: true
+          in: query
+          schema:
+            type: string
       responses:
         "200":
           description: ""
-  /agent-chat-conversations/{conversationId}:
+      tags:
+        - Agent Chat Conversations
+  /conversations/{conversationId}:
     get:
       operationId: getConversationById
       parameters:
@@ -288,6 +300,8 @@ paths:
             application/json:
               schema:
                 type: object
+      tags:
+        - Agent Chat Conversations
 info:
   title: AgentLabs API
   description: Build AI Agents in minutes, not months.
