@@ -20,10 +20,10 @@ class _DecodedUser(TypedDict):
 
 class _ChatMessage(TypedDict):
     text: str
-    senderType: str
-    id: str
-    decodedUser: _DecodedUser
-    createdAt: str
+    conversationId: str
+    messageId: str
+    agentId: str
+    memberId: str
 
 class User:
     def __init__(self, decoded_user: _DecodedUser):
@@ -33,14 +33,19 @@ class User:
         self.created_at = decoded_user["createdAt"]
 
 class IncomingChatMessage:
-    def __init__(self, message: _ChatMessage):
+    def __init__(self, io: socketio.Client, message: _ChatMessage):
+        self.io = io
         self.text = message["text"]
-        self.sender_type = message["senderType"]
-        self.id = message["id"]
-        self.created_at = message["createdAt"]
-        self.user = User(message["decodedUser"])
+        self.conversation_id = message["conversationId"]
+        self.message_id = message["messageId"]
+        self.agent_id = message["agentId"]
+        self.member_id = message["memberId"]
 
     def reply(self, message: str, attachments: list[Attachment] = []):
+        emit(self.io, 'chat-message', {
+            "conversationId": self.conversation_id,
+            "text": message,
+        })
         print("Replying to message: " + message)
 
 class Agent:
@@ -61,7 +66,11 @@ class Agent:
         self._server_logger = AgentLogger(agent_id=config['agent_id'], name="Server")
 
     def on_chat_message(self, fn: Callable[[IncomingChatMessage], None]):
-        self.io.on('chat-message', fn, namespace=agent_namespace)
+        def wrapper(payload: Any):
+            chat_message = IncomingChatMessage(self.io, payload['data'])
+            fn(chat_message)
+
+        self.io.on('chat-message', wrapper, namespace=agent_namespace)
 
     def on_heartbeat(self, fn: Callable[[], None]):
         def wrapper(_: dict):

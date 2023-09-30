@@ -11,6 +11,7 @@ import { Socket } from 'socket.io';
 import { AgentChatConversationsService } from 'src/agent-chat/agent-chat-conversations/agent-chat-conversations.service';
 import { AgentChatMessagesService } from 'src/agent-chat/agent-chat-messages/agent-chat-messages.service';
 import { AgentConnectionManagerService } from 'src/agent-connection-manager/agent-connection-manager.service';
+import { BaseRealtimeMessageDto } from 'src/common/base-realtime-message.dto';
 import { FrontendConnectionManagerService } from 'src/frontend-connection-manager/frontend-connection-manager.service';
 import { FrontendChatMessageDto } from './dto/frontend-chat-message.dto';
 
@@ -94,17 +95,35 @@ export class FrontendConnectionGateway
   async handleChatMessage(
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: FrontendChatMessageDto,
-  ) {
+  ): Promise<BaseRealtimeMessageDto> {
     const frontendConnection =
       this.frontendConnectionManagerService.getConnectionBySid(client.id);
 
     if (!frontendConnection) {
       return {
-        error: 'Failed to send message: Unknown connection',
+        message: 'Not connected to server',
+        data: {},
+        timestamp: new Date().toISOString(),
+        error: {
+          code: 'NOT_CONNECTED',
+          message: 'Not connected to server',
+        },
       };
     }
 
-    let conversationId = payload.conversationId;
+    if (payload.error) {
+      return {
+        message: 'An error occured.',
+        timestamp: new Date().toISOString(),
+        data: {},
+        error: {
+          code: 'INVALID_PAYLOAD',
+          message: 'Invalid payload, error sent.',
+        },
+      };
+    }
+
+    let conversationId = payload.data.conversationId;
 
     if (!conversationId) {
       const { id } = await this.conversationsService.createConversation({
@@ -117,7 +136,7 @@ export class FrontendConnectionGateway
 
     const message = await this.messagesService.createMessage({
       source: 'USER',
-      text: payload.text,
+      text: payload.data.text,
       conversationId,
     });
 
@@ -128,21 +147,39 @@ export class FrontendConnectionGateway
 
     if (!agentConnection) {
       return {
-        error: 'Failed to contact agent: not connected.',
+        timestamp: new Date().toISOString(),
+        message: 'Agent is offline',
+        data: {},
+        error: {
+          code: 'AGENT_OFFLINE',
+          message: 'Agent is offline',
+          context: {
+            conversationId,
+            messageId: message.id,
+            agentId: frontendConnection.agentId,
+          },
+        },
       };
     }
 
     agentConnection.socket.emit('chat-message', {
       data: {
-        text: payload.text,
+        text: payload.data.text,
         conversationId,
+        agentId: frontendConnection.agentId,
         messageId: message.id,
+        memberId: frontendConnection.memberId,
       },
     });
-  }
 
-  @SubscribeMessage('message')
-  handleMessage(client: any, payload: any): string {
-    return 'Hello world!';
+    return {
+      timestamp: new Date().toISOString(),
+      data: {
+        conversationId,
+        messageId: message.id,
+        agentId: frontendConnection.agentId,
+      },
+      message: 'Message sent',
+    };
   }
 }

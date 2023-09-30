@@ -11,6 +11,7 @@ import { Socket } from 'socket.io';
 import { AgentChatConversationsService } from 'src/agent-chat/agent-chat-conversations/agent-chat-conversations.service';
 import { AgentChatMessagesService } from 'src/agent-chat/agent-chat-messages/agent-chat-messages.service';
 import { AgentConnectionManagerService } from 'src/agent-connection-manager/agent-connection-manager.service';
+import { BaseRealtimeMessageDto } from 'src/common/base-realtime-message.dto';
 import { FrontendConnectionManagerService } from 'src/frontend-connection-manager/frontend-connection-manager.service';
 import { AgentMessageDto } from './dto/agent-message.dto';
 
@@ -90,26 +91,34 @@ export class AgentConnectionGateway
   async handleChatMessage(
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: AgentMessageDto,
-  ) {
+  ): Promise<BaseRealtimeMessageDto> {
     const conversation =
       await this.conversationsService.findConversationByIdWithAgent(
-        payload.conversationId,
+        payload.data.conversationId,
       );
 
     if (!conversation) {
-      const message = `Conversation not found: ID=${payload.conversationId}`;
+      const message = `Conversation not found: ID=${payload.data.conversationId}`;
 
       this.logger.error(message);
       client.send({
         message,
       });
 
-      return;
+      return {
+        message,
+        timestamp: new Date().toISOString(),
+        data: {},
+        error: {
+          code: 'CONVERSATION_NOT_FOUND',
+          message,
+        },
+      };
     }
 
     await this.messagesService.createMessage({
       conversationId: conversation.id,
-      text: payload.text,
+      text: payload.data.text,
       source: 'AGENT',
     });
 
@@ -126,6 +135,9 @@ export class AgentConnectionGateway
       this.logger.error(message);
 
       return {
+        message,
+        timestamp: new Date().toISOString(),
+        data: {},
         error: {
           code: 'FRONTEND_CONNECTION_NOT_FOUND',
           message,
@@ -134,6 +146,12 @@ export class AgentConnectionGateway
     }
 
     frontendConnection.socket.emit('chat-message', payload);
+
+    return {
+      message: 'Message sent successfully',
+      timestamp: new Date().toISOString(),
+      data: {},
+    };
   }
 
   @SubscribeMessage('message')

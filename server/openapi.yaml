@@ -287,7 +287,7 @@ paths:
         - authMethods
       security:
         - bearer: []
-  /conversations:
+  /conversations/getAll:
     get:
       operationId: getAllConversations
       parameters:
@@ -306,7 +306,7 @@ paths:
           description: ""
       tags:
         - Agent Chat Conversations
-  /conversations/{conversationId}:
+  /conversations/getById/{conversationId}:
     get:
       operationId: getConversationById
       parameters:
