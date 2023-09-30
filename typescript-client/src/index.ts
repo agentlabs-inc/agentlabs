@@ -36,6 +36,7 @@ export type { UserCreatedResponseDto } from './models/UserCreatedResponseDto';
 export type { VerifyPasswordlessEmailDto } from './models/VerifyPasswordlessEmailDto';
 export type { WhoAmIResultDto } from './models/WhoAmIResultDto';
 
+export { AgentChatConversationsService } from './services/AgentChatConversationsService';
 export { AgentsService } from './services/AgentsService';
 export { AuthMethodsService } from './services/AuthMethodsService';
 export { DefaultService } from './services/DefaultService';
