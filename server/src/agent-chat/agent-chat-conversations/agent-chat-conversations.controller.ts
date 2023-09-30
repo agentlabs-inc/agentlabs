@@ -16,7 +16,7 @@ export class AgentChatConversationsController {
     private readonly conversationsService: AgentChatConversationsService,
   ) {}
 
-  @Get('')
+  @Get('getAll')
   async getAllConversations(
     @Query() { memberId, agentId }: GetAllConversationsDto,
   ) {
@@ -29,7 +29,7 @@ export class AgentChatConversationsController {
   }
 
   // TODO: only return the N most recent messages for the specified conversation
-  @Get(':conversationId')
+  @Get('getById/:conversationId')
   async getConversationById(@Param('conversationId') conversationId: string) {
     const conversation =
       await this.conversationsService.findConversationByIdWithMessages(
