@@ -1,14 +1,18 @@
 import { Logger } from '@nestjs/common';
 import {
   ConnectedSocket,
+  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
+import { AgentChatConversationsService } from 'src/agent-chat/agent-chat-conversations/agent-chat-conversations.service';
+import { AgentChatMessagesService } from 'src/agent-chat/agent-chat-messages/agent-chat-messages.service';
 import { AgentConnectionManagerService } from 'src/agent-connection-manager/agent-connection-manager.service';
 import { FrontendConnectionManagerService } from 'src/frontend-connection-manager/frontend-connection-manager.service';
+import { FrontendChatMessageDto } from './dto/frontend-chat-message.dto';
 
 @WebSocketGateway({ namespace: '/frontend' })
 export class FrontendConnectionGateway
@@ -19,6 +23,8 @@ export class FrontendConnectionGateway
   constructor(
     private readonly frontendConnectionManagerService: FrontendConnectionManagerService,
     private readonly agentConnectionManagerService: AgentConnectionManagerService,
+    private readonly conversationsService: AgentChatConversationsService,
+    private readonly messagesService: AgentChatMessagesService,
   ) {}
 
   handleConnection(client: Socket) {
@@ -73,7 +79,7 @@ export class FrontendConnectionGateway
       socket: client,
       agentId,
       projectId,
-      userId,
+      memberId: userId,
     });
 
     client.send('Connected to server, waiting for messages...');
@@ -85,7 +91,10 @@ export class FrontendConnectionGateway
   }
 
   @SubscribeMessage('chat-message')
-  handleChatMessage(@ConnectedSocket() client: Socket, payload: any) {
+  async handleChatMessage(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: FrontendChatMessageDto,
+  ) {
     const frontendConnection =
       this.frontendConnectionManagerService.getConnectionBySid(client.id);
 
@@ -94,6 +103,23 @@ export class FrontendConnectionGateway
         error: 'Failed to send message: Unknown connection',
       };
     }
+
+    let conversationId = payload.conversationId;
+
+    if (!conversationId) {
+      const { id } = await this.conversationsService.createConversation({
+        agentId: frontendConnection.agentId,
+        memberId: frontendConnection.memberId,
+      });
+
+      conversationId = id;
+    }
+
+    const message = await this.messagesService.createMessage({
+      source: 'USER',
+      text: payload.text,
+      conversationId,
+    });
 
     const agentConnection = this.agentConnectionManagerService.getConnection(
       frontendConnection.projectId,
@@ -107,8 +133,11 @@ export class FrontendConnectionGateway
     }
 
     agentConnection.socket.emit('chat-message', {
-      data: payload,
-      frontendClientSid: client.id,
+      data: {
+        text: payload.text,
+        conversationId,
+        messageId: message.id,
+      },
     });
   }
 

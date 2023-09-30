@@ -173,6 +173,8 @@ model Agent {
 
 	project				Project @relation(fields: [projectId], references: [id])
 	projectId			String
+
+	conversations	AgentConversation[]
 }
 
 model MemberAuthVerificationCode {
@@ -227,8 +229,9 @@ model Member {
 	project				Project @relation(fields: [projectId], references: [id])
 	projectId			String
 
+	identities		MemberIdentity[]
+	conversations	AgentConversation[]
 	auth 				  		MemberAuth?
-	identities				MemberIdentity[]
 	verificationCode	MemberAuthVerificationCode?
 }
 
@@ -266,29 +269,31 @@ model MemberIdentity {
 }
 
 model AgentConversation {
-	id		String   @id @default(uuid())
-	createdAt DateTime @default(now())
-	updatedAt DateTime @updatedAt @default(now())
-	agentId		String
+	id				String		@id 		@default(uuid())
+	createdAt 		DateTime				@default(now())
+	updatedAt 		DateTime	@updatedAt	@default(now())
 
-	tasks		AgentTask[]
+	agentId			String
+	agent			Agent		@relation(fields: [agentId], references: [id])
+	memberId 		String
+	member			Member		@relation(fields: [memberId], references: [id])
+	messages		AgentMessage[]
 }
 
-model AgentTask {
-	id		String   @id @default(uuid())
-	createdAt DateTime @default(now())
-	updatedAt DateTime @updatedAt @default(now())
-
-	agentConversationId String
-	agentConversation AgentConversation @relation(fields: [agentConversationId], references: [id])
-	message		AgentTaskMessage[]
+enum AgentMessageSource {
+	USER
+	AGENT		
+	SYSTEM // reserved for future use
 }
 
-model AgentTaskMessage {
-	id		String   @id @default(uuid())
-	createdAt DateTime @default(now())
+model AgentMessage {
+	id				String				@id			@default(uuid())
+	createdAt		DateTime						@default(now())
+	updateAt		DateTime			@updatedAt	@default(now())
 
-	agentTaskId String
-	agentTask AgentTask @relation(fields: [agentTaskId], references: [id])
-	message		String
+	source			AgentMessageSource
+	text			String
+
+	conversationId	String
+	conversation	AgentConversation	@relation(fields: [conversationId], references: [id])
 }

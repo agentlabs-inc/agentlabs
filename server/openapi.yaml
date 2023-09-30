@@ -287,6 +287,43 @@ paths:
         - authMethods
       security:
         - bearer: []
+  /conversations:
+    get:
+      operationId: getAllConversations
+      parameters:
+        - name: agentId
+          required: true
+          in: query
+          schema:
+            type: string
+        - name: memberId
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+      tags:
+        - Agent Chat Conversations
+  /conversations/{conversationId}:
+    get:
+      operationId: getConversationById
+      parameters:
+        - name: conversationId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+      tags:
+        - Agent Chat Conversations
   /members/p/{projectId}/requestPasswordlessEmail:
     post:
       operationId: requestPasswordlessEmail

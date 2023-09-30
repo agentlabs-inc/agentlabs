@@ -8,8 +8,11 @@ import {
   WebSocketGateway,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
+import { AgentChatConversationsService } from 'src/agent-chat/agent-chat-conversations/agent-chat-conversations.service';
+import { AgentChatMessagesService } from 'src/agent-chat/agent-chat-messages/agent-chat-messages.service';
 import { AgentConnectionManagerService } from 'src/agent-connection-manager/agent-connection-manager.service';
 import { FrontendConnectionManagerService } from 'src/frontend-connection-manager/frontend-connection-manager.service';
+import { AgentMessageDto } from './dto/agent-message.dto';
 
 @WebSocketGateway({ namespace: '/agent' })
 export class AgentConnectionGateway
@@ -18,6 +21,8 @@ export class AgentConnectionGateway
   constructor(
     private readonly agentConnectionManagerService: AgentConnectionManagerService,
     private readonly frontendConnectionManagerService: FrontendConnectionManagerService,
+    private readonly conversationsService: AgentChatConversationsService,
+    private readonly messagesService: AgentChatMessagesService,
   ) {}
 
   private readonly logger = new Logger(AgentConnectionGateway.name);
@@ -82,25 +87,53 @@ export class AgentConnectionGateway
   }
 
   @SubscribeMessage('chat-message')
-  handleChatMessage(
+  async handleChatMessage(
     @ConnectedSocket() client: Socket,
-    @MessageBody() payload: any,
+    @MessageBody() payload: AgentMessageDto,
   ) {
-    const senderSid = payload.senderSid;
-    const senderConnection =
-      this.frontendConnectionManagerService.getConnectionBySid(senderSid);
+    const conversation =
+      await this.conversationsService.findConversationByIdWithAgent(
+        payload.conversationId,
+      );
 
-    if (!senderConnection) {
-      this.logger.error(`Sender connection not found: SID=${senderSid}`);
+    if (!conversation) {
+      const message = `Conversation not found: ID=${payload.conversationId}`;
+
+      this.logger.error(message);
+      client.send({
+        message,
+      });
+
+      return;
+    }
+
+    await this.messagesService.createMessage({
+      conversationId: conversation.id,
+      text: payload.text,
+      source: 'AGENT',
+    });
+
+    const frontendConnection =
+      this.frontendConnectionManagerService.getConnection({
+        memberId: conversation.memberId,
+        projectId: conversation.agent.projectId,
+        agentId: conversation.agent.id,
+      });
+
+    if (!frontendConnection) {
+      const message = `Frontend connection not found: MEMBER_ID=${conversation.memberId},PROJECT_ID=${conversation.agent.projectId},AGENT_ID=${conversation.agent.id}`;
+
+      this.logger.error(message);
+
       return {
         error: {
-          code: 'SENDER_NOT_FOUND',
-          message: 'Sender connection not found',
+          code: 'FRONTEND_CONNECTION_NOT_FOUND',
+          message,
         },
       };
     }
 
-    senderConnection.socket.emit('chat-message', payload);
+    frontendConnection.socket.emit('chat-message', payload);
   }
 
   @SubscribeMessage('message')
