@@ -296,4 +296,27 @@ model AgentMessage {
 
 	conversationId	String
 	conversation	AgentConversation	@relation(fields: [conversationId], references: [id])
+	
+	attachments		AgentAttachment[]
+}
+
+enum AgentAttachmentDriver {
+	AWS_S3
+	AZURE_BLOB_STORAGE
+	GOOGLE_CLOUD_STORAGE
+	LOCAL_FILE_SYSTEM
+}
+
+model AgentAttachment {
+	id				String				@id			@default(uuid())
+
+	createdAt		DateTime						@default(now())
+	updateAt		DateTime			@updatedAt	@default(now())
+
+	name			String
+	mimeType		String
+	checksumSha256	String
+	driver			AgentAttachmentDriver
+
+	messages		AgentMessage[]
 }

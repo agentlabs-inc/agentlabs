@@ -372,6 +372,28 @@ paths:
                 $ref: "#/components/schemas/LoginMemberResponseDto"
       tags:
         - Members
+  /agent-attachments/createSync:
+    post:
+      operationId: createSync
+      parameters:
+        - name: projectId
+          required: true
+          in: query
+          schema:
+            type: string
+        - name: agentId
+          required: true
+          in: query
+          schema:
+            type: string
+        - name: messageId
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        "201":
+          description: ""
 info:
   title: AgentLabs API
   description: Build AI Agents in minutes, not months.
