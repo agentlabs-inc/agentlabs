@@ -11,11 +11,12 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { AgentAttachmentsService } from './agent-attachments.service';
 import { CreateMessageAttachmentSyncDto } from './dto/create-message-attachment-sync.dto';
-import { GetAttachmentDataSyncDto } from './dto/get-attachment-data-sync.dto';
 
+@ApiTags('Agent Attachments')
 @Controller('agent-attachments')
 export class AgentAttachmentsController {
   constructor(
@@ -41,12 +42,12 @@ export class AgentAttachmentsController {
   }
 
   @Get('getById/:attachmentId/data')
-  async getDataById(
+  async getAttachmentDataById(
     @Param('attachmentId') attachmentId: string,
-    @Query() { agentId, projectId }: GetAttachmentDataSyncDto,
     @Res() res: Response,
   ) {
     const attachment = await this.agentAttachmentsService.getById(attachmentId);
+
     if (!attachment) {
       throw new NotFoundException(
         `Attachment with id ${attachmentId} not found.`,
@@ -54,8 +55,6 @@ export class AgentAttachmentsController {
     }
 
     const data = await this.agentAttachmentsService.getAttachmentData(
-      projectId,
-      agentId,
       attachmentId,
     );
 
@@ -65,7 +64,7 @@ export class AgentAttachmentsController {
   }
 
   @UseInterceptors(FileInterceptor('file'))
-  @Post('createSync')
+  @Post('createMessageAttachmentSync')
   async createSync(
     @UploadedFile() file: Express.Multer.File,
     @Query() { projectId, agentId, messageId }: CreateMessageAttachmentSyncDto,
@@ -77,7 +76,7 @@ export class AgentAttachmentsController {
     const attachment =
       await this.agentAttachmentsService.createMessageAttachment({
         data: file.buffer,
-        filename: file.originalname,
+        filename: file.filename,
         mimeType: file.mimetype,
         projectId,
         messageId,

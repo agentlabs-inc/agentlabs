@@ -384,6 +384,8 @@ paths:
       responses:
         "200":
           description: ""
+      tags:
+        - Agent Attachments
   /agent-attachments/getById/{attachmentId}:
     get:
       operationId: getById
@@ -400,34 +402,23 @@ paths:
             application/json:
               schema:
                 type: object
+      tags:
+        - Agent Attachments
   /agent-attachments/getById/{attachmentId}/data:
     get:
-      operationId: getDataById
+      operationId: getAttachmentDataById
       parameters:
         - name: attachmentId
           required: true
           in: path
           schema:
             type: string
-        - name: projectId
-          required: true
-          in: query
-          schema:
-            type: string
-        - name: agentId
-          required: true
-          in: query
-          schema:
-            type: string
-        - name: messageId
-          required: true
-          in: query
-          schema:
-            type: string
       responses:
         "200":
           description: ""
-  /agent-attachments/createSync:
+      tags:
+        - Agent Attachments
+  /agent-attachments/createMessageAttachmentSync:
     post:
       operationId: createSync
       parameters:
@@ -449,6 +440,8 @@ paths:
       responses:
         "201":
           description: ""
+      tags:
+        - Agent Attachments
 info:
   title: AgentLabs API
   description: Build AI Agents in minutes, not months.

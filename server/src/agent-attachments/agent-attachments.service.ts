@@ -37,16 +37,8 @@ export class AgentAttachmentsService {
     return attachments;
   }
 
-  async getAttachmentData(
-    projectId: string,
-    agentId: string,
-    attachmentId: string,
-  ): Promise<Buffer> {
-    return this.attachmentStorageService.download({
-      projectId,
-      agentId,
-      attachmentId,
-    });
+  async getAttachmentData(attachmentId: string): Promise<Buffer> {
+    return this.attachmentStorageService.download(attachmentId);
   }
 
   async getById(id: string) {

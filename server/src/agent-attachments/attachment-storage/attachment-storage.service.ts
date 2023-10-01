@@ -9,14 +9,13 @@ export interface AttachmentMetadata {
   checksumSha256: string;
 }
 
-export interface DownloadAttachmentPayload {
-  projectId: string;
-  agentId: string;
-  attachmentId: string;
-}
-
+// An attachment has to be retrievable by its sole ID, without any other
+// kind of metadata. The upload implementation should account for this.
 @Injectable()
 export abstract class AttachmentStorageService {
   abstract upload(data: Buffer, metadata: AttachmentMetadata): Promise<void>;
-  abstract download(payload: DownloadAttachmentPayload): Promise<Buffer>;
+
+  abstract download(attachmentId: string): Promise<Buffer>;
+
+  abstract delete(attachmentId: string): Promise<void>;
 }
