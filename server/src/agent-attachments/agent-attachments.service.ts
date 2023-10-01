@@ -23,6 +23,42 @@ export class AgentAttachmentsService {
     return createHash('sha256').update(data).digest('hex');
   }
 
+  async listByMessageId(messageId: string) {
+    const attachments = await this.prisma.agentAttachment.findMany({
+      where: {
+        messages: {
+          some: {
+            id: messageId,
+          },
+        },
+      },
+    });
+
+    return attachments;
+  }
+
+  async getAttachmentData(
+    projectId: string,
+    agentId: string,
+    attachmentId: string,
+  ): Promise<Buffer> {
+    return this.attachmentStorageService.download({
+      projectId,
+      agentId,
+      attachmentId,
+    });
+  }
+
+  async getById(id: string) {
+    const attachment = await this.prisma.agentAttachment.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    return attachment;
+  }
+
   async createMessageAttachment(payload: CreateMessageAttachmentPayload) {
     const checksum = this.computeChecksum(payload.data);
     const attachment = await this.prisma.agentAttachment.create({

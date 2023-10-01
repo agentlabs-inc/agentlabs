@@ -372,6 +372,61 @@ paths:
                 $ref: "#/components/schemas/LoginMemberResponseDto"
       tags:
         - Members
+  /agent-attachments/listByMessageId/{messageId}:
+    get:
+      operationId: listByMessageId
+      parameters:
+        - name: messageId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+  /agent-attachments/getById/{attachmentId}:
+    get:
+      operationId: getById
+      parameters:
+        - name: attachmentId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+  /agent-attachments/getById/{attachmentId}/data:
+    get:
+      operationId: getDataById
+      parameters:
+        - name: attachmentId
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: projectId
+          required: true
+          in: query
+          schema:
+            type: string
+        - name: agentId
+          required: true
+          in: query
+          schema:
+            type: string
+        - name: messageId
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
   /agent-attachments/createSync:
     post:
       operationId: createSync

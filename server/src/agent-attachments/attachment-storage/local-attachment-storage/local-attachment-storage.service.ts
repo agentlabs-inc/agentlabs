@@ -4,6 +4,7 @@ import { basename, join } from 'path';
 import {
   AttachmentMetadata,
   AttachmentStorageService,
+  DownloadAttachmentPayload,
 } from '../attachment-storage.service';
 
 // Note:
@@ -18,27 +19,39 @@ export class LocalAttachmentStorageService implements AttachmentStorageService {
     'attachments',
   );
 
-  private makeAttachmentPath(metadata: AttachmentMetadata): string {
+  private makeAttachmentPath(
+    projectId: string,
+    agentId: string,
+    attachmentId: string,
+  ): string {
     return join(
       this.attachmentBasePath,
       'projects',
-      metadata.projectId,
+      projectId,
       'agents',
-      metadata.agentId,
-      metadata.attachmentId,
+      agentId,
+      attachmentId,
     );
   }
 
   async upload(data: Buffer, metadata: AttachmentMetadata): Promise<void> {
-    const filePath = this.makeAttachmentPath(metadata);
+    const filePath = this.makeAttachmentPath(
+      metadata.projectId,
+      metadata.agentId,
+      metadata.attachmentId,
+    );
     const dir = basename(filePath);
 
     await mkdir(dir, { recursive: true });
     await writeFile(filePath, data);
   }
 
-  async download(metadata: AttachmentMetadata): Promise<Buffer> {
-    const path = this.makeAttachmentPath(metadata);
+  async download(payload: DownloadAttachmentPayload): Promise<Buffer> {
+    const path = this.makeAttachmentPath(
+      payload.projectId,
+      payload.agentId,
+      payload.attachmentId,
+    );
     const buffer = await readFile(path);
 
     return buffer;

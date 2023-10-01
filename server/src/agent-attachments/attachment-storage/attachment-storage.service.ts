@@ -9,8 +9,14 @@ export interface AttachmentMetadata {
   checksumSha256: string;
 }
 
+export interface DownloadAttachmentPayload {
+  projectId: string;
+  agentId: string;
+  attachmentId: string;
+}
+
 @Injectable()
 export abstract class AttachmentStorageService {
   abstract upload(data: Buffer, metadata: AttachmentMetadata): Promise<void>;
-  abstract download(metadata: AttachmentMetadata): Promise<Buffer>;
+  abstract download(payload: DownloadAttachmentPayload): Promise<Buffer>;
 }
