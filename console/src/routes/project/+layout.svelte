@@ -1,5 +1,5 @@
 <script>
-	import AuthOnly from "$lib/gates/AuthOnly.svelte";
+	import AuthOnly from "$lib/context/AuthOnly.svelte";
 </script>
 
 <AuthOnly>

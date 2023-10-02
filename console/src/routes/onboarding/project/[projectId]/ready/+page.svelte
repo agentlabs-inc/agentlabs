@@ -14,10 +14,17 @@
 	} from "$lib/components/project/agents/code-snippets/onboarding.snippet";
 	import Tabs from "$lib/components/common/tabs/Tabs.svelte";
 	import { projectStore } from "$lib/stores/project";
+	import { onMount } from "svelte";
 
 	let currentStep: "open-frontend" | "authentication" | "send-message" = "open-frontend";
 
 	let selectedTab = "python";
+
+	const project = $projectStore.currentProject;
+
+	if (!project) {
+		throw new Error("No project context found");
+	}
 
 	const tabItems: {
 		value: string;
@@ -39,18 +46,18 @@
 	$: snippetValue =
 		selectedTab === "python"
 			? onboardingPythonCode({
-					projectId: $projectStore.currentProjectId,
-					slug: $projectStore.currentProject?.slug,
+					projectId: project.id,
+					projectSlug: project.slug,
 					agentId: "the-agent-id"
 			  })
 			: onboardingTypescriptCode({
-					projectId: $projectStore.currentProjectId,
-					slug: $projectStore.currentProject?.slug,
+					projectId: project.id,
+					projectSlug: project.slug,
 					// TODO: replace with the real agent id
 					agentId: "the-agent-id"
 			  });
 
-	$: projectSlug = $projectStore.currentProject?.slug;
+	$: projectSlug = project.slug;
 
 	const handleNewUser = () => {
 		currentStep = "send-message";
@@ -64,6 +71,10 @@
 		window.open(`http://${projectSlug}.${PUBLIC_AI_AGENT_DOMAIN}`, "_blank");
 		currentStep = "authentication";
 	};
+
+	onMount(() => {
+		console.log("Mounted", $projectStore.currentProject, $projectStore.list);
+	});
 </script>
 
 <div>

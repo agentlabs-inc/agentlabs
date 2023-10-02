@@ -27,3 +27,7 @@ export const registerRoute = {
 export const verifyPasswordlessEmailRoute = {
 	path: (email: string) => `${basePath}/register/verify?email=${email}`
 };
+
+export const projectNotFoundRoute = {
+	path: () => `${basePath}/project-not-found`
+};

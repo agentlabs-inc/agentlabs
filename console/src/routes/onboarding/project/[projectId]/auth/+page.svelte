@@ -16,6 +16,7 @@
 	import { page } from "$app/stores";
 	import { goto } from "$app/navigation";
 	import { projectOnboardingUseApplicationRoute } from "$lib/routes/routes";
+	import { setCurrentProjectId } from "$lib/stores/project";
 
 	const availableAuthMethods: MultiSelectItem[] = [
 		{
@@ -72,6 +73,7 @@
 		submitting = true;
 		try {
 			const { projectId } = $page.params;
+
 			await initProjectAuthMethods(projectId, selectedItems);
 			await goto(projectOnboardingUseApplicationRoute.path(projectId));
 		} catch (e) {

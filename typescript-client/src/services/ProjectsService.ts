@@ -5,6 +5,7 @@
 import type { CreatedProjectDto } from '../models/CreatedProjectDto';
 import type { CreateProjectDto } from '../models/CreateProjectDto';
 import type { ListProjectsResultDto } from '../models/ListProjectsResultDto';
+import type { ProjectDto } from '../models/ProjectDto';
 import type { ProjectExistsResponseDto } from '../models/ProjectExistsResponseDto';
 import type { PublicProjectConfigDto } from '../models/PublicProjectConfigDto';
 
@@ -63,6 +64,24 @@ export class ProjectsService {
             url: '/projects/exists/{slug}',
             path: {
                 'slug': slug,
+            },
+        });
+    }
+
+    /**
+     * @returns ProjectDto
+     * @throws ApiError
+     */
+    public static getById({
+        projectId,
+    }: {
+        projectId: string,
+    }): CancelablePromise<ProjectDto> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/projects/getById/{projectId}',
+            path: {
+                'projectId': projectId,
             },
         });
     }

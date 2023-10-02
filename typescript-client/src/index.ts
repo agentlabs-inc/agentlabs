@@ -25,6 +25,7 @@ export type { ListProjectsResultDto } from './models/ListProjectsResultDto';
 export type { LoginMemberResponseDto } from './models/LoginMemberResponseDto';
 export type { LoginResponseDto } from './models/LoginResponseDto';
 export type { LoginUserDto } from './models/LoginUserDto';
+export type { ProjectDto } from './models/ProjectDto';
 export type { ProjectExistsResponseDto } from './models/ProjectExistsResponseDto';
 export type { PublicProjectConfigDto } from './models/PublicProjectConfigDto';
 export type { RegisterResponseDto } from './models/RegisterResponseDto';

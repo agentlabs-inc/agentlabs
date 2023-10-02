@@ -4,9 +4,11 @@ import { err, ok, PResult } from '../common/result';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatedProjectDto } from './dtos/created.project.dto';
 import { ListProjectsResultDto } from './dtos/list.projects.result.dto';
+import { ProjectDto } from './dtos/project.dto';
 import { PublicProjectConfigDto } from './dtos/public.project.config.dto';
 import {
   CreateProjectError,
+  FindProjectError,
   GetPublicConfigError,
   ListOrganizationProjectsError,
   VerifyIfIsOrganizationUserError,
@@ -164,6 +166,20 @@ export class ProjectsService {
     });
 
     return !!project;
+  }
+
+  async getById(id: string): PResult<ProjectDto, FindProjectError> {
+    const project = await this.prisma.project.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!project) {
+      return err('ProjectNotFound');
+    }
+
+    return ok(project);
   }
 
   async getPublicConfig(

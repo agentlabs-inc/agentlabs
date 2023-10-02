@@ -23,3 +23,7 @@ export const GetPublicConfigErrors = [
 ] as const;
 
 export type GetPublicConfigError = (typeof GetPublicConfigErrors)[number];
+
+export const FindProjectErrors = ['ProjectNotFound'] as const;
+
+export type FindProjectError = (typeof FindProjectErrors)[number];

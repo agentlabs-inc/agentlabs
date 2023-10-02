@@ -1,3 +1,5 @@
+import { goto } from "$app/navigation";
+import { projectNotFoundRoute } from "$lib/routes/routes";
 import { retrievePublicConfig } from "$lib/usecases/project/retrievePublicConfig";
 import type { Load } from "@sveltejs/kit";
 import type { MainLayoutContext } from "./types";
@@ -9,7 +11,12 @@ export const load: Load = async (event): Promise<MainLayoutContext> => {
 
 	return {
 		mainLayoutLazy: {
-			isLoaded: retrievePublicConfig(hostname).then(() => true)
+			isLoaded: retrievePublicConfig(hostname)
+				.then(() => true)
+				.catch(async () => {
+					await goto(projectNotFoundRoute.path());
+					return false;
+				})
 		}
 	};
 };

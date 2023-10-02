@@ -26,6 +26,14 @@ export const setCurrentProjectId = (id: string | null) => {
 	});
 };
 
+export const setCurrentProject = (project: Project) => {
+	projectStore.update((store) => {
+		store.currentProject = project;
+		store.currentProjectId = project.id;
+		return store;
+	});
+};
+
 export const setProjectList = (list: Project[]) => {
 	projectStore.update((store) => {
 		store.list = list;

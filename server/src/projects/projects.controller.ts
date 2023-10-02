@@ -3,6 +3,7 @@ import {
   ConflictException,
   Controller,
   Get,
+  NotFoundException,
   Param,
   Post,
   Query,
@@ -21,6 +22,7 @@ import { CreateProjectDto } from './dtos/create.project.dto';
 import { CreatedProjectDto } from './dtos/created.project.dto';
 import { GetPublicConfigDto } from './dtos/get.public.config.dto';
 import { ListProjectsResultDto } from './dtos/list.projects.result.dto';
+import { ProjectDto } from './dtos/project.dto';
 import { ProjectExistsResponseDto } from './dtos/project.exists.response.dto';
 import { PublicProjectConfigDto } from './dtos/public.project.config.dto';
 import { ProjectsService } from './projects.service';
@@ -114,6 +116,27 @@ export class ProjectsController {
     };
   }
 
+  @RequireAuthMethod('local')
+  @Get('/getById/:projectId')
+  async getById(
+    @Req() req: LocalAuthenticatedRequest,
+    @Param('projectId') projectId: string,
+  ): Promise<ProjectDto> {
+    const result = await this.projectsService.getById(projectId);
+
+    if (result.ok) {
+      return result.value;
+    }
+
+    switch (result.error) {
+      case 'ProjectNotFound':
+        throw new NotFoundException({
+          code: 'ProjectNotFound',
+          message: 'Project not found',
+        });
+    }
+  }
+
   @ApiUnprocessableEntityResponse({
     description: 'Unprocessable hostname or unknown project',
   })
@@ -121,7 +144,6 @@ export class ProjectsController {
   async getPublicConfig(
     @Query() queryParams: GetPublicConfigDto,
   ): Promise<PublicProjectConfigDto> {
-    console.log('params', queryParams);
     const config = await this.projectsService.getPublicConfig(
       queryParams.hostname,
     );

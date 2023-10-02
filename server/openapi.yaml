@@ -138,6 +138,26 @@ paths:
         - projects
       security:
         - bearer: []
+  /projects/getById/{projectId}:
+    get:
+      operationId: getById
+      parameters:
+        - name: projectId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectDto"
+      tags:
+        - projects
+      security:
+        - bearer: []
   /projects/getPublicConfig:
     get:
       operationId: getPublicConfig
@@ -582,6 +602,33 @@ components:
           type: boolean
       required:
         - exists
+    ProjectDto:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        organizationId:
+          type: string
+        creatorId:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - id
+        - name
+        - slug
+        - organizationId
+        - creatorId
+        - createdAt
+        - updatedAt
     PublicProjectConfigDto:
       type: object
       properties:
