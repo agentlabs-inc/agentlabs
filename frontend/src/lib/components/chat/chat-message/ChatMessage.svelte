@@ -1,10 +1,12 @@
 <script lang="ts">
 	import Avatar from "$lib/components/common/avatar/Avatar.svelte";
 	import LetterAvatar from "$lib/components/common/letter-avatar/LetterAvatar.svelte";
+	import Typewriter from "svelte-typewriter";
 
 	export let time: string;
 	export let body: string;
 	export let from: "user" | "agent";
+	export let typewriter = false;
 
 	let bubbleClass: string;
 
@@ -32,7 +34,13 @@
 					{time}
 				</div>
 				<div class="text-body-accent dark:text-body-accent-dark text-[11pt] leading-7">
-					{body}
+					{#if typewriter}
+						<Typewriter>
+							{body}
+						</Typewriter>
+					{:else}
+						{body}
+					{/if}
 				</div>
 			</div>
 		</div>

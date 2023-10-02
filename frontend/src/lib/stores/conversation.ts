@@ -1,0 +1,34 @@
+import type { Conversation } from "$lib/entities/conversation/conversation";
+import { get, writable } from "svelte/store";
+
+export interface ConversationStore {
+	list: Conversation[];
+	selectedConversationId: string | null;
+}
+
+export const conversationStore = writable<ConversationStore>({
+	list: [],
+	selectedConversationId: null
+});
+
+export const setConversationList = (list: Conversation[]) => {
+	conversationStore.update((store) => {
+		store.list = list;
+
+		return store;
+	});
+};
+
+export const setSelectedConversationId = (id: string | null) => {
+	conversationStore.update((store) => {
+		store.selectedConversationId = id;
+
+		return store;
+	});
+}
+
+export const getConversationById = (id: string): Conversation | undefined => {
+	const { list } = get(conversationStore);
+
+	return list.find((conversation) => conversation.id === id);
+}

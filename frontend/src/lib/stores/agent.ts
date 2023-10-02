@@ -13,7 +13,7 @@ const AGENT_STORE_KEY = genStoreKey("agent-store");
 export const agentStore = persist(
 	writable<AgentStore>({
 		selectedAgent: null,
-		list: []
+		list: [],
 	}),
 	createLocalStorage(),
 	AGENT_STORE_KEY

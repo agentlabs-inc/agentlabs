@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { AgentChatConversationsService } from './agent-chat-conversations/agent-chat-conversations.service';
-import { AgentChatMessagesService } from './agent-chat-messages/agent-chat-messages.service';
 import { AgentChatConversationsController } from './agent-chat-conversations/agent-chat-conversations.controller';
+import { AgentChatConversationsService } from './agent-chat-conversations/agent-chat-conversations.service';
 import { AgentChatMessagesController } from './agent-chat-messages/agent-chat-messages.controller';
+import { AgentChatMessagesService } from './agent-chat-messages/agent-chat-messages.service';
 
 @Module({
   providers: [AgentChatConversationsService, AgentChatMessagesService],

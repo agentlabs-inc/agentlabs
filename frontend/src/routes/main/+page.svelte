@@ -3,40 +3,21 @@
 	import ChatMessage from "$lib/components/chat/chat-message/ChatMessage.svelte";
 	import Button from "$lib/components/common/button/Button.svelte";
 	import { PaperAirplane } from "svelte-hero-icons";
-	import { afterUpdate } from "svelte";
+	import { afterUpdate, onMount } from "svelte";
 	import ChatInput from "$lib/components/chat/chat-input/ChatInput.svelte";
 	import dayjs from "dayjs";
 	import type { Message } from "$lib/entities/message/message";
+	import { openRealtimeConnection, realtimeStore } from "$lib/stores/realtime";
+	import { agentStore } from "$lib/stores/agent";
+	import { mainContextStore } from "$lib/stores/main-context";
+	import { authStore } from "$lib/stores/auth";
+	import { goto } from "$app/navigation";
 
 	afterUpdate(() => {
 		window.scrollTo(0, document.body.scrollHeight);
 	});
 
 	let messages: Message[] = [
-		{
-			text: "Please, write me a demo Linkedin post to demonstrate the power of my AI agent that I have built in 5 minutes using AgentLabs.",
-			senderFullName: "John Doe",
-			senderId: "1",
-			from: "user",
-			createdAt: new Date(),
-			id: "1"
-		},
-		{
-			text:
-				"🚀 Harnessing the Power of AI in Just 5 Minutes! 🚀\n" +
-				"\n" +
-				"Hey LinkedIn community! 🌍\n" +
-				"\n" +
-				"Today, I embarked on a challenge to build an AI agent, and guess what? With the help of #PluginLab, I was able to bring it to life in just 5 minutes! 🕐✨\n" +
-				"\n" +
-				"This isn't just about speed, it's about the democratization of technology. Imagine the potential when anyone, regardless of their tech background, can leverage the power of AI to solve real-world problems, innovate, and drive business growth.\n" +
-				"\n",
-			senderFullName: "John Doe",
-			senderId: "1",
-			from: "agent",
-			createdAt: new Date(),
-			id: "1"
-		}
 	];
 
 	let inputValue = "";
@@ -45,19 +26,45 @@
 		e.stopPropagation();
 		e.preventDefault();
 
-		messages = [
-			...messages,
-			{
-				text: inputValue,
-				senderFullName: "John Doe",
-				senderId: "1",
-				from: "user",
-				createdAt: new Date(),
-				id: "1"
+		const con = $realtimeStore.connection
+
+		if (!con) {
+			return ;
+		}
+
+		con.emit('chat-message', {
+			data: {
+				text: inputValue
 			}
-		];
+		 }, (ack: any) => {
+		 	if (!ack.error) {
+				const conversationId = ack.data.message.conversationId;
+				goto(`/main/c/${conversationId}`)
+			}
+		 })
+
+
 		inputValue = "";
 	};
+
+	onMount(async () => {
+		const agent = $agentStore.selectedAgent
+		const project =  $mainContextStore.publicProjectConfig;
+		const member  = $authStore.member;
+
+		if (!agent || !project || !member) {
+			return;
+		}
+
+		const con = await openRealtimeConnection(project.id, agent.id, member.id);
+
+		if (con) {
+			con.on('chat-message', (payload) => {
+					console.log('Got message', payload)
+			})
+		}
+
+	})
 </script>
 
 <div class="flex flex-col justify-between relative h-full">

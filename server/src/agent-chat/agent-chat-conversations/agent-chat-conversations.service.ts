@@ -19,6 +19,9 @@ export class AgentChatConversationsService {
         agentId,
         memberId,
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
   }
 

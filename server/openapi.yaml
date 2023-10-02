@@ -344,6 +344,20 @@ paths:
                 type: object
       tags:
         - Agent Chat Conversations
+  /agent-chat-messages/listByConversationId/{conversationId}:
+    get:
+      operationId: listByConversationId
+      parameters:
+        - name: conversationId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+      tags:
+        - Agent Chat Messages
   /members/p/{projectId}/requestPasswordlessEmail:
     post:
       operationId: requestPasswordlessEmail

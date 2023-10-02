@@ -57,7 +57,7 @@ export class AgentsController {
     }
   }
 
-  @RequireAuthMethod('local')
+  //@RequireAuthMethod('local')
   @ApiUnauthorizedResponse({
     description: 'You are not authorized to access this resource',
   })
@@ -70,7 +70,6 @@ export class AgentsController {
 
     const result = await this.agentsService.listProjectAgents({
       projectId,
-      userId: user.id,
     });
 
     if (result.ok) {

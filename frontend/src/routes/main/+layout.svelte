@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import TopNav from "$lib/components/common/navigation/top-nav/TopNav.svelte";
 	import LeftNav from "$lib/components/common/navigation/left-nav/LeftNav.svelte";
 	import AgentContext from "$lib/context/AgentContext.svelte";
