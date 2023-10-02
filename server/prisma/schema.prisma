@@ -300,7 +300,7 @@ model AgentMessage {
 	attachments		AgentAttachment[]
 }
 
-enum AgentAttachmentDriver {
+enum AgentAttachmentStorageDriver {
 	AWS_S3
 	AZURE_BLOB_STORAGE
 	GOOGLE_CLOUD_STORAGE
@@ -316,7 +316,7 @@ model AgentAttachment {
 	name			String
 	mimeType		String
 	checksumSha256	String
-	driver			AgentAttachmentDriver
+	driver			AgentAttachmentStorageDriver
 
 	messages		AgentMessage[]
 }
