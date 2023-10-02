@@ -18,6 +18,8 @@ export class LocalAttachmentStorageService implements AttachmentStorageService {
     __dirname,
     '..',
     '..',
+    '..',
+    '..',
     'attachments',
   );
 
