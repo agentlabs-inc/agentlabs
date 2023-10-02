@@ -13,7 +13,9 @@ export const load: Load = async (event): Promise<MainLayoutContext> => {
 		mainLayoutLazy: {
 			isLoaded: retrievePublicConfig(hostname)
 				.then(() => true)
-				.catch(async () => {
+				.catch(async (error) => {
+					console.error(error);
+
 					await goto(projectNotFoundRoute.path());
 					return false;
 				})

@@ -19,3 +19,4 @@ export const setPublicProjectConfig = (value: PublicProjectConfigDto) => {
 export const getMainContextStore = () => {
 	return get(mainContextStore);
 };
+
