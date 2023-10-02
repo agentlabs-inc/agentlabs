@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { AgentAttachmentsModule } from './agent-attachments/agent-attachments.module';
 import { AgentChatModule } from './agent-chat/agent-chat.module';
 import { AgentConnectionManagerModule } from './agent-connection-manager/agent-connection-manager.module';
 import { AgentConnectionModule } from './agent-connection/agent-connection.module';
@@ -30,6 +31,7 @@ import { UsersModule } from './users/users.module';
     FrontendConnectionModule,
     AgentChatModule,
     MembersModule,
+    AgentAttachmentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

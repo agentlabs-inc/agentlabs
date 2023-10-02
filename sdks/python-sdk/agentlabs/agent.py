@@ -1,11 +1,15 @@
 import os
 from typing import Any, Callable, Set, TypedDict
+import requests
+from .http import HttpApi
 
 from agentlabs.logger import AgentLogger
 
 from .server import emit, agent_namespace, emit_sync
 from .attachment import Attachment
 import socketio
+
+from agentlabs import attachment
 
 class AgentConfig(TypedDict):
     agentlabs_url: str;
@@ -33,8 +37,9 @@ class User:
         self.created_at = decoded_user["createdAt"]
 
 class IncomingChatMessage:
-    def __init__(self, io: socketio.Client, message: _ChatMessage):
+    def __init__(self, http: HttpApi,io: socketio.Client, message: _ChatMessage):
         self.io = io
+        self.http = http
         self.text = message["text"]
         self.conversation_id = message["conversationId"]
         self.message_id = message["messageId"]
@@ -42,11 +47,22 @@ class IncomingChatMessage:
         self.member_id = message["memberId"]
 
     def reply(self, message: str, attachments: list[Attachment] = []):
+        attachment_payloads = list(map(lambda attachment: {
+            "name": attachment.name,
+        }, attachments))
+
         emit(self.io, 'chat-message', {
             "conversationId": self.conversation_id,
             "text": message,
+            "attachments": attachment_payloads
         })
-        print("Replying to message: " + message)
+
+        # TODO: parallelize this
+        for attachment in attachments:
+            self.http.create_message_attachment(
+                    message_id=self.message_id,
+                    attachment=attachment
+            )
 
 class Agent:
     is_connected: bool = False
@@ -64,10 +80,15 @@ class Agent:
         self.io.on('message', self._log_message, namespace=agent_namespace)
         self._client_logger = AgentLogger(agent_id=config['agent_id'], name="Client")
         self._server_logger = AgentLogger(agent_id=config['agent_id'], name="Server")
+        self.http = HttpApi({
+            "agent_id": config['agent_id'],
+            "project_id": config['project_id'],
+            "agentlabs_url": config['agentlabs_url']
+        })
 
     def on_chat_message(self, fn: Callable[[IncomingChatMessage], None]):
         def wrapper(payload: Any):
-            chat_message = IncomingChatMessage(self.io, payload['data'])
+            chat_message = IncomingChatMessage(http=self.http, io=self.io, message=payload['data'])
             fn(chat_message)
 
         self.io.on('chat-message', wrapper, namespace=agent_namespace)
