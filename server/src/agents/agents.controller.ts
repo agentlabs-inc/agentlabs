@@ -11,8 +11,8 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { UserAuthenticatedRequest } from 'src/iam/iam.types';
 import { RequireAuthMethod } from '../iam/iam.decorators';
-import { LocalAuthenticatedRequest } from '../iam/iam.types';
 import { AgentsService } from './agents.service';
 import { CreateAgentDto } from './dtos/create.agent.dto';
 import { GetAgentResponseDto } from './dtos/get.agent.response.dto';
@@ -24,10 +24,10 @@ import { ListAgentsResponseDto } from './dtos/list.agents.response.dto';
 export class AgentsController {
   constructor(private readonly agentsService: AgentsService) {}
 
-  @RequireAuthMethod('local')
+  @RequireAuthMethod('user-token')
   @Post('/create')
   async createAgent(
-    @Req() req: LocalAuthenticatedRequest,
+    @Req() req: UserAuthenticatedRequest,
     @Body() dto: CreateAgentDto,
   ) {
     const { user } = req;
@@ -57,17 +57,14 @@ export class AgentsController {
     }
   }
 
-  //@RequireAuthMethod('local')
   @ApiUnauthorizedResponse({
     description: 'You are not authorized to access this resource',
   })
   @Post('/listForProject/:projectId')
   async listForProject(
-    @Req() req: LocalAuthenticatedRequest,
+    @Req() req: UserAuthenticatedRequest,
     @Param('projectId') projectId: string,
   ): Promise<ListAgentsResponseDto> {
-    const { user } = req;
-
     const result = await this.agentsService.listProjectAgents({
       projectId,
     });
@@ -91,19 +88,14 @@ export class AgentsController {
     }
   }
 
-  @RequireAuthMethod('local')
   @ApiUnauthorizedResponse({
     description: 'You are not authorized to access this resource',
   })
   @Post('/getById/:agentId')
   async getById(
-    @Req() req: LocalAuthenticatedRequest,
     @Param('agentId') agentId: string,
   ): Promise<GetAgentResponseDto> {
-    const { user } = req;
-
     const result = await this.agentsService.getAgentById({
-      userId: user.id,
       agentId,
     });
 

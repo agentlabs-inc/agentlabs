@@ -14,8 +14,8 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { UserAuthenticatedRequest } from 'src/iam/iam.types';
 import { RequireAuthMethod } from '../iam/iam.decorators';
-import { LocalAuthenticatedRequest } from '../iam/iam.types';
 import { LoginResponseDto } from './dtos/login.response.dto';
 import { LoginUserDto } from './dtos/login.user.dto';
 import { RegisterUserDto } from './dtos/register.user.dto';
@@ -95,15 +95,13 @@ export class UsersController {
     return result.value;
   }
 
-  @RequireAuthMethod('local')
+  @RequireAuthMethod('user-token')
   @ApiBearerAuth()
   @ApiNotFoundResponse({
     description: 'User not found',
   })
   @Post('/whoami')
-  async whoami(
-    @Req() req: LocalAuthenticatedRequest,
-  ): Promise<WhoAmIResultDto> {
+  async whoami(@Req() req: UserAuthenticatedRequest): Promise<WhoAmIResultDto> {
     const result = await this.usersService.getWhoAmI(req.user.id);
 
     if (!result.ok) {

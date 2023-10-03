@@ -77,6 +77,54 @@ paths:
         - users
       security:
         - bearer: []
+  /members/p/{projectId}/requestPasswordlessEmail:
+    post:
+      operationId: requestPasswordlessEmail
+      parameters:
+        - name: projectId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestPasswordlessEmailDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegisterResponseDto"
+      tags:
+        - Members
+  /members/p/{projectId}/verifyPasswordlessEmail:
+    post:
+      operationId: verifyPasswordlessEmail
+      parameters:
+        - name: projectId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyPasswordlessEmailDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginMemberResponseDto"
+      tags:
+        - Members
   /projects/create:
     post:
       operationId: createProject
@@ -358,54 +406,6 @@ paths:
           description: ""
       tags:
         - Agent Chat Messages
-  /members/p/{projectId}/requestPasswordlessEmail:
-    post:
-      operationId: requestPasswordlessEmail
-      parameters:
-        - name: projectId
-          required: true
-          in: path
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/RequestPasswordlessEmailDto"
-      responses:
-        "201":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RegisterResponseDto"
-      tags:
-        - Members
-  /members/p/{projectId}/verifyPasswordlessEmail:
-    post:
-      operationId: verifyPasswordlessEmail
-      parameters:
-        - name: projectId
-          required: true
-          in: path
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/VerifyPasswordlessEmailDto"
-      responses:
-        "201":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/LoginMemberResponseDto"
-      tags:
-        - Members
   /agent-attachments/listByMessageId/{messageId}:
     get:
       operationId: listByMessageId
@@ -600,6 +600,79 @@ components:
         - onboarding
         - projectCount
         - projectCreatedCount
+    RequestPasswordlessEmailDto:
+      type: object
+      properties:
+        email:
+          type: string
+      required:
+        - email
+    RegisterResponseDto:
+      type: object
+      properties:
+        email:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - email
+        - createdAt
+        - updatedAt
+    VerifyPasswordlessEmailDto:
+      type: object
+      properties:
+        email:
+          type: string
+        code:
+          type: string
+      required:
+        - email
+        - code
+    SanitizedMemberDto:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        firstName:
+          type: string
+          nullable: true
+        lastName:
+          type: string
+          nullable: true
+        verifiedAt:
+          format: date-time
+          type: string
+          nullable: true
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - id
+        - email
+        - firstName
+        - lastName
+        - verifiedAt
+        - createdAt
+        - updatedAt
+    LoginMemberResponseDto:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        member:
+          $ref: "#/components/schemas/SanitizedMemberDto"
+      required:
+        - accessToken
+        - member
     CreateProjectDto:
       type: object
       properties:
@@ -1000,76 +1073,3 @@ components:
       required:
         - items
         - total
-    RequestPasswordlessEmailDto:
-      type: object
-      properties:
-        email:
-          type: string
-      required:
-        - email
-    RegisterResponseDto:
-      type: object
-      properties:
-        email:
-          type: string
-        createdAt:
-          format: date-time
-          type: string
-        updatedAt:
-          format: date-time
-          type: string
-      required:
-        - email
-        - createdAt
-        - updatedAt
-    VerifyPasswordlessEmailDto:
-      type: object
-      properties:
-        email:
-          type: string
-        code:
-          type: string
-      required:
-        - email
-        - code
-    SanitizedMemberDto:
-      type: object
-      properties:
-        id:
-          type: string
-        email:
-          type: string
-        firstName:
-          type: string
-          nullable: true
-        lastName:
-          type: string
-          nullable: true
-        verifiedAt:
-          format: date-time
-          type: string
-          nullable: true
-        createdAt:
-          format: date-time
-          type: string
-        updatedAt:
-          format: date-time
-          type: string
-      required:
-        - id
-        - email
-        - firstName
-        - lastName
-        - verifiedAt
-        - createdAt
-        - updatedAt
-    LoginMemberResponseDto:
-      type: object
-      properties:
-        accessToken:
-          type: string
-        member:
-          $ref: "#/components/schemas/SanitizedMemberDto"
-      required:
-        - accessToken
-        - member

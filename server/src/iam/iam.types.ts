@@ -1,17 +1,34 @@
-import { User } from '@prisma/client';
+import { Member, User } from '@prisma/client';
 import { Request } from 'express';
 
-export const AuthMethods = ['local', 'api-key'] as const;
+export const AuthMethods = [
+  'server-sdk',
+  'member-token',
+  'user-token',
+] as const;
 
 export type AuthMethod = (typeof AuthMethods)[number];
 
 export interface BaseAuthenticatedRequest extends Request {
-  user: User;
   authMethod: AuthMethod;
 }
 
-export interface LocalAuthenticatedRequest extends BaseAuthenticatedRequest {
-  decodedToken: any;
+export interface MemberAuthenticatedRequest extends BaseAuthenticatedRequest {
+  authMethod: 'member-token';
+  member: Member;
 }
 
-export type AuthenticatedRequest = LocalAuthenticatedRequest;
+export interface UserAuthenticatedRequest extends BaseAuthenticatedRequest {
+  authMethod: 'user-token';
+  user: User;
+}
+
+export interface ServerSdkAuthenticatedRequest
+  extends BaseAuthenticatedRequest {
+  authMethod: 'server-sdk';
+}
+
+export type AuthenticatedRequest =
+  | MemberAuthenticatedRequest
+  | UserAuthenticatedRequest
+  | ServerSdkAuthenticatedRequest;
