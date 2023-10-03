@@ -35,7 +35,7 @@
 				</div>
 				<div class="text-body-accent dark:text-body-accent-dark text-[11pt] leading-7">
 					{#if typewriter}
-						<Typewriter>
+						<Typewriter interval={10}>
 							{body}
 						</Typewriter>
 					{:else}
