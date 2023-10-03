@@ -33,6 +33,24 @@ export class Environment {
     (env) => env.AGENT_ATTACHMENT_STORAGE_DRIVER === 'GOOGLE_CLOUD_STORAGE',
   )
   GOOGLE_CLOUD_STORAGE_SERVICE_ACCOUNT_BASE64?: string;
+
+  @IsString()
+  SMTP_HOST: string;
+
+  @IsNumber()
+  SMTP_PORT: number;
+
+  @IsString()
+  SMTP_USERNAME: string;
+
+  @IsString()
+  SMTP_PASSWORD: string;
+
+  @IsString()
+  EMAIL_SENDER_ADDRESS: string;
+
+  @IsString()
+  EMAIL_SENDER_NAME: string;
 }
 
 export const validateEnv = (env: NodeJS.ProcessEnv) => {

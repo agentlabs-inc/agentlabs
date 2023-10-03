@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { AuthMethodType, Member } from '@prisma/client';
 import * as dayjs from 'dayjs';
+import { readFileSync } from 'fs';
 import * as jose from 'jose';
+import * as path from 'path';
 import { PResult, err, ok } from '../common/result';
+import { MailerService } from '../mailer/mailer.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginMemberResponseDto } from './dtos/login.member.response.dto';
 import { RegisterResponseDto } from './dtos/register.response.dto';
@@ -19,6 +22,7 @@ export class MembersService {
     private readonly prisma: PrismaService,
     @InjectMembersConfig()
     private readonly membersConfig: MembersConfig,
+    private readonly mailerService: MailerService,
   ) {}
 
   private async verifyProjectAuthMethod(params: {
@@ -106,6 +110,25 @@ export class MembersService {
       .sign(secret);
   }
 
+  async sendVerificationCodeEmail(params: {
+    recipientEmail: string;
+    code: string;
+  }) {
+    const { recipientEmail, code } = params;
+
+    const html = readFileSync(
+      path.join(__dirname, 'templates', 'passwordless-authentication.hbs'),
+      'utf8',
+    );
+
+    await this.mailerService.sendEmailWithTemplate({
+      template: html,
+      recipientEmail,
+      subject: 'Your authentication code',
+      substitutions: { code },
+    });
+  }
+
   async requestPasswordlessEmail(params: {
     projectId: string;
     email: string;
@@ -161,7 +184,10 @@ export class MembersService {
               },
             },
           });
-          // TODO: send verification code email
+          await this.sendVerificationCodeEmail({
+            recipientEmail: email,
+            code: verificationCode.code,
+          });
           return memberCreated;
         }
 
@@ -208,7 +234,11 @@ export class MembersService {
             },
           },
         });
-        // TODO: send verification code email
+
+        await this.sendVerificationCodeEmail({
+          recipientEmail: email,
+          code: verificationCode.code,
+        });
 
         return memberUpdated;
       },
