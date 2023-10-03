@@ -1,17 +1,17 @@
 import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
-import { UsersService } from 'src/users/users.service';
+import { MembersService } from 'src/members/members.service';
 import {
   AccessTokenPayload,
   isAccessTokenPayload,
-} from '../../users/users.types';
-import { AuthenticatedRequest } from '../iam.types';
+} from '../../members/members.types';
+import { AuthenticatedRequest, MemberAuthenticatedRequest } from '../iam.types';
 
 @Injectable()
-export class LocalAuthMiddleware implements NestMiddleware {
-  private readonly logger = new Logger(LocalAuthMiddleware.name);
+export class MemberAuthMiddleware implements NestMiddleware {
+  private readonly logger = new Logger(MemberAuthMiddleware.name);
 
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly membersService: MembersService) {}
 
   private extractToken(req: Request): string | null {
     return req.header('authorization')?.replace('Bearer ', '') ?? null;
@@ -25,7 +25,7 @@ export class LocalAuthMiddleware implements NestMiddleware {
     | { isValid: false; payload: null }
   > {
     try {
-      const payload = await this.usersService.verifyAccessToken(token);
+      const payload = await this.membersService.verifyAccessToken(token);
 
       if (isAccessTokenPayload(payload)) {
         return {
@@ -47,11 +47,6 @@ export class LocalAuthMiddleware implements NestMiddleware {
     }
   }
 
-  // TODO: use relevant typings
-  private decodeToken(token: string): any {
-    token;
-  }
-
   async use(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     const token = this.extractToken(req);
 
@@ -63,21 +58,21 @@ export class LocalAuthMiddleware implements NestMiddleware {
     const { isValid, payload } = await this.isTokenValid(token);
 
     if (!isValid) {
-      this.logger.warn('Invalid token found in request');
+      this.logger.debug('Invalid token found in request');
       return next();
     }
 
-    const user = await this.usersService.deserializeUser(payload.sub);
+    const member = await this.membersService.findById(payload?.sub);
 
-    if (!user) {
+    if (!member) {
       this.logger.error(
-        `User with id ${payload?.sub} not found in database. The sub does not correspond to a valid user id.`,
+        `Member with id ${payload?.sub} not found in database. The sub does not correspond to a valid member id.`,
       );
       return next();
     }
 
-    req.user = user;
-    req.authMethod = 'local';
+    req.authMethod = 'member-token';
+    (req as MemberAuthenticatedRequest).member = member;
 
     next();
   }

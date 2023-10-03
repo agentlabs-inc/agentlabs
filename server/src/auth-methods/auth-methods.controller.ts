@@ -10,8 +10,8 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { UserAuthenticatedRequest } from 'src/iam/iam.types';
 import { RequireAuthMethod } from '../iam/iam.decorators';
-import { LocalAuthenticatedRequest } from '../iam/iam.types';
 import { AuthMethodsService } from './auth-methods.service';
 import { CreateAuthMethodDto } from './dtos/create.auth-method.dto';
 import { CreateDemoAuthMethodsDto } from './dtos/create.demo.auth-method.dto';
@@ -25,10 +25,10 @@ import { ListAuthMethodResponseDto } from './dtos/list.auth-method.response.dto'
 export class AuthMethodsController {
   constructor(private readonly authMethodsService: AuthMethodsService) {}
 
-  @RequireAuthMethod('local')
+  @RequireAuthMethod('user-token')
   @Post('/create')
   async createAuthMethod(
-    @Req() req: LocalAuthenticatedRequest,
+    @Req() req: UserAuthenticatedRequest,
     @Body() dto: CreateAuthMethodDto,
   ): Promise<CreatedAuthMethodDto> {
     const result = await this.authMethodsService.createAuthMethod({
@@ -61,10 +61,10 @@ export class AuthMethodsController {
     }
   }
 
-  @RequireAuthMethod('local')
+  @RequireAuthMethod('user-token')
   @Post('/createDemoAuthMethods')
   async createDemoAuthMethod(
-    @Req() req: LocalAuthenticatedRequest,
+    @Req() req: UserAuthenticatedRequest,
     @Body() dto: CreateDemoAuthMethodsDto,
   ): Promise<CreatedDemoAuthMethodsDto> {
     const result = await this.authMethodsService.createDemoAuthMethods({
@@ -97,10 +97,10 @@ export class AuthMethodsController {
     }
   }
 
-  @RequireAuthMethod('local')
+  @RequireAuthMethod('user-token')
   @Get('/listForProject/:projectId')
   async listAuthMethods(
-    @Req() req: LocalAuthenticatedRequest,
+    @Req() req: UserAuthenticatedRequest,
     @Param('projectId') projectId: string,
   ): Promise<ListAuthMethodResponseDto> {
     const result = await this.authMethodsService.listAuthMethodsForProject({

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { AuthMethodType, Member } from '@prisma/client';
 import * as dayjs from 'dayjs';
 import * as jose from 'jose';
+import { AccessTokenPayload } from 'src/members/members.types';
 import { PResult, err, ok } from '../common/result';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginMemberResponseDto } from './dtos/login.member.response.dto';
@@ -85,13 +86,8 @@ export class MembersService {
       projectId: member.projectId,
     });
   }
-  private signAccessToken(payload: {
-    sub: string;
-    email: string;
-    firstName: string | null;
-    lastName: string | null;
-    projectId: string;
-  }): Promise<string> {
+
+  private signAccessToken(payload: AccessTokenPayload): Promise<string> {
     const secret = new TextEncoder().encode(
       this.membersConfig.accessTokenSecret,
     );
@@ -104,6 +100,23 @@ export class MembersService {
       .setExpirationTime(this.membersConfig.accessTokenExpirationTime)
       .setIssuedAt()
       .sign(secret);
+  }
+
+  public async verifyAccessToken(jwt: string) {
+    const secret = new TextEncoder().encode(
+      this.membersConfig.accessTokenSecret,
+    );
+    const { payload } = await jose.jwtVerify(jwt, secret);
+
+    return payload;
+  }
+
+  async findById(id: string): Promise<Member | null> {
+    return this.prisma.member.findUnique({
+      where: {
+        id,
+      },
+    });
   }
 
   async requestPasswordlessEmail(params: {

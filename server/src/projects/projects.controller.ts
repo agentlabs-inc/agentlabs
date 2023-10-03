@@ -16,8 +16,8 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
+import { UserAuthenticatedRequest } from 'src/iam/iam.types';
 import { RequireAuthMethod } from '../iam/iam.decorators';
-import { LocalAuthenticatedRequest } from '../iam/iam.types';
 import { CreateProjectDto } from './dtos/create.project.dto';
 import { CreatedProjectDto } from './dtos/created.project.dto';
 import { GetPublicConfigDto } from './dtos/get.public.config.dto';
@@ -33,10 +33,10 @@ import { ProjectsService } from './projects.service';
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
-  @RequireAuthMethod('local')
+  @RequireAuthMethod('user-token')
   @Post('/create')
   async createProject(
-    @Req() req: LocalAuthenticatedRequest,
+    @Req() req: UserAuthenticatedRequest,
     @Body() dto: CreateProjectDto,
   ): Promise<CreatedProjectDto> {
     const { user } = req;
@@ -71,10 +71,10 @@ export class ProjectsController {
     }
   }
 
-  @RequireAuthMethod('local')
+  @RequireAuthMethod('user-token')
   @Get(`/listForOrganization/:organizationId`)
   async listOrganizationProjects(
-    @Req() req: LocalAuthenticatedRequest,
+    @Req() req: UserAuthenticatedRequest,
     @Param('organizationId') organizationId: string,
   ): Promise<ListProjectsResultDto> {
     const { user } = req;
@@ -103,10 +103,9 @@ export class ProjectsController {
     }
   }
 
-  @RequireAuthMethod('local')
+  @RequireAuthMethod('user-token')
   @Get('/exists/:slug')
   async projectExists(
-    @Req() req: LocalAuthenticatedRequest,
     @Param('slug') slug: string,
   ): Promise<ProjectExistsResponseDto> {
     const exists = await this.projectsService.projectExists(slug);
@@ -116,12 +115,9 @@ export class ProjectsController {
     };
   }
 
-  @RequireAuthMethod('local')
+  @RequireAuthMethod('user-token')
   @Get('/getById/:projectId')
-  async getById(
-    @Req() req: LocalAuthenticatedRequest,
-    @Param('projectId') projectId: string,
-  ): Promise<ProjectDto> {
+  async getById(@Param('projectId') projectId: string): Promise<ProjectDto> {
     const result = await this.projectsService.getById(projectId);
 
     if (result.ok) {

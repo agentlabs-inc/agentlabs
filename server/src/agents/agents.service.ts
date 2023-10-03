@@ -107,10 +107,9 @@ export class AgentsService {
   }
 
   async getAgentById(params: {
-    userId: string;
     agentId: string;
   }): PResult<GetAgentResponseDto, GetAgentByIdError> {
-    const { userId, agentId } = params;
+    const { agentId } = params;
 
     const agent = await this.prisma.agent.findUnique({
       where: {
@@ -122,6 +121,7 @@ export class AgentsService {
       return err('AgentNotFound');
     }
 
+    /*
     const projectId = agent.projectId;
 
     const verifyResult = await this.verifyIfProjectUser({
@@ -132,6 +132,7 @@ export class AgentsService {
     if (!verifyResult.ok) {
       return err(verifyResult.error);
     }
+	*/
 
     return ok(agent);
   }
