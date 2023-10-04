@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { ChatBubbleLeft, Icon, User } from "svelte-hero-icons";
-	import SidebarHeader from "$lib/components/sidebar/header/SidebarHeader.svelte";
 	import { goto } from "$app/navigation";
 	import { onMount } from "svelte";
 	import { fetchConversations } from "$lib/usecases/conversations/fetch-conversations";
@@ -9,20 +8,6 @@ import { authStore } from "$lib/stores/auth";
 	import { conversationStore } from "$lib/stores/conversation";
 	import Button from "../../button/Button.svelte";
 	
-
-	$: items = [
-		{
-			label: "How to use the dashboard the right way",
-			icon: User,
-			path: ""
-		},
-		{
-			label: "How to use AgentLabs?",
-			icon: User,
-			path: ""
-		}
-	];
-
 	onMount(async () => {
 		const agent = $agentStore.selectedAgent;
 		const member = $authStore.member;

@@ -1,24 +1,27 @@
 <script lang="ts">
 	import "../../app.css";
-	import ChatMessage from "$lib/components/chat/chat-message/ChatMessage.svelte";
 	import Button from "$lib/components/common/button/Button.svelte";
 	import { PaperAirplane } from "svelte-hero-icons";
-	import { afterUpdate, onDestroy, onMount } from "svelte";
 	import ChatInput from "$lib/components/chat/chat-input/ChatInput.svelte";
-	import dayjs from "dayjs";
 	import type { Message } from "$lib/entities/message/message";
 	import { realtimeStore } from "$lib/stores/realtime";
 	import { goto } from "$app/navigation";
-
-	afterUpdate(() => {
-		window.scrollTo(0, document.body.scrollHeight);
-	});
+	import { addConversation } from "$lib/stores/conversation";
+	import { authStore } from "$lib/stores/auth";
+	import { agentStore } from "$lib/stores/agent";
 
 	let messages: Message[] = [];
 
 	let inputValue = "";
 
 	const sendMessage = (e: Event) => {
+		const memberId = $authStore.member?.id;
+		const agentId = $agentStore.selectedAgent?.id;
+
+		if (!memberId || !agentId) {
+			return;
+		}
+
 		e.stopPropagation();
 		e.preventDefault();
 
@@ -38,6 +41,14 @@
 			(ack: any) => {
 				if (!ack.error) {
 					const conversationId = ack.data.conversationId;
+
+					addConversation({
+							id: conversationId,
+							createdAt: new Date().toISOString(),
+							updatedAt: new Date().toISOString(),
+							memberId,
+							agentId
+					})
 					goto(`/main/c/${conversationId}`);
 				}
 			}
