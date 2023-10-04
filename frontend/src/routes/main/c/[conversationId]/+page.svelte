@@ -11,11 +11,13 @@ import dayjs from "dayjs";
 	import { agentStore } from "$lib/stores/agent";
 	import { mainContextStore } from "$lib/stores/main-context";
 	import { authStore } from "$lib/stores/auth";
+	import { conversationStore } from "$lib/stores/conversation";
 	export let data: { conversationId: string };
 
 	export let isWaitingForAnswer = false
 
 	const load = async (conversationId: string) => {
+		$conversationStore.selectedConversationId = conversationId;
 		await fetchMessages(conversationId);
 	}
 	
