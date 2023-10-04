@@ -22,12 +22,18 @@ export const openRealtimeConnection = async (projectId: string, agentId: string,
 
 	connection.connect()
 
-	connection.on('connect', () => {
-		realtimeStore.update((store) => {
-			store.connection = connection;
-			return store;
-		});
+	await new Promise<void>((resolve) => {
+		connection.on('connect', () => {
+			resolve();
+		})
 	})
+
+	realtimeStore.update((store) => {
+		store.connection = connection;
+
+		return store;
+	});
+
 
 	return connection;
 }

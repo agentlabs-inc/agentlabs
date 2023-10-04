@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 	import { PaperAirplane } from "svelte-hero-icons";
 	import ChatInput from "$lib/components/chat/chat-input/ChatInput.svelte";
 	import Button from "$lib/components/common/button/Button.svelte";
-	import { afterUpdate, onMount } from "svelte";
+	import { afterUpdate, onDestroy, onMount } from "svelte";
 	import { openRealtimeConnection, realtimeStore } from "$lib/stores/realtime";
 	import { agentStore } from "$lib/stores/agent";
 	import { mainContextStore } from "$lib/stores/main-context";
@@ -47,27 +47,23 @@ import dayjs from "dayjs";
 		inputValue = "";
 	}
 
-	onMount(async () => {
-		const agent = $agentStore.selectedAgent;
-		const project =  $mainContextStore.publicProjectConfig;
-		const member = $authStore.member;
+	const listenToChatMessage = (payload: any) => {
+		if (payload.data.conversationId !== data.conversationId) {
+			console.warn(`Received message for conversation ${payload.data.conversationId} but current conversation is ${data.conversationId}`)
 
-		if (!agent || !project || !member) {
 			return;
 		}
 
-		const con  = await openRealtimeConnection(project.id, agent.id, member.id);
-		
-		con.on('chat-message', (payload) => {
-			if (payload.data.conversationId !== data.conversationId) {
-				console.warn(`Received message for conversation ${payload.data.conversationId} but current conversation is ${data.conversationId}`)
+		isWaitingForAnswer = false;
+		addMessage(payload.data);
+	}
 
-				return;
-			}
+	onMount(async () => {
+		$realtimeStore.connection?.on('chat-message', listenToChatMessage);
+	})
 
-			isWaitingForAnswer = false;
-			addMessage(payload.data);
-		})
+	onDestroy(() => {
+		$realtimeStore.connection?.off('chat-message', listenToChatMessage);
 	})
 
 
@@ -78,7 +74,7 @@ import dayjs from "dayjs";
 
 	afterUpdate(() => {
 		if (chatElement) {
-			chatElement.scrollTo(0, chatElement.scrollHeight);
+			chatElement.scrollTo(0, chatElement.scrollHeight + 100)
 		}
 	})
 
@@ -87,8 +83,8 @@ import dayjs from "dayjs";
 
 <div class="flex flex-col justify-between relative h-full">
 <div 
-bind:this={chatElement}
-class="absolute top-0 bottom-[80px] left-0 right-0 overflow-y-scroll bg-background-primary dark:bg-background-secondary-dark">
+	bind:this={chatElement}
+	class="absolute top-0 bottom-[80px] left-0 right-0 overflow-y-scroll bg-background-primary dark:bg-background-secondary-dark">
 		{#if messages?.length > 0}
 			<div class="flex flex-col grow gap-4 py-4 px-3 items-start">
 				{#each messages as message, idx}
