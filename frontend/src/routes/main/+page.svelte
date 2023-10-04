@@ -40,7 +40,7 @@
 			},
 			(ack: any) => {
 				if (!ack.error) {
-					const conversationId = ack.data.message.conversationId;
+					const conversationId = ack.data.conversationId;
 					goto(`/main/c/${conversationId}`);
 				}
 			}

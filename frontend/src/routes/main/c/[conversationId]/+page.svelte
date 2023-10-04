@@ -11,16 +11,10 @@ import dayjs from "dayjs";
 	import { agentStore } from "$lib/stores/agent";
 	import { mainContextStore } from "$lib/stores/main-context";
 	import { authStore } from "$lib/stores/auth";
-	    import Typewriter from 'svelte-typewriter'
 	export let data: { conversationId: string };
-
-	let typingMessageIndex = -1;
-	let preloadedMessageCount = 0;
 
 	const load = async (conversationId: string) => {
 		const messages = await fetchMessages(conversationId);
-
-		preloadedMessageCount = messages.length;
 	}
 	
 	let inputValue = "";
@@ -35,16 +29,16 @@ import dayjs from "dayjs";
 			return;
 		}
 
-		con.emit('chat-message', {
+		const payload = {
 			data: {
 				text: inputValue,
-				conversationId: data.conversationId
+				conversationId: data.conversationId,
+				source: 'user' as 'user' | 'agent' | 'system',
 			}
-		}, (ack: any) => {
-			if (!ack.error) {
-				addMessage(ack.data);
-			}
-		})
+		}
+
+		addMessage(payload.data);
+		con.emit('chat-message', payload);
 
 		inputValue = "";
 	}
@@ -61,6 +55,12 @@ import dayjs from "dayjs";
 		const con  = await openRealtimeConnection(project.id, agent.id, member.id);
 		
 		con.on('chat-message', (payload) => {
+			if (payload.data.conversationId !== data.conversationId) {
+				console.warn(`Received message for conversation ${payload.data.conversationId} but current conversation is ${data.conversationId}`)
+
+				return;
+			}
+
 			addMessage(payload.data);
 		})
 	})

@@ -1,22 +1,26 @@
-import type { ConversationMessage } from "$lib/entities/message/message";
 import { writable } from "svelte/store";
 
+export interface ChatMessage {
+	text: string;
+	source: 'user' | 'agent' | 'system';
+}
+
 export interface ChatStore {
-	messages: ConversationMessage[];
+	messages: ChatMessage[];
 }
 
 export const chatStore = writable(<ChatStore>({
 	messages: []
 }));
 
-export const loadMessages = (messages: ConversationMessage[]) => {
+export const loadMessages = (messages: ChatMessage[]) => {
 	chatStore.update(store => {
 		store.messages = messages;
 		return store;
 	});
 }
 
-export const addMessage = (message: ConversationMessage) => {
+export const addMessage = (message: ChatMessage) => {
 	chatStore.update(store => {
 		store.messages.push(message);
 		return store;
