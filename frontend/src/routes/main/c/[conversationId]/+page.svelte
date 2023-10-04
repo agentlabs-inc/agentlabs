@@ -6,21 +6,19 @@ import dayjs from "dayjs";
 	import { PaperAirplane } from "svelte-hero-icons";
 	import ChatInput from "$lib/components/chat/chat-input/ChatInput.svelte";
 	import Button from "$lib/components/common/button/Button.svelte";
-	import { afterUpdate, onMount } from "svelte";
+	import { afterUpdate, onDestroy, onMount } from "svelte";
 	import { openRealtimeConnection, realtimeStore } from "$lib/stores/realtime";
 	import { agentStore } from "$lib/stores/agent";
 	import { mainContextStore } from "$lib/stores/main-context";
 	import { authStore } from "$lib/stores/auth";
-	    import Typewriter from 'svelte-typewriter'
+	import { conversationStore } from "$lib/stores/conversation";
 	export let data: { conversationId: string };
 
-	let typingMessageIndex = -1;
-	let preloadedMessageCount = 0;
+	export let isWaitingForAnswer = false
 
 	const load = async (conversationId: string) => {
-		const messages = await fetchMessages(conversationId);
-
-		preloadedMessageCount = messages.length;
+		$conversationStore.selectedConversationId = conversationId;
+		await fetchMessages(conversationId);
 	}
 	
 	let inputValue = "";
@@ -35,34 +33,39 @@ import dayjs from "dayjs";
 			return;
 		}
 
-		con.emit('chat-message', {
+		const payload = {
 			data: {
 				text: inputValue,
-				conversationId: data.conversationId
+				conversationId: data.conversationId,
+				source: 'USER' as 'USER' | 'AGENT' | 'SYSTEM',
 			}
-		}, (ack: any) => {
-			if (!ack.error) {
-				addMessage(ack.data.message);
-			}
-		})
+		}
+
+		addMessage(payload.data);
+		
+		isWaitingForAnswer = true;
+		con.emit('chat-message', payload);
 
 		inputValue = "";
 	}
 
-	onMount(async () => {
-		const agent = $agentStore.selectedAgent;
-		const project =  $mainContextStore.publicProjectConfig;
-		const member = $authStore.member;
+	const listenToChatMessage = (payload: any) => {
+		if (payload.data.conversationId !== data.conversationId) {
+			console.warn(`Received message for conversation ${payload.data.conversationId} but current conversation is ${data.conversationId}`)
 
-		if (!agent || !project || !member) {
 			return;
 		}
 
-		const con  = await openRealtimeConnection(project.id, agent.id, member.id);
-		
-		con.on('chat-message', (payload) => {
-			addMessage(payload.data);
-		})
+		isWaitingForAnswer = false;
+		addMessage(payload.data);
+	}
+
+	onMount(async () => {
+		$realtimeStore.connection?.on('chat-message', listenToChatMessage);
+	})
+
+	onDestroy(() => {
+		$realtimeStore.connection?.off('chat-message', listenToChatMessage);
 	})
 
 
@@ -73,7 +76,7 @@ import dayjs from "dayjs";
 
 	afterUpdate(() => {
 		if (chatElement) {
-			chatElement.scrollTo(0, chatElement.scrollHeight);
+			chatElement.scrollTo(0, chatElement.scrollHeight + 100)
 		}
 	})
 
@@ -82,16 +85,16 @@ import dayjs from "dayjs";
 
 <div class="flex flex-col justify-between relative h-full">
 <div 
-bind:this={chatElement}
-class="absolute top-0 bottom-[80px] left-0 right-0 overflow-y-scroll bg-background-primary dark:bg-background-secondary-dark">
+	bind:this={chatElement}
+	class="absolute top-0 bottom-[80px] left-0 right-0 overflow-y-scroll bg-background-primary dark:bg-background-secondary-dark">
 		{#if messages?.length > 0}
 			<div class="flex flex-col grow gap-4 py-4 px-3 items-start">
 				{#each messages as message, idx}
 					<div class="w-full">
 						<ChatMessage
 							typewriter={idx === messages.length - 1}
-							from={message.source === 'USER' ? 'user' : 'agent'}
-							time={dayjs(message.createdAt).format("hh:mm A")}
+							from={message.source}
+							time={dayjs().format("hh:mm A")}
 							body={message.text} />
 					</div>
 				{/each}
@@ -109,7 +112,7 @@ class="absolute top-0 bottom-[80px] left-0 right-0 overflow-y-scroll bg-backgrou
 						placeholder="Send a message" />
 				</form>
 				<div class="h-full flex">
-					<Button submit rightIcon={PaperAirplane} on:click={sendMessage} />
+					<Button disabled={isWaitingForAnswer}  submit rightIcon={PaperAirplane} on:click={sendMessage} />
 				</div>
 			</div>
 		</div>

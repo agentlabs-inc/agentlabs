@@ -1,5 +1,5 @@
 import type { Conversation } from "$lib/entities/conversation/conversation";
-import { get, writable } from "svelte/store";
+import { derived, get, writable } from "svelte/store";
 
 export interface ConversationStore {
 	list: Conversation[];
@@ -8,8 +8,9 @@ export interface ConversationStore {
 
 export const conversationStore = writable<ConversationStore>({
 	list: [],
-	selectedConversationId: null
+	selectedConversationId: null,
 });
+
 
 export const setConversationList = (list: Conversation[]) => {
 	conversationStore.update((store) => {
@@ -31,4 +32,12 @@ export const getConversationById = (id: string): Conversation | undefined => {
 	const { list } = get(conversationStore);
 
 	return list.find((conversation) => conversation.id === id);
+}
+
+export const addConversation = (conversation: Conversation) => {
+	conversationStore.update((store) => {
+		store.list = [conversation, ...store.list];
+
+		return store;
+	});
 }

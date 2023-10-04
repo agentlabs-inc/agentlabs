@@ -140,26 +140,45 @@ export class FrontendConnectionGateway
       conversationId,
     });
 
+    const clientPayload: BaseRealtimeMessageDto = {
+      timestamp: new Date().toISOString(),
+      data: {
+        text: message.text,
+        conversationId,
+        source: 'USER',
+      },
+      message: 'Message sent',
+    };
+
     const agentConnection = this.agentConnectionManagerService.getConnection(
       frontendConnection.projectId,
       frontendConnection.agentId,
     );
 
     if (!agentConnection) {
-      return {
+      // TODO: if the agent was never connected, assume it is the platform owner testing his app out.
+      // Send  a link to the documentation on how to connect an agent.
+      const text = 'Agent is offline. Please ask the platform owner for help.';
+
+      await this.messagesService.createMessage({
+        conversationId,
+        source: 'SYSTEM',
+        text,
+      });
+
+      const payload: BaseRealtimeMessageDto = {
         timestamp: new Date().toISOString(),
-        message: 'Agent is offline',
-        data: {},
-        error: {
-          code: 'AGENT_OFFLINE',
-          message: 'Agent is offline',
-          context: {
-            conversationId,
-            messageId: message.id,
-            agentId: frontendConnection.agentId,
-          },
+        data: {
+          text,
+          conversationId,
+          source: 'SYSTEM',
         },
+        message: 'Agent is offline',
       };
+
+      frontendConnection.socket.emit('chat-message', payload);
+
+      return clientPayload;
     }
 
     agentConnection.socket.emit('chat-message', {
@@ -172,15 +191,6 @@ export class FrontendConnectionGateway
       },
     });
 
-    return {
-      timestamp: new Date().toISOString(),
-      data: {
-        conversationId,
-        messageId: message.id,
-        agentId: frontendConnection.agentId,
-        message,
-      },
-      message: 'Message sent',
-    };
+    return clientPayload;
   }
 }

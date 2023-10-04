@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { ChatBubbleLeft, Icon, User } from "svelte-hero-icons";
-	import SidebarHeader from "$lib/components/sidebar/header/SidebarHeader.svelte";
+	import { ChatBubbleLeft, Icon } from "svelte-hero-icons";
 	import { goto } from "$app/navigation";
 	import { onMount } from "svelte";
 	import { fetchConversations } from "$lib/usecases/conversations/fetch-conversations";
@@ -9,20 +8,6 @@ import { authStore } from "$lib/stores/auth";
 	import { conversationStore } from "$lib/stores/conversation";
 	import Button from "../../button/Button.svelte";
 	
-
-	$: items = [
-		{
-			label: "How to use the dashboard the right way",
-			icon: User,
-			path: ""
-		},
-		{
-			label: "How to use AgentLabs?",
-			icon: User,
-			path: ""
-		}
-	];
-
 	onMount(async () => {
 		const agent = $agentStore.selectedAgent;
 		const member = $authStore.member;
@@ -35,19 +20,24 @@ import { authStore } from "$lib/stores/auth";
 	});
 
 	$: conversations = $conversationStore.list;
+	$: selectedConversationId = $conversationStore.selectedConversationId;
 </script>
 
 <div
 	class="sticky top-0 h-[calc(100vh-60px)] overflow-y-auto border-r border-stroke-base dark:border-stroke-base-dark w-[250px] bg-background-secondary dark:bg-background-primary-dark">
 	<section class="py-5 px-3">
 		<div class="flex flex-col gap-3 antialiased">
-			<Button type='secondary' on:click={() => goto('/main')}>
+			<Button type='primary' on:click={() => goto('/main')}>
 			New chat
 			</Button>
 			{#each conversations as conversation}
 				<button
 					on:click={() => goto(`/main/c/${conversation.id}`)}
-					class="text-ellipsis overflow-ellipsis flex gap-2 items-center justify-start hover:bg-background-accent dark:hover:bg-background-accent-dark text-sm text-body-base dark:text-body-base-dark py-3 px-2 rounded-lg cursor-pointer">
+					class="text-ellipsis overflow-ellipsis flex gap-2 items-center justify-start hover:bg-background-accent dark:hover:bg-background-accent-dark text-sm text-body-base dark:text-body-base-dark py-3 px-2 rounded-lg cursor-pointer"
+					class:dark:bg-background-accent-dark={conversation.id === selectedConversationId}
+					class:bg-background-accent={conversation.id === selectedConversationId}
+					>
+
 					<Icon src={ChatBubbleLeft} class="w-4 flex-shrink-0" />
 					<span class="block h-5 truncate grow-0">conversation #{conversation.id}</span>
 				</button>
