@@ -280,6 +280,26 @@ paths:
         - agents
       security:
         - bearer: []
+  /agents/didEverConnect/{agentId}:
+    get:
+      operationId: didEverConnect
+      parameters:
+        - name: agentId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DidAgentEverConnectResponse"
+      tags:
+        - agents
+      security:
+        - bearer: []
   /agents/listForProject/{projectId}:
     post:
       operationId: listForProject
@@ -919,6 +939,13 @@ components:
         - creatorId
         - createdAt
         - updatedAt
+    DidAgentEverConnectResponse:
+      type: object
+      properties:
+        didEverConnect:
+          type: boolean
+      required:
+        - didEverConnect
     ListAgentItem:
       type: object
       properties:

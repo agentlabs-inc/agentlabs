@@ -10,6 +10,9 @@ CREATE TYPE "IdentityProvider" AS ENUM ('EMAIL', 'GOOGLE', 'GITHUB', 'GITLAB', '
 -- CreateEnum
 CREATE TYPE "AgentMessageSource" AS ENUM ('USER', 'AGENT', 'SYSTEM');
 
+-- CreateEnum
+CREATE TYPE "AgentAttachmentStorageDriver" AS ENUM ('AWS_S3', 'AZURE_BLOB_STORAGE', 'GOOGLE_CLOUD_STORAGE', 'LOCAL_FILE_SYSTEM');
+
 -- CreateTable
 CREATE TABLE "PasswordHashConfig" (
     "id" TEXT NOT NULL,
@@ -207,6 +210,34 @@ CREATE TABLE "AgentMessage" (
     CONSTRAINT "AgentMessage_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "AgentAttachment" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updateAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "name" TEXT NOT NULL,
+    "mimeType" TEXT NOT NULL,
+    "checksumSha256" TEXT NOT NULL,
+    "driver" "AgentAttachmentStorageDriver" NOT NULL,
+
+    CONSTRAINT "AgentAttachment_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "AgentConnectionEvent" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "agentId" TEXT NOT NULL,
+
+    CONSTRAINT "AgentConnectionEvent_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "_AgentAttachmentToAgentMessage" (
+    "A" TEXT NOT NULL,
+    "B" TEXT NOT NULL
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "PasswordHashConfig_userId_key" ON "PasswordHashConfig"("userId");
 
@@ -230,6 +261,12 @@ CREATE UNIQUE INDEX "MemberAuthVerificationCode_memberId_key" ON "MemberAuthVeri
 
 -- CreateIndex
 CREATE UNIQUE INDEX "MemberAuth_memberId_key" ON "MemberAuth"("memberId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_AgentAttachmentToAgentMessage_AB_unique" ON "_AgentAttachmentToAgentMessage"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_AgentAttachmentToAgentMessage_B_index" ON "_AgentAttachmentToAgentMessage"("B");
 
 -- AddForeignKey
 ALTER TABLE "PasswordHashConfig" ADD CONSTRAINT "PasswordHashConfig_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -290,3 +327,12 @@ ALTER TABLE "AgentConversation" ADD CONSTRAINT "AgentConversation_memberId_fkey"
 
 -- AddForeignKey
 ALTER TABLE "AgentMessage" ADD CONSTRAINT "AgentMessage_conversationId_fkey" FOREIGN KEY ("conversationId") REFERENCES "AgentConversation"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "AgentConnectionEvent" ADD CONSTRAINT "AgentConnectionEvent_agentId_fkey" FOREIGN KEY ("agentId") REFERENCES "Agent"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_AgentAttachmentToAgentMessage" ADD CONSTRAINT "_AgentAttachmentToAgentMessage_A_fkey" FOREIGN KEY ("A") REFERENCES "AgentAttachment"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_AgentAttachmentToAgentMessage" ADD CONSTRAINT "_AgentAttachmentToAgentMessage_B_fkey" FOREIGN KEY ("B") REFERENCES "AgentMessage"("id") ON DELETE CASCADE ON UPDATE CASCADE;
