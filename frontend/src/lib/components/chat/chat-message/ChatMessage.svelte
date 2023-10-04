@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Avatar from "$lib/components/common/avatar/Avatar.svelte";
 	import LetterAvatar from "$lib/components/common/letter-avatar/LetterAvatar.svelte";
-	import Typewriter from "svelte-typewriter";
+	import MarkdownRenderer from "$lib/components/markdown/markdown-renderer.svelte";
 
 	export let time: string;
 	export let body: string;
@@ -39,13 +39,11 @@
 					{time}
 				</div>
 				<div class="text-body-accent dark:text-body-accent-dark text-[11pt] leading-7">
-					{#if typewriter}
-						<Typewriter interval={10}>
-							{body}
-						</Typewriter>
-					{:else}
+						{#if from !== 'USER'}
+						<MarkdownRenderer source={body} />
+						{:else}
 						{body}
-					{/if}
+						{/if}
 				</div>
 			</div>
 		</div>
