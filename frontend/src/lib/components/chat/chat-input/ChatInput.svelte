@@ -6,6 +6,7 @@
 	export let required = false;
 
 	export let value: string | undefined = undefined;
+	export let inputElement: HTMLInputElement | undefined = undefined;
 
 	export let errors: any | string[] | undefined = undefined;
 
@@ -31,6 +32,7 @@
 	{/if}
 	<input
 		id={name}
+		bind:this={inputElement}
 		value={value}
 		required={required}
 		on:input={onInput}

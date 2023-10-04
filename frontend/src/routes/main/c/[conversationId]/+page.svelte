@@ -1,86 +1,87 @@
 <script lang="ts">
 import dayjs from "dayjs";
-	import ChatMessage from "$lib/components/chat/chat-message/ChatMessage.svelte";
-	import { addMessage, chatStore } from "$lib/stores/chat";
-	import { fetchMessages } from "$lib/usecases/chat/fetch-messages";
-	import { PaperAirplane } from "svelte-hero-icons";
-	import ChatInput from "$lib/components/chat/chat-input/ChatInput.svelte";
-	import Button from "$lib/components/common/button/Button.svelte";
-	import { afterUpdate, onDestroy, onMount } from "svelte";
-	import { openRealtimeConnection, realtimeStore } from "$lib/stores/realtime";
-	import { agentStore } from "$lib/stores/agent";
-	import { mainContextStore } from "$lib/stores/main-context";
-	import { authStore } from "$lib/stores/auth";
-	import { conversationStore } from "$lib/stores/conversation";
-	export let data: { conversationId: string };
+import ChatMessage from "$lib/components/chat/chat-message/ChatMessage.svelte";
+import { addMessage, chatStore } from "$lib/stores/chat";
+import { fetchMessages } from "$lib/usecases/chat/fetch-messages";
+import { PaperAirplane } from "svelte-hero-icons";
+import ChatInput from "$lib/components/chat/chat-input/ChatInput.svelte";
+import Button from "$lib/components/common/button/Button.svelte";
+import { afterUpdate, onDestroy, onMount } from "svelte";
+import { realtimeStore } from "$lib/stores/realtime";
+import { conversationStore } from "$lib/stores/conversation";
 
-	export let isWaitingForAnswer = false
+export let data: { conversationId: string };
+export let isWaitingForAnswer = false
 
-	const load = async (conversationId: string) => {
-		$conversationStore.selectedConversationId = conversationId;
-		await fetchMessages(conversationId);
+let chatElement: HTMLDivElement;
+let inputValue = "";
+
+const load = async (conversationId: string) => {
+	$conversationStore.selectedConversationId = conversationId;
+	await fetchMessages(conversationId);
+	inputElement?.focus()
+}
+
+const sendMessage = (e: Event) => {
+	e.stopPropagation();
+	e.preventDefault();
+
+	const con = $realtimeStore.connection;
+
+	if (!con) {
+		return;
 	}
+
+	const payload = {
+		data: {
+			text: inputValue,
+			conversationId: data.conversationId,
+			source: 'USER' as 'USER' | 'AGENT' | 'SYSTEM',
+		}
+	}
+
+	addMessage(payload.data);
 	
-	let inputValue = "";
+	isWaitingForAnswer = true;
+	con.emit('chat-message', payload);
 
-	const sendMessage = (e: Event) => {
-		e.stopPropagation();
-		e.preventDefault();
+	inputValue = "";
+}
 
-		const con = $realtimeStore.connection;
+const listenToChatMessage = (payload: any) => {
+	if (payload.data.conversationId !== data.conversationId) {
+		console.warn(`Received message for conversation ${payload.data.conversationId} but current conversation is ${data.conversationId}`)
 
-		if (!con) {
-			return;
-		}
-
-		const payload = {
-			data: {
-				text: inputValue,
-				conversationId: data.conversationId,
-				source: 'USER' as 'USER' | 'AGENT' | 'SYSTEM',
-			}
-		}
-
-		addMessage(payload.data);
-		
-		isWaitingForAnswer = true;
-		con.emit('chat-message', payload);
-
-		inputValue = "";
+		return;
 	}
 
-	const listenToChatMessage = (payload: any) => {
-		if (payload.data.conversationId !== data.conversationId) {
-			console.warn(`Received message for conversation ${payload.data.conversationId} but current conversation is ${data.conversationId}`)
+	isWaitingForAnswer = false;
+	addMessage(payload.data);
+}
 
-			return;
-		}
+onMount(async () => {
+	$realtimeStore.connection?.on('chat-message', listenToChatMessage);
+})
 
-		isWaitingForAnswer = false;
-		addMessage(payload.data);
+onDestroy(() => {
+	$realtimeStore.connection?.off('chat-message', listenToChatMessage);
+})
+
+
+$: load(data.conversationId);
+$: messages = $chatStore.messages;
+
+
+afterUpdate(() => {
+	if (chatElement) {
+		chatElement.scrollTo(0, chatElement.scrollHeight + 100)
 	}
+})
 
-	onMount(async () => {
-		$realtimeStore.connection?.on('chat-message', listenToChatMessage);
-	})
-
-	onDestroy(() => {
-		$realtimeStore.connection?.off('chat-message', listenToChatMessage);
-	})
+let inputElement: HTMLInputElement;
 
 
-	$: load(data.conversationId);
-	$: messages = $chatStore.messages;
-
-	let chatElement: HTMLDivElement;
-
-	afterUpdate(() => {
-		if (chatElement) {
-			chatElement.scrollTo(0, chatElement.scrollHeight + 100)
-		}
-	})
-
-	$: console.log(messages);
+$: console.log(messages);
 </script>
 
 <div class="flex flex-col justify-between relative h-full">
@@ -107,6 +108,7 @@ import dayjs from "dayjs";
 			<div class="flex items-center justify-between gap-3">
 				<form class="w-full" on:submit={sendMessage}>
 					<ChatInput
+						bind:inputElement={inputElement}
 						bind:value={inputValue}
 						name="chat-input"
 						placeholder="Send a message" />

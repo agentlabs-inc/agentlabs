@@ -9,8 +9,11 @@
 	import { addConversation } from "$lib/stores/conversation";
 	import { authStore } from "$lib/stores/auth";
 	import { agentStore } from "$lib/stores/agent";
+	import { onMount } from "svelte";
+	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
 
 	let messages: Message[] = [];
+	let chatInputElement: HTMLInputElement;
 
 	let inputValue = "";
 
@@ -53,9 +56,12 @@
 				}
 			}
 		)
+	}
 
-		inputValue = "";
-	};
+		onMount(() => {
+			chatInputElement?.focus();
+		})
+
 </script>
 
 <div class="flex flex-col justify-between relative h-full">
@@ -88,6 +94,7 @@
 			<div class="flex items-center justify-between gap-3">
 				<form class="w-full" on:submit={sendMessage}>
 					<ChatInput
+						bind:inputElement={chatInputElement}
 						bind:value={inputValue}
 						name="chat-input"
 						placeholder="Send a message" />
