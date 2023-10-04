@@ -15,6 +15,7 @@ import {
   RegisterPasswordlessEmailError,
   VerifyPasswordlessEmailError,
 } from './members.errors';
+import { AccessTokenPayload } from './members.types';
 
 @Injectable()
 export class MembersService {
@@ -90,13 +91,7 @@ export class MembersService {
     });
   }
 
-  private signAccessToken(payload: {
-    sub: string;
-    email: string;
-    firstName: string | null;
-    lastName: string | null;
-    projectId: string;
-  }): Promise<string> {
+  private signAccessToken(payload: AccessTokenPayload): Promise<string> {
     const secret = new TextEncoder().encode(
       this.membersConfig.accessTokenSecret,
     );
@@ -129,6 +124,23 @@ export class MembersService {
       substitutions: {
         code,
         expireInMinutes: this.membersConfig.authCodeExpirationDelayInMinutes,
+      },
+    });
+  }
+
+  public async verifyAccessToken(jwt: string) {
+    const secret = new TextEncoder().encode(
+      this.membersConfig.accessTokenSecret,
+    );
+    const { payload } = await jose.jwtVerify(jwt, secret);
+
+    return payload;
+  }
+
+  async findById(id: string): Promise<Member | null> {
+    return this.prisma.member.findUnique({
+      where: {
+        id,
       },
     });
   }
