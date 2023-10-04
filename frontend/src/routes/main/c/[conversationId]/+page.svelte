@@ -13,8 +13,10 @@ import dayjs from "dayjs";
 	import { authStore } from "$lib/stores/auth";
 	export let data: { conversationId: string };
 
+	export let isWaitingForAnswer = false
+
 	const load = async (conversationId: string) => {
-		const messages = await fetchMessages(conversationId);
+		await fetchMessages(conversationId);
 	}
 	
 	let inputValue = "";
@@ -33,11 +35,13 @@ import dayjs from "dayjs";
 			data: {
 				text: inputValue,
 				conversationId: data.conversationId,
-				source: 'user' as 'user' | 'agent' | 'system',
+				source: 'USER' as 'USER' | 'AGENT' | 'SYSTEM',
 			}
 		}
 
 		addMessage(payload.data);
+		
+		isWaitingForAnswer = true;
 		con.emit('chat-message', payload);
 
 		inputValue = "";
@@ -61,6 +65,7 @@ import dayjs from "dayjs";
 				return;
 			}
 
+			isWaitingForAnswer = false;
 			addMessage(payload.data);
 		})
 	})
@@ -90,8 +95,8 @@ class="absolute top-0 bottom-[80px] left-0 right-0 overflow-y-scroll bg-backgrou
 					<div class="w-full">
 						<ChatMessage
 							typewriter={idx === messages.length - 1}
-							from={message.source === 'USER' ? 'user' : message.source === 'AGENT' ? 'agent' : 'system'}
-							time={dayjs(message.createdAt).format("hh:mm A")}
+							from={message.source}
+							time={dayjs().format("hh:mm A")}
 							body={message.text} />
 					</div>
 				{/each}
@@ -109,7 +114,7 @@ class="absolute top-0 bottom-[80px] left-0 right-0 overflow-y-scroll bg-backgrou
 						placeholder="Send a message" />
 				</form>
 				<div class="h-full flex">
-					<Button submit rightIcon={PaperAirplane} on:click={sendMessage} />
+					<Button disabled={isWaitingForAnswer}  submit rightIcon={PaperAirplane} on:click={sendMessage} />
 				</div>
 			</div>
 		</div>

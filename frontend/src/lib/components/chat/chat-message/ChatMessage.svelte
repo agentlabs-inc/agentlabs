@@ -2,17 +2,16 @@
 	import Avatar from "$lib/components/common/avatar/Avatar.svelte";
 	import LetterAvatar from "$lib/components/common/letter-avatar/LetterAvatar.svelte";
 	import Typewriter from "svelte-typewriter";
-	import logoDark from "$lib/assets/img/logo-dark.svg";
 
 	export let time: string;
 	export let body: string;
-	export let from: "user" | "agent" | "system";
+	export let from: "USER" | "AGENT" | "SYSTEM";
 	export let typewriter = false;
 
 	let bubbleClass: string;
 
 	$: bubbleClass =
-		from === "user"
+		from === "USER"
 			? "bg-background-primary dark:bg-background-primary-dark"
 			: "bg-background-secondary dark:bg-[#282833]";
 </script>
@@ -21,11 +20,11 @@
 	<div class="mb-3">
 		<div class="flex gap-4">
 			<div class="shrink-0">
-				{#if from === "user"}
+				{#if from === "USER"}
 					<Avatar
 						alt="user avatar"
 						src="https://media.licdn.com/dms/image/D4E03AQFXJiFpNFWE0A/profile-displayphoto-shrink_100_100/0/1680893451739?e=1699488000&v=beta&t=WiNliB67TjMHbaIycm8u55JDrX82xu9I20jw-b10u4A" />
-				{:else if from === "agent"}
+				{:else if from === "AGENT"}
 					<LetterAvatar>Ag</LetterAvatar>
 				{:else}
 					<Avatar

@@ -2,7 +2,7 @@ import { writable } from "svelte/store";
 
 export interface ChatMessage {
 	text: string;
-	source: 'user' | 'agent' | 'system';
+	source: 'USER' | 'AGENT' | 'SYSTEM';
 }
 
 export interface ChatStore {
