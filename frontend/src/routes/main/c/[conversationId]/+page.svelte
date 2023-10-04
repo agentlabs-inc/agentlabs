@@ -94,7 +94,7 @@ import dayjs from "dayjs";
 						<ChatMessage
 							typewriter={idx === messages.length - 1}
 							from={message.source}
-							time={dayjs().format("hh:mm A")}
+							time={dayjs(message.createdAt).format("hh:mm A")}
 							body={message.text} />
 					</div>
 				{/each}
