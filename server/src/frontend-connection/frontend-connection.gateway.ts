@@ -146,20 +146,25 @@ export class FrontendConnectionGateway
     );
 
     if (!agentConnection) {
-      return {
+      await this.messagesService.createMessage({
+        conversationId,
+        source: 'SYSTEM',
+        text: 'Agent is offline',
+      });
+
+      const payload: BaseRealtimeMessageDto = {
         timestamp: new Date().toISOString(),
-        message: 'Agent is offline',
-        data: {},
-        error: {
-          code: 'AGENT_OFFLINE',
-          message: 'Agent is offline',
-          context: {
-            conversationId,
-            messageId: message.id,
-            agentId: frontendConnection.agentId,
-          },
+        data: {
+          text: 'Agent is offline. Ask the platform owner for help.',
+          conversationId,
+          source: 'SYSTEM',
         },
+        message: 'Agent is offline',
       };
+
+      frontendConnection.socket.emit('chat-message', payload);
+
+      return payload;
     }
 
     agentConnection.socket.emit('chat-message', {

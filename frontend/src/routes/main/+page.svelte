@@ -44,7 +44,7 @@
 					goto(`/main/c/${conversationId}`);
 				}
 			}
-		);
+		)
 
 		inputValue = "";
 	};

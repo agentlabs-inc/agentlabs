@@ -2,10 +2,11 @@
 	import Avatar from "$lib/components/common/avatar/Avatar.svelte";
 	import LetterAvatar from "$lib/components/common/letter-avatar/LetterAvatar.svelte";
 	import Typewriter from "svelte-typewriter";
+	import logoDark from "$lib/assets/img/logo-dark.svg";
 
 	export let time: string;
 	export let body: string;
-	export let from: "user" | "agent";
+	export let from: "user" | "agent" | "system";
 	export let typewriter = false;
 
 	let bubbleClass: string;
@@ -26,6 +27,11 @@
 						src="https://media.licdn.com/dms/image/D4E03AQFXJiFpNFWE0A/profile-displayphoto-shrink_100_100/0/1680893451739?e=1699488000&v=beta&t=WiNliB67TjMHbaIycm8u55JDrX82xu9I20jw-b10u4A" />
 				{:else if from === "agent"}
 					<LetterAvatar>Ag</LetterAvatar>
+				{:else}
+					<Avatar
+						alt="user avatar"
+						src="https://uploads-ssl.webflow.com/64ee053fe2278d415220a0b0/64f0b039fb591a9b415a6550_mark-icon.svg"
+					/>
 				{/if}
 			</div>
 

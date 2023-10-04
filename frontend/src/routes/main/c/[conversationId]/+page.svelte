@@ -42,7 +42,7 @@ import dayjs from "dayjs";
 			}
 		}, (ack: any) => {
 			if (!ack.error) {
-				addMessage(ack.data.message);
+				addMessage(ack.data);
 			}
 		})
 
@@ -90,7 +90,7 @@ class="absolute top-0 bottom-[80px] left-0 right-0 overflow-y-scroll bg-backgrou
 					<div class="w-full">
 						<ChatMessage
 							typewriter={idx === messages.length - 1}
-							from={message.source === 'USER' ? 'user' : 'agent'}
+							from={message.source === 'USER' ? 'user' : message.source === 'AGENT' ? 'agent' : 'system'}
 							time={dayjs(message.createdAt).format("hh:mm A")}
 							body={message.text} />
 					</div>
