@@ -1,6 +1,7 @@
 export type Member = {
 	id: string;
-	fullName: string;
+	firstName: string | null;
+	lastName: string | null;
 	email: string;
 	verifiedAt: Date | null;
 	createdAt: Date;

@@ -2,64 +2,66 @@
 	import TopCover from "$lib/components/common/top-cover/TopCover.svelte";
 	import Input from "$lib/components/common/input/Input.svelte";
 	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
-	import Button from "$lib/components/common/button/Button.svelte";
 	import Table from "$lib/components/common/table/Table.svelte";
-	import { PlusSmall } from "svelte-hero-icons";
 	import dayjs from "dayjs";
 	import type { TableColumn, TableRow } from "$lib/components/common/table/types";
 	import type { Member } from "$lib/entities/member/member";
 	import TabNav from "$lib/components/common/navigation/tab-nav/TabNav.svelte";
 	import { projectStore } from "$lib/stores/project";
+	import { fetchProjectMembers } from "$lib/usecases/members/fetchProjectMembers";
 
-	import { page } from "$app/stores";
 	import { projectAuthMethodsRoute, projectMembersRoute } from "$lib/routes/routes";
+	import { onMount } from "svelte";
+	import CopiableCell from "$lib/components/common/table/CopiableCell.svelte";
+
+	let isLoadingData = false;
+	const projectId = $projectStore.currentProjectId;
+
+	if (!projectId) {
+		throw new Error("Project ID is not defined");
+	}
+
+	onMount(async () => {
+		isLoadingData = true;
+		try {
+			const result = await fetchProjectMembers({
+				projectId,
+				page: 1
+			});
+
+			users = result.items;
+			isLoadingData = false;
+		} catch (e) {
+			console.error("Error while fetching members", e);
+		} finally {
+			isLoadingData = false;
+		}
+	});
 
 	let searchValue = "";
 
-	let users: TableRow<Member>[] = [
-		{
-			id: "123456789",
-			fullName: "John Doe",
-			email: "john@doe.com",
-			verifiedAt: null,
-			createdAt: new Date(),
-			updatedAt: new Date()
-		},
-		{
-			id: "123456789",
-			fullName: "John Doe",
-			email: "john@doe.com",
-			verifiedAt: null,
-			createdAt: new Date(),
-			updatedAt: new Date()
-		},
-		{
-			id: "123456789",
-			fullName: "John Doe",
-			email: "john@doe.com",
-			verifiedAt: null,
-			createdAt: new Date(),
-			updatedAt: new Date()
-		}
-	];
+	let users: TableRow<Member>[] = [];
 
 	const columns: TableColumn<Member, keyof Member>[] = [
 		{
-			name: "Name",
-			key: "fullName"
+			name: "ID",
+			key: "id",
+			customComponent: CopiableCell
 		},
 		{
 			name: "Email",
 			key: "email"
 		},
 		{
+			name: "Name",
+			key: "firstName",
+			format: (member: Member) =>
+				`${member.firstName ?? ""} ${member.lastName ?? ""}`.trim() || "-"
+		},
+		{
 			name: "Is Verified",
 			key: "verifiedAt",
 			format: (member: Member) => (member.verifiedAt ? "Yes" : "No")
-		},
-		{
-			name: "ID",
-			key: "id"
 		},
 		{
 			name: "Created at",
@@ -80,6 +82,16 @@
 				}
 		  ]
 		: [];
+
+	$: filteredResults = () => {
+		if (!searchValue) return users;
+		return users.filter((user) => {
+			const search = searchValue.toLowerCase();
+			return (
+				user.id.toLowerCase().includes(search) || user.email.toLowerCase().includes(search)
+			);
+		});
+	};
 </script>
 
 <div>
@@ -101,11 +113,17 @@
 						type="text"
 						bind:value={searchValue} />
 				</div>
-				<Button leftIcon={PlusSmall}>Create a new user</Button>
+				<!--				<Button leftIcon={PlusSmall}>Create a new user</Button>-->
 			</div>
 			<Spacer size="md" />
 
-			<Table totalCount={3} columns={columns} rows={users} />
+			<Table
+				isLoadingData={isLoadingData}
+				totalCount={users.length}
+				columns={columns}
+				rows={filteredResults()}
+				emptyTitle="You don't have any users yet"
+				emptyDescription="Share your AI Agent publicly to get your first users." />
 		</div>
 	</div>
 </div>

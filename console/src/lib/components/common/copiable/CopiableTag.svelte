@@ -15,11 +15,11 @@
 
 <button
 	on:click={handleCopy}
-	class="bg-background-accent dark:bg-background-accent-dark flex items-center gap-2 border border-stroke-accent dark:border-stroke-accent-dark rounded-full py-1.5 px-5 text-body-base dark:text-body-base-dark text-sm antialiased cursor-pointer">
+	class="bg-background-accent dark:bg-background-accent-dark flex items-center gap-2 border border-stroke-accent dark:border-stroke-accent-dark rounded-full py-1.5 px-5 text-body-base dark:text-body-base-dark text-sm antialiased cursor-pointer max-w-full">
 	{#if !isCopied}
-		<Icon src={DocumentDuplicate} width="15" />
+		<Icon src={DocumentDuplicate} width="15" class="shrink-0" />
 	{:else}
-		<Icon src={DocumentCheck} width="15" />
+		<Icon src={DocumentCheck} width="15" class="shrink-0" />
 	{/if}
-	{value}
+	<span class="truncate">{value}</span>
 </button>

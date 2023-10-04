@@ -6,7 +6,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { PaginatedResponse } from '../../common/paginated.response';
+import { ListResponse } from '../../common/list.response';
 
 export class ListProjectItemDto {
   @IsString()
@@ -31,9 +31,7 @@ export class ListProjectItemDto {
   updatedAt: Date;
 }
 
-export class ListProjectsResultDto
-  implements PaginatedResponse<ListProjectItemDto>
-{
+export class ListProjectsResultDto implements ListResponse<ListProjectItemDto> {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ListProjectItemDto)

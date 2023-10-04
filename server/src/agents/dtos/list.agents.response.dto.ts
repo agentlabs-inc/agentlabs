@@ -6,7 +6,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { PaginatedResponse } from '../../common/paginated.response';
+import { ListResponse } from '../../common/list.response';
 
 class ListAgentItem {
   @IsString()
@@ -28,7 +28,7 @@ class ListAgentItem {
   updatedAt: Date;
 }
 
-export class ListAgentsResponseDto implements PaginatedResponse<ListAgentItem> {
+export class ListAgentsResponseDto implements ListResponse<ListAgentItem> {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ListAgentItem)

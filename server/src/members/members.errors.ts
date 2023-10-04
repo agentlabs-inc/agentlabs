@@ -24,3 +24,15 @@ export const VerifyPasswordlessEmailErrors = [
 
 export type VerifyPasswordlessEmailError =
   (typeof VerifyPasswordlessEmailErrors)[number];
+
+export const VerifyIfIsProjectUserErrors = [
+  'ProjectNotFound',
+  'NotAProjectUser',
+] as const;
+
+export type VerifyIfIsProjectUserError =
+  (typeof VerifyIfIsProjectUserErrors)[number];
+
+export const ListMembersErrors = [...VerifyIfIsProjectUserErrors] as const;
+
+export type ListMembersError = (typeof ListMembersErrors)[number];
