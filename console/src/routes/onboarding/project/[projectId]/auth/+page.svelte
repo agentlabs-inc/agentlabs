@@ -17,6 +17,7 @@
 	import { goto } from "$app/navigation";
 	import { projectOnboardingUseApplicationRoute } from "$lib/routes/routes";
 	import { setCurrentProjectId } from "$lib/stores/project";
+	import Alert from "$lib/components/common/alert/Alert.svelte";
 
 	const availableAuthMethods: MultiSelectItem[] = [
 		{
@@ -103,6 +104,11 @@
 						<Typography type="subTitle">
 							Choose the methods your users can use to login.
 						</Typography>
+						<div class="my-3" />
+						<Alert type="info">
+							Only passwordless email will be applied for now. Other methods will be
+							available soon.
+						</Alert>
 						<div class="my-10" />
 						<MultiSelect items={availableAuthMethods} on:change={handleSelect} />
 					</div>

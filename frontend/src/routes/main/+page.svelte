@@ -17,8 +17,7 @@
 		window.scrollTo(0, document.body.scrollHeight);
 	});
 
-	let messages: Message[] = [
-	];
+	let messages: Message[] = [];
 
 	let inputValue = "";
 
@@ -26,31 +25,34 @@
 		e.stopPropagation();
 		e.preventDefault();
 
-		const con = $realtimeStore.connection
+		const con = $realtimeStore.connection;
 
 		if (!con) {
-			return ;
+			return;
 		}
 
-		con.emit('chat-message', {
-			data: {
-				text: inputValue
+		con.emit(
+			"chat-message",
+			{
+				data: {
+					text: inputValue
+				}
+			},
+			(ack: any) => {
+				if (!ack.error) {
+					const conversationId = ack.data.message.conversationId;
+					goto(`/main/c/${conversationId}`);
+				}
 			}
-		 }, (ack: any) => {
-		 	if (!ack.error) {
-				const conversationId = ack.data.message.conversationId;
-				goto(`/main/c/${conversationId}`)
-			}
-		 })
-
+		);
 
 		inputValue = "";
 	};
 
 	onMount(async () => {
-		const agent = $agentStore.selectedAgent
-		const project =  $mainContextStore.publicProjectConfig;
-		const member  = $authStore.member;
+		const agent = $agentStore.selectedAgent;
+		const project = $mainContextStore.publicProjectConfig;
+		const member = $authStore.member;
 
 		if (!agent || !project || !member) {
 			return;
@@ -59,12 +61,11 @@
 		const con = await openRealtimeConnection(project.id, agent.id, member.id);
 
 		if (con) {
-			con.on('chat-message', (payload) => {
-					console.log('Got message', payload)
-			})
+			con.on("chat-message", (payload) => {
+				console.log("Got message", payload);
+			});
 		}
-
-	})
+	});
 </script>
 
 <div class="flex flex-col justify-between relative h-full">
@@ -96,7 +97,7 @@
 						</div>
 					</div>
 					<p class="text-body-subdued dark:text-body-subdued antialiased mt-4">
-						Select an agent on your left to get started.
+						Send a message to start the conversation
 					</p>
 				</div>
 			</div>

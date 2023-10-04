@@ -12,6 +12,7 @@
 	import { fetchAgentDetails } from "$lib/usecases/agents/fetchAgentDetails";
 	import { page } from "$app/stores";
 	import MainTitleSkeleton from "$lib/components/common/skeleton/MainTitleSkeleton.svelte";
+	import Alert from "$lib/components/common/alert/Alert.svelte";
 	export let data: PageData;
 
 	const { form, errors, validate } = superForm(data.form, {
@@ -129,12 +130,11 @@
 				<section class="p-10 antialiased">
 					<div class="flex flex-col gap-3">
 						<Typography type="sectionTitle">Danger zone</Typography>
-						<div
-							class="border-l-2 border-stroke-warning dark:border-stroke-warning-dark p-5 bg-background-warning dark:bg-background-warning-dark text-body-warning dark:text-body-warning-dark text-sm">
+						<Alert type="warning">
 							Removing an agent will instantly make it unavailable for all your users
 							and result in losing all data and events related to this agent. We
 							assume you know what you are doing.
-						</div>
+						</Alert>
 					</div>
 				</section>
 				<Spacer size="md" />

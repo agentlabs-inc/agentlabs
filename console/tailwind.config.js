@@ -20,7 +20,7 @@ export default {
 				"background-success": "#00C48C",
 				"background-error": "#ef434b",
 				"background-warning": "#fff6e0",
-				"background-info": "#272A3A",
+				"background-info": "#d8dcff",
 
 				// Colors for background in all situations
 				"background-primary-dark": "#141420",
@@ -29,7 +29,7 @@ export default {
 				"background-quaternary-dark": "#2e2e41",
 				"background-accent-dark": "#272A3A",
 				"background-success-dark": "#00C48C",
-				"background-error-dark": "#ef434b",
+				"background-error-dark": "#DB1A5B",
 				"background-warning-dark": "#342e17",
 				"background-info-dark": "#272A3A",
 
@@ -53,6 +53,26 @@ export default {
 				"body-warning-dark": "#d9d6c9",
 				"body-success-dark": "#00C48C",
 
+				// Colors for text elements when filled
+				"body-filled-base": "#616A7B",
+				"body-filled-secondary": "#616A7B",
+				"body-filled-subdued": "#616A7B",
+				"body-filled-accent": "#383C4E",
+				"body-filled-info": "#033f7a",
+				"body-filled-error": "#ffebf4",
+				"body-filled-warning": "#5d5440",
+				"body-filled-success": "#00C48C",
+
+				// Colors for text elements when filled
+				"body-filled-base-dark": "#C5C8D8",
+				"body-filled-secondary-dark": "#C5C8D8",
+				"body-filled-subdued-dark": "#616A7B",
+				"body-filled-accent-dark": "#F2F2F8",
+				"body-filled-info-dark": "#FAFAFF",
+				"body-filled-error-dark": "#ffebf4",
+				"body-filled-warning-dark": "#d9d6c9",
+				"body-filled-success-dark": "#00C48C",
+
 				// Colors for borders
 				"stroke-base": "#F2F2F8",
 				"stroke-accent": "#d4d4db",
@@ -65,7 +85,7 @@ export default {
 				"stroke-base-dark": "#272A3A",
 				"stroke-accent-dark": "#383C4E",
 				"stroke-info-dark": "#016AD4",
-				"stroke-error-dark": "#DB1A5B",
+				"stroke-error-dark": "#960639",
 				"stroke-warning-dark": "#F58801",
 				"stroke-success-dark": "#00C48C",
 
