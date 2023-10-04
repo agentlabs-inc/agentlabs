@@ -1,12 +1,12 @@
 import { Type } from 'class-transformer';
 import { IsArray, IsNumber, ValidateNested } from 'class-validator';
-import { PaginatedResponse } from '../../common/paginated.response';
+import { ListResponse } from '../../common/list.response';
 import { AuthMethodItemDto } from './auth-method.item.dto';
 
 class ListAuthMethodItem extends AuthMethodItemDto {}
 
 export class ListAuthMethodResponseDto
-  implements PaginatedResponse<ListAuthMethodItem>
+  implements ListResponse<ListAuthMethodItem>
 {
   @IsArray()
   @ValidateNested({ each: true })

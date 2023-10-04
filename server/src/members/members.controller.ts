@@ -1,11 +1,18 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   Post,
+  Query,
+  Req,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { PaginatedQueryDto } from '../common/paginated.query.dto';
+import { RequireAuthMethod } from '../iam/iam.decorators';
+import { UserAuthenticatedRequest } from '../iam/iam.types';
+import { ListMembersResponseDto } from './dtos/list.members.response.dto';
 import { LoginMemberResponseDto } from './dtos/login.member.response.dto';
 import { RegisterResponseDto } from './dtos/register.response.dto';
 import { RequestPasswordlessEmailDto } from './dtos/request.passwordless-email.dto';
@@ -16,6 +23,39 @@ import { MembersService } from './members.service';
 @Controller('members')
 export class MembersController {
   constructor(private readonly membersService: MembersService) {}
+
+  @RequireAuthMethod('user-token')
+  @Get('/p/:projectId/listMembers')
+  async listMembers(
+    @Param('projectId') projectId: string,
+    @Query() query: PaginatedQueryDto,
+    @Req() req: UserAuthenticatedRequest,
+  ): Promise<ListMembersResponseDto> {
+    const result = await this.membersService.listMembers({
+      userId: req.user.id,
+      projectId,
+      limit: query.limit,
+      page: query.page,
+    });
+
+    if (result.ok) {
+      return result.value;
+    }
+
+    switch (result.error) {
+      case 'ProjectNotFound':
+        throw new UnauthorizedException({
+          code: 'ProjectNotFound',
+          message: 'Project not found',
+        });
+
+      case 'NotAProjectUser':
+        throw new UnauthorizedException({
+          code: 'NotAProjectUser',
+          message: 'Not a project user',
+        });
+    }
+  }
 
   @Post('/p/:projectId/requestPasswordlessEmail')
   async requestPasswordlessEmail(

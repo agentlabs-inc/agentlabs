@@ -5,6 +5,7 @@
 	import { projectStore } from "$lib/stores/project";
 
 	import { projectAuthMethodsRoute, projectMembersRoute } from "$lib/routes/routes";
+	import Alert from "$lib/components/common/alert/Alert.svelte";
 
 	$: navItems = $projectStore?.currentProjectId
 		? [
@@ -33,7 +34,10 @@
 		<div class="max-w-6xl m-auto mt-10">
 			<Spacer size="md" />
 
-			<h1>Work in progress</h1>
+			<Alert type="info">
+				The current version only supports passwordless authentication. Come back here in a
+				few weeks :)
+			</Alert>
 		</div>
 	</div>
 </div>

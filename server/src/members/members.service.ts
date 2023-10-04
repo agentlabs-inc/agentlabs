@@ -7,12 +7,15 @@ import * as path from 'path';
 import { PResult, err, ok } from '../common/result';
 import { MailerService } from '../mailer/mailer.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { ListMembersResponseDto } from './dtos/list.members.response.dto';
 import { LoginMemberResponseDto } from './dtos/login.member.response.dto';
 import { RegisterResponseDto } from './dtos/register.response.dto';
 import { InjectMembersConfig, MembersConfig } from './members.config';
 import {
+  ListMembersError,
   RegisterMemberVerifyAuthMethodError,
   RegisterPasswordlessEmailError,
+  VerifyIfIsProjectUserError,
   VerifyPasswordlessEmailError,
 } from './members.errors';
 import { AccessTokenPayload } from './members.types';
@@ -25,6 +28,35 @@ export class MembersService {
     private readonly membersConfig: MembersConfig,
     private readonly mailerService: MailerService,
   ) {}
+
+  private async verifyIfProjectUser(params: {
+    userId: string;
+    projectId: string;
+  }): PResult<{ isVerified: true }, VerifyIfIsProjectUserError> {
+    const { userId, projectId } = params;
+    const project = await this.prisma.project.findFirst({
+      where: {
+        id: projectId,
+      },
+      include: {
+        organization: {
+          include: {
+            users: true,
+          },
+        },
+      },
+    });
+
+    if (!project) {
+      return err('ProjectNotFound');
+    }
+
+    if (!project?.organization?.users?.find((user) => user.userId === userId)) {
+      return err('NotAProjectUser');
+    }
+
+    return ok({ isVerified: true });
+  }
 
   private async verifyProjectAuthMethod(params: {
     projectId: string;
@@ -142,6 +174,45 @@ export class MembersService {
       where: {
         id,
       },
+    });
+  }
+
+  async listMembers(params: {
+    userId: string;
+    projectId: string;
+    limit: number;
+    page: number;
+  }): PResult<ListMembersResponseDto, ListMembersError> {
+    const { userId, projectId, limit, page } = params;
+
+    const verify = await this.verifyIfProjectUser({
+      projectId,
+      userId,
+    });
+
+    if (!verify.ok) {
+      return err(verify.error);
+    }
+
+    const count = await this.prisma.member.count({
+      where: {
+        projectId,
+      },
+    });
+
+    const members = await this.prisma.member.findMany({
+      where: {
+        projectId,
+      },
+      take: limit,
+      skip: limit * (page - 1),
+    });
+
+    return ok({
+      items: members,
+      resultCount: members.length,
+      totalCount: count,
+      hasMore: count > limit * page,
     });
   }
 

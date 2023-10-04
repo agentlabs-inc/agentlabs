@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { ListMembersResponseDto } from '../models/ListMembersResponseDto';
 import type { LoginMemberResponseDto } from '../models/LoginMemberResponseDto';
 import type { RegisterResponseDto } from '../models/RegisterResponseDto';
 import type { RequestPasswordlessEmailDto } from '../models/RequestPasswordlessEmailDto';
@@ -12,6 +13,32 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 
 export class MembersService {
+
+    /**
+     * @returns ListMembersResponseDto
+     * @throws ApiError
+     */
+    public static listMembers({
+        projectId,
+        page,
+        limit,
+    }: {
+        projectId: string,
+        page: number,
+        limit: number,
+    }): CancelablePromise<ListMembersResponseDto> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/members/p/{projectId}/listMembers',
+            path: {
+                'projectId': projectId,
+            },
+            query: {
+                'page': page,
+                'limit': limit,
+            },
+        });
+    }
 
     /**
      * @returns RegisterResponseDto

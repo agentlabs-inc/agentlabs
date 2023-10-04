@@ -1,5 +1,4 @@
 <script>
-	import { page } from "$app/stores";
 	import NotFound from "$lib/assets/img/illustrations/not-found.svg";
 	import Card from "$lib/components/common/card/Card.svelte";
 	import Typography from "$lib/components/common/typography/Typography.svelte";
