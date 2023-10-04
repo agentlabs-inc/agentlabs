@@ -26,7 +26,7 @@ export class MailerService {
     template: string;
     recipientEmail: string;
     subject: string;
-    substitutions?: Record<string, string>;
+    substitutions?: Record<string, string | number>;
   }) {
     const { template, recipientEmail, subject, substitutions } = params;
 

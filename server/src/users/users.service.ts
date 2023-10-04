@@ -5,6 +5,7 @@ import * as jose from 'jose';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { v4 as uuid } from 'uuid';
 import { PResult, Result, err, ok } from '../common/result';
+import { MailerService } from '../mailer/mailer.service';
 import { LoginResponseDto } from './dtos/login.response.dto';
 import { RegisterUserDto } from './dtos/register.user.dto';
 import { SanitizedUserResponseDto } from './dtos/sanitized.user.response.dto';
@@ -24,6 +25,7 @@ export class UsersService {
     private readonly prisma: PrismaService,
     @InjectUsersConfig()
     private readonly usersConfig: UsersConfig,
+    private readonly mailerService: MailerService,
   ) {}
 
   private sanitizeUser(user: User): SanitizedUserResponseDto {

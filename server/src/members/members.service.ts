@@ -89,6 +89,7 @@ export class MembersService {
       projectId: member.projectId,
     });
   }
+
   private signAccessToken(payload: {
     sub: string;
     email: string;
@@ -125,7 +126,10 @@ export class MembersService {
       template: html,
       recipientEmail,
       subject: 'Your authentication code',
-      substitutions: { code },
+      substitutions: {
+        code,
+        expireInMinutes: this.membersConfig.authCodeExpirationDelayInMinutes,
+      },
     });
   }
 
