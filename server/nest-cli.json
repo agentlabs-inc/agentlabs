@@ -3,6 +3,9 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
+	"assets": [
+	  { "include": "**/*.hbs", "watchAssets": true }
+	],
     "deleteOutDir": true,
 	"plugins": [
 		{

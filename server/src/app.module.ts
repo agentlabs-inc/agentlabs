@@ -11,6 +11,7 @@ import { ConfigModule } from './config/config.module';
 import { FrontendConnectionManagerModule } from './frontend-connection-manager/frontend-connection-manager.module';
 import { FrontendConnectionModule } from './frontend-connection/frontend-connection.module';
 import { IamModule } from './iam/iam.module';
+import { MailerModule } from './mailer/mailer.module';
 import { MembersModule } from './members/members.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ProjectsModule } from './projects/projects.module';
@@ -32,6 +33,7 @@ import { UsersModule } from './users/users.module';
     AgentChatModule,
     MembersModule,
     AgentAttachmentsModule,
+    MailerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
