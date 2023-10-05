@@ -2,7 +2,7 @@
 	import TopCover from "$lib/components/common/top-cover/TopCover.svelte";
 	import Typography from "$lib/components/common/typography/Typography.svelte";
 	import Card from "$lib/components/common/card/Card.svelte";
-	import { Icon, CheckCircle, CursorArrowRays } from "svelte-hero-icons";
+	import { Icon, CheckCircle, CursorArrowRays, ArrowRight } from "svelte-hero-icons";
 	import Button from "$lib/components/common/button/Button.svelte";
 	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
 	import Monaco from "svelte-monaco";
@@ -15,6 +15,9 @@
 	import Tabs from "$lib/components/common/tabs/Tabs.svelte";
 	import { projectStore } from "$lib/stores/project";
 	import { onMount } from "svelte";
+	import OnboardingIllustration from "$lib/assets/img/illustrations/success.svg";
+	import { goto } from "$app/navigation";
+	import { projectOverviewRoute } from "$lib/routes/routes";
 
 	let currentStep: "open-frontend" | "authentication" | "send-message" = "open-frontend";
 
@@ -68,7 +71,7 @@
 	};
 
 	const openFrontend = () => {
-		window.open(`http://${projectSlug}.${PUBLIC_AI_AGENT_DOMAIN}`, "_blank");
+		window.open(`http://${projectSlug}.${PUBLIC_AI_AGENT_DOMAIN}/register`, "_blank");
 		currentStep = "authentication";
 	};
 
@@ -78,22 +81,29 @@
 </script>
 
 <div>
-	<TopCover>
-		<section class="p-12 flex flex-col items-center max-w-2xl m-auto justify-center">
-			<div class="flex gap-2">
-				<div class="text-body-success dark:text-body-success-dark">
-					<Icon src={CheckCircle} width="30" />
-				</div>
-				<Typography type="mainSectionTitle">Your Agent UI is ready!</Typography>
-			</div>
-
-			<div class="mt-3" />
-			<Typography type="subTitle"
-				>You can now test your Agent UI to see how it looks.</Typography>
-		</section>
-	</TopCover>
+	<TopCover />
 	<div class="w-full">
-		<div class="max-w-7xl m-auto mt-[-30px]">
+		<div class="max-w-2xl m-auto mt-[-100px]">
+			<Card>
+				<div class="flex flex-col items-center justify-center gap-10 py-10 px-10">
+					<div class="text-center">
+						<Typography type="sectionTitle">Your Agent UI is ready!</Typography>
+						<Typography type="subTitle">Go to your console to get started.</Typography>
+						<Spacer size="md" />
+						<div class="flex items-center justify-center">
+							<Button
+								on:click={() => {
+									goto(projectOverviewRoute.path(project.id));
+								}}
+								size="bigger"
+								rightIcon={ArrowRight}>Go to my console</Button>
+						</div>
+					</div>
+					<img src={OnboardingIllustration} alt="not found" />
+
+					<slot />
+				</div>
+			</Card>
 			<Card>
 				<section class="p-10 antialiased min-h-[200px] grid grid-cols-6 gap-3">
 					<div class="col-span-2">
@@ -102,7 +112,7 @@
 							<Typography type="sectionTitle">Test your Agent UI</Typography>
 							<Spacer size="sm" />
 							<Button on:click={openFrontend} size="bigger" leftIcon={CursorArrowRays}
-								>Open the demo Agent</Button>
+								>Open my agent</Button>
 							<Spacer size="md" />
 						</div>
 						<div class={currentStep === "authentication" ? "" : "disabled opacity-20"}>
