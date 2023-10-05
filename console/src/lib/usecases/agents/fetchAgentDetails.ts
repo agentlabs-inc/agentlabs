@@ -8,7 +8,7 @@ export const fetchAgentDetails = async (agentId: string): Promise<Agent> => {
 		agentId
 	});
 
-	await waitForDelay(2000);
+	await waitForDelay(500);
 
 	return {
 		id: item.id,

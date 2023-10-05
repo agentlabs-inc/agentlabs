@@ -14,7 +14,7 @@ import { AgentConnectionManagerService } from 'src/agent-connection-manager/agen
 import { AgentsService } from 'src/agents/agents.service';
 import { BaseRealtimeMessageDto } from 'src/common/base-realtime-message.dto';
 import { FrontendConnectionManagerService } from 'src/frontend-connection-manager/frontend-connection-manager.service';
-import { ProjectsService } from 'src/projects/projects.service';
+import { SdkSecretsService } from '../sdk-secrets/sdk-secrets.service';
 import { ConversationMutexManager } from './conversation-mutex-manager';
 import { AgentMessageDto } from './dto/agent-message.dto';
 
@@ -30,7 +30,7 @@ export class AgentConnectionGateway
     private readonly conversationsService: AgentChatConversationsService,
     private readonly messagesService: AgentChatMessagesService,
     private readonly agentsService: AgentsService,
-    private readonly projectsService: ProjectsService,
+    private readonly sdkSecretsService: SdkSecretsService,
   ) {}
 
   private readonly logger = new Logger(AgentConnectionGateway.name);
@@ -78,7 +78,7 @@ export class AgentConnectionGateway
       return;
     }
 
-    const isAuthorized = await this.projectsService.verifySdkSecret(
+    const isAuthorized = await this.sdkSecretsService.verifySdkSecret(
       projectId,
       secret,
     );
