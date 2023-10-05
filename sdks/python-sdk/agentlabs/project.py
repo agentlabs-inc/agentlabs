@@ -4,6 +4,7 @@ from .agent import Agent
 class ProjectConfig(TypedDict):
     agentlabs_url: str
     project_id: str
+    secret: str
 
 class Project:
     registered_agent_ids: list[str] = []
@@ -20,5 +21,6 @@ class Project:
         return Agent({
             'agent_id': id,
             'project_id': self.config['project_id'],
-            'agentlabs_url': self.config['agentlabs_url']
+            'agentlabs_url': self.config['agentlabs_url'],
+            'secret': self.config['secret']
         })

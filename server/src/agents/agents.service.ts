@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Agent } from '@prisma/client';
 import { err, ok, PResult } from '../common/result';
 import { PrismaService } from '../prisma/prisma.service';
 import {
@@ -114,6 +115,20 @@ export class AgentsService {
       items: agents.map((agent) => ({ ...agent })),
       total: agents.length,
     });
+  }
+
+  async findProjectAgent(
+    projectId: string,
+    agentId: string,
+  ): Promise<Agent | null> {
+    const agent = await this.prisma.agent.findUnique({
+      where: {
+        id: agentId,
+        projectId,
+      },
+    });
+
+    return agent;
   }
 
   async getAgentById(params: {

@@ -15,6 +15,7 @@ class AgentConfig(TypedDict):
     agentlabs_url: str;
     project_id: str;
     agent_id: str;
+    secret: str;
 
 class _DecodedUser(TypedDict):
     id: str
@@ -61,6 +62,7 @@ class IncomingChatMessage:
         for attachment in attachments:
             try:
                 self.http.create_message_attachment(
+                        agent_id=self.agent_id,
                         message_id=self.message_id,
                         attachment=attachment
                 )
@@ -84,9 +86,9 @@ class Agent:
         self._client_logger = AgentLogger(agent_id=config['agent_id'], name="Client")
         self._server_logger = AgentLogger(agent_id=config['agent_id'], name="Server")
         self.http = HttpApi({
-            "agent_id": config['agent_id'],
             "project_id": config['project_id'],
-            "agentlabs_url": config['agentlabs_url']
+            "agentlabs_url": config['agentlabs_url'],
+            "secret": config['secret']
         })
 
     def on_chat_message(self, fn: Callable[[IncomingChatMessage], None]):
@@ -107,6 +109,7 @@ class Agent:
         self.io.connect(url=self.config['agentlabs_url'], namespaces=[agent_namespace], transports=['websocket'], headers={
             "x-agentlabs-project-id": self.config['project_id'],
             "x-agentlabs-agent-id": self.config['agent_id'],
+            "x-agentlabs-sdk-secret": self.config['secret'],
             "user-agent": "agentlabs-python-sdk"
             })
         self.is_connected = True

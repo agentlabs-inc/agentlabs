@@ -6,7 +6,7 @@ class AgentLogger:
         self.name = name
 
     def _format_log(self, level: str, message: str) -> str:
-        return f"[{self.name}] [{self.agent_id}] {datetime.now().strftime('%m/%d/%Y, %H:%M:%S')} {level} {message}"
+        return f"[{self.agent_id}] [{self.name}] {datetime.now().strftime('%m/%d/%Y, %H:%M:%S')} {level} {message}"
 
     def _log(self, level: str, message: str) -> None:
         print(self._format_log(level, message))

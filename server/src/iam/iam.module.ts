@@ -1,6 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { MembersModule } from 'src/members/members.module';
+import { ProjectsModule } from 'src/projects/projects.module';
 import { UsersModule } from 'src/users/users.module';
 import { IamGuard } from './iam.guard';
 import { MemberAuthMiddleware } from './member-auth/member-auth.middleware';
@@ -8,7 +9,7 @@ import { ServerSdkAuthMiddleware } from './server-sdk-auth/server-sdk-auth.middl
 import { UserAuthMiddleware } from './user-auth/user-auth.middleware';
 
 @Module({
-  imports: [UsersModule, MembersModule],
+  imports: [UsersModule, MembersModule, ProjectsModule],
   providers: [
     {
       provide: APP_GUARD,
