@@ -4,11 +4,14 @@ import { PrismaService } from '../prisma/prisma.service';
 import {
   CreateAgentError,
   GetAgentByIdError,
+  UpdateAgentError,
+  VerifyIfCanUpdateAgentError,
   VerifyIfIsProjectUserError,
 } from './agents.errors';
 import { CreatedAgentDto } from './dtos/created.agent.dto';
 import { GetAgentResponseDto } from './dtos/get.agent.response.dto';
 import { ListAgentsResponseDto } from './dtos/list.agents.response.dto';
+import { UpdatedAgentDto } from './dtos/updated.agent.dto';
 
 @Injectable()
 export class AgentsService {
@@ -43,6 +46,29 @@ export class AgentsService {
     return ok({ isVerified: true });
   }
 
+  private async verifyIfCanUpdateAgent(params: {
+    userId: string;
+    agentId: string;
+  }): PResult<{ isVerified: true }, VerifyIfCanUpdateAgentError> {
+    const { userId, agentId } = params;
+    const agent = await this.prisma.agent.findUnique({
+      where: {
+        id: agentId,
+      },
+    });
+
+    if (!agent) {
+      return err('AgentNotFound');
+    }
+
+    const { projectId } = agent;
+
+    return this.verifyIfProjectUser({
+      userId,
+      projectId,
+    });
+  }
+
   async createAgent(dto: {
     name: string;
     projectId: string;
@@ -70,6 +96,36 @@ export class AgentsService {
             id: dto.projectId,
           },
         },
+      },
+    });
+
+    return ok({
+      ...result,
+    });
+  }
+
+  async updateAgent(dto: {
+    agentId: string;
+    userId: string;
+    data: {
+      name: string;
+    };
+  }): PResult<UpdatedAgentDto, UpdateAgentError> {
+    const verifyResult = await this.verifyIfCanUpdateAgent({
+      userId: dto.userId,
+      agentId: dto.agentId,
+    });
+
+    if (!verifyResult.ok) {
+      return err(verifyResult.error);
+    }
+
+    const result = await this.prisma.agent.update({
+      where: {
+        id: dto.agentId,
+      },
+      data: {
+        name: dto.data.name,
       },
     });
 

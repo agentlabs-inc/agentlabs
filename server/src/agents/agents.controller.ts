@@ -17,6 +17,8 @@ import { AgentsService } from './agents.service';
 import { CreateAgentDto } from './dtos/create.agent.dto';
 import { GetAgentResponseDto } from './dtos/get.agent.response.dto';
 import { ListAgentsResponseDto } from './dtos/list.agents.response.dto';
+import { UpdateAgentDto } from './dtos/update.agent.dto';
+import { UpdatedAgentDto } from './dtos/updated.agent.dto';
 
 @ApiBearerAuth()
 @ApiTags('agents')
@@ -53,6 +55,48 @@ export class AgentsController {
         throw new UnauthorizedException({
           code: 'NotAProjectUser',
           message: 'Not a project user',
+        });
+    }
+  }
+
+  @ApiUnauthorizedResponse({
+    description: 'You are not authorized to access this resource',
+  })
+  @Post('/update/:agentId')
+  async updateAgent(
+    @Req() req: UserAuthenticatedRequest,
+    @Param('agentId') agentId: string,
+    @Body() dto: UpdateAgentDto,
+  ): Promise<UpdatedAgentDto> {
+    const result = await this.agentsService.updateAgent({
+      userId: req.user.id,
+      agentId,
+      data: {
+        name: dto.name,
+      },
+    });
+
+    if (result.ok) {
+      return result.value;
+    }
+
+    switch (result.error) {
+      case 'ProjectNotFound':
+        throw new UnauthorizedException({
+          code: 'ProjectNotFound',
+          message: 'Project not found',
+        });
+
+      case 'NotAProjectUser':
+        throw new UnauthorizedException({
+          code: 'NotAProjectUser',
+          message: 'Not a project user',
+        });
+
+      case 'AgentNotFound':
+        throw new UnauthorizedException({
+          code: 'AgentNotFound',
+          message: 'Agent not found',
         });
     }
   }

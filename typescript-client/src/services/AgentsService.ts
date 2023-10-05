@@ -6,6 +6,8 @@ import type { CreateAgentDto } from '../models/CreateAgentDto';
 import type { CreatedAgentDto } from '../models/CreatedAgentDto';
 import type { GetAgentResponseDto } from '../models/GetAgentResponseDto';
 import type { ListAgentsResponseDto } from '../models/ListAgentsResponseDto';
+import type { UpdateAgentDto } from '../models/UpdateAgentDto';
+import type { UpdatedAgentDto } from '../models/UpdatedAgentDto';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -27,6 +29,31 @@ export class AgentsService {
             url: '/agents/create',
             body: requestBody,
             mediaType: 'application/json',
+        });
+    }
+
+    /**
+     * @returns UpdatedAgentDto
+     * @throws ApiError
+     */
+    public static updateAgent({
+        agentId,
+        requestBody,
+    }: {
+        agentId: string,
+        requestBody: UpdateAgentDto,
+    }): CancelablePromise<UpdatedAgentDto> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/agents/update/{agentId}',
+            path: {
+                'agentId': agentId,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                401: `You are not authorized to access this resource`,
+            },
         });
     }
 

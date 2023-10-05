@@ -1,7 +1,4 @@
 <script lang="ts">
-	import { Icon, DocumentDuplicate, CursorArrowRays, BookOpen } from "svelte-hero-icons";
-	import DiscordIcon from "$lib/assets/img/discord-icon.svg";
-	import TopCover from "$lib/components/common/top-cover/TopCover.svelte";
 	import Typography from "$lib/components/common/typography/Typography.svelte";
 	import Card from "$lib/components/common/card/Card.svelte";
 	import Button from "$lib/components/common/button/Button.svelte";
@@ -10,105 +7,64 @@
 	import { z as zod } from "zod";
 	import { superForm } from "sveltekit-superforms/client";
 	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
-	import { fetchAgentDetails } from "$lib/usecases/agents/fetchAgentDetails";
-	import { page } from "$app/stores";
-	import MainTitleSkeleton from "$lib/components/common/skeleton/MainTitleSkeleton.svelte";
 	import Alert from "$lib/components/common/alert/Alert.svelte";
-	import Tabs from "$lib/components/common/tabs/Tabs.svelte";
 	import { projectStore } from "$lib/stores/project";
-	import {
-		onboardingPythonCode,
-		onboardingTypescriptCode
-	} from "$lib/components/project/agents/code-snippets/onboarding.snippet";
+	import { renameAgent } from "$lib/usecases/agents/renameAgent";
+	import { toastError, toastSuccess } from "$lib/utils/toast";
+	import { agentStore } from "$lib/stores/agent";
 
-	import Monaco from "svelte-monaco";
 	export let data: PageData;
 
-	const { form, errors, validate } = superForm(data.form, {
-		validators: zod.object({
-			name: zod.string().min(3).max(20)
-		}),
-		validationMethod: "oninput"
-	});
+	const agent = $agentStore.currentAgent;
+
+	if (!agent) {
+		throw new Error("Agent not found");
+	}
+
+	const { form, errors, validate } = superForm(
+		{
+			name: agent.name
+		},
+		{
+			validators: zod.object({
+				name: zod.string().min(3).max(20)
+			}),
+			validationMethod: "oninput"
+		}
+	);
+
+	let isRenaming = false;
 
 	const handleValidation = async (e: Event) => {
+		isRenaming = true;
 		e.preventDefault();
 		const res = await validate();
 
 		if (!res.valid) {
 			errors.set(res.errors);
+			isRenaming = false;
 			return;
+		}
+
+		try {
+			await renameAgent({
+				agentId: agent.id,
+				name: $form.name
+			});
+
+			toastSuccess("Agent renamed successfully");
+		} catch (e: any) {
+			toastError(e?.message || "Something went wrong");
+		} finally {
+			isRenaming = false;
 		}
 	};
 
-	import { PUBLIC_AI_AGENT_DOMAIN } from "$env/static/public";
-	import TabNav from "$lib/components/common/navigation/tab-nav/TabNav.svelte";
-	import { projectAuthMethodsRoute, projectMembersRoute } from "$lib/routes/routes";
-
 	const project = $projectStore.currentProject;
-
-	console.log("project", project);
 
 	if (!project) {
 		throw new Error("Project not found");
 	}
-
-	const tabItems: {
-		value: string;
-		id: string;
-		label: string;
-	}[] = [
-		{
-			id: "python",
-			label: "Python",
-			value: "python"
-		},
-		{
-			id: "typescript",
-			label: "Typescript",
-			value: "typescript"
-		}
-	];
-
-	let currentStep: "open-frontend" | "authentication" | "send-message" = "open-frontend";
-
-	let selectedTab = "python";
-
-	$: snippetValue =
-		selectedTab === "python"
-			? onboardingPythonCode({
-					projectId: project.id,
-					projectSlug: project.slug,
-					agentId: "the-agent-id"
-			  })
-			: onboardingTypescriptCode({
-					projectId: project.id,
-					projectSlug: project.slug,
-					// TODO: replace with the real agent id
-					agentId: "the-agent-id"
-			  });
-
-	$: projectSlug = project.slug;
-
-	const openFrontend = () => {
-		window.open(`http://${projectSlug}.${PUBLIC_AI_AGENT_DOMAIN}/register`, "_blank");
-		currentStep = "authentication";
-	};
-
-	const agentPromise = fetchAgentDetails($page.params.agentId);
-
-	$: navItems = $projectStore.currentProjectId
-		? [
-				{
-					label: "General",
-					path: projectMembersRoute.path($projectStore.currentProjectId)
-				},
-				{
-					label: "Settings",
-					path: projectAuthMethodsRoute.path($projectStore.currentProjectId)
-				}
-		  ]
-		: [];
 </script>
 
 <div>
@@ -148,7 +104,9 @@
 					class="px-10 py-5 antialiased border-t border-stroke-base dark:border-stroke-base-dark flex justify-end">
 					<div>
 						<Button
-							disabled={!$form.name || !!$errors?.name}
+							on:click={handleValidation}
+							loading={isRenaming}
+							disabled={!$form.name || !!$errors?.name || isRenaming}
 							submit
 							type="primary"
 							center>Update</Button>

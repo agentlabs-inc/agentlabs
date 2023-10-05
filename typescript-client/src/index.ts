@@ -35,6 +35,8 @@ export type { RegisterUserDto } from './models/RegisterUserDto';
 export type { RequestPasswordlessEmailDto } from './models/RequestPasswordlessEmailDto';
 export type { SanitizedMemberDto } from './models/SanitizedMemberDto';
 export type { SanitizedUserResponseDto } from './models/SanitizedUserResponseDto';
+export type { UpdateAgentDto } from './models/UpdateAgentDto';
+export type { UpdatedAgentDto } from './models/UpdatedAgentDto';
 export type { UserCreatedResponseDto } from './models/UserCreatedResponseDto';
 export type { VerifyPasswordlessEmailDto } from './models/VerifyPasswordlessEmailDto';
 export type { WhoAmIResultDto } from './models/WhoAmIResultDto';

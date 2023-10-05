@@ -62,19 +62,6 @@
 
 	$: projectSlug = project.slug;
 
-	const handleNewUser = () => {
-		currentStep = "send-message";
-	};
-
-	const completeOnboarding = () => {
-		// not implemented
-	};
-
-	const openFrontend = () => {
-		window.open(`http://${projectSlug}.${PUBLIC_AI_AGENT_DOMAIN}/register`, "_blank");
-		currentStep = "authentication";
-	};
-
 	onMount(() => {
 		console.log("Mounted", $projectStore.currentProject, $projectStore.list);
 	});
@@ -87,8 +74,10 @@
 			<Card>
 				<div class="flex flex-col items-center justify-center gap-10 py-10 px-10">
 					<div class="text-center">
-						<Typography type="sectionTitle">Your Agent UI is ready!</Typography>
-						<Typography type="subTitle">Go to your console to get started.</Typography>
+						<Typography type="sectionTitle">You just saved a week of work!</Typography>
+						<Typography type="subTitle"
+							>Your Agent UI is now ready and configured. Go to your console to get
+							started.</Typography>
 						<Spacer size="md" />
 						<div class="flex items-center justify-center">
 							<Button
@@ -103,75 +92,6 @@
 
 					<slot />
 				</div>
-			</Card>
-			<Card>
-				<section class="p-10 antialiased min-h-[200px] grid grid-cols-6 gap-3">
-					<div class="col-span-2">
-						<div class={currentStep === "open-frontend" ? "" : "disabled opacity-20"}>
-							<Typography type="label">Step 1</Typography>
-							<Typography type="sectionTitle">Test your Agent UI</Typography>
-							<Spacer size="sm" />
-							<Button on:click={openFrontend} size="bigger" leftIcon={CursorArrowRays}
-								>Open my agent</Button>
-							<Spacer size="md" />
-						</div>
-						<div class={currentStep === "authentication" ? "" : "disabled opacity-20"}>
-							<Typography type="label">Step 2</Typography>
-							<Typography type="sectionTitle"
-								>Test your authentication portal</Typography>
-							<Spacer size="sm" />
-							<div class="grid grid-cols-2 gap-3">
-								<Button
-									on:click={handleNewUser}
-									size="default"
-									leftIcon={CursorArrowRays}>Authenticate</Button>
-							</div>
-							<Spacer size="md" />
-						</div>
-						<div class={currentStep === "send-message" ? "" : "disabled opacity-20"}>
-							<Typography type="label">Step 3</Typography>
-							<Typography type="sectionTitle">Implement your own logic</Typography>
-							<Spacer size="sm" />
-							<div class="grid grid-cols-2 gap-3">
-								<Button
-									on:click={completeOnboarding}
-									size="bigger"
-									leftIcon={CursorArrowRays}>Let's go!</Button>
-							</div>
-							<Spacer size="md" />
-						</div>
-					</div>
-					<div class="flex items-center justify-center col-span-4">
-						<div
-							class="bg-background-quaternary dark:bg-background-quaternary-dark rounded-md py-4 px-4 flex flex-col items-left justify-center w-full h-full relative">
-							<Tabs
-								on:change={(event) => (selectedTab = event.detail.item.id)}
-								defaultActive="python"
-								items={tabItems} />
-							<div class="w-full h-full rounded-md overflow-hidden">
-								<div id="editor" class="h-full">
-									<!-- event.detail is the monaco instance. All options are reactive! -->
-									<Monaco
-										options={{
-											minimap: {
-												enabled: false
-											},
-											readOnly: true,
-											padding: {
-												top: 30
-											},
-											language: "python",
-											automaticLayout: true,
-											fontSize: 16
-										}}
-										theme="vs-dark"
-										on:ready={(event) => console.log(event.detail)}
-										bind:value={snippetValue} />
-								</div>
-							</div>
-						</div>
-					</div>
-				</section>
 			</Card>
 		</div>
 	</div>
