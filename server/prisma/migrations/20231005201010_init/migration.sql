@@ -110,9 +110,12 @@ CREATE TABLE "SdkSecret" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "secret" TEXT NOT NULL,
+    "revokedAt" TIMESTAMP(3),
+    "hash" TEXT NOT NULL,
+    "preview" TEXT NOT NULL,
     "description" TEXT,
     "projectId" TEXT NOT NULL,
+    "creatorId" TEXT NOT NULL,
 
     CONSTRAINT "SdkSecret_pkey" PRIMARY KEY ("id")
 );
@@ -255,7 +258,7 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "Project_slug_key" ON "Project"("slug");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "SdkSecret_secret_key" ON "SdkSecret"("secret");
+CREATE UNIQUE INDEX "SdkSecret_hash_key" ON "SdkSecret"("hash");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "MemberAuthVerificationCode_memberId_key" ON "MemberAuthVerificationCode"("memberId");
@@ -298,6 +301,9 @@ ALTER TABLE "AuthMethod" ADD CONSTRAINT "AuthMethod_projectId_fkey" FOREIGN KEY 
 
 -- AddForeignKey
 ALTER TABLE "SdkSecret" ADD CONSTRAINT "SdkSecret_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SdkSecret" ADD CONSTRAINT "SdkSecret_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Agent" ADD CONSTRAINT "Agent_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

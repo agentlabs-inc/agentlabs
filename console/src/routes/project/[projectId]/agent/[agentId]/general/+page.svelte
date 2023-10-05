@@ -44,6 +44,7 @@
 	import { PUBLIC_AI_AGENT_DOMAIN } from "$env/static/public";
 	import TabNav from "$lib/components/common/navigation/tab-nav/TabNav.svelte";
 	import { projectAuthMethodsRoute, projectMembersRoute } from "$lib/routes/routes";
+	import SDKSecretGenerator from "$lib/components/project/secret/SDKSecretGenerator.svelte";
 
 	const project = $projectStore.currentProject;
 
@@ -146,6 +147,8 @@
 								streaming and even more features.</Typography>
 						</div>
 					</div>
+					<Spacer size="md" />
+					<SDKSecretGenerator />
 					<Spacer size="md" />
 					<div
 						class="bg-background-quaternary dark:bg-background-quaternary-dark rounded-md py-4 px-4 flex flex-col items-left justify-center w-full h-[500px] relative">

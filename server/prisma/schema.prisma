@@ -65,6 +65,7 @@ model User {
 	projectCreated	 	Project[]
 	agentCreated			Agent[]
 	onboardings				Onboarding[]
+	sdkSecrets				SdkSecret[]
 }
 
 model Organization {
@@ -153,12 +154,17 @@ model SdkSecret {
 	id						String   @id @default(uuid())
 	createdAt 		DateTime @default(now())
 	updatedAt 		DateTime @updatedAt @default(now())
+	revokedAt			DateTime?
 
-	secret				String	@unique
+	hash					String	@unique
+	preview				String
 	description		String?
 
 	projectId			String
 	project				Project @relation(fields: [projectId], references: [id])
+
+	creator				User @relation(fields: [creatorId], references: [id])
+	creatorId			String
 }
 
 model Agent {

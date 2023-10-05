@@ -1,6 +1,6 @@
 import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
-import { ProjectsService } from 'src/projects/projects.service';
+import { SdkSecretsService } from '../../sdk-secrets/sdk-secrets.service';
 import {
   AuthenticatedRequest,
   ServerSdkAuthenticatedRequest,
@@ -15,7 +15,7 @@ export interface SdkAuthConfig {
 export class ServerSdkAuthMiddleware implements NestMiddleware {
   private readonly logger = new Logger(ServerSdkAuthMiddleware.name);
 
-  constructor(private readonly projectsService: ProjectsService) {}
+  constructor(private readonly sdkSecretsService: SdkSecretsService) {}
 
   private extractSdkConfig(req: Request): SdkAuthConfig | null {
     const projectId = req.header('x-agentlabs-project-id');
@@ -41,7 +41,7 @@ export class ServerSdkAuthMiddleware implements NestMiddleware {
       return next();
     }
 
-    const isSdkSecretValid = await this.projectsService.verifySdkSecret(
+    const isSdkSecretValid = await this.sdkSecretsService.verifySdkSecret(
       config.projectId,
       config.secret,
     );

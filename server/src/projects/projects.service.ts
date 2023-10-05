@@ -267,24 +267,4 @@ export class ProjectsService {
       organizationId: project.organization.id,
     });
   }
-
-  // If we decide to hash secrets, this method will have to be implemented differently
-  private comparSdkSecret(clearSecret: string, secret: string): boolean {
-    return clearSecret === secret;
-  }
-
-  async verifySdkSecret(
-    projectId: string,
-    clearSecret: string,
-  ): Promise<boolean> {
-    const sdkSecrets = await this.prisma.sdkSecret.findMany({
-      where: {
-        projectId,
-      },
-    });
-
-    return sdkSecrets.some((secret) =>
-      this.comparSdkSecret(clearSecret, secret.secret),
-    );
-  }
 }
