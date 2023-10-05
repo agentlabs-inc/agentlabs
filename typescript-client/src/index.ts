@@ -15,6 +15,8 @@ export type { CreatedDemoAuthMethodsDto } from './models/CreatedDemoAuthMethodsD
 export type { CreateDemoAuthMethodsDto } from './models/CreateDemoAuthMethodsDto';
 export type { CreatedProjectDto } from './models/CreatedProjectDto';
 export type { CreateProjectDto } from './models/CreateProjectDto';
+export type { DeletedAgentResponseDto } from './models/DeletedAgentResponseDto';
+export type { DidAgentEverConnectResponse } from './models/DidAgentEverConnectResponse';
 export type { GetAgentResponseDto } from './models/GetAgentResponseDto';
 export type { ListAgentItem } from './models/ListAgentItem';
 export type { ListAgentsResponseDto } from './models/ListAgentsResponseDto';
@@ -35,6 +37,8 @@ export type { RegisterUserDto } from './models/RegisterUserDto';
 export type { RequestPasswordlessEmailDto } from './models/RequestPasswordlessEmailDto';
 export type { SanitizedMemberDto } from './models/SanitizedMemberDto';
 export type { SanitizedUserResponseDto } from './models/SanitizedUserResponseDto';
+export type { UpdateAgentDto } from './models/UpdateAgentDto';
+export type { UpdatedAgentDto } from './models/UpdatedAgentDto';
 export type { UserCreatedResponseDto } from './models/UserCreatedResponseDto';
 export type { VerifyPasswordlessEmailDto } from './models/VerifyPasswordlessEmailDto';
 export type { WhoAmIResultDto } from './models/WhoAmIResultDto';

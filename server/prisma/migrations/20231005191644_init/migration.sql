@@ -122,6 +122,7 @@ CREATE TABLE "Agent" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "deletedAt" TIMESTAMP(3),
     "name" TEXT NOT NULL,
     "creatorId" TEXT NOT NULL,
     "projectId" TEXT NOT NULL,

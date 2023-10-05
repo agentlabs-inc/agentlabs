@@ -5,11 +5,14 @@ import { PrismaService } from '../prisma/prisma.service';
 import {
   CreateAgentError,
   GetAgentByIdError,
+  UpdateAgentError,
+  VerifyIfCanUpdateAgentError,
   VerifyIfIsProjectUserError,
 } from './agents.errors';
 import { CreatedAgentDto } from './dtos/created.agent.dto';
 import { GetAgentResponseDto } from './dtos/get.agent.response.dto';
 import { ListAgentsResponseDto } from './dtos/list.agents.response.dto';
+import { UpdatedAgentDto } from './dtos/updated.agent.dto';
 
 @Injectable()
 export class AgentsService {
@@ -42,6 +45,29 @@ export class AgentsService {
     }
 
     return ok({ isVerified: true });
+  }
+
+  private async verifyIfCanUpdateAgent(params: {
+    userId: string;
+    agentId: string;
+  }): PResult<{ isVerified: true }, VerifyIfCanUpdateAgentError> {
+    const { userId, agentId } = params;
+    const agent = await this.prisma.agent.findUnique({
+      where: {
+        id: agentId,
+      },
+    });
+
+    if (!agent) {
+      return err('AgentNotFound');
+    }
+
+    const { projectId } = agent;
+
+    return this.verifyIfProjectUser({
+      userId,
+      projectId,
+    });
   }
 
   async createAgent(dto: {
@@ -78,7 +104,35 @@ export class AgentsService {
       ...result,
     });
   }
+  async updateAgent(dto: {
+    agentId: string;
+    userId: string;
+    data: {
+      name: string;
+    };
+  }): PResult<UpdatedAgentDto, UpdateAgentError> {
+    const verifyResult = await this.verifyIfCanUpdateAgent({
+      userId: dto.userId,
+      agentId: dto.agentId,
+    });
 
+    if (!verifyResult.ok) {
+      return err(verifyResult.error);
+    }
+
+    const result = await this.prisma.agent.update({
+      where: {
+        id: dto.agentId,
+      },
+      data: {
+        name: dto.data.name,
+      },
+    });
+
+    return ok({
+      ...result,
+    });
+  }
   async getConnectionCount(agentId: string): Promise<number> {
     const eventCount = await this.prisma.agentConnectionEvent.count({
       where: {
@@ -87,6 +141,33 @@ export class AgentsService {
     });
 
     return eventCount;
+  }
+
+  async deleteAgent(params: {
+    agentId: string;
+    userId: string;
+  }): PResult<boolean, VerifyIfCanUpdateAgentError> {
+    const { agentId, userId } = params;
+
+    const verifyResult = await this.verifyIfCanUpdateAgent({
+      userId,
+      agentId,
+    });
+
+    if (!verifyResult.ok) {
+      return err(verifyResult.error);
+    }
+
+    await this.prisma.agent.update({
+      where: {
+        id: agentId,
+      },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+
+    return ok(true);
   }
 
   async listProjectAgents(params: {
@@ -108,6 +189,7 @@ export class AgentsService {
     const agents = await this.prisma.agent.findMany({
       where: {
         projectId,
+        deletedAt: null,
       },
     });
 

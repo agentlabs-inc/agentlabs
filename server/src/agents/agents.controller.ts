@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   ForbiddenException,
   Get,
   Param,
@@ -21,9 +22,12 @@ import { ProjectsService } from 'src/projects/projects.service';
 import { RequireAuthMethod } from '../iam/iam.decorators';
 import { AgentsService } from './agents.service';
 import { CreateAgentDto } from './dtos/create.agent.dto';
+import { DeletedAgentResponseDto } from './dtos/deleted.agent.response.dto';
 import { DidAgentEverConnectResponse } from './dtos/did-agent-ever-connect.dto';
 import { GetAgentResponseDto } from './dtos/get.agent.response.dto';
 import { ListAgentsResponseDto } from './dtos/list.agents.response.dto';
+import { UpdateAgentDto } from './dtos/update.agent.dto';
+import { UpdatedAgentDto } from './dtos/updated.agent.dto';
 
 @ApiBearerAuth()
 @ApiTags('agents')
@@ -80,6 +84,86 @@ export class AgentsController {
   }
 
   @RequireAuthMethod('member-token', 'user-token')
+  @ApiUnauthorizedResponse({
+    description: 'You are not authorized to access this resource',
+  })
+  @Post('/update/:agentId')
+  async updateAgent(
+    @Req() req: UserAuthenticatedRequest,
+    @Param('agentId') agentId: string,
+    @Body() dto: UpdateAgentDto,
+  ): Promise<UpdatedAgentDto> {
+    const result = await this.agentsService.updateAgent({
+      userId: req.user.id,
+      agentId,
+      data: {
+        name: dto.name,
+      },
+    });
+
+    if (result.ok) {
+      return result.value;
+    }
+
+    switch (result.error) {
+      case 'ProjectNotFound':
+        throw new UnauthorizedException({
+          code: 'ProjectNotFound',
+          message: 'Project not found',
+        });
+
+      case 'NotAProjectUser':
+        throw new UnauthorizedException({
+          code: 'NotAProjectUser',
+          message: 'Not a project user',
+        });
+
+      case 'AgentNotFound':
+        throw new UnauthorizedException({
+          code: 'AgentNotFound',
+          message: 'Agent not found',
+        });
+    }
+  }
+
+  @ApiUnauthorizedResponse({
+    description: 'You are not authorized to access this resource',
+  })
+  @Delete('/delete/:agentId')
+  async deleteAgent(
+    @Req() req: UserAuthenticatedRequest,
+    @Param('agentId') agentId: string,
+  ): Promise<DeletedAgentResponseDto> {
+    const result = await this.agentsService.deleteAgent({
+      userId: req.user.id,
+      agentId,
+    });
+
+    if (result.ok) {
+      return { success: true };
+    }
+
+    switch (result.error) {
+      case 'ProjectNotFound':
+        throw new UnauthorizedException({
+          code: 'ProjectNotFound',
+          message: 'Project not found',
+        });
+
+      case 'NotAProjectUser':
+        throw new UnauthorizedException({
+          code: 'NotAProjectUser',
+          message: 'Not a project user',
+        });
+
+      case 'AgentNotFound':
+        throw new UnauthorizedException({
+          code: 'AgentNotFound',
+          message: 'Agent not found',
+        });
+    }
+  }
+
   @ApiUnauthorizedResponse({
     description: 'You are not authorized to access this resource',
   })

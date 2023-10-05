@@ -14,6 +14,7 @@
 	onMount(async () => {
 		try {
 			const project = await retrieveProjectById(projectId);
+			console.log(project);
 			setCurrentProject(project);
 		} catch (e: any) {
 			if (e.status === 401) {
