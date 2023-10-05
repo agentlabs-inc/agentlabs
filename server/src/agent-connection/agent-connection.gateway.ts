@@ -11,8 +11,10 @@ import { Socket } from 'socket.io';
 import { AgentChatConversationsService } from 'src/agent-chat/agent-chat-conversations/agent-chat-conversations.service';
 import { AgentChatMessagesService } from 'src/agent-chat/agent-chat-messages/agent-chat-messages.service';
 import { AgentConnectionManagerService } from 'src/agent-connection-manager/agent-connection-manager.service';
+import { AgentsService } from 'src/agents/agents.service';
 import { BaseRealtimeMessageDto } from 'src/common/base-realtime-message.dto';
 import { FrontendConnectionManagerService } from 'src/frontend-connection-manager/frontend-connection-manager.service';
+import { ProjectsService } from 'src/projects/projects.service';
 import { AgentMessageDto } from './dto/agent-message.dto';
 
 @WebSocketGateway({ namespace: '/agent' })
@@ -24,13 +26,16 @@ export class AgentConnectionGateway
     private readonly frontendConnectionManagerService: FrontendConnectionManagerService,
     private readonly conversationsService: AgentChatConversationsService,
     private readonly messagesService: AgentChatMessagesService,
+    private readonly agentsService: AgentsService,
+    private readonly projectsService: ProjectsService,
   ) {}
 
   private readonly logger = new Logger(AgentConnectionGateway.name);
 
-  handleConnection(client: Socket) {
+  async handleConnection(client: Socket) {
     const projectId = client.handshake.headers['x-agentlabs-project-id'];
     const agentId = client.handshake.headers['x-agentlabs-agent-id'];
+    const secret = client.handshake.headers['x-agentlabs-sdk-secret'];
 
     this.logger.debug(
       `Client connected: SID=${client.id},AGENT=${agentId},PROJECT=${projectId}`,
@@ -52,6 +57,44 @@ export class AgentConnectionGateway
       const message =
         'Missing header: X-AgentLabs-Agent-Id, closing connection';
       this.logger.error('Client disconnected: MISSING_AGENT_ID');
+      client.send({
+        message,
+      });
+      client.disconnect(true);
+      return;
+    }
+
+    if (typeof secret !== 'string') {
+      const message =
+        'Missing header: x-agentlabs-sdk-secret, closing connection';
+      this.logger.error('Client disconnected: MISSING_SDK_SECRET');
+      client.send({
+        message,
+      });
+      client.disconnect(true);
+      return;
+    }
+
+    const isAuthorized = await this.projectsService.verifySdkSecret(
+      projectId,
+      secret,
+    );
+
+    if (!isAuthorized) {
+      const message = 'Invalid credentials, closing connection.';
+      this.logger.error('Client disconnected: INVALID_CREDENTIALS');
+      client.send({
+        message,
+      });
+      client.disconnect(true);
+      return;
+    }
+
+    const agent = await this.agentsService.findProjectAgent(projectId, agentId);
+
+    if (!agent) {
+      const message = `Agent not found: ID=${agentId},PROJECT_ID=${projectId}`;
+      this.logger.error('Client disconnected: AGENT_NOT_FOUND');
       client.send({
         message,
       });

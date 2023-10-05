@@ -109,6 +109,7 @@ class Agent:
         self.io.connect(url=self.config['agentlabs_url'], namespaces=[agent_namespace], transports=['websocket'], headers={
             "x-agentlabs-project-id": self.config['project_id'],
             "x-agentlabs-agent-id": self.config['agent_id'],
+            "x-agentlabs-sdk-secret": self.config['secret'],
             "user-agent": "agentlabs-python-sdk"
             })
         self.is_connected = True
