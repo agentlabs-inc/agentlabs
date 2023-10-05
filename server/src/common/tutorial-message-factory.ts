@@ -18,6 +18,7 @@ from agentlabs.project import Project
 project = Project({
     'project_id': '${projectId}',
     'agentlabs_url': 'http://localhost',
+	'secret': '<SDK_SECRET_FROM_ADMIN_CONSOLE>'
 })
 
 agent = project.agent(id="${agentId}")

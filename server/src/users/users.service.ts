@@ -44,6 +44,7 @@ export class UsersService {
       fullName: user.fullName,
     });
   }
+
   private signAccessToken(
     payload: Record<string, string | number>,
   ): Promise<string> {

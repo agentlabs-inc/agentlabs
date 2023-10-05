@@ -12,14 +12,15 @@ onMount(async () => {
 	const agent = $agentStore.selectedAgent;
 	const project = $mainContextStore.publicProjectConfig;
 	const member = $authStore.member;
+	const accessToken = $authStore.accessToken;
 
-	if (!agent || !project || !member) {
+	if (!agent || !project || !member || !accessToken) {
 		return;
 	}
 
 	try {
-		await openRealtimeConnection(project.id, agent.id, member.id);
-		isLoading = false;
+		await openRealtimeConnection(project.id, agent.id, accessToken);
+		isLoading = false
 	} catch (e) {
 		console.error(e);
 	}

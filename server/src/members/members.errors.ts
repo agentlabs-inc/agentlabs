@@ -33,6 +33,11 @@ export const VerifyIfIsProjectUserErrors = [
 export type VerifyIfIsProjectUserError =
   (typeof VerifyIfIsProjectUserErrors)[number];
 
+export const VerifiyIfIsProjectMemberErrors = ['NotAProjectMember'] as const;
+
+export type VerifiyIfIsProjectMemberError =
+  (typeof VerifiyIfIsProjectMemberErrors)[number];
+
 export const ListMembersErrors = [...VerifyIfIsProjectUserErrors] as const;
 
 export type ListMembersError = (typeof ListMembersErrors)[number];

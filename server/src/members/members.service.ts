@@ -15,6 +15,7 @@ import {
   ListMembersError,
   RegisterMemberVerifyAuthMethodError,
   RegisterPasswordlessEmailError,
+  VerifiyIfIsProjectMemberError,
   VerifyIfIsProjectUserError,
   VerifyPasswordlessEmailError,
 } from './members.errors';
@@ -53,6 +54,25 @@ export class MembersService {
 
     if (!project?.organization?.users?.find((user) => user.userId === userId)) {
       return err('NotAProjectUser');
+    }
+
+    return ok({ isVerified: true });
+  }
+
+  async verifyIfProjectMember(params: {
+    memberId: string;
+    projectId: string;
+  }): PResult<{ isVerified: true }, VerifiyIfIsProjectMemberError> {
+    const { memberId, projectId } = params;
+    const member = await this.prisma.member.findUnique({
+      where: {
+        id: memberId,
+        projectId,
+      },
+    });
+
+    if (!member) {
+      return err('NotAProjectMember');
     }
 
     return ok({ isVerified: true });
