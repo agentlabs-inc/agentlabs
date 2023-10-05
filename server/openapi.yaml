@@ -156,6 +156,29 @@ paths:
                 $ref: "#/components/schemas/LoginMemberResponseDto"
       tags:
         - Members
+  /sdk-secrets/create:
+    post:
+      operationId: create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSdkSecretDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatedSdkSecretDto"
+        "401":
+          description: You are not authorized to perform this action
+      tags:
+        - sdk-secrets
+      security:
+        - bearer: []
   /projects/create:
     post:
       operationId: createProject
@@ -823,6 +846,43 @@ components:
       required:
         - accessToken
         - member
+    CreateSdkSecretDto:
+      type: object
+      properties:
+        description:
+          type: string
+        projectId:
+          type: string
+      required:
+        - projectId
+    CreatedSdkSecretDto:
+      type: object
+      properties:
+        hash:
+          type: string
+        id:
+          type: string
+        description:
+          type: string
+          nullable: true
+        projectId:
+          type: string
+        preview:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - hash
+        - id
+        - description
+        - projectId
+        - preview
+        - createdAt
+        - updatedAt
     CreateProjectDto:
       type: object
       properties:
