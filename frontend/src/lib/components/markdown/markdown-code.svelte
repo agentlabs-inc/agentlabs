@@ -1,14 +1,22 @@
 <script lang="ts">
 import Highlight from 'svelte-highlight';
-import { typescript } from 'svelte-highlight/languages';
-import theme from "svelte-highlight/styles/vs2015.css";
+import { python, typescript } from 'svelte-highlight/languages';
+import atomOneDark from 'svelte-highlight/styles/atom-one-dark';
 
 export let token: any
+
+const languages: Record<string, Highlight['language']> = {
+	'typescript': typescript,
+	'javascript': typescript,
+	'python': python,
+}
+
+const language = languages[token.lang] || typescript
 
 </script>
 
 <svelte:head>
-{@html theme}
+{@html atomOneDark}
 </svelte:head>
 
-<Highlight language={typescript} code={token.text} class="rounded-lg text-sm rounded-sm" />
+<Highlight style={atomOneDark} language={language} code={token.text} class="antialiased rounded-lg text-sm rounded-sm" />
