@@ -1,6 +1,10 @@
 import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
-import { AuthenticatedRequest } from '../iam.types';
+import { ProjectsService } from 'src/projects/projects.service';
+import {
+  AuthenticatedRequest,
+  ServerSdkAuthenticatedRequest,
+} from '../iam.types';
 
 export interface SdkAuthConfig {
   projectId: string;
@@ -10,6 +14,8 @@ export interface SdkAuthConfig {
 @Injectable()
 export class ServerSdkAuthMiddleware implements NestMiddleware {
   private readonly logger = new Logger(ServerSdkAuthMiddleware.name);
+
+  constructor(private readonly projectsService: ProjectsService) {}
 
   private extractSdkConfig(req: Request): SdkAuthConfig | null {
     const projectId = req.header('x-agentlabs-project-id');
@@ -25,7 +31,7 @@ export class ServerSdkAuthMiddleware implements NestMiddleware {
     };
   }
 
-  use(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  async use(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     const config = this.extractSdkConfig(req);
 
     if (!config) {
@@ -35,8 +41,20 @@ export class ServerSdkAuthMiddleware implements NestMiddleware {
       return next();
     }
 
-    // TODO: implement SDK credentials verification
+    const isSdkSecretValid = await this.projectsService.verifySdkSecret(
+      config.projectId,
+      config.secret,
+    );
+
+    if (!isSdkSecretValid) {
+      this.logger.error('Invalid SDK secret for this project.');
+      return next();
+    }
 
     req.authMethod = 'server-sdk';
+    (req as ServerSdkAuthenticatedRequest).sdkUser = {
+      projectId: config.projectId,
+    };
+    next();
   }
 }

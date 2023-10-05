@@ -1,5 +1,6 @@
 import { Member, User } from '@prisma/client';
 import { Request } from 'express';
+import { SdkUser } from './server-sdk-auth/server-sdk-auth.types';
 
 export const AuthMethods = [
   'server-sdk',
@@ -26,6 +27,7 @@ export interface UserAuthenticatedRequest extends BaseAuthenticatedRequest {
 export interface ServerSdkAuthenticatedRequest
   extends BaseAuthenticatedRequest {
   authMethod: 'server-sdk';
+  sdkUser: SdkUser;
 }
 
 export type AuthenticatedRequest =
