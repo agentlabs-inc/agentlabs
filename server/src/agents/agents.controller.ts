@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   Post,
   Req,
@@ -15,6 +16,7 @@ import { UserAuthenticatedRequest } from 'src/iam/iam.types';
 import { RequireAuthMethod } from '../iam/iam.decorators';
 import { AgentsService } from './agents.service';
 import { CreateAgentDto } from './dtos/create.agent.dto';
+import { DidAgentEverConnectResponse } from './dtos/did-agent-ever-connect.dto';
 import { GetAgentResponseDto } from './dtos/get.agent.response.dto';
 import { ListAgentsResponseDto } from './dtos/list.agents.response.dto';
 import { UpdateAgentDto } from './dtos/update.agent.dto';
@@ -57,6 +59,17 @@ export class AgentsController {
           message: 'Not a project user',
         });
     }
+  }
+
+  @Get('/didEverConnect/:agentId')
+  async didEverConnect(
+    @Param('agentId') agentId: string,
+  ): Promise<DidAgentEverConnectResponse> {
+    const count = await this.agentsService.getConnectionCount(agentId);
+
+    return {
+      didEverConnect: count > 0,
+    };
   }
 
   @ApiUnauthorizedResponse({

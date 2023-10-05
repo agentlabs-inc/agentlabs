@@ -23,8 +23,11 @@ class HttpApi:
 
     def create_message_attachment(self, message_id: str, attachment: Attachment):
         url = self._make_url("/agent-attachments/createMessageAttachmentSync")
-        requests.post(url, params={
-            message_id: message_id
+        res = requests.post(url, params={
+            message_id: message_id,
+            "projectId": self.config["project_id"],
+            "agentId": self.config["agent_id"]
         }, files={
             "file": attachment.buffer
         })
+        res.raise_for_status()

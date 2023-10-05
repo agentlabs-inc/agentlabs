@@ -11,7 +11,9 @@ import { Socket } from 'socket.io';
 import { AgentChatConversationsService } from 'src/agent-chat/agent-chat-conversations/agent-chat-conversations.service';
 import { AgentChatMessagesService } from 'src/agent-chat/agent-chat-messages/agent-chat-messages.service';
 import { AgentConnectionManagerService } from 'src/agent-connection-manager/agent-connection-manager.service';
+import { AgentsService } from 'src/agents/agents.service';
 import { BaseRealtimeMessageDto } from 'src/common/base-realtime-message.dto';
+import { TutorialMessageFactory } from 'src/common/tutorial-message-factory';
 import { FrontendConnectionManagerService } from 'src/frontend-connection-manager/frontend-connection-manager.service';
 import { FrontendChatMessageDto } from './dto/frontend-chat-message.dto';
 
@@ -26,6 +28,7 @@ export class FrontendConnectionGateway
     private readonly agentConnectionManagerService: AgentConnectionManagerService,
     private readonly conversationsService: AgentChatConversationsService,
     private readonly messagesService: AgentChatMessagesService,
+    private agentsService: AgentsService,
   ) {}
 
   handleConnection(client: Socket) {
@@ -156,9 +159,23 @@ export class FrontendConnectionGateway
     );
 
     if (!agentConnection) {
+      const connectionCount = await this.agentsService.getConnectionCount(
+        frontendConnection.agentId,
+      );
+
+      let text = '';
+
+      if (connectionCount > 0) {
+        text = 'Agent is offline. Please ask the platform owner for help.';
+      } else {
+        text = TutorialMessageFactory.createMessage(
+          frontendConnection.projectId,
+          frontendConnection.agentId,
+        );
+      }
+
       // TODO: if the agent was never connected, assume it is the platform owner testing his app out.
       // Send  a link to the documentation on how to connect an agent.
-      const text = 'Agent is offline. Please ask the platform owner for help.';
 
       await this.messagesService.createMessage({
         conversationId,

@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "@macfja/svelte-persistent-store": "^2.4.0",
+    "@magidoc/plugin-svelte-marked": "^4.1.0",
     "@storybook/addon-essentials": "^7.4.0",
     "@storybook/addon-interactions": "^7.4.0",
     "@storybook/addon-links": "^7.4.0",
@@ -28,6 +29,7 @@
     "@sveltejs/adapter-auto": "^2.0.0",
     "@sveltejs/adapter-node": "^1.3.1",
     "@sveltejs/kit": "^1.20.4",
+    "@types/marked": "^6.0.0",
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "@typescript-eslint/parser": "^5.45.0",
     "@zerodevx/svelte-toast": "^0.9.5",
@@ -37,6 +39,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-storybook": "^0.6.13",
     "eslint-plugin-svelte": "^2.30.0",
+    "marked": "^9.0.3",
     "postcss": "^8.4.29",
     "prettier": "^2.8.0",
     "prettier-plugin-organize-imports": "^3.2.3",
@@ -61,6 +64,7 @@
     "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.2",
     "svelte-hero-icons": "^5.0.0",
+    "svelte-highlight": "^7.3.0",
     "svelte-twemoji": "^1.0.4",
     "svelte-typewriter": "^3.1.6",
     "zod": "^3.22.2"

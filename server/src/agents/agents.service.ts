@@ -103,7 +103,6 @@ export class AgentsService {
       ...result,
     });
   }
-
   async updateAgent(dto: {
     agentId: string;
     userId: string;
@@ -132,6 +131,15 @@ export class AgentsService {
     return ok({
       ...result,
     });
+  }
+  async getConnectionCount(agentId: string): Promise<number> {
+    const eventCount = await this.prisma.agentConnectionEvent.count({
+      where: {
+        agentId,
+      },
+    });
+
+    return eventCount;
   }
 
   async listProjectAgents(params: {

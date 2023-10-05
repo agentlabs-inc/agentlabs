@@ -175,6 +175,7 @@ model Agent {
 	projectId			String
 
 	conversations	AgentConversation[]
+	connectionEvents AgentConnectionEvent[]
 }
 
 model MemberAuthVerificationCode {
@@ -319,4 +320,13 @@ model AgentAttachment {
 	driver			AgentAttachmentStorageDriver
 
 	messages		AgentMessage[]
+}
+
+model AgentConnectionEvent {
+
+	id				String				@id			@default(uuid())
+	createdAt		DateTime						@default(now())
+
+	agentId			String
+	agent			Agent		@relation(fields: [agentId], references: [id])
 }

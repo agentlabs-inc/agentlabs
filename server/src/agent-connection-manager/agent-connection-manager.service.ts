@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 import {
   AgentConnection,
   RegisterAgentConnectionPayload,
@@ -10,7 +11,7 @@ export class AgentConnectionManagerService {
   private agentKeyToConnection = new Map<string, AgentConnection>();
   private readonly logger = new Logger(AgentConnectionManagerService.name);
 
-  constructor() {
+  constructor(private readonly prisma: PrismaService) {
     setInterval(() => {
       const agentCount = this.agentKeyToConnection.size;
 
@@ -40,11 +41,11 @@ export class AgentConnectionManagerService {
     return this.sidToConnection.get(sid) || null;
   }
 
-  registerConnection({
+  async registerConnection({
     socket,
     projectId,
     agentId,
-  }: RegisterAgentConnectionPayload): void {
+  }: RegisterAgentConnectionPayload): Promise<void> {
     const key = this.computeAgentKey(projectId, agentId);
     const connection: AgentConnection = {
       projectId,
@@ -53,6 +54,12 @@ export class AgentConnectionManagerService {
       socket,
       createdAt: new Date(),
     };
+
+    await this.prisma.agentConnectionEvent.create({
+      data: {
+        agentId,
+      },
+    });
 
     this.sidToConnection.set(socket.id, connection);
     this.agentKeyToConnection.set(key, connection);
