@@ -465,32 +465,9 @@ paths:
           in: query
           schema:
             type: string
-        - name: memberId
-          required: true
-          in: query
-          schema:
-            type: string
       responses:
         "200":
           description: ""
-      tags:
-        - Agent Chat Conversations
-  /conversations/getById/{conversationId}:
-    get:
-      operationId: getConversationById
-      parameters:
-        - name: conversationId
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
       tags:
         - Agent Chat Conversations
   /agent-chat-messages/listByConversationId/{conversationId}:

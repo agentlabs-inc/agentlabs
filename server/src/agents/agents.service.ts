@@ -171,11 +171,11 @@ export class AgentsService {
   }
 
   async listProjectAgents(params: {
-    userId: string;
     projectId: string;
   }): PResult<ListAgentsResponseDto, VerifyIfIsProjectUserError> {
-    const { projectId, userId } = params;
+    const { projectId } = params;
 
+    /*
     const verifyResult = await this.verifyIfProjectUser({
       userId,
       projectId,
@@ -184,6 +184,7 @@ export class AgentsService {
     if (!verifyResult.ok) {
       return err(verifyResult.error);
     }
+	*/
 
     const agents = await this.prisma.agent.findMany({
       where: {
