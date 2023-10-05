@@ -11,7 +11,10 @@
 	import { projectStore } from "$lib/stores/project";
 	import { renameAgent } from "$lib/usecases/agents/renameAgent";
 	import { toastError, toastSuccess } from "$lib/utils/toast";
+	import { projectOverviewRoute } from "$lib/routes/routes";
 	import { agentStore } from "$lib/stores/agent";
+	import { deleteAgent } from "$lib/usecases/agents/deleteAgent";
+	import { goto } from "$app/navigation";
 
 	export let data: PageData;
 
@@ -65,6 +68,22 @@
 	if (!project) {
 		throw new Error("Project not found");
 	}
+
+	let isDeleting = false;
+
+	const handleDeletion = async () => {
+		const confirmed = confirm("Are you sure you want to delete this agent?");
+		if (!confirmed) return;
+		isDeleting = true;
+		try {
+			await deleteAgent(agent.id);
+			await goto(projectOverviewRoute.path(project.id));
+		} catch (e: any) {
+			toastError(e?.message || "Something went wrong");
+		} finally {
+			isDeleting = false;
+		}
+	};
 </script>
 
 <div>
@@ -130,8 +149,9 @@
 					class="px-10 py-5 antialiased border-t border-stroke-base dark:border-stroke-base-dark flex justify-end">
 					<div>
 						<Button
+							loading={isDeleting}
+							on:click={handleDeletion}
 							disabled={!$form.name || !!$errors?.name}
-							submit
 							type="danger"
 							center>Delete forever</Button>
 					</div>

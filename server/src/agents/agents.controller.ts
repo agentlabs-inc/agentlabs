@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -16,6 +17,7 @@ import { UserAuthenticatedRequest } from 'src/iam/iam.types';
 import { RequireAuthMethod } from '../iam/iam.decorators';
 import { AgentsService } from './agents.service';
 import { CreateAgentDto } from './dtos/create.agent.dto';
+import { DeletedAgentResponseDto } from './dtos/deleted.agent.response.dto';
 import { DidAgentEverConnectResponse } from './dtos/did-agent-ever-connect.dto';
 import { GetAgentResponseDto } from './dtos/get.agent.response.dto';
 import { ListAgentsResponseDto } from './dtos/list.agents.response.dto';
@@ -117,12 +119,51 @@ export class AgentsController {
   @ApiUnauthorizedResponse({
     description: 'You are not authorized to access this resource',
   })
+  @Delete('/delete/:agentId')
+  async deleteAgent(
+    @Req() req: UserAuthenticatedRequest,
+    @Param('agentId') agentId: string,
+  ): Promise<DeletedAgentResponseDto> {
+    const result = await this.agentsService.deleteAgent({
+      userId: req.user.id,
+      agentId,
+    });
+
+    if (result.ok) {
+      return { success: true };
+    }
+
+    switch (result.error) {
+      case 'ProjectNotFound':
+        throw new UnauthorizedException({
+          code: 'ProjectNotFound',
+          message: 'Project not found',
+        });
+
+      case 'NotAProjectUser':
+        throw new UnauthorizedException({
+          code: 'NotAProjectUser',
+          message: 'Not a project user',
+        });
+
+      case 'AgentNotFound':
+        throw new UnauthorizedException({
+          code: 'AgentNotFound',
+          message: 'Agent not found',
+        });
+    }
+  }
+
+  @ApiUnauthorizedResponse({
+    description: 'You are not authorized to access this resource',
+  })
   @Post('/listForProject/:projectId')
   async listForProject(
     @Req() req: UserAuthenticatedRequest,
     @Param('projectId') projectId: string,
   ): Promise<ListAgentsResponseDto> {
     const result = await this.agentsService.listProjectAgents({
+      userId: req.user.id,
       projectId,
     });
 

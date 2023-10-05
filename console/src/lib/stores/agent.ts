@@ -11,12 +11,12 @@ export const agentStore = writable<AgentStore>({
 	currentAgentId: null
 });
 
-export const setCurrentAgent = (agent: Agent) => {
+export const setCurrentAgent = (agent: Agent | null) => {
 	agentStore.update((store) => {
 		return {
 			...store,
 			currentAgent: agent,
-			currentAgentId: agent.id
+			currentAgentId: agent?.id ?? null
 		};
 	});
 };

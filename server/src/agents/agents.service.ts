@@ -142,12 +142,39 @@ export class AgentsService {
     return eventCount;
   }
 
+  async deleteAgent(params: {
+    agentId: string;
+    userId: string;
+  }): PResult<boolean, VerifyIfCanUpdateAgentError> {
+    const { agentId, userId } = params;
+
+    const verifyResult = await this.verifyIfCanUpdateAgent({
+      userId,
+      agentId,
+    });
+
+    if (!verifyResult.ok) {
+      return err(verifyResult.error);
+    }
+
+    await this.prisma.agent.update({
+      where: {
+        id: agentId,
+      },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+
+    return ok(true);
+  }
+
   async listProjectAgents(params: {
+    userId: string;
     projectId: string;
   }): PResult<ListAgentsResponseDto, VerifyIfIsProjectUserError> {
-    const { projectId } = params;
+    const { projectId, userId } = params;
 
-    /*
     const verifyResult = await this.verifyIfProjectUser({
       userId,
       projectId,
@@ -156,11 +183,11 @@ export class AgentsService {
     if (!verifyResult.ok) {
       return err(verifyResult.error);
     }
-	*/
 
     const agents = await this.prisma.agent.findMany({
       where: {
         projectId,
+        deletedAt: null,
       },
     });
 

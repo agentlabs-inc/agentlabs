@@ -4,6 +4,8 @@
 /* eslint-disable */
 import type { CreateAgentDto } from '../models/CreateAgentDto';
 import type { CreatedAgentDto } from '../models/CreatedAgentDto';
+import type { DeletedAgentResponseDto } from '../models/DeletedAgentResponseDto';
+import type { DidAgentEverConnectResponse } from '../models/DidAgentEverConnectResponse';
 import type { GetAgentResponseDto } from '../models/GetAgentResponseDto';
 import type { ListAgentsResponseDto } from '../models/ListAgentsResponseDto';
 import type { UpdateAgentDto } from '../models/UpdateAgentDto';
@@ -33,6 +35,24 @@ export class AgentsService {
     }
 
     /**
+     * @returns DidAgentEverConnectResponse
+     * @throws ApiError
+     */
+    public static didEverConnect({
+        agentId,
+    }: {
+        agentId: string,
+    }): CancelablePromise<DidAgentEverConnectResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/agents/didEverConnect/{agentId}',
+            path: {
+                'agentId': agentId,
+            },
+        });
+    }
+
+    /**
      * @returns UpdatedAgentDto
      * @throws ApiError
      */
@@ -51,6 +71,27 @@ export class AgentsService {
             },
             body: requestBody,
             mediaType: 'application/json',
+            errors: {
+                401: `You are not authorized to access this resource`,
+            },
+        });
+    }
+
+    /**
+     * @returns DeletedAgentResponseDto
+     * @throws ApiError
+     */
+    public static deleteAgent({
+        agentId,
+    }: {
+        agentId: string,
+    }): CancelablePromise<DeletedAgentResponseDto> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/agents/delete/{agentId}',
+            path: {
+                'agentId': agentId,
+            },
             errors: {
                 401: `You are not authorized to access this resource`,
             },

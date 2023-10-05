@@ -15,6 +15,8 @@ export type { CreatedDemoAuthMethodsDto } from './models/CreatedDemoAuthMethodsD
 export type { CreateDemoAuthMethodsDto } from './models/CreateDemoAuthMethodsDto';
 export type { CreatedProjectDto } from './models/CreatedProjectDto';
 export type { CreateProjectDto } from './models/CreateProjectDto';
+export type { DeletedAgentResponseDto } from './models/DeletedAgentResponseDto';
+export type { DidAgentEverConnectResponse } from './models/DidAgentEverConnectResponse';
 export type { GetAgentResponseDto } from './models/GetAgentResponseDto';
 export type { ListAgentItem } from './models/ListAgentItem';
 export type { ListAgentsResponseDto } from './models/ListAgentsResponseDto';
