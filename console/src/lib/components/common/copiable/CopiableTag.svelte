@@ -1,7 +1,10 @@
 <script>
 	import { DocumentDuplicate, DocumentCheck, Icon } from "svelte-hero-icons";
+	import { onMount } from "svelte";
 
 	export let value = "";
+	export let displayedValue = "";
+
 	let isCopied = false;
 
 	const handleCopy = () => {
@@ -11,6 +14,12 @@
 			isCopied = false;
 		}, 1500);
 	};
+
+	onMount(() => {
+		if (!displayedValue) {
+			displayedValue = value;
+		}
+	});
 </script>
 
 <button
@@ -21,5 +30,5 @@
 	{:else}
 		<Icon src={DocumentCheck} width="15" class="shrink-0" />
 	{/if}
-	<span class="truncate">{value}</span>
+	<span class="truncate">{displayedValue}</span>
 </button>

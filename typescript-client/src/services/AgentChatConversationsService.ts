@@ -14,35 +14,14 @@ export class AgentChatConversationsService {
      */
     public static getAllConversations({
         agentId,
-        memberId,
     }: {
         agentId: string,
-        memberId: string,
     }): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/conversations/getAll',
             query: {
                 'agentId': agentId,
-                'memberId': memberId,
-            },
-        });
-    }
-
-    /**
-     * @returns any
-     * @throws ApiError
-     */
-    public static getConversationById({
-        conversationId,
-    }: {
-        conversationId: string,
-    }): CancelablePromise<Record<string, any>> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/conversations/getById/{conversationId}',
-            path: {
-                'conversationId': conversationId,
             },
         });
     }

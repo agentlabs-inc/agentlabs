@@ -13,7 +13,7 @@ export class SdkSecretsService {
   }
 
   private generateSecretPreview(secret: string): string {
-    return secret.slice(0, 8);
+    return `${secret.slice(0, 4)}...${secret.slice(-5)}`;
   }
 
   private generateSecret(): string {
