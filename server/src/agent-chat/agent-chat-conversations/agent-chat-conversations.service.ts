@@ -25,6 +25,23 @@ export class AgentChatConversationsService {
     });
   }
 
+  async isConversationOwner({
+    memberId,
+    conversationId,
+  }: {
+    memberId: string;
+    conversationId: string;
+  }) {
+    const count = await this.prisma.agentConversation.count({
+      where: {
+        id: conversationId,
+        memberId,
+      },
+    });
+
+    return count > 0;
+  }
+
   async createConversation(
     payload: CreateAgentChatConversationPayload,
   ): Promise<AgentConversation> {
