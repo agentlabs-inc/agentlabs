@@ -59,10 +59,13 @@ class IncomingChatMessage:
 
         # TODO: parallelize this
         for attachment in attachments:
-            self.http.create_message_attachment(
-                    message_id=self.message_id,
-                    attachment=attachment
-            )
+            try:
+                self.http.create_message_attachment(
+                        message_id=self.message_id,
+                        attachment=attachment
+                )
+            except Exception as e:
+                print(f"Failed to create message attachment {attachment.name}: {e}")
 
 class Agent:
     is_connected: bool = False
