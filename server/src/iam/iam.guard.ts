@@ -6,9 +6,9 @@ import {
   Logger,
   UnauthorizedException,
 } from '@nestjs/common';
-import { AuthMethod, AuthenticatedRequest } from './iam.types';
 import { Reflector } from '@nestjs/core';
 import { REQUIRE_AUTH_METHOD_METADATA_KEY } from './iam.decorators';
+import { AuthMethod, AuthenticatedRequest } from './iam.types';
 
 @Injectable()
 export class IamGuard implements CanActivate {
@@ -18,8 +18,8 @@ export class IamGuard implements CanActivate {
 
   private readonly getRequiredAuthMethod = (
     context: ExecutionContext,
-  ): AuthMethod | undefined => {
-    const method = this.reflector.get<AuthMethod | undefined>(
+  ): AuthMethod[] | undefined => {
+    const method = this.reflector.get<AuthMethod[] | undefined>(
       REQUIRE_AUTH_METHOD_METADATA_KEY,
       context.getHandler(),
     );
@@ -28,7 +28,7 @@ export class IamGuard implements CanActivate {
       return method;
     }
 
-    const classMethod = this.reflector.get<AuthMethod | undefined>(
+    const classMethod = this.reflector.get<AuthMethod[] | undefined>(
       REQUIRE_AUTH_METHOD_METADATA_KEY,
       context.getClass(),
     );
@@ -53,7 +53,7 @@ export class IamGuard implements CanActivate {
       throw new UnauthorizedException('Unauthenticated, please login.');
     }
 
-    if (req.authMethod !== requiredAuthMethod) {
+    if (!requiredAuthMethod.includes(req.authMethod)) {
       this.logger.warn(
         `User attempted to use ${req.authMethod} auth method to access a resource that requires ${requiredAuthMethod}.`,
       );

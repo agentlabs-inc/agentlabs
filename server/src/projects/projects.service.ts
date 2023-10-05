@@ -43,6 +43,69 @@ export class ProjectsService {
     return ok({ isMember: true });
   }
 
+  async isProjectMemberById({
+    memberId,
+    projectId,
+  }: {
+    memberId: string;
+    projectId: string;
+  }) {
+    const count = await this.prisma.member.count({
+      where: {
+        projectId,
+        id: memberId,
+      },
+    });
+
+    return count > 0;
+  }
+
+  async isProjectUserById({
+    projectId,
+    userId,
+  }: {
+    projectId: string;
+    userId: string;
+  }) {
+    const count = await this.prisma.organizationUser.count({
+      where: {
+        userId,
+        organization: {
+          projects: {
+            some: {
+              id: projectId,
+            },
+          },
+        },
+      },
+    });
+
+    return count > 0;
+  }
+
+  async isProjectUserBySlug({
+    projectSlug,
+    userId,
+  }: {
+    projectSlug: string;
+    userId: string;
+  }) {
+    const count = await this.prisma.organizationUser.count({
+      where: {
+        userId,
+        organization: {
+          projects: {
+            some: {
+              slug: projectSlug,
+            },
+          },
+        },
+      },
+    });
+
+    return count > 0;
+  }
+
   async createProject(dto: {
     name: string;
     slug: string;
