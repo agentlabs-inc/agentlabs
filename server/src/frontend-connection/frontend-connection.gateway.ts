@@ -15,6 +15,7 @@ import { AgentsService } from 'src/agents/agents.service';
 import { BaseRealtimeMessageDto } from 'src/common/base-realtime-message.dto';
 import { TutorialMessageFactory } from 'src/common/tutorial-message-factory';
 import { FrontendConnectionManagerService } from 'src/frontend-connection-manager/frontend-connection-manager.service';
+import { MembersService } from 'src/members/members.service';
 import { FrontendChatMessageDto } from './dto/frontend-chat-message.dto';
 
 @WebSocketGateway({ namespace: '/frontend' })
@@ -22,61 +23,82 @@ export class FrontendConnectionGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
   private readonly logger = new Logger(FrontendConnectionGateway.name);
+  private readonly projectIdHeader = 'x-agentlabs-project-id';
+  private readonly agentIdHeader = 'x-agentlabs-agent-id';
+  private readonly memberIdHeader = 'x-agentlabs-member-id';
 
   constructor(
     private readonly frontendConnectionManagerService: FrontendConnectionManagerService,
     private readonly agentConnectionManagerService: AgentConnectionManagerService,
     private readonly conversationsService: AgentChatConversationsService,
     private readonly messagesService: AgentChatMessagesService,
-    private agentsService: AgentsService,
+    private readonly agentsService: AgentsService,
+    private readonly membersService: MembersService,
   ) {}
 
-  handleConnection(client: Socket) {
-    const projectId = client.handshake.headers['x-agentlabs-project-id'];
-    const agentId = client.handshake.headers['x-agentlabs-agent-id'];
-    const memberId = client.handshake.headers['x-agentlabs-member-id'];
+  extractToken(authorization: string) {
+    return authorization.split(' ')[1];
+  }
+
+  async handleConnection(client: Socket) {
+    const closeWithError = (message: string) => {
+      this.logger.error(message);
+      client.send({
+        message,
+      });
+      client.disconnect(true);
+    };
+
+    const projectId = client.handshake.headers[this.projectIdHeader];
+    const agentId = client.handshake.headers[this.agentIdHeader];
+    const authorization = client.handshake.headers['authorization'];
+
+    if (!authorization) {
+      return closeWithError('Missing header: authorization');
+    }
+
+    const token = this.extractToken(authorization);
+    let memberId: null | string = null;
+
+    try {
+      const payload = await this.membersService.verifyAccessToken(token);
+
+      if (!payload.sub) {
+        return closeWithError('Missing payload.sub');
+      }
+
+      memberId = payload.sub;
+    } catch (e) {
+      return closeWithError(`Failed to verify access token: ${e.message}`);
+    }
+
+    if (typeof projectId !== 'string') {
+      return closeWithError(`Missing header: ${this.projectIdHeader}`);
+    }
+
+    if (typeof agentId !== 'string') {
+      return closeWithError(`Missing header: ${this.agentIdHeader}`);
+    }
 
     this.logger.debug(
       `Frontend client connected: project=${projectId} agent=${agentId} user=${memberId}`,
     );
 
-    if (typeof memberId !== 'string') {
-      const message =
-        'Failed to identify frontend client: Missing user ID. Expected header: x-agentlabs-user-id';
+    const result = await this.membersService.verifyIfProjectMember({
+      projectId,
+      memberId,
+    });
 
-      this.logger.error(message);
-      client.send({
-        message,
-      });
-      client.disconnect(true);
-
-      return;
+    if (!result.ok) {
+      return closeWithError(
+        `Failed to identify frontend client: ${result.error}`,
+      );
     }
 
-    if (typeof projectId !== 'string') {
-      const message =
-        'Failed to identify frontend client: Missing project ID. Expected header: x-agentlabs-project-id';
+    const agent = await this.agentsService.findProjectAgent(projectId, agentId);
 
-      this.logger.error(message);
-      client.send({
-        message,
-      });
-      client.disconnect(true);
-
-      return;
-    }
-
-    if (typeof agentId !== 'string') {
-      const message =
-        'Failed to identify frontend client: Missing agent ID. Expected header: x-agentlabs-agent-id';
-
-      this.logger.error(message);
-      client.send({
-        message,
-      });
-      client.disconnect(true);
-
-      return;
+    if (!agent) {
+      return closeWithError(`Agent not found: ${agentId}`);
     }
 
     this.frontendConnectionManagerService.registerConnection({
@@ -103,6 +125,7 @@ export class FrontendConnectionGateway
       this.frontendConnectionManagerService.getConnectionBySid(client.id);
 
     if (!frontendConnection) {
+      this.logger.error(`Frontend client not connected: ${client.id}`);
       return {
         message: 'Not connected to server',
         data: {},
@@ -110,18 +133,6 @@ export class FrontendConnectionGateway
         error: {
           code: 'NOT_CONNECTED',
           message: 'Not connected to server',
-        },
-      };
-    }
-
-    if (payload.error) {
-      return {
-        message: 'An error occured.',
-        timestamp: new Date().toISOString(),
-        data: {},
-        error: {
-          code: 'INVALID_PAYLOAD',
-          message: 'Invalid payload, error sent.',
         },
       };
     }
