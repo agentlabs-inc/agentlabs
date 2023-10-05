@@ -54,7 +54,12 @@ export const logoutRoute = {
 
 export const agentOverviewRoute = {
 	path: (projectId: string, agentId: string) =>
-		`${basePath}/project/${projectId}/agent/${agentId}`
+		`${basePath}/project/${projectId}/agent/${agentId}/general`
+};
+
+export const agentSettingsRoute = {
+	path: (projectId: string, agentId: string) =>
+		`${basePath}/project/${projectId}/agent/${agentId}/settings`
 };
 
 export const projectMembersRoute = {
@@ -63,4 +68,8 @@ export const projectMembersRoute = {
 
 export const projectAuthMethodsRoute = {
 	path: (projectId: string) => `${basePath}/project/${projectId}/auth/methods`
+};
+
+export const createAgentRoute = {
+	path: (projectId: string) => `${basePath}/project/${projectId}/agent/new`
 };

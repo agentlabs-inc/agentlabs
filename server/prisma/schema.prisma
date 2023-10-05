@@ -166,6 +166,8 @@ model Agent {
 	createdAt 		DateTime @default(now())
 	updatedAt 		DateTime @updatedAt @default(now())
 
+	deletedAt			DateTime?
+
 	name					String
 
 	creator				User @relation(fields: [creatorId], references: [id])

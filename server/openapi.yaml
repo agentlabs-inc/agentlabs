@@ -300,6 +300,56 @@ paths:
         - agents
       security:
         - bearer: []
+  /agents/update/{agentId}:
+    post:
+      operationId: updateAgent
+      parameters:
+        - name: agentId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAgentDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdatedAgentDto"
+        "401":
+          description: You are not authorized to access this resource
+      tags:
+        - agents
+      security:
+        - bearer: []
+  /agents/delete/{agentId}:
+    delete:
+      operationId: deleteAgent
+      parameters:
+        - name: agentId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeletedAgentResponseDto"
+        "401":
+          description: You are not authorized to access this resource
+      tags:
+        - agents
+      security:
+        - bearer: []
   /agents/listForProject/{projectId}:
     post:
       operationId: listForProject
@@ -946,6 +996,44 @@ components:
           type: boolean
       required:
         - didEverConnect
+    UpdateAgentDto:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+    UpdatedAgentDto:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        projectId:
+          type: string
+        creatorId:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - id
+        - name
+        - projectId
+        - creatorId
+        - createdAt
+        - updatedAt
+    DeletedAgentResponseDto:
+      type: object
+      properties:
+        success:
+          type: boolean
+      required:
+        - success
     ListAgentItem:
       type: object
       properties:
