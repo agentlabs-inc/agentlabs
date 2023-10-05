@@ -15,12 +15,15 @@ import { AgentsService } from 'src/agents/agents.service';
 import { BaseRealtimeMessageDto } from 'src/common/base-realtime-message.dto';
 import { FrontendConnectionManagerService } from 'src/frontend-connection-manager/frontend-connection-manager.service';
 import { ProjectsService } from 'src/projects/projects.service';
+import { ConversationMutexManager } from './conversation-mutex-manager';
 import { AgentMessageDto } from './dto/agent-message.dto';
 
 @WebSocketGateway({ namespace: '/agent' })
 export class AgentConnectionGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
+  private readonly conversationMutexManager = new ConversationMutexManager();
+
   constructor(
     private readonly agentConnectionManagerService: AgentConnectionManagerService,
     private readonly frontendConnectionManagerService: FrontendConnectionManagerService,
@@ -159,42 +162,48 @@ export class AgentConnectionGateway
       };
     }
 
-    await this.messagesService.createMessage({
-      conversationId: conversation.id,
-      text: payload.data.text,
-      source: 'AGENT',
-    });
+    try {
+      await this.conversationMutexManager.acquire(conversation.id);
 
-    const frontendConnection =
-      this.frontendConnectionManagerService.getConnection({
-        memberId: conversation.memberId,
-        projectId: conversation.agent.projectId,
-        agentId: conversation.agent.id,
+      await this.messagesService.createMessage({
+        conversationId: conversation.id,
+        text: payload.data.text,
+        source: 'AGENT',
       });
 
-    if (!frontendConnection) {
-      const message = `Frontend connection not found: MEMBER_ID=${conversation.memberId},PROJECT_ID=${conversation.agent.projectId},AGENT_ID=${conversation.agent.id}`;
+      const frontendConnection =
+        this.frontendConnectionManagerService.getConnection({
+          memberId: conversation.memberId,
+          projectId: conversation.agent.projectId,
+          agentId: conversation.agent.id,
+        });
 
-      this.logger.error(message);
+      if (!frontendConnection) {
+        const message = `Frontend connection not found: MEMBER_ID=${conversation.memberId},PROJECT_ID=${conversation.agent.projectId},AGENT_ID=${conversation.agent.id}`;
+
+        this.logger.error(message);
+
+        return {
+          message,
+          timestamp: new Date().toISOString(),
+          data: {},
+          error: {
+            code: 'FRONTEND_CONNECTION_NOT_FOUND',
+            message,
+          },
+        };
+      }
+
+      frontendConnection.socket.emit('chat-message', payload);
 
       return {
-        message,
+        message: 'Message sent successfully',
         timestamp: new Date().toISOString(),
         data: {},
-        error: {
-          code: 'FRONTEND_CONNECTION_NOT_FOUND',
-          message,
-        },
       };
+    } finally {
+      this.conversationMutexManager.release(conversation.id);
     }
-
-    frontendConnection.socket.emit('chat-message', payload);
-
-    return {
-      message: 'Message sent successfully',
-      timestamp: new Date().toISOString(),
-      data: {},
-    };
   }
 
   @SubscribeMessage('message')
