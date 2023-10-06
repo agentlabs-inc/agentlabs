@@ -31,6 +31,7 @@ export type { LoginMemberResponseDto } from './models/LoginMemberResponseDto';
 export type { LoginResponseDto } from './models/LoginResponseDto';
 export type { LoginUserDto } from './models/LoginUserDto';
 export type { MemberItem } from './models/MemberItem';
+export type { oauthAuthorizeDto } from './models/oauthAuthorizeDto';
 export type { ProjectDto } from './models/ProjectDto';
 export type { ProjectExistsResponseDto } from './models/ProjectExistsResponseDto';
 export type { PublicProjectConfigDto } from './models/PublicProjectConfigDto';

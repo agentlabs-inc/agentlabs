@@ -18,6 +18,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { UsersModule } from './users/users.module';
 import { SdkSecretsModule } from './sdk-secrets/sdk-secrets.module';
 import { AttachmentsModule } from './attachments/attachments.module';
+import { OauthProvidersModule } from './oauth-providers/oauth-providers.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { AttachmentsModule } from './attachments/attachments.module';
     MailerModule,
     SdkSecretsModule,
     AttachmentsModule,
+    OauthProvidersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -16,48 +16,12 @@ export class AgentAttachmentsService {
         messageId,
     }: {
         messageId: string,
-    }): CancelablePromise<any> {
+    }): CancelablePromise<Array<Record<string, any>>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/agent-attachments/listByMessageId/{messageId}',
             path: {
                 'messageId': messageId,
-            },
-        });
-    }
-
-    /**
-     * @returns any
-     * @throws ApiError
-     */
-    public static getById({
-        attachmentId,
-    }: {
-        attachmentId: string,
-    }): CancelablePromise<Record<string, any>> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/agent-attachments/getById/{attachmentId}',
-            path: {
-                'attachmentId': attachmentId,
-            },
-        });
-    }
-
-    /**
-     * @returns any
-     * @throws ApiError
-     */
-    public static getAttachmentDataById({
-        attachmentId,
-    }: {
-        attachmentId: string,
-    }): CancelablePromise<any> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/agent-attachments/getById/{attachmentId}/data',
-            path: {
-                'attachmentId': attachmentId,
             },
         });
     }
@@ -74,7 +38,7 @@ export class AgentAttachmentsService {
         projectId: string,
         agentId: string,
         messageId: string,
-    }): CancelablePromise<any> {
+    }): CancelablePromise<Record<string, any>> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/agent-attachments/createMessageAttachmentSync',

@@ -6,6 +6,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { v4 as uuid } from 'uuid';
 import { PResult, Result, err, ok } from '../common/result';
 import { MailerService } from '../mailer/mailer.service';
+import { GoogleService } from '../oauth-providers/google/google.service';
 import { LoginResponseDto } from './dtos/login.response.dto';
 import { RegisterUserDto } from './dtos/register.user.dto';
 import { SanitizedUserResponseDto } from './dtos/sanitized.user.response.dto';
@@ -14,6 +15,7 @@ import { WhoAmIResultDto } from './dtos/whoami.result.dto';
 import { InjectUsersConfig, UsersConfig } from './users.config';
 import {
   LoginUserError,
+  OAuthLoginError,
   RegisterUserError,
   WhoAmIError,
 } from './users.service.errors';
@@ -26,6 +28,7 @@ export class UsersService {
     @InjectUsersConfig()
     private readonly usersConfig: UsersConfig,
     private readonly mailerService: MailerService,
+    private readonly googleService: GoogleService,
   ) {}
 
   private sanitizeUser(user: User): SanitizedUserResponseDto {
@@ -290,5 +293,141 @@ export class UsersService {
     }
 
     return user;
+  }
+
+  private async upsertUserWithOAuth(params: {
+    email: string;
+    fullName: string;
+    pictureUrl: string;
+    signInMethod: 'google';
+    providerUserId: string;
+    isVerified: boolean;
+  }): Promise<User> {
+    const { email, fullName, pictureUrl } = params;
+    const userCreatedOrUpdated = await this.prisma.$transaction(async (tx) => {
+      const user = await tx.user.findFirst({
+        where: {
+          email,
+        },
+      });
+
+      if (!user) {
+        const organizationId = this.generateOrganizationId();
+        const userCreated = await tx.user.create({
+          data: {
+            email,
+            fullName,
+            profilePictureUrl: pictureUrl,
+            verifiedAt: params.isVerified ? new Date() : null,
+            organizations: {
+              create: [
+                {
+                  role: 'ADMIN',
+                  organization: {
+                    create: {
+                      id: organizationId,
+                      name: this.usersConfig.defaultOrganizationName,
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        });
+
+        await tx.onboarding.create({
+          data: {
+            hasAddedAuthMethod: false,
+            hasUsedTheApplication: false,
+            organization: {
+              connect: {
+                id: organizationId,
+              },
+            },
+            user: {
+              connect: {
+                id: userCreated.id,
+              },
+            },
+          },
+        });
+
+        return userCreated;
+      }
+
+      const userUpdated = await tx.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          email: email,
+          fullName: fullName ?? user.fullName,
+          profilePictureUrl: pictureUrl ?? user.profilePictureUrl,
+          verifiedAt:
+            user.verifiedAt ?? (params.isVerified ? new Date() : null),
+        },
+      });
+
+      return userUpdated;
+    });
+
+    return userCreatedOrUpdated;
+  }
+
+  async completeOAuthLogin(params: {
+    code: string;
+    state: string;
+    redirectUri: string;
+    providerId: string;
+  }): PResult<LoginResponseDto, OAuthLoginError> {
+    const { providerId, code, state, redirectUri } = params;
+
+    if (providerId !== 'google') {
+      return err('UnsupportedOAuthProvider');
+    }
+
+    const clientSecret = this.usersConfig.oauthGoogleClientSecret;
+    const clientId = this.usersConfig.oauthGoogleClientId;
+
+    if (!clientSecret) {
+      return err('MissingClientSecret');
+    }
+
+    if (!clientId) {
+      return err('MissingClientId');
+    }
+
+    const result = await this.googleService.getToken({
+      code,
+      clientSecret,
+      clientId,
+      redirectUri,
+    });
+
+    if (!result) {
+      return err('TokenRequestFailed');
+    }
+
+    const user = await this.googleService.getUserInfo(result.access_token);
+
+    if (!user) {
+      return err('ImpossibleToGetUserInfo');
+    }
+
+    const userCreatedOrUpdated = await this.upsertUserWithOAuth({
+      email: user.email,
+      fullName: user.name,
+      pictureUrl: user.picture,
+      signInMethod: 'google',
+      providerUserId: user.sub,
+      isVerified: user.email_verified,
+    });
+
+    const ourAccessToken = await this.generateAccessToken(userCreatedOrUpdated);
+
+    return ok({
+      accessToken: ourAccessToken,
+      user: this.sanitizeUser(userCreatedOrUpdated),
+    });
   }
 }

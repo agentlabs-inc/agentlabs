@@ -35,6 +35,24 @@ export class AgentsService {
     }
 
     /**
+     * @returns any
+     * @throws ApiError
+     */
+    public static uploadLogo({
+        agentId,
+    }: {
+        agentId: string,
+    }): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/agents/uploadLogo/{agentId}',
+            path: {
+                'agentId': agentId,
+            },
+        });
+    }
+
+    /**
      * @returns DidAgentEverConnectResponse
      * @throws ApiError
      */

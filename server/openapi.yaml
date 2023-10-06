@@ -58,6 +58,32 @@ paths:
           description: Something went wrong.
       tags:
         - users
+  /users/oauth/handleCallback/{providerId}:
+    post:
+      operationId: handleOAuthCallback
+      parameters:
+        - name: providerId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/oauthAuthorizeDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponseDto"
+        "500":
+          description: Something went wrong.
+      tags:
+        - users
   /users/whoami:
     post:
       operationId: whoami
@@ -681,6 +707,19 @@ components:
       required:
         - accessToken
         - user
+    oauthAuthorizeDto:
+      type: object
+      properties:
+        code:
+          type: string
+        state:
+          type: string
+        redirectUri:
+          type: string
+      required:
+        - code
+        - state
+        - redirectUri
     WhoAmIResultDto:
       type: object
       properties:

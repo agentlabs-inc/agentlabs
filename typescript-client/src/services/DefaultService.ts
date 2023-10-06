@@ -19,4 +19,40 @@ export class DefaultService {
         });
     }
 
+    /**
+     * @returns any
+     * @throws ApiError
+     */
+    public static serveById({
+        id,
+    }: {
+        id: string,
+    }): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/attachments/viewById/{id}',
+            path: {
+                'id': id,
+            },
+        });
+    }
+
+    /**
+     * @returns any
+     * @throws ApiError
+     */
+    public static downloadById({
+        id,
+    }: {
+        id: string,
+    }): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/attachments/downloadById/{id}',
+            path: {
+                'id': id,
+            },
+        });
+    }
+
 }

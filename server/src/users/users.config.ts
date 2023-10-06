@@ -6,6 +6,8 @@ export interface UsersConfig {
   accessTokenSecret: string;
   accessTokenExpirationTime: string;
   defaultOrganizationName: string;
+  oauthGoogleClientId: string;
+  oauthGoogleClientSecret: string;
 }
 
 export const usersConfig = registerAs<UsersConfig>(
@@ -17,6 +19,8 @@ export const usersConfig = registerAs<UsersConfig>(
       accessTokenSecret: env.USERS_ACCESS_TOKEN_SECRET,
       accessTokenExpirationTime: '3h',
       defaultOrganizationName: 'My organization',
+      oauthGoogleClientId: env.USERS_OAUTH_GOOGLE_CLIENT_ID,
+      oauthGoogleClientSecret: env.USERS_OAUTH_GOOGLE_CLIENT_SECRET,
     };
   },
 );

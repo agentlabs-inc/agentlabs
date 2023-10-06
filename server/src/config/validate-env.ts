@@ -51,6 +51,12 @@ export class Environment {
 
   @IsString()
   EMAIL_SENDER_NAME: string;
+
+  @IsString()
+  USERS_OAUTH_GOOGLE_CLIENT_ID: string;
+
+  @IsString()
+  USERS_OAUTH_GOOGLE_CLIENT_SECRET: string;
 }
 
 export const validateEnv = (env: NodeJS.ProcessEnv) => {

@@ -263,7 +263,7 @@ export class MembersService {
         const verificationCode = this.generateVerificationCode();
 
         if (!member) {
-          const memberCreated = tx.member.create({
+          const memberCreated = await tx.member.create({
             data: {
               projectId,
               email,
