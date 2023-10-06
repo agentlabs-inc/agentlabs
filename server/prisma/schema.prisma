@@ -50,6 +50,8 @@ model User {
 	email      String  @unique
 	fullName   String
 
+	profilePictureUrl String?
+
 	// If these fields are null, it means they are falsy
 	verifiedAt DateTime?
 	bannedAt   DateTime?

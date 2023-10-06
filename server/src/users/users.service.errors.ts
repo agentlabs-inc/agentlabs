@@ -11,3 +11,16 @@ export type LoginUserError = (typeof LoginUserErrors)[number];
 
 export const WhoAmIErrors = ['UserNotFound'] as const;
 export type WhoAmIError = (typeof WhoAmIErrors)[number];
+
+export const OAuthLoginErrors = [
+  'InvalidRedirectUri',
+  'InvalidState',
+  'InvalidCode',
+  'MissingClientSecret',
+  'MissingClientId',
+  'UnsupportedOAuthProvider',
+  'TokenRequestFailed',
+  'ImpossibleToGetUserInfo',
+] as const;
+
+export type OAuthLoginError = (typeof OAuthLoginErrors)[number];

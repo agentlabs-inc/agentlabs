@@ -2,6 +2,7 @@ import {
   Body,
   ConflictException,
   Controller,
+  Param,
   Post,
   Req,
   UnauthorizedException,
@@ -18,6 +19,7 @@ import { UserAuthenticatedRequest } from 'src/iam/iam.types';
 import { RequireAuthMethod } from '../iam/iam.decorators';
 import { LoginResponseDto } from './dtos/login.response.dto';
 import { LoginUserDto } from './dtos/login.user.dto';
+import { oauthAuthorizeDto } from './dtos/oauth.authorize.dto';
 import { RegisterUserDto } from './dtos/register.user.dto';
 import { UserCreatedResponseDto } from './dtos/user.created.response.dto';
 import { WhoAmIResultDto } from './dtos/whoami.result.dto';
@@ -90,6 +92,28 @@ export class UsersController {
             code: 'UserDoesNotHavePasswordHashConfig',
           });
       }
+    }
+
+    return result.value;
+  }
+
+  @Post('oauth/handleCallback/:providerId')
+  async handleOAuthCallback(
+    @Body() dto: oauthAuthorizeDto,
+    @Param('providerId') providerId: string,
+  ): Promise<LoginResponseDto> {
+    const result = await this.usersService.completeOAuthLogin({
+      code: dto.code,
+      providerId,
+      redirectUri: dto.redirectUri,
+      state: dto.state,
+    });
+
+    if (!result.ok) {
+      throw new UnauthorizedException({
+        message: result.error,
+        description: result.error,
+      });
     }
 
     return result.value;

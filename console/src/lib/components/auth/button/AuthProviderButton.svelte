@@ -4,6 +4,7 @@
 	import GoogleIcon from "$lib/components/auth/GoogleIcon.svelte";
 	import GitlabIcon from "$lib/components/auth/GitlabIcon.svelte";
 	import GithubIcon from "$lib/components/auth/GithubIcon.svelte";
+	import { signInWithGoogle } from "$lib/usecases/users/signInWithGoogle";
 
 	export let provider: AuthProvider;
 
@@ -24,13 +25,17 @@
 		github: "Github"
 	};
 
-	const handleLogin = () => {};
+	const handleLogin = () => {
+		providerCurrentlyLoading = "google";
+		signInWithGoogle();
+	};
 </script>
 
 <Button
 	type="secondary"
 	center={false}
 	on:click={handleLogin}
+	loading={providerCurrentlyLoading === provider}
 	disabled={providerCurrentlyLoading === provider}>
 	<div class="flex items-center gap-5">
 		<svelte:component this={providerIconMap[provider]} />

@@ -48,6 +48,7 @@ CREATE TABLE "User" (
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "email" TEXT NOT NULL,
     "fullName" TEXT NOT NULL,
+    "profilePictureUrl" TEXT,
     "verifiedAt" TIMESTAMP(3),
     "bannedAt" TIMESTAMP(3),
     "passwordHash" TEXT,

@@ -4,6 +4,7 @@
 /* eslint-disable */
 import type { LoginResponseDto } from '../models/LoginResponseDto';
 import type { LoginUserDto } from '../models/LoginUserDto';
+import type { oauthAuthorizeDto } from '../models/oauthAuthorizeDto';
 import type { RegisterUserDto } from '../models/RegisterUserDto';
 import type { UserCreatedResponseDto } from '../models/UserCreatedResponseDto';
 import type { WhoAmIResultDto } from '../models/WhoAmIResultDto';
@@ -51,6 +52,31 @@ export class UsersService {
             mediaType: 'application/json',
             errors: {
                 401: `The provided credentials are invalid or the user does not have a password configured.`,
+                500: `Something went wrong.`,
+            },
+        });
+    }
+
+    /**
+     * @returns LoginResponseDto
+     * @throws ApiError
+     */
+    public static handleOAuthCallback({
+        providerId,
+        requestBody,
+    }: {
+        providerId: string,
+        requestBody: oauthAuthorizeDto,
+    }): CancelablePromise<LoginResponseDto> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/users/oauth/handleCallback/{providerId}',
+            path: {
+                'providerId': providerId,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
                 500: `Something went wrong.`,
             },
         });
