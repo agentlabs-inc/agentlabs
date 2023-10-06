@@ -1,0 +1,35 @@
+#! /bin/sh
+
+set -e
+
+validate_env() {
+	if [ -z "$PYPI_USERNAME" ]; then
+		echo "PYPI_USERNAME env var is not set, exiting"
+		exit 1
+	fi
+
+	if [ -z "$PYPI_PASSWORD" ]; then
+		echo "PYPI_PASSWORD env var is not set, exiting"
+		exit 1
+	fi
+
+	if [ -z "$VERSION" ]; then
+		echo "VERSION env var is not set, exiting"
+		exit 1
+	fi
+}
+
+prepare_config() {
+	sed -i "s/^version = .*$/version = \"$VERSION\"/" pyproject.toml
+	echo "Wrote version to pyproject.toml ($VERSION)"
+}
+
+validate_env
+
+prepare_config
+
+poetry publish --build			\
+	--no-interaction			\
+	--build						\
+	--username "$PYPI_USERNAME"	\
+	--password "$PYPI_PASSWORD"	
