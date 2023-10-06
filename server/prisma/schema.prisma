@@ -184,6 +184,8 @@ model Agent {
 
 	conversations	AgentConversation[]
 	connectionEvents AgentConnectionEvent[]
+
+	logoUrl				String?
 }
 
 model MemberAuthVerificationCode {
@@ -306,28 +308,39 @@ model AgentMessage {
 	conversationId	String
 	conversation	AgentConversation	@relation(fields: [conversationId], references: [id])
 	
-	attachments		AgentAttachment[]
+	attachments		AgentMessageAttachment[]
 }
 
-enum AgentAttachmentStorageDriver {
+model AgentMessageAttachment {
+	id				String				@id			@default(uuid())
+
+	attachmentId	String @unique
+	attachment		Attachment	@relation(fields: [attachmentId], references: [id])
+
+	messageId		String
+	message			AgentMessage	@relation(fields: [messageId], references: [id])
+}
+
+enum AttachmentStorageDriver {
 	AWS_S3
 	AZURE_BLOB_STORAGE
 	GOOGLE_CLOUD_STORAGE
 	LOCAL_FILE_SYSTEM
 }
 
-model AgentAttachment {
-	id				String				@id			@default(uuid())
+model Attachment {
+	id						String				@id			@default(uuid())
 
-	createdAt		DateTime						@default(now())
-	updateAt		DateTime			@updatedAt	@default(now())
+	createdAt				DateTime						@default(now())
+	updateAt				DateTime			@updatedAt	@default(now())
 
-	name			String
-	mimeType		String
-	checksumSha256	String
-	driver			AgentAttachmentStorageDriver
+	name					String
+	mimeType				String
+	checksumSha256			String
+	driver					AttachmentStorageDriver
+	isPublic				Boolean @default(false)
 
-	messages		AgentMessage[]
+	agentMessageAttachment	AgentMessageAttachment?
 }
 
 model AgentConnectionEvent {

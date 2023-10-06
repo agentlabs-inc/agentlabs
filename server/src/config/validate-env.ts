@@ -1,4 +1,4 @@
-import { AgentAttachmentStorageDriver } from '@prisma/client';
+import { AttachmentStorageDriver } from '@prisma/client';
 import { plainToClass } from 'class-transformer';
 import {
   IsEnum,
@@ -25,8 +25,8 @@ export class Environment {
   MEMBERS_AUTH_CODE_EXPIRATION_DELAY_IN_MINUTES: number;
 
   @IsOptional()
-  @IsEnum(AgentAttachmentStorageDriver)
-  AGENT_ATTACHMENT_STORAGE_DRIVER: AgentAttachmentStorageDriver =
+  @IsEnum(AttachmentStorageDriver)
+  AGENT_ATTACHMENT_STORAGE_DRIVER: AttachmentStorageDriver =
     'LOCAL_FILE_SYSTEM';
 
   @ValidateIf(

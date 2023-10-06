@@ -303,6 +303,22 @@ paths:
         - agents
       security:
         - bearer: []
+  /agents/uploadLogo/{agentId}:
+    post:
+      operationId: uploadLogo
+      parameters:
+        - name: agentId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "201":
+          description: ""
+      tags:
+        - agents
+      security:
+        - bearer: []
   /agents/didEverConnect/{agentId}:
     get:
       operationId: didEverConnect
@@ -417,6 +433,30 @@ paths:
         - agents
       security:
         - bearer: []
+  /attachments/viewById/{id}:
+    get:
+      operationId: serveById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+  /attachments/downloadById/{id}:
+    get:
+      operationId: downloadById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
   /authMethods/create:
     post:
       operationId: createAuthMethod
@@ -519,38 +559,12 @@ paths:
       responses:
         "200":
           description: ""
-      tags:
-        - Agent Attachments
-  /agent-attachments/getById/{attachmentId}:
-    get:
-      operationId: getById
-      parameters:
-        - name: attachmentId
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        "200":
-          description: ""
           content:
             application/json:
               schema:
-                type: object
-      tags:
-        - Agent Attachments
-  /agent-attachments/getById/{attachmentId}/data:
-    get:
-      operationId: getAttachmentDataById
-      parameters:
-        - name: attachmentId
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        "200":
-          description: ""
+                type: array
+                items:
+                  type: object
       tags:
         - Agent Attachments
   /agent-attachments/createMessageAttachmentSync:
@@ -575,6 +589,10 @@ paths:
       responses:
         "201":
           description: ""
+          content:
+            application/json:
+              schema:
+                type: object
       tags:
         - Agent Attachments
 info:
