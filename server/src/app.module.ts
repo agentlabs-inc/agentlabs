@@ -17,6 +17,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { ProjectsModule } from './projects/projects.module';
 import { UsersModule } from './users/users.module';
 import { SdkSecretsModule } from './sdk-secrets/sdk-secrets.module';
+import { AttachmentsModule } from './attachments/attachments.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { SdkSecretsModule } from './sdk-secrets/sdk-secrets.module';
     AgentAttachmentsModule,
     MailerModule,
     SdkSecretsModule,
+    AttachmentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

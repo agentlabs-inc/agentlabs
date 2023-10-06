@@ -306,17 +306,27 @@ model AgentMessage {
 	conversationId	String
 	conversation	AgentConversation	@relation(fields: [conversationId], references: [id])
 	
-	attachments		AgentAttachment[]
+	attachments		AgentMessageAttachment[]
 }
 
-enum AgentAttachmentStorageDriver {
+model AgentMessageAttachment {
+	id				String				@id			@default(uuid())
+
+	attachmentId	String
+	attachment		Attachment	@relation(fields: [attachmentId], references: [id])
+
+	messageId		String
+	message			AgentMessage	@relation(fields: [messageId], references: [id])
+}
+
+enum AttachmentStorageDriver {
 	AWS_S3
 	AZURE_BLOB_STORAGE
 	GOOGLE_CLOUD_STORAGE
 	LOCAL_FILE_SYSTEM
 }
 
-model AgentAttachment {
+model Attachment {
 	id				String				@id			@default(uuid())
 
 	createdAt		DateTime						@default(now())
@@ -325,9 +335,9 @@ model AgentAttachment {
 	name			String
 	mimeType		String
 	checksumSha256	String
-	driver			AgentAttachmentStorageDriver
+	driver			AttachmentStorageDriver
 
-	messages		AgentMessage[]
+	agentAttachments	AgentMessageAttachment[]
 }
 
 model AgentConnectionEvent {
