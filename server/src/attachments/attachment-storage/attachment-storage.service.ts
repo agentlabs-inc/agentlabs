@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 export interface AttachmentMetadata {
-  projectId: string;
-  agentId: string;
   attachmentId: string;
   filename: string;
   mimeType: string;
   checksumSha256: string;
+  extension?: string;
 }
 
 // An attachment has to be retrievable by its sole ID, without any other

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -8,12 +9,16 @@ import {
   Post,
   Req,
   UnauthorizedException,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBearerAuth,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { AttachmentsService } from 'src/attachments/attachments.service';
 import {
   MemberAuthenticatedRequest,
   UserAuthenticatedRequest,
@@ -36,6 +41,7 @@ export class AgentsController {
   constructor(
     private readonly agentsService: AgentsService,
     private readonly projectsService: ProjectsService,
+    private readonly attachmentsService: AttachmentsService,
   ) {}
 
   @RequireAuthMethod('user-token')
@@ -69,6 +75,48 @@ export class AgentsController {
           message: 'Not a project user',
         });
     }
+  }
+
+  @UseInterceptors(FileInterceptor('file'))
+  @RequireAuthMethod('user-token')
+  @Post('uploadLogo/:agentId')
+  async uploadLogo(
+    @Param('agentId') agentId: string,
+    @UploadedFile() file: Express.Multer.File,
+    @Req() req: UserAuthenticatedRequest,
+  ) {
+    if (!file) {
+      throw new BadRequestException('No file provided');
+    }
+
+    const verifyResult = await this.agentsService.verifyIfCanUpdateAgent({
+      agentId,
+      userId: req.user.id,
+    });
+
+    if (!verifyResult.ok) {
+      throw new ForbiddenException('You are not allowed to update this agent');
+    }
+
+    const uploadResult = await this.agentsService.uploadAgentLogo(
+      agentId,
+      file.buffer,
+      file.mimetype,
+    );
+
+    if (!uploadResult.ok) {
+      switch (uploadResult.error) {
+        case 'ProhibitedMimeType':
+          throw new BadRequestException({
+            code: 'ProhibitedMimeType',
+            message: 'Prohibited mime type',
+          });
+      }
+    }
+
+    return {
+      success: true,
+    };
   }
 
   @RequireAuthMethod('user-token')

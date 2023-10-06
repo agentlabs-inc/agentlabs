@@ -184,6 +184,8 @@ model Agent {
 
 	conversations	AgentConversation[]
 	connectionEvents AgentConnectionEvent[]
+
+	logoUrl				String?
 }
 
 model MemberAuthVerificationCode {
@@ -312,7 +314,7 @@ model AgentMessage {
 model AgentMessageAttachment {
 	id				String				@id			@default(uuid())
 
-	attachmentId	String
+	attachmentId	String @unique
 	attachment		Attachment	@relation(fields: [attachmentId], references: [id])
 
 	messageId		String
@@ -327,17 +329,18 @@ enum AttachmentStorageDriver {
 }
 
 model Attachment {
-	id				String				@id			@default(uuid())
+	id						String				@id			@default(uuid())
 
-	createdAt		DateTime						@default(now())
-	updateAt		DateTime			@updatedAt	@default(now())
+	createdAt				DateTime						@default(now())
+	updateAt				DateTime			@updatedAt	@default(now())
 
-	name			String
-	mimeType		String
-	checksumSha256	String
-	driver			AttachmentStorageDriver
+	name					String
+	mimeType				String
+	checksumSha256			String
+	driver					AttachmentStorageDriver
+	isPublic				Boolean @default(false)
 
-	agentAttachments	AgentMessageAttachment[]
+	agentMessageAttachment	AgentMessageAttachment?
 }
 
 model AgentConnectionEvent {

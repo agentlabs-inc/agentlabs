@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { Agent } from '@prisma/client';
-import { err, ok, PResult } from '../common/result';
+import { AttachmentsService } from 'src/attachments/attachments.service';
+import { PResult, err, ok } from '../common/result';
 import { PrismaService } from '../prisma/prisma.service';
+import { acceptedLogoMimeTypes } from './agents.constants';
 import {
   CreateAgentError,
   GetAgentByIdError,
   UpdateAgentError,
+  UploadAgentLogoError,
   VerifyIfCanUpdateAgentError,
   VerifyIfIsProjectUserError,
 } from './agents.errors';
@@ -16,7 +19,10 @@ import { UpdatedAgentDto } from './dtos/updated.agent.dto';
 
 @Injectable()
 export class AgentsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly attachmentsService: AttachmentsService,
+  ) {}
 
   private async verifyIfProjectUser(params: {
     userId: string;
@@ -47,7 +53,7 @@ export class AgentsService {
     return ok({ isVerified: true });
   }
 
-  private async verifyIfCanUpdateAgent(params: {
+  async verifyIfCanUpdateAgent(params: {
     userId: string;
     agentId: string;
   }): PResult<{ isVerified: true }, VerifyIfCanUpdateAgentError> {
@@ -68,6 +74,50 @@ export class AgentsService {
       userId,
       projectId,
     });
+  }
+
+  private isAcceptedAgentLogoMimeType(mimeType: string): boolean {
+    return acceptedLogoMimeTypes.includes(mimeType);
+  }
+
+  findAgentById(agentId: string): Promise<Agent | null> {
+    const agent = this.prisma.agent.findUnique({
+      where: {
+        id: agentId,
+      },
+    });
+
+    return agent;
+  }
+
+  async uploadAgentLogo(
+    agentId: string,
+    buffer: Buffer,
+    mimeType: string,
+  ): PResult<{ isUploaded: true }, UploadAgentLogoError> {
+    const isAcceptedMimeType = this.isAcceptedAgentLogoMimeType(mimeType);
+
+    if (!isAcceptedMimeType) {
+      return err('ProhibitedMimeType');
+    }
+
+    const attachment = await this.attachmentsService.createOneSync({
+      mimeType,
+      data: buffer,
+      filename: `${agentId}-logo`,
+      isPublic: true,
+    });
+
+    await this.prisma.agent.update({
+      data: {
+        logoUrl: `/api/attachments/viewById/${attachment.id}`,
+      },
+      where: {
+        id: agentId,
+      },
+    });
+
+    return ok({ isUploaded: true });
   }
 
   async createAgent(dto: {

@@ -27,3 +27,10 @@ export type GetAgentByIdError = (typeof GetAgentByIdErrors)[number];
 export const UpdateAgentErrors = [...VerifyIfCanUpdateAgentErrors] as const;
 
 export type UpdateAgentError = (typeof UpdateAgentErrors)[number];
+
+export const UploadAgentLogoErrors = [
+  'AgentNotFound',
+  'ProhibitedMimeType',
+] as const;
+
+export type UploadAgentLogoError = (typeof UploadAgentLogoErrors)[number];

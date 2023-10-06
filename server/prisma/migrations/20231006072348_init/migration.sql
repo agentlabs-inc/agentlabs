@@ -129,6 +129,7 @@ CREATE TABLE "Agent" (
     "name" TEXT NOT NULL,
     "creatorId" TEXT NOT NULL,
     "projectId" TEXT NOT NULL,
+    "logoUrl" TEXT,
 
     CONSTRAINT "Agent_pkey" PRIMARY KEY ("id")
 );
@@ -232,6 +233,7 @@ CREATE TABLE "Attachment" (
     "mimeType" TEXT NOT NULL,
     "checksumSha256" TEXT NOT NULL,
     "driver" "AttachmentStorageDriver" NOT NULL,
+    "isPublic" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "Attachment_pkey" PRIMARY KEY ("id")
 );
@@ -268,6 +270,9 @@ CREATE UNIQUE INDEX "MemberAuthVerificationCode_memberId_key" ON "MemberAuthVeri
 
 -- CreateIndex
 CREATE UNIQUE INDEX "MemberAuth_memberId_key" ON "MemberAuth"("memberId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "AgentMessageAttachment_attachmentId_key" ON "AgentMessageAttachment"("attachmentId");
 
 -- AddForeignKey
 ALTER TABLE "PasswordHashConfig" ADD CONSTRAINT "PasswordHashConfig_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
