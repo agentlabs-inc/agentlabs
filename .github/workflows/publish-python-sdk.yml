@@ -23,5 +23,5 @@ jobs:
           --rm
           -e PYPI_USER="$PYPI_USER"
           -e PYPI_PASSWORD="${{ secrets.PYPI_PASSWORD }}"
-          -e VERSION="${{ github.ref_name }}"
+          -e VERSION="$( echo \"${{ github.ref_name }}\" | tr -d 'v' )"
           $PUBLISHER_IMAGE_TAG
