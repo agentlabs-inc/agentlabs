@@ -1,0 +1,31 @@
+{
+  "name": "@agentlabs/node-sdk",
+  "version": "0.0.0",
+  "description": "SDK to build AgentLabs agents",
+  "engines": {
+    "node": ">= 18.0.0"
+  },
+  "types": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "scripts": {
+    "clean": "rimraf ./dist",
+    "type": "tsc --declaration  --emitDeclarationOnly --outDir ./dist",
+    "build-only": "node ./scripts/build.js",
+    "prepare": "npm run build",
+    "build": "run-p clean type build-only",
+    "buildpack": "npm run build && npm pack",
+    "lint": "eslint . --ext .ts,.cts,.mts --fix --ignore-path .gitignore"
+  },
+  "author": "Aurelien Brabant <aurel@agentlabs.dev>",
+  "license": "ISC",
+  "devDependencies": {
+    "@rushstack/eslint-patch": "^1.5.1",
+    "@types/node": "^20.8.3",
+    "esbuild": "^0.19.4",
+    "eslint": "^8.51.0",
+    "npm-run-all": "^4.1.5",
+    "prettier-plugin-organize-imports": "^3.2.3",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.2.2"
+  }
+}
