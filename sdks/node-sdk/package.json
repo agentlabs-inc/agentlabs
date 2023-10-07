@@ -12,7 +12,7 @@
     "type": "tsc --declaration  --emitDeclarationOnly --outDir ./dist",
     "build-only": "node ./scripts/build.js",
     "prepare": "npm run build",
-    "build": "run-p clean type build-only",
+    "build": "run-s clean type build-only",
     "buildpack": "npm run build && npm pack",
     "lint": "eslint . --ext .ts,.cts,.mts --fix --ignore-path .gitignore"
   },
