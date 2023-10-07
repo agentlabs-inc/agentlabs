@@ -1030,6 +1030,40 @@ components:
         - creatorId
         - createdAt
         - updatedAt
+    PublicAuthMethodDto:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - OAUTH2
+            - EMAIL
+            - ANONYMOUS
+        provider:
+          type: string
+          enum:
+            - PASSWORDLESS_EMAIL
+            - EMAIL_AND_PASSWORD
+            - ANONYMOUS
+            - GOOGLE
+            - GITHUB
+            - GITLAB
+            - MICROSOFT
+            - FACEBOOK
+            - TWITTER
+            - APPLE
+        clientId:
+          type: string
+          nullable: true
+        scopes:
+          type: array
+          items:
+            type: string
+      required:
+        - type
+        - provider
+        - clientId
+        - scopes
     PublicProjectConfigDto:
       type: object
       properties:
@@ -1043,12 +1077,17 @@ components:
           type: string
         organizationId:
           type: string
+        authMethods:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicAuthMethodDto"
       required:
         - hostname
         - id
         - slug
         - name
         - organizationId
+        - authMethods
     CreateAgentDto:
       type: object
       properties:

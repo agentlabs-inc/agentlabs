@@ -1,16 +1,17 @@
 <script lang="ts">
 	import Button from "$lib/components/common/button/Button.svelte";
 	import type { AuthProvider } from "$lib/components/auth/types";
+	import { AuthProviderNameMap } from "$lib/components/auth/types";
 	import GoogleIcon from "$lib/components/auth/GoogleIcon.svelte";
 	import GitlabIcon from "$lib/components/auth/GitlabIcon.svelte";
 	import GithubIcon from "$lib/components/auth/GithubIcon.svelte";
-	import { AgentLabsApp } from "$lib/externals/agentlabs-js-sdk/agentlabs";
-	import { getAuth, signInWithRedirect } from "$lib/externals/agentlabs-js-sdk/auth";
-	import GoogleAuthProvider from "$lib/externals/agentlabs-js-sdk/auth-providers/google";
-	import GitlabAuthProvider from "$lib/externals/agentlabs-js-sdk/auth-providers/gitlab";
-	import GithubAuthProvider from "$lib/externals/agentlabs-js-sdk/auth-providers/github";
+	import type { PublicAuthMethodDto } from "$lib/services/gen-api";
+	import { signInWithRedirect } from "$lib/services/oauth/signInWithRedirect";
+	import GoogleAuthProvider from "$lib/services/oauth/providers/google";
 
 	export let provider: AuthProvider;
+
+	export let authMethod: PublicAuthMethodDto;
 
 	let providerCurrentlyLoading: AuthProvider | null = null;
 
@@ -18,52 +19,31 @@
 		AuthProvider,
 		typeof GoogleIcon | typeof GitlabIcon | typeof GithubIcon
 	> = {
-		google: GoogleIcon,
-		gitlab: GitlabIcon,
-		github: GithubIcon
+		GOOGLE: GoogleIcon,
+		GITLAB: GitlabIcon,
+		GITHUB: GithubIcon
 	};
 
-	const providerNameMap: Record<AuthProvider, string> = {
-		google: "Google",
-		gitlab: "Gitlab",
-		github: "Github"
-	};
+	const redirectUri = `http://${window.location.origin.split(".", 2)[1]}/oauth/handler/${
+		authMethod.provider
+	}`.toLowerCase();
 
-	// This will be instantiated in the main layout after fetching project config
-	const app = new AgentLabsApp({
-		project: {
-			id: "",
-			slug: "something",
-			name: "something"
-		},
-		signInMethods: {
-			google: {
-				id: "google",
-				isEnabled: true,
-				oauthSettings: {
-					hasClientSecret: false,
-					clientId:
-						"1046622402922-2q425h1v1dmacgg2p4g0bj89f8un67q3.apps.googleusercontent.com"
-				}
-			}
-		}
-	});
-
-	const auth = getAuth(app);
+	console.log(authMethod);
 
 	const providerHandlerMap: Record<AuthProvider, () => void> = {
-		google: () =>
+		GOOGLE: () => {
+			alert(redirectUri);
 			signInWithRedirect(
-				auth,
-				new GoogleAuthProvider([], auth.getOAuthSignInMethods().google)
-			),
-		gitlab: () => signInWithRedirect(auth, new GitlabAuthProvider([])),
-		github: () => signInWithRedirect(auth, new GithubAuthProvider([]))
+				new GoogleAuthProvider({
+					clientId: authMethod.clientId,
+					scopes: authMethod.scopes
+				}),
+				redirectUri
+			);
+		}
 	};
 
 	const handleLogin = () => {
-		console.log(auth.getOAuthSignInMethods().google);
-
 		providerCurrentlyLoading = provider;
 
 		providerHandlerMap[provider]();
@@ -77,6 +57,6 @@
 	disabled={providerCurrentlyLoading === provider}>
 	<div class="flex items-center gap-5">
 		<svelte:component this={providerIconMap[provider]} />
-		<span>Continue with {providerNameMap[provider]}</span>
+		<span>Continue with {AuthProviderNameMap[provider]}</span>
 	</div>
 </Button>

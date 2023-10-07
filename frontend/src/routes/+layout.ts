@@ -9,6 +9,10 @@ export const ssr = false;
 export const load: Load = async (event): Promise<MainLayoutContext> => {
 	const hostname = event.url.hostname;
 
+	if (event.url.href.includes("/oauth/handler")) {
+		console.log("oauth handler", event.url);
+	}
+
 	return {
 		mainLayoutLazy: {
 			isLoaded: retrievePublicConfig(hostname)

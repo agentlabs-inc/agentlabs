@@ -52,6 +52,12 @@
 			submitting = false;
 		}
 	};
+
+	$: isPasswordlessEmailActivated = !!projectConfig?.authMethods.find(
+		(m) => m.provider === "PASSWORDLESS_EMAIL"
+	);
+	$: isGoogleActivated = !!projectConfig?.authMethods.find((m) => m.provider === "GOOGLE");
+	$: isAnyOAuthMethodActivated = isGoogleActivated;
 </script>
 
 <div
@@ -64,41 +70,64 @@
 					<div class="text-center">
 						<Typography type="mainTitle">Welcome!</Typography>
 						<Spacer size="sm" />
-						<Typography type="subTitle"
-							>Enter your email to get a one-time code and start using the Agent.</Typography>
-					</div>
-					<Spacer size="sm" />
-					<div class="w-full sm:w-[320px]">
-						<form on:submit={handleValidation}>
-							<Input
-								bind:value={$form.email}
-								label="Email"
-								required
-								name="email"
-								errors={$errors?.email}
-								type="text"
-								placeholder="Your email" />
-							<div class="my-5" />
-							<div class="w-full">
-								<Button
-									loading={submitting}
-									submit
-									type="primary"
-									fullWidth
-									center
-									on:click={handleValidation}>Sign Up</Button>
+						{#if isPasswordlessEmailActivated}
+							<div class="text-center">
+								<Typography type="subTitle"
+									>Enter your email to get a one-time code and start using the
+									Agent.</Typography>
 							</div>
-						</form>
-						<div class="my-7 flex gap-5 justify-between items-center">
-							<hr class="border-stroke-base dark:border-stroke-base-dark grow" />
-							<span
-								class="text-body-base dark:text-body-base-dark text-sm antialiased"
-								>OR</span>
-							<hr class="border-stroke-base dark:border-stroke-base-dark grow" />
-						</div>
-						<div class="flex flex-col gap-3">
-							<AuthProviderButton provider="google" />
-						</div>
+							<Spacer size="sm" />
+						{:else}
+							<div class="text-center">
+								<Typography type="subTitle"
+									>Sign-in to access your agent</Typography>
+							</div>
+							<Spacer size="sm" />
+						{/if}
+					</div>
+					<div class="w-full sm:w-[320px]">
+						{#if isPasswordlessEmailActivated}
+							<Spacer size="sm" />
+							<form on:submit={handleValidation}>
+								<Input
+									bind:value={$form.email}
+									label="Email"
+									required
+									name="email"
+									errors={$errors?.email}
+									type="text"
+									placeholder="Your email" />
+								<div class="my-5" />
+								<div class="w-full">
+									<Button
+										loading={submitting}
+										submit
+										type="primary"
+										fullWidth
+										center
+										on:click={handleValidation}>Sign Up</Button>
+								</div>
+							</form>
+						{/if}
+						{#if isAnyOAuthMethodActivated && isPasswordlessEmailActivated}
+							<div class="my-7 flex gap-5 justify-between items-center">
+								<hr class="border-stroke-base dark:border-stroke-base-dark grow" />
+								<span
+									class="text-body-base dark:text-body-base-dark text-sm antialiased"
+									>OR</span>
+								<hr class="border-stroke-base dark:border-stroke-base-dark grow" />
+							</div>
+						{/if}
+						{#if !isPasswordlessEmailActivated}
+							<Spacer size="sm" />
+						{/if}
+						{#each projectConfig.authMethods as authMethod}
+							<div class="flex flex-col">
+								<AuthProviderButton
+									authMethod={authMethod}
+									provider={authMethod.provider} />
+							</div>
+						{/each}
 
 						<div class="text-center mt-10">
 							<span
