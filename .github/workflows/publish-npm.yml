@@ -1,0 +1,26 @@
+name: Publish node sdk
+env:
+  PUBLISHER_IMAGE_TAG: node-sdk-publisher
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  publish_pypi:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build node sdk publisher image
+        run:  |
+          docker build sdks/node-sdk -t $PUBLISHER_IMAGE_TAG
+      - name: Publish node client
+        run: >
+          docker run
+          --rm
+          -e NPM_TOKEN="${{ secrets.NPM_TOKEN }}"
+          -e VERSION="$( echo ${{ github.ref_name }} | tr -d 'v' )"
+          $PUBLISHER_IMAGE_TAG

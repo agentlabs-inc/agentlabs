@@ -27,5 +27,8 @@
     "prettier-plugin-organize-imports": "^3.2.3",
     "rimraf": "^5.0.5",
     "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "socket.io-client": "^4.7.2"
   }
 }
