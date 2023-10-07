@@ -18,9 +18,10 @@ jobs:
         run:  |
           docker build sdks/python-sdk -t $PUBLISHER_IMAGE_TAG
       - name: Publish python client
-        env:
-          PYPI_USERNAME: agentlabs
-          PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-          VERSION: ${{ github.ref_name }}
         run: |
-          docker run --rm $PUBLISHER_IMAGE_TAG
+          docker run
+            --rm                                            \
+            -e PYPI_USER="$PYPI_USER"                       \
+            -e PYPI_PASSWORD="${{ secrets.PYPI_PASSWORD }}" \
+            -e VERSION="${{ github.ref_name }}"             \
+            $PUBLISHER_IMAGE_TAG
