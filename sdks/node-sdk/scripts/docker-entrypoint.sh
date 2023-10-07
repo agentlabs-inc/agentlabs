@@ -23,8 +23,6 @@ else
 	prepare_config
 fi
 
-echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
-
 npm ci
 npm run build
 
