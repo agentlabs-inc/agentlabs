@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "agentlabs"
+name = "agentlabs-sdk"
 version = "0.1.0"
 description = ""
 authors = ["Aurélien Brabant <main@aurelienbrabant.fr>"]

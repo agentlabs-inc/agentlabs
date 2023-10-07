@@ -3,13 +3,8 @@
 set -e
 
 validate_env() {
-	if [ -z "$PYPI_USER" ]; then
-		echo "PYPI_USER env var is not set, exiting"
-		exit 1
-	fi
-
-	if [ -z "$PYPI_PASSWORD" ]; then
-		echo "PYPI_PASSWORD env var is not set, exiting"
+	if [ -z "$PYPI_TOKEN" ]; then
+		echo "PYPI_TOKEN env var is not set, exiting"
 		exit 1
 	fi
 }
@@ -27,8 +22,8 @@ else
 	prepare_config
 fi
 
+poetry config pypi-token.pypi "$PYPI_TOKEN"
+
 poetry publish --build			\
 	--no-interaction			\
-	--build						\
-	--username "$PYPI_USER"	\
-	--password "$PYPI_PASSWORD"	
+	--build
