@@ -23,5 +23,6 @@ else
 	prepare_config
 fi
 
+npm ci
 npm run build
 npm publish --access public

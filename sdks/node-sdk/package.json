@@ -1,7 +1,7 @@
 {
   "name": "@agentlabs/node-sdk",
   "version": "0.0.0",
-  "description": "SDK to build AgentLabs agents",
+  "description": "An SDK to build AgentLabs AI agents",
   "engines": {
     "node": ">= 18.0.0"
   },

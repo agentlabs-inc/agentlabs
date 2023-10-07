@@ -2,12 +2,8 @@ FROM node:20-alpine3.17 as build
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
-
-RUN npm ci
-
 COPY . .
 
-RUN npm run build
+COPY scripts/docker-entrypoint.sh /entrypoint.sh
 
-ENTRYPOINT [ "sh", "docker-entrypoint.sh" ]
+ENTRYPOINT [ "sh", "/entrypoint.sh" ]
