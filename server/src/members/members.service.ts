@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AuthMethodType, Member } from '@prisma/client';
+import { AuthProvider, Member } from '@prisma/client';
 import * as dayjs from 'dayjs';
 import { readFileSync } from 'fs';
 import * as jose from 'jose';
@@ -80,14 +80,14 @@ export class MembersService {
 
   private async verifyProjectAuthMethod(params: {
     projectId: string;
-    authMethodType: AuthMethodType;
+    provider: AuthProvider;
   }): PResult<
     {
       isVerified: boolean;
     },
     RegisterMemberVerifyAuthMethodError
   > {
-    const { projectId, authMethodType } = params;
+    const { projectId, provider } = params;
     const project = await this.prisma.project.findUnique({
       where: { id: projectId },
       include: {
@@ -100,7 +100,7 @@ export class MembersService {
     }
 
     const authMethod = project.authMethods.find((method) => {
-      return method.type === authMethodType;
+      return method.provider === provider;
     });
 
     if (!authMethod) {
@@ -244,7 +244,7 @@ export class MembersService {
 
     const verifyMethodResult = await this.verifyProjectAuthMethod({
       projectId,
-      authMethodType: 'PASSWORDLESS_EMAIL',
+      provider: 'PASSWORDLESS_EMAIL',
     });
 
     if (!verifyMethodResult.ok) {
@@ -279,7 +279,7 @@ export class MembersService {
               identities: {
                 create: [
                   {
-                    provider: 'EMAIL',
+                    provider: 'PASSWORDLESS_EMAIL',
                     providerUserId: email,
                     lastSignedInAt: null,
                     accessToken: null,
@@ -312,11 +312,11 @@ export class MembersService {
                   where: {
                     memberId_provider: {
                       memberId: member.id,
-                      provider: 'EMAIL',
+                      provider: 'PASSWORDLESS_EMAIL',
                     },
                   },
                   create: {
-                    provider: 'EMAIL',
+                    provider: 'PASSWORDLESS_EMAIL',
                     providerUserId: email,
                   },
                 },
@@ -409,7 +409,7 @@ export class MembersService {
         where: {
           memberId_provider: {
             memberId: member.id,
-            provider: 'EMAIL',
+            provider: 'PASSWORDLESS_EMAIL',
           },
         },
         data: {

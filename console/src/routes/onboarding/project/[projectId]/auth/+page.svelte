@@ -23,15 +23,15 @@
 		{
 			id: "passwordless-email",
 			label: "Passwordless email",
-			value: "passwordless-email",
+			value: "PASSWORDLESS_EMAIL",
 			heroIcon: Envelope
 		},
 		{
 			id: "google",
 			label: "Google / Gmail",
-			value: "google",
+			value: "GOOGLE",
 			customIcon: GoogleIcon,
-			disabled: true,
+			disabled: false,
 			disabledLabel: "Coming soon"
 		},
 		{

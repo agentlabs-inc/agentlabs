@@ -1195,13 +1195,14 @@ components:
           type: string
           enum:
             - OAUTH2
-            - API_KEY
-            - PASSWORDLESS_EMAIL
-            - PASSWORDLESS_SMS
+            - EMAIL
+            - ANONYMOUS
         provider:
           type: string
           enum:
-            - EMAIL
+            - PASSWORDLESS_EMAIL
+            - EMAIL_AND_PASSWORD
+            - ANONYMOUS
             - GOOGLE
             - GITHUB
             - GITLAB
@@ -1236,13 +1237,14 @@ components:
           type: string
           enum:
             - OAUTH2
-            - API_KEY
-            - PASSWORDLESS_EMAIL
-            - PASSWORDLESS_SMS
+            - EMAIL
+            - ANONYMOUS
         provider:
           type: string
           enum:
-            - EMAIL
+            - PASSWORDLESS_EMAIL
+            - EMAIL_AND_PASSWORD
+            - ANONYMOUS
             - GOOGLE
             - GITHUB
             - GITLAB
@@ -1283,14 +1285,15 @@ components:
     CreateDemoAuthMethodsDto:
       type: object
       properties:
-        methodTypes:
-          type: array
-          items:
-            type: object
+        methods:
+          type: string
+          enum:
+            - PASSWORDLESS_EMAIL
+            - GOOGLE
         projectId:
           type: string
       required:
-        - methodTypes
+        - methods
         - projectId
     CreatedDemoAuthMethodsDto:
       type: object
@@ -1306,13 +1309,14 @@ components:
           type: string
           enum:
             - OAUTH2
-            - API_KEY
-            - PASSWORDLESS_EMAIL
-            - PASSWORDLESS_SMS
+            - EMAIL
+            - ANONYMOUS
         provider:
           type: string
           enum:
-            - EMAIL
+            - PASSWORDLESS_EMAIL
+            - EMAIL_AND_PASSWORD
+            - ANONYMOUS
             - GOOGLE
             - GITHUB
             - GITLAB

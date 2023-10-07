@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 export type CreateDemoAuthMethodsDto = {
-    methodTypes: Array<Record<string, any>>;
+    methods: 'PASSWORDLESS_EMAIL' | 'GOOGLE';
     projectId: string;
 };
 

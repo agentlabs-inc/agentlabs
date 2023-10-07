@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { err, ok, PResult } from '../common/result';
+import { AuthMethod, Prisma } from '@prisma/client';
+import { PResult, err, ok } from '../common/result';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   CreateAuthMethodError,
@@ -9,7 +9,10 @@ import {
   VerifyIfIsProjectUserError,
 } from './auth-methods.errors';
 import { CreateAuthMethodDto } from './dtos/create.auth-method.dto';
-import { CreateDemoAuthMethodsDto } from './dtos/create.demo.auth-method.dto';
+import {
+  CreateDemoAuthMethodsDto,
+  SelectedAuthMethod,
+} from './dtos/create.demo.auth-method.dto';
 import { CreatedAuthMethodDto } from './dtos/created.auth-method.dto';
 import { CreatedDemoAuthMethodsDto } from './dtos/created.demo.auth-method.dto';
 import { ListAuthMethodResponseDto } from './dtos/list.auth-method.response.dto';
@@ -112,6 +115,32 @@ export class AuthMethodsService {
     });
   }
 
+  private selectedMethodToAuthMethodData(
+    selectedMethod: SelectedAuthMethod,
+  ): Omit<AuthMethod, 'createdAt' | 'updatedAt' | 'projectId'> {
+    switch (selectedMethod) {
+      case 'PASSWORDLESS_EMAIL':
+        return {
+          type: 'EMAIL',
+          provider: 'PASSWORDLESS_EMAIL',
+          isEnabled: true,
+          scopes: [],
+          clientId: null,
+          clientSecret: null,
+        };
+
+      case 'GOOGLE':
+        return {
+          type: 'OAUTH2',
+          provider: 'GOOGLE',
+          isEnabled: true,
+          scopes: [],
+          clientId: null,
+          clientSecret: null,
+        };
+    }
+  }
+
   async createDemoAuthMethods(
     params: CreateDemoAuthMethodsDto & { userId: string },
   ): PResult<CreatedDemoAuthMethodsDto, CreateDemoAuthMethodsError> {
@@ -124,13 +153,11 @@ export class AuthMethodsService {
       return err(verifyResult.error);
     }
 
-    const emailProvider = params.methodTypes.find(
-      (type) => type === 'PASSWORDLESS_EMAIL',
-    );
+    const { methods } = params;
 
-    if (!emailProvider) {
-      return err('OnlyEmailMethodAcceptedAtTheMoment');
-    }
+    const partialAuthMethods = methods.map((method) => {
+      return this.selectedMethodToAuthMethodData(method);
+    });
 
     const onboarding = await this.prisma.onboarding.findUnique({
       where: {
@@ -139,25 +166,20 @@ export class AuthMethodsService {
       },
     });
 
-    // At the moment we only support passwordless email but we'll support more soon.
     try {
       await this.prisma.$transaction(async (tx) => {
-        await tx.authMethod.create({
-          data: {
-            type: 'PASSWORDLESS_EMAIL',
-            provider: 'EMAIL',
-            isEnabled: true,
-            scopes: [],
-            hasClientSecret: false,
-            clientId: null,
-            clientSecret: null,
-            project: {
-              connect: {
-                id: params.projectId,
+        for (const partialAuthMethod of partialAuthMethods) {
+          await tx.authMethod.create({
+            data: {
+              ...partialAuthMethod,
+              project: {
+                connect: {
+                  id: params.projectId,
+                },
               },
             },
-          },
-        });
+          });
+        }
 
         if (onboarding?.id && !onboarding.hasAddedAuthMethod) {
           await tx.onboarding.update({

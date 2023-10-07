@@ -2,10 +2,10 @@
 CREATE TYPE "OrganizationUserRole" AS ENUM ('USER', 'ADMIN');
 
 -- CreateEnum
-CREATE TYPE "AuthMethodType" AS ENUM ('OAUTH2', 'API_KEY', 'PASSWORDLESS_EMAIL', 'PASSWORDLESS_SMS');
+CREATE TYPE "AuthMethodType" AS ENUM ('OAUTH2', 'EMAIL', 'ANONYMOUS');
 
 -- CreateEnum
-CREATE TYPE "IdentityProvider" AS ENUM ('EMAIL', 'GOOGLE', 'GITHUB', 'GITLAB', 'MICROSOFT', 'FACEBOOK', 'TWITTER', 'APPLE');
+CREATE TYPE "AuthProvider" AS ENUM ('PASSWORDLESS_EMAIL', 'EMAIL_AND_PASSWORD', 'ANONYMOUS', 'GOOGLE', 'GITHUB', 'GITLAB', 'MICROSOFT', 'FACEBOOK', 'TWITTER', 'APPLE');
 
 -- CreateEnum
 CREATE TYPE "AgentMessageSource" AS ENUM ('USER', 'AGENT', 'SYSTEM');
@@ -91,19 +91,36 @@ CREATE TABLE "Project" (
 );
 
 -- CreateTable
+CREATE TABLE "SmtpConfiguration" (
+    "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "host" TEXT NOT NULL,
+    "port" INTEGER NOT NULL,
+    "secure" BOOLEAN NOT NULL,
+    "username" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "senderName" TEXT NOT NULL,
+    "senderEmail" TEXT NOT NULL,
+    "replyTo" TEXT NOT NULL,
+    "projectId" TEXT NOT NULL,
+
+    CONSTRAINT "SmtpConfiguration_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "AuthMethod" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "provider" "IdentityProvider" NOT NULL,
+    "provider" "AuthProvider" NOT NULL,
     "type" "AuthMethodType" NOT NULL,
     "isEnabled" BOOLEAN NOT NULL DEFAULT false,
-    "projectId" TEXT NOT NULL,
     "clientId" TEXT,
     "clientSecret" TEXT,
-    "hasClientSecret" BOOLEAN,
     "scopes" TEXT[],
+    "projectId" TEXT NOT NULL,
 
-    CONSTRAINT "AuthMethod_pkey" PRIMARY KEY ("projectId","provider")
+    CONSTRAINT "AuthMethod_pkey" PRIMARY KEY ("projectId","provider","type")
 );
 
 -- CreateTable
@@ -181,7 +198,7 @@ CREATE TABLE "Member" (
 CREATE TABLE "MemberIdentity" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "provider" "IdentityProvider" NOT NULL,
+    "provider" "AuthProvider" NOT NULL,
     "providerUserId" TEXT NOT NULL,
     "memberId" TEXT NOT NULL,
     "lastSignedInAt" TIMESTAMP(3),
@@ -264,6 +281,9 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "Project_slug_key" ON "Project"("slug");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "SmtpConfiguration_projectId_key" ON "SmtpConfiguration"("projectId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "SdkSecret_hash_key" ON "SdkSecret"("hash");
 
 -- CreateIndex
@@ -298,6 +318,9 @@ ALTER TABLE "Project" ADD CONSTRAINT "Project_creatorId_fkey" FOREIGN KEY ("crea
 
 -- AddForeignKey
 ALTER TABLE "Project" ADD CONSTRAINT "Project_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SmtpConfiguration" ADD CONSTRAINT "SmtpConfiguration_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "AuthMethod" ADD CONSTRAINT "AuthMethod_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -1,4 +1,4 @@
-export const SignInMethods = ["passwordless-email", "google", "github", "gitlab"] as const;
+export const SignInMethods = ["PASSWORDLESS_EMAIL", "GOOGLE"] as const;
 export type SignInMethod = (typeof SignInMethods)[number];
 
 export type MainLayoutContext = {
