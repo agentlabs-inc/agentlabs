@@ -18,19 +18,10 @@ jobs:
         run:  |
           docker build sdks/python-sdk -t $PUBLISHER_IMAGE_TAG
       - name: Publish python client (tag version)
-        if: startsWith(github.ref, 'refs/tags/v')
         run: |
           docker run
             --rm                                            \
             -e PYPI_USER="$PYPI_USER"                       \
             -e PYPI_PASSWORD="${{ secrets.PYPI_PASSWORD }}" \
             -e VERSION="${{ github.ref_name }}"             \
-            $PUBLISHER_IMAGE_TAG
-      - name: Publish python client (manual version)
-        if: ! startsWith(github.ref, 'refs/tags/v')
-        run: |
-          docker run
-            --rm                                            \
-            -e PYPI_USER="$PYPI_USER"                       \
-            -e PYPI_PASSWORD="${{ secrets.PYPI_PASSWORD }}" \
             $PUBLISHER_IMAGE_TAG
