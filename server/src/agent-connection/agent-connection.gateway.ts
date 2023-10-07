@@ -78,14 +78,10 @@ export class AgentConnectionGateway
       return;
     }
 
-    /*
     const isAuthorized = await this.sdkSecretsService.verifySdkSecret(
       projectId,
       secret,
     );
-	*/
-
-    const isAuthorized = true;
 
     if (!isAuthorized) {
       const message = 'Invalid credentials, closing connection.';
