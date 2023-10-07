@@ -3,8 +3,8 @@
 set -e
 
 validate_env() {
-	if [ -z "$PYPI_USERNAME" ]; then
-		echo "PYPI_USERNAME env var is not set, exiting"
+	if [ -z "$PYPI_USER" ]; then
+		echo "PYPI_USER env var is not set, exiting"
 		exit 1
 	fi
 
@@ -30,5 +30,5 @@ fi
 poetry publish --build			\
 	--no-interaction			\
 	--build						\
-	--username "$PYPI_USERNAME"	\
+	--username "$PYPI_USER"	\
 	--password "$PYPI_PASSWORD"	
