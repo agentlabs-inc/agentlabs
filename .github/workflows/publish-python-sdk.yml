@@ -21,7 +21,7 @@ jobs:
         run: >
           docker run
           --rm
-          -e PYPI_USER="$PYPI_USER"
+          -e PYPI_USER="${{ vars.PYPI_USER }}"
           -e PYPI_PASSWORD="${{ secrets.PYPI_PASSWORD }}"
           -e VERSION="$( echo \"${{ github.ref_name }}\" | tr -d 'v' )"
           $PUBLISHER_IMAGE_TAG
