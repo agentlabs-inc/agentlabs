@@ -12,11 +12,6 @@ validate_env() {
 		echo "PYPI_PASSWORD env var is not set, exiting"
 		exit 1
 	fi
-
-	if [ -z "$VERSION" ]; then
-		echo "VERSION env var is not set, exiting"
-		exit 1
-	fi
 }
 
 prepare_config() {
@@ -26,7 +21,11 @@ prepare_config() {
 
 validate_env
 
-prepare_config
+if [ -z "$VERSION" ]; then
+	echo "VERSION env var is not set, will use pyproject.toml version unmodified."
+else
+	prepare_config
+fi
 
 poetry publish --build			\
 	--no-interaction			\
