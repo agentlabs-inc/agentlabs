@@ -4,6 +4,8 @@ WORKDIR /app
 
 COPY . .
 
+COPY .npmrc /root/.npmrc
+
 COPY scripts/docker-entrypoint.sh /entrypoint.sh
 
-ENTRYPOINT [ "sh", "/entrypoint.sh" ]
+CMD [ "sh", "/entrypoint.sh" ]
