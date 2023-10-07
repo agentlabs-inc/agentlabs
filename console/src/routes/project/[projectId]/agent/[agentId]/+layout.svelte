@@ -5,6 +5,7 @@
 	import { page } from "$app/stores";
 	import MainTitleSkeleton from "$lib/components/common/skeleton/MainTitleSkeleton.svelte";
 	import { projectStore } from "$lib/stores/project";
+	import { projectOverviewRoute } from "$lib/routes/routes";
 
 	export let data: PageData;
 
@@ -23,7 +24,7 @@
 
 	const agentPromise = fetchAgentDetails($page.params.agentId).then((agent) => {
 		if (!agent) {
-			goto(agentOverviewRoute.path(project.id));
+			goto(projectOverviewRoute.path(project.id));
 		}
 
 		setCurrentAgent(agent);
@@ -60,7 +61,7 @@
 					</div>
 				{:then agent}
 					<span class="text-body-accent dark:text-body-accent-dark font-semibold text-2xl"
-						>{$agentStore.currentAgent.name}</span>
+						>{$agentStore.currentAgent?.name}</span>
 					<CopiableTag value={agent.id} />
 				{/await}
 			</div>

@@ -6,6 +6,7 @@
 	"semi": true,
 	"singleQuote": false,
 	"jsxBracketSameLine": true,
+	"plugins": ["prettier-plugin-organize-imports"],
 	"overrides": [ {
 		"files": "*.svelte",
 		"options": {

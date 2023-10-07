@@ -26,6 +26,8 @@
 
 	const { form, errors, validate } = superForm(
 		{
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
 			name: agent.name
 		},
 		{
