@@ -160,4 +160,27 @@ export class AgentStreamManagerService {
       await this.messageMutex.release(data.messageId);
     }
   }
+
+  async end(messageId: string) {
+    try {
+      await this.messageMutex.acquire(messageId);
+      const stream = this.activeStreams.get(messageId);
+
+      if (!stream) {
+        return;
+      }
+
+      stream.frontend.emit('stream-chat-message-end', {
+        data: {
+          conversationId: stream.conversationId,
+          messageId: stream.messageId,
+        },
+      });
+
+      await this.flushToDatabase(messageId);
+      this.activeStreams.delete(messageId);
+    } finally {
+      this.messageMutex.release(messageId);
+    }
+  }
 }

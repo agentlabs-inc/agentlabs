@@ -224,6 +224,11 @@ export class AgentConnectionGateway
     });
   }
 
+  @SubscribeMessage('stream-chat-message-end')
+  async handleStreamChatMessageEnd(@MessageBody() payload: any) {
+    await this.streamManager.end(payload.data.messageId);
+  }
+
   @SubscribeMessage('message')
   handleMessage(client: Socket, payload: any): void {
     this.logger.debug(`Client ${client.id} sent message: ${payload}`);

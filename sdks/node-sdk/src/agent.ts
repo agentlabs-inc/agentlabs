@@ -33,7 +33,7 @@ class StreamedMessage {
 	}
 
 	end() {
-		this.io.emit('stream-chat-message-close', {
+		this.io.emit('stream-chat-message-end', {
 			data: {
 				conversationId: this.conversationId,
 				messageId: this.messageId,

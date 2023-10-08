@@ -59,9 +59,6 @@
 	$: sizeClass = buttonSizeClassMap[size];
 
 	const handleClick = (e: Event) => {
-		e.stopPropagation();
-		e.preventDefault();
-
 		if (disabled) return;
 
 		dispatch("click", e);
@@ -70,6 +67,7 @@
 
 <button
 	on:click={handleClick}
+	disabled={disabled}
 	type={submit ? "submit" : "button"}
 	class="rounded-md antialiased flex gap-2 {typeClassMap[type]} {statusClass} {sizeClass}">
 	{#if loading}
@@ -77,7 +75,7 @@
 	{/if}
 	{#if !!leftIcon}<Icon class="inline-block" src={leftIcon} size="20" />{/if}
 	<slot />
-	{#if !!rightIcon}
+	{#if !!rightIcon && !loading}
 		<div class="h-full flex items-center justify-center">
 			<Icon class="inline-block" src={rightIcon} size="20" />
 		</div>{/if}

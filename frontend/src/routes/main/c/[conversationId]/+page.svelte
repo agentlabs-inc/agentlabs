@@ -23,7 +23,6 @@ const load = async (conversationId: string) => {
 }
 
 const sendMessage = (e: Event) => {
-	e.stopPropagation();
 	e.preventDefault();
 
 	const con = $realtimeStore.connection;
@@ -49,6 +48,10 @@ const sendMessage = (e: Event) => {
 
 	inputValue = "";
 
+}
+
+const listenToStreamChatMessageEnd = () => {
+	isWaitingForAnswer = false;
 }
 
 const listenToChatMessage = (payload: any) => {
@@ -80,11 +83,13 @@ const listenToStreamedChatMessageToken = (payload: any) => {
 onMount(async () => {
 	$realtimeStore.connection?.on('chat-message', listenToChatMessage);
 	$realtimeStore.connection?.on('stream-chat-message-token', listenToStreamedChatMessageToken);
+	$realtimeStore.connection?.on('stream-chat-message-end', listenToStreamChatMessageEnd);
 })
 
 onDestroy(() => {
 	$realtimeStore.connection?.off('chat-message', listenToChatMessage);
 	$realtimeStore.connection?.off('stream-chat-message-token', listenToStreamedChatMessageToken);
+	$realtimeStore.connection?.off('stream-chat-message-end', listenToStreamChatMessageEnd);
 })
 
 
@@ -138,18 +143,16 @@ let inputElement: HTMLInputElement;
 <div
 		class="absolute bottom-0 left-0 right-0 flex items-center justify-center py-3 px-3 border-t border-stroke-base dark:border-stroke-base-dark bg-background-secondary dark:bg-background-primary-dark flex-grow-0">
 		<div class="flex-grow max-w-4xl">
-			<div class="flex items-center justify-between gap-3">
-				<form class="w-full" on:submit={sendMessage}>
+				<form class="w-full items-center flex gap-3" on:submit|preventDefault={sendMessage}>
+					<div class="flex-1">
 					<ChatInput
 						bind:inputElement={inputElement}
 						bind:value={inputValue}
 						name="chat-input"
 						placeholder="Send a message" />
+						</div>
+						<Button submit loading={isWaitingForAnswer} disabled={isWaitingForAnswer || inputValue === ''} rightIcon={PaperAirplane} />
 				</form>
-				<div class="h-full flex">
-					<Button disabled={isWaitingForAnswer}  submit rightIcon={PaperAirplane} on:click={sendMessage} />
-				</div>
-			</div>
 		</div>
 	</div>
 
