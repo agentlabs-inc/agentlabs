@@ -2,13 +2,9 @@
 	export let name: string;
 	export let placeholder: string;
 	export let type: "text" | "email" | "password" = "text";
-
 	export let label: string | undefined = undefined;
-
 	export let required = false;
-
 	export let value: string | undefined = undefined;
-
 	export let errors: any | string[] | undefined = undefined;
 
 	const onInput = (event: Event) => {

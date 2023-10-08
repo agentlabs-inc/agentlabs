@@ -73,3 +73,9 @@ export const projectAuthMethodsRoute = {
 export const createAgentRoute = {
 	path: (projectId: string) => `${basePath}/project/${projectId}/agent/new`
 };
+
+export const authMethodRoute = {
+	path: (projectId: string, providerId: string) => {
+		return `${basePath}/project/${projectId}/auth/methods/${providerId}`;
+	}
+};

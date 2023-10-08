@@ -1,6 +1,5 @@
 <script lang="ts">
 	import TopCover from "$lib/components/common/top-cover/TopCover.svelte";
-	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
 	import TabNav from "$lib/components/common/navigation/tab-nav/TabNav.svelte";
 	import { projectStore } from "$lib/stores/project";
 

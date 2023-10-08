@@ -1,4 +1,4 @@
-import { AuthProvider } from '@prisma/client';
+import { AuthMethodType, AuthProvider } from '@prisma/client';
 import { Type } from 'class-transformer';
 import {
   IsArray,
@@ -9,9 +9,10 @@ import {
   ValidateNested,
 } from 'class-validator';
 
+const AuthMethodTypes = Object.values(AuthMethodType);
 const AuthProviders = Object.values(AuthProvider);
 
-export class CreateAuthMethodDto {
+export class UpsertAuthMethodDto {
   @IsIn(AuthProviders)
   provider: AuthProvider;
 
@@ -21,11 +22,9 @@ export class CreateAuthMethodDto {
   @IsBoolean()
   isEnabled: boolean;
 
-  @IsOptional()
   @IsString()
   clientId: string;
 
-  @IsOptional()
   @IsString()
   clientSecret: string;
 

@@ -20,13 +20,13 @@ export const fetchAvailableAuthMethods = async (
 
 	const builtInMethods: AuthMethodListItem[] = [
 		{
-			id: "passwordless-email",
+			id: "passwordless_email",
 			name: "Passwordless email",
 			value: "PASSWORDLESS_EMAIL",
 			heroIcon: Envelope,
 			componentIcon: null,
 			available: true,
-			statusLabel: "ACTIVE",
+			statusLabel: "DISABLED",
 			isEnabled: false
 		},
 		{
@@ -81,7 +81,7 @@ export const fetchAvailableAuthMethods = async (
 			heroIcon: null,
 			componentIcon: GoogleIcon,
 			available: true,
-			statusLabel: "ACTIVE",
+			statusLabel: "DISABLED",
 			isEnabled: false
 		},
 		{
