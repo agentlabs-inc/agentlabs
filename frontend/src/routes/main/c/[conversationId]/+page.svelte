@@ -1,7 +1,7 @@
 <script lang="ts">
 import dayjs from "dayjs";
 import ChatMessage from "$lib/components/chat/chat-message/ChatMessage.svelte";
-import { addMessage, chatStore } from "$lib/stores/chat";
+import { addMessage, chatStore, addStreamedMessageToken } from "$lib/stores/chat";
 import { fetchMessages } from "$lib/usecases/chat/fetch-messages";
 import { PaperAirplane } from "svelte-hero-icons";
 import ChatInput from "$lib/components/chat/chat-input/ChatInput.svelte";
@@ -59,12 +59,25 @@ const listenToChatMessage = (payload: any) => {
 	addMessage(payload.data);
 }
 
+const listenToStreamedChatMessageToken = (payload: any) => {
+	//console.log(payload);
+	if (payload.data.conversationId !== data.conversationId) {
+		console.warn(`Received message for conversation ${payload.data.conversationId} but current conversation is ${data.conversationId}`)
+
+		return;
+	}
+
+	addStreamedMessageToken(payload.data);
+}
+
 onMount(async () => {
 	$realtimeStore.connection?.on('chat-message', listenToChatMessage);
+	$realtimeStore.connection?.on('stream-chat-message-token', listenToStreamedChatMessageToken);
 })
 
 onDestroy(() => {
 	$realtimeStore.connection?.off('chat-message', listenToChatMessage);
+	$realtimeStore.connection?.off('stream-chat-message-token', listenToStreamedChatMessageToken);
 })
 
 
@@ -81,7 +94,6 @@ afterUpdate(() => {
 let inputElement: HTMLInputElement;
 
 
-$: console.log(messages);
 </script>
 
 <div class="flex flex-col justify-between relative h-full">

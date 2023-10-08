@@ -1,6 +1,8 @@
+import { Writable } from 'stream';
 import { AgentLogger } from './logger';
 import { ProjectConfig } from './project';
 import io, { Socket } from 'socket.io-client';
+import { randomUUID } from 'crypto';
 
 export interface RawChatMessage {
 	text: string;
@@ -11,6 +13,34 @@ export interface RawChatMessage {
 }
 
 export type OnChatMessageHandler = (message: IncomingChatMessage) => void;
+
+class StreamedMessage {
+	private readonly messageId = randomUUID()
+
+	constructor(private readonly io: Socket, private readonly conversationId: string) {
+	}
+
+	write(message: string) {
+		this.io.emit('stream-chat-message-token', {
+			timestamp: new Date().toISOString(),
+			data: {
+				text: message,
+				attachments: [],
+				conversationId: this.conversationId,
+				messageId: this.messageId,
+			}
+		})
+	}
+
+	end() {
+		this.io.emit('stream-chat-message-close', {
+			data: {
+				conversationId: this.conversationId,
+				messageId: this.messageId,
+			}
+		})
+	}
+}
 
 class IncomingChatMessage {
 	public readonly text: string;
@@ -23,6 +53,10 @@ class IncomingChatMessage {
 		this.conversationId = rawChatMessage.conversationId;
 		this.messageId = rawChatMessage.messageId;
 		this.memberId = rawChatMessage.memberId;
+	}
+
+	streamedReply() {
+		return new StreamedMessage(this.io, this.conversationId);
 	}
 
 	reply(message: string) {
