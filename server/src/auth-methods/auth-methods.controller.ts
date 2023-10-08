@@ -7,7 +7,6 @@ import {
   Post,
   Req,
   UnauthorizedException,
-  UnprocessableEntityException,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UserAuthenticatedRequest } from 'src/iam/iam.types';
@@ -87,12 +86,6 @@ export class AuthMethodsController {
         throw new UnauthorizedException({
           message: 'Not a project user',
           code: 'NotAProjectUser',
-        });
-
-      case 'OnlyEmailMethodAcceptedAtTheMoment':
-        throw new UnprocessableEntityException({
-          message: 'Only email method accepted at the moment',
-          code: 'OnlyEmailMethodAcceptedAtTheMoment',
         });
     }
   }

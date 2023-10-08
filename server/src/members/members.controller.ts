@@ -14,6 +14,7 @@ import { RequireAuthMethod } from '../iam/iam.decorators';
 import { UserAuthenticatedRequest } from '../iam/iam.types';
 import { ListMembersResponseDto } from './dtos/list.members.response.dto';
 import { LoginMemberResponseDto } from './dtos/login.member.response.dto';
+import { oauthAuthorizeDto } from './dtos/oauth.authorize.dto';
 import { RegisterResponseDto } from './dtos/register.response.dto';
 import { RequestPasswordlessEmailDto } from './dtos/request.passwordless-email.dto';
 import { VerifyPasswordlessEmailDto } from './dtos/verify-passwordless-email.dto';
@@ -138,5 +139,28 @@ export class MembersController {
           message: 'Member banned',
         });
     }
+  }
+
+  @Post('oauth/handleCallback/:providerId')
+  async handleOAuthCallback(
+    @Body() dto: oauthAuthorizeDto,
+    @Param('providerId') providerId: string,
+  ): Promise<LoginMemberResponseDto> {
+    const result = await this.membersService.completeOAuthLogin({
+      code: dto.code,
+      providerId,
+      redirectUri: dto.redirectUri,
+      state: dto.state,
+      projectId: dto.projectId,
+    });
+
+    if (!result.ok) {
+      throw new UnauthorizedException({
+        message: result.error,
+        description: result.error,
+      });
+    }
+
+    return result.value;
   }
 }

@@ -2,6 +2,7 @@
 	import type { MultiSelectItem } from "$lib/components/common/multi-select/types";
 	import { Icon } from "svelte-hero-icons";
 	import { createEventDispatcher } from "svelte";
+	import Typography from "$lib/components/common/typography/Typography.svelte";
 
 	const dispatch = createEventDispatcher<{ change: MultiSelectItem[] }>();
 	export let items: MultiSelectItem[] = [];
@@ -9,6 +10,8 @@
 	let selectedItems: Record<string, MultiSelectItem> = {};
 
 	const handleSelect = (item: MultiSelectItem) => {
+		if (item.disabled) return;
+
 		if (selectedItems[item.id]) {
 			delete selectedItems[item.id];
 			selectedItems = { ...selectedItems };
@@ -26,7 +29,9 @@
 		<button
 			id={item.id}
 			on:click={() => handleSelect(item)}
-			class="antialiased border rounded-md p-3 border-stroke-base dark:border-stroke-base-dark flex items-center justify-left gap-3 text-body-base dark:text-body-base-dark hover:bg-background-accent dark:hover:bg-background-accent-dark cursor-pointer {selectedItems[
+			class="{item.disabled
+				? 'opacity-60 bg-background-accent dark:bg-background-accent-dark'
+				: ''} antialiased border rounded-md p-3 border-stroke-base dark:border-stroke-base-dark flex items-center justify-left gap-3 text-body-base dark:text-body-base-dark hover:bg-background-accent dark:hover:bg-background-accent-dark cursor-pointer {selectedItems[
 				item.id
 			]
 				? 'border border-stroke-info dark:border-stroke-info-dark'
@@ -44,6 +49,9 @@
 				</div>
 			{/if}
 			<span>{item.label}</span>
+			{#if item.disabledLabel}
+				<Typography type="label">{item.disabledLabel}</Typography>
+			{/if}
 		</button>
 	{/each}
 </div>

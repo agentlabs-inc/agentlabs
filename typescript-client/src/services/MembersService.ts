@@ -4,6 +4,7 @@
 /* eslint-disable */
 import type { ListMembersResponseDto } from '../models/ListMembersResponseDto';
 import type { LoginMemberResponseDto } from '../models/LoginMemberResponseDto';
+import type { oauthAuthorizeDto } from '../models/oauthAuthorizeDto';
 import type { RegisterResponseDto } from '../models/RegisterResponseDto';
 import type { RequestPasswordlessEmailDto } from '../models/RequestPasswordlessEmailDto';
 import type { VerifyPasswordlessEmailDto } from '../models/VerifyPasswordlessEmailDto';
@@ -78,6 +79,28 @@ export class MembersService {
             url: '/members/p/{projectId}/verifyPasswordlessEmail',
             path: {
                 'projectId': projectId,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+
+    /**
+     * @returns LoginMemberResponseDto
+     * @throws ApiError
+     */
+    public static handleOAuthCallback({
+        providerId,
+        requestBody,
+    }: {
+        providerId: string,
+        requestBody: oauthAuthorizeDto,
+    }): CancelablePromise<LoginMemberResponseDto> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/members/oauth/handleCallback/{providerId}',
+            path: {
+                'providerId': providerId,
             },
             body: requestBody,
             mediaType: 'application/json',

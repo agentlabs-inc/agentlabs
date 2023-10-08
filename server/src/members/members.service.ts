@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { AuthMethodType, Member } from '@prisma/client';
+import { AuthProvider, Member } from '@prisma/client';
 import * as dayjs from 'dayjs';
 import { readFileSync } from 'fs';
 import * as jose from 'jose';
 import * as path from 'path';
 import { PResult, err, ok } from '../common/result';
 import { MailerService } from '../mailer/mailer.service';
+import { GoogleService } from '../oauth-providers/google/google.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { ListMembersResponseDto } from './dtos/list.members.response.dto';
 import { LoginMemberResponseDto } from './dtos/login.member.response.dto';
@@ -13,6 +14,7 @@ import { RegisterResponseDto } from './dtos/register.response.dto';
 import { InjectMembersConfig, MembersConfig } from './members.config';
 import {
   ListMembersError,
+  OAuthLoginError,
   RegisterMemberVerifyAuthMethodError,
   RegisterPasswordlessEmailError,
   VerifiyIfIsProjectMemberError,
@@ -28,6 +30,7 @@ export class MembersService {
     @InjectMembersConfig()
     private readonly membersConfig: MembersConfig,
     private readonly mailerService: MailerService,
+    private readonly googleService: GoogleService,
   ) {}
 
   private async verifyIfProjectUser(params: {
@@ -80,14 +83,14 @@ export class MembersService {
 
   private async verifyProjectAuthMethod(params: {
     projectId: string;
-    authMethodType: AuthMethodType;
+    provider: AuthProvider;
   }): PResult<
     {
       isVerified: boolean;
     },
     RegisterMemberVerifyAuthMethodError
   > {
-    const { projectId, authMethodType } = params;
+    const { projectId, provider } = params;
     const project = await this.prisma.project.findUnique({
       where: { id: projectId },
       include: {
@@ -100,7 +103,7 @@ export class MembersService {
     }
 
     const authMethod = project.authMethods.find((method) => {
-      return method.type === authMethodType;
+      return method.provider === provider;
     });
 
     if (!authMethod) {
@@ -244,7 +247,7 @@ export class MembersService {
 
     const verifyMethodResult = await this.verifyProjectAuthMethod({
       projectId,
-      authMethodType: 'PASSWORDLESS_EMAIL',
+      provider: 'PASSWORDLESS_EMAIL',
     });
 
     if (!verifyMethodResult.ok) {
@@ -279,7 +282,7 @@ export class MembersService {
               identities: {
                 create: [
                   {
-                    provider: 'EMAIL',
+                    provider: 'PASSWORDLESS_EMAIL',
                     providerUserId: email,
                     lastSignedInAt: null,
                     accessToken: null,
@@ -312,11 +315,11 @@ export class MembersService {
                   where: {
                     memberId_provider: {
                       memberId: member.id,
-                      provider: 'EMAIL',
+                      provider: 'PASSWORDLESS_EMAIL',
                     },
                   },
                   create: {
-                    provider: 'EMAIL',
+                    provider: 'PASSWORDLESS_EMAIL',
                     providerUserId: email,
                   },
                 },
@@ -409,7 +412,7 @@ export class MembersService {
         where: {
           memberId_provider: {
             memberId: member.id,
-            provider: 'EMAIL',
+            provider: 'PASSWORDLESS_EMAIL',
           },
         },
         data: {
@@ -440,6 +443,148 @@ export class MembersService {
         createdAt: member.createdAt,
         updatedAt: member.updatedAt,
       },
+    });
+  }
+
+  private async upsertMemberWithOAuth(params: {
+    email: string;
+    firstName?: string;
+    lastName?: string;
+    pictureUrl: string;
+    signInMethod: 'google';
+    providerUserId: string;
+    isVerified: boolean;
+    projectId: string;
+    fullName: string;
+  }): Promise<Member> {
+    const { projectId, email, firstName, lastName, pictureUrl, fullName } =
+      params;
+    const memberCreatedOrUpdated = await this.prisma.$transaction(
+      async (tx) => {
+        const member = await tx.member.findFirst({
+          where: {
+            email,
+          },
+        });
+
+        if (!member) {
+          const memberCreated = await tx.member.create({
+            data: {
+              email,
+              firstName,
+              lastName,
+              fullName,
+              profilePictureUrl: pictureUrl,
+              verifiedAt: params.isVerified ? new Date() : null,
+              project: {
+                connect: {
+                  id: projectId,
+                },
+              },
+            },
+          });
+
+          return memberCreated;
+        }
+
+        const memberUpdated = await tx.member.update({
+          where: {
+            id: member.id,
+          },
+          data: {
+            email: email,
+            fullName: fullName ?? member.fullName,
+            firstName: firstName ?? member.firstName,
+            lastName: lastName ?? member.lastName,
+            profilePictureUrl: pictureUrl ?? member.profilePictureUrl,
+            verifiedAt:
+              member.verifiedAt ?? (params.isVerified ? new Date() : null),
+          },
+        });
+
+        return memberUpdated;
+      },
+    );
+
+    return memberCreatedOrUpdated;
+  }
+
+  async completeOAuthLogin(params: {
+    code: string;
+    state: string;
+    redirectUri: string;
+    providerId: string;
+    projectId: string;
+  }): PResult<LoginMemberResponseDto, OAuthLoginError> {
+    const { projectId, providerId, code, state, redirectUri } = params;
+
+    if (providerId !== 'GOOGLE') {
+      return err('UnsupportedOAuthProvider');
+    }
+
+    const authMethod = await this.prisma.authMethod.findUnique({
+      where: {
+        projectId_provider_type: {
+          provider: providerId,
+          projectId,
+          type: 'OAUTH2',
+        },
+      },
+    });
+
+    if (!authMethod?.isEnabled) {
+      return err('DisabledAuthMethod');
+    }
+
+    const clientSecret =
+      authMethod.clientSecret ?? this.membersConfig.googleDemoClientSecret;
+    const clientId =
+      authMethod.clientId ?? this.membersConfig.googleDemoClientId;
+
+    if (!clientSecret) {
+      return err('MissingClientSecret');
+    }
+
+    if (!clientId) {
+      return err('MissingClientId');
+    }
+
+    const result = await this.googleService.getToken({
+      code,
+      clientSecret,
+      clientId,
+      redirectUri,
+    });
+
+    if (!result) {
+      return err('TokenRequestFailed');
+    }
+
+    const user = await this.googleService.getUserInfo(result.access_token);
+
+    if (!user) {
+      return err('ImpossibleToGetUserInfo');
+    }
+
+    const memberCreatedOrUpdated = await this.upsertMemberWithOAuth({
+      projectId,
+      email: user.email,
+      fullName: user.name,
+      firstName: user.given_name,
+      lastName: user.family_name,
+      pictureUrl: user.picture,
+      signInMethod: 'google',
+      providerUserId: user.sub,
+      isVerified: user.email_verified,
+    });
+
+    const ourAccessToken = await this.generateAccessToken(
+      memberCreatedOrUpdated,
+    );
+
+    return ok({
+      accessToken: ourAccessToken,
+      member: memberCreatedOrUpdated,
     });
   }
 }

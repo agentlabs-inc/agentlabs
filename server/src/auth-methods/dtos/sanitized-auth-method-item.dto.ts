@@ -13,7 +13,7 @@ import {
 const AuthMethodTypes = Object.values(AuthMethodType);
 const AuthProviders = Object.values(AuthProvider);
 
-export class AuthMethodItemDto {
+export class SanitizedAuthMethodItemDto {
   @IsIn(AuthMethodTypes)
   type: AuthMethodType;
 
@@ -29,10 +29,6 @@ export class AuthMethodItemDto {
   @IsOptional()
   @IsString()
   clientId: string | null;
-
-  @IsOptional()
-  @IsString()
-  clientSecret: string | null;
 
   @IsArray()
   @ValidateNested({ each: true })

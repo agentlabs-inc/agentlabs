@@ -17,7 +17,6 @@ export type ListAuthMethodsError = (typeof ListAuthMethodsErrors)[number];
 
 export const CreateDemoAuthMethodsErrors = [
   ...VerifyIfIsProjectUserErrors,
-  'OnlyEmailMethodAcceptedAtTheMoment',
 ] as const;
 export type CreateDemoAuthMethodsError =
   (typeof CreateDemoAuthMethodsErrors)[number];

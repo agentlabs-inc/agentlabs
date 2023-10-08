@@ -64,6 +64,7 @@ export class GoogleService {
     code: string;
     redirectUri: string;
   }): Promise<TokenResponse | null> {
+    console.log('getToken', params);
     try {
       const { code, clientId, clientSecret, redirectUri } = params;
       const urlParams = new URLSearchParams();

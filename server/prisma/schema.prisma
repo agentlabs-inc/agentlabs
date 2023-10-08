@@ -123,33 +123,53 @@ model Project {
 	authMethods		AuthMethod[]
 	onboardings		Onboarding[]
 	memberAuthVerificationCodes MemberAuthVerificationCode[]
+
+	smtpConfiguration							SmtpConfiguration?
 }
 
 enum AuthMethodType {
 	OAUTH2
-	API_KEY
-	PASSWORDLESS_EMAIL
-	PASSWORDLESS_SMS
+	EMAIL
+	ANONYMOUS
 }
 
-model AuthMethod {
+model SmtpConfiguration {
+	id						String   @id @default(uuid())
 	createdAt 		DateTime @default(now())
 	updatedAt 		DateTime @updatedAt @default(now())
 
-	provider			IdentityProvider
+	host					String
+	port					Int
+	secure				Boolean
+	username			String
+	password			String
+
+	senderName		String
+	senderEmail		String
+	replyTo				String
+
+	project				Project @relation(fields: [projectId], references: [id])
+	projectId			String 	@unique
+}
+
+model AuthMethod {
+	@@id([projectId, provider, type])
+
+	createdAt 		DateTime @default(now())
+	updatedAt 		DateTime @updatedAt @default(now())
+
+	provider			AuthProvider
 	type					AuthMethodType
 	isEnabled			Boolean @default(false)
 
+	// Only for OAuth2 providers
+	// If these fields are null, it means we will use the demo IDs
+	clientId			String?
+	clientSecret	String?
+	scopes				String[]
+
 	project				Project @relation(fields: [projectId], references: [id])
 	projectId			String
-
-	// Only applicable for OAuth2
-	clientId				String?
-	clientSecret		String?
-	hasClientSecret	Boolean?
-	scopes					String[]
-
-	@@id([projectId, provider])
 }
 
 model SdkSecret {
@@ -237,7 +257,11 @@ model Member {
 
 	firstName			String?
 	lastName			String?
+	fullName			String?
+
 	email					String
+
+	profilePictureUrl	String?
 
 	project				Project @relation(fields: [projectId], references: [id])
 	projectId			String
@@ -248,8 +272,10 @@ model Member {
 	verificationCode	MemberAuthVerificationCode?
 }
 
-enum IdentityProvider {
-	EMAIL
+enum AuthProvider {
+	PASSWORDLESS_EMAIL
+	EMAIL_AND_PASSWORD
+	ANONYMOUS
 	GOOGLE
 	GITHUB
 	GITLAB
@@ -263,7 +289,7 @@ model MemberIdentity {
 	createdAt 		DateTime @default(now())
 	updatedAt 		DateTime @updatedAt @default(now())
 
-	provider			IdentityProvider
+	provider			AuthProvider
 
 	// if the provider is EMAIL, then the id is the email address
 	providerUserId		String

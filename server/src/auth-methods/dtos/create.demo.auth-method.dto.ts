@@ -1,18 +1,13 @@
-import { AuthMethodType } from '@prisma/client';
-import { Type } from 'class-transformer';
-import { IsArray, IsString } from 'class-validator';
+import { IsArray, IsIn, IsNotEmpty, IsString } from 'class-validator';
 
-const isMethodType = (value: any[]): value is AuthMethodType[] => {
-  const keys = Object.values(AuthMethodType);
-  return value.some((item) => {
-    return !keys.includes(item);
-  });
-};
+export const SelectedAuthMethods = ['PASSWORDLESS_EMAIL', 'GOOGLE'] as const;
+export type SelectedAuthMethod = (typeof SelectedAuthMethods)[number];
 
 export class CreateDemoAuthMethodsDto {
   @IsArray()
-  @Type(() => isMethodType)
-  methodTypes: AuthMethodType[];
+  @IsNotEmpty()
+  @IsIn(SelectedAuthMethods, { each: true })
+  methods: SelectedAuthMethod[];
 
   @IsString()
   projectId: string;

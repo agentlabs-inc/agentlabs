@@ -6,6 +6,7 @@ import { CreatedProjectDto } from './dtos/created.project.dto';
 import { ListProjectsResultDto } from './dtos/list.projects.result.dto';
 import { ProjectDto } from './dtos/project.dto';
 import { PublicProjectConfigDto } from './dtos/public.project.config.dto';
+import { InjectProjectsConfig, ProjectsConfig } from './projects.config';
 import {
   CreateProjectError,
   FindProjectError,
@@ -16,7 +17,10 @@ import {
 
 @Injectable()
 export class ProjectsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @InjectProjectsConfig() private readonly config: ProjectsConfig,
+  ) {}
 
   private async verifyIfOrganizationUser(params: {
     userId: string;
@@ -252,6 +256,17 @@ export class ProjectsService {
             id: true,
           },
         },
+        authMethods: {
+          where: {
+            isEnabled: true,
+          },
+          select: {
+            clientId: true,
+            provider: true,
+            type: true,
+            scopes: true,
+          },
+        },
       },
     });
 
@@ -265,6 +280,11 @@ export class ProjectsService {
       slug: project.slug,
       name: project.name,
       organizationId: project.organization.id,
+      authMethods: project.authMethods.map((authMethod) => ({
+        ...authMethod,
+        clientId: authMethod.clientId ?? this.config.googleDemoClientId,
+        isUsingDemoConfig: !authMethod.clientId,
+      })),
     });
   }
 }

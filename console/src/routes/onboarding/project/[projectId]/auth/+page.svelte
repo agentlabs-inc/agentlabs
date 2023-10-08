@@ -23,16 +23,14 @@
 		{
 			id: "passwordless-email",
 			label: "Passwordless email",
-			value: "passwordless-email",
+			value: "PASSWORDLESS_EMAIL",
 			heroIcon: Envelope
 		},
 		{
 			id: "google",
 			label: "Google / Gmail",
-			value: "google",
-			customIcon: GoogleIcon,
-			disabled: true,
-			disabledLabel: "Coming soon"
+			value: "GOOGLE",
+			customIcon: GoogleIcon
 		},
 		{
 			id: "github",
@@ -40,7 +38,7 @@
 			value: "github",
 			customIcon: GithubIcon,
 			disabled: true,
-			disabledLabel: "Coming soon"
+			disabledLabel: "soon"
 		},
 		{
 			id: "gitlab",
@@ -48,15 +46,15 @@
 			value: "gitlab",
 			customIcon: GitlabIcon,
 			disabled: true,
-			disabledLabel: "Coming soon"
+			disabledLabel: "soon"
 		},
 		{
 			id: "microsoft",
-			label: "Microsoft / Outlook",
+			label: "Microsoft",
 			value: "microsoft",
 			customIcon: MicrosoftIcon,
 			disabled: true,
-			disabledLabel: "Coming soon"
+			disabledLabel: "soon"
 		}
 	];
 

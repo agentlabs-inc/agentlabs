@@ -34,6 +34,7 @@ export type { MemberItem } from './models/MemberItem';
 export type { oauthAuthorizeDto } from './models/oauthAuthorizeDto';
 export type { ProjectDto } from './models/ProjectDto';
 export type { ProjectExistsResponseDto } from './models/ProjectExistsResponseDto';
+export type { PublicAuthMethodDto } from './models/PublicAuthMethodDto';
 export type { PublicProjectConfigDto } from './models/PublicProjectConfigDto';
 export type { RegisterResponseDto } from './models/RegisterResponseDto';
 export type { RegisterUserDto } from './models/RegisterUserDto';

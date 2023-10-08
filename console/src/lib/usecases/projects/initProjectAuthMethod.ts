@@ -1,5 +1,5 @@
-import { AuthMethodsService } from "$lib/services/gen-api";
 import type { MultiSelectItem } from "$lib/components/common/multi-select/types";
+import { AuthMethodsService } from "$lib/services/gen-api";
 
 export const initProjectAuthMethods = async (
 	projectId: string,
@@ -11,7 +11,7 @@ export const initProjectAuthMethods = async (
 			projectId,
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
-			methodTypes: ["PASSWORDLESS_EMAIL"]
+			methods: methods.map((m) => m.value)
 		}
 	});
 

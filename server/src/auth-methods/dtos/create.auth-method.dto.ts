@@ -1,4 +1,4 @@
-import { AuthMethodType, IdentityProvider } from '@prisma/client';
+import { AuthMethodType, AuthProvider } from '@prisma/client';
 import { Type } from 'class-transformer';
 import {
   IsArray,
@@ -10,14 +10,14 @@ import {
 } from 'class-validator';
 
 const AuthMethodTypes = Object.values(AuthMethodType);
-const IdentityProviders = Object.values(IdentityProvider);
+const AuthProviders = Object.values(AuthProvider);
 
 export class CreateAuthMethodDto {
   @IsIn(AuthMethodTypes)
   type: AuthMethodType;
 
-  @IsIn(IdentityProviders)
-  provider: IdentityProvider;
+  @IsIn(AuthProviders)
+  provider: AuthProvider;
 
   @IsString()
   projectId: string;
