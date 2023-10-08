@@ -9,7 +9,6 @@
 
 	const dispatch = createEventDispatcher();
 	const onClickOutside = () => {
-		console.log("click outside");
 		if (visible) {
 			// todo: fix this
 			// dispatch("close");

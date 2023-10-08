@@ -6,7 +6,7 @@ import { fetchMessages } from "$lib/usecases/chat/fetch-messages";
 import { PaperAirplane } from "svelte-hero-icons";
 import ChatInput from "$lib/components/chat/chat-input/ChatInput.svelte";
 import Button from "$lib/components/common/button/Button.svelte";
-import { afterUpdate, onDestroy, onMount } from "svelte";
+import { afterUpdate, beforeUpdate, onDestroy, onMount } from "svelte";
 import { realtimeStore } from "$lib/stores/realtime";
 import { conversationStore } from "$lib/stores/conversation";
 
@@ -40,12 +40,15 @@ const sendMessage = (e: Event) => {
 		}
 	}
 
+	chatElement.scrollTop = chatElement.scrollHeight;
+
 	addMessage(payload.data);
 	
 	isWaitingForAnswer = true;
 	con.emit('chat-message', payload);
 
 	inputValue = "";
+
 }
 
 const listenToChatMessage = (payload: any) => {
@@ -60,14 +63,18 @@ const listenToChatMessage = (payload: any) => {
 }
 
 const listenToStreamedChatMessageToken = (payload: any) => {
-	//console.log(payload);
 	if (payload.data.conversationId !== data.conversationId) {
 		console.warn(`Received message for conversation ${payload.data.conversationId} but current conversation is ${data.conversationId}`)
 
 		return;
 	}
 
-	addStreamedMessageToken(payload.data);
+	addStreamedMessageToken({
+			id: payload.data.messageId,
+			text: payload.data.text,
+			source: 'AGENT',
+			createdAt: payload.timestamp
+	});
 }
 
 onMount(async () => {
@@ -84,10 +91,24 @@ onDestroy(() => {
 $: load(data.conversationId);
 $: messages = $chatStore.messages;
 
+let chatElementScrollHeight = 0;
+let chatElementScrollTop = 0;
+let chatElementClientHeight = 0;
+
+beforeUpdate(() => {
+	if (chatElement) {
+		chatElementScrollHeight = chatElement.scrollHeight;
+		chatElementScrollTop = chatElement.scrollTop;
+		chatElementClientHeight = chatElement.clientHeight;
+	}
+})
 
 afterUpdate(() => {
 	if (chatElement) {
-		chatElement.scrollTo(0, chatElement.scrollHeight + 100)
+		// if chat element is scrolled to the bottom, scroll to the bottom again
+		if (chatElementScrollHeight - chatElementScrollTop === chatElementClientHeight) {
+			chatElement.scrollTop = chatElement.scrollHeight;
+		}
 	}
 })
 

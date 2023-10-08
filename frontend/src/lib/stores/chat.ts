@@ -1,7 +1,7 @@
-import { get, writable } from "svelte/store";
+import { writable } from "svelte/store";
 
 export interface ChatMessage {
-	messageId: string;
+	id: string;
 	text: string;
 	source: 'USER' | 'AGENT' | 'SYSTEM';
 	createdAt: string;
@@ -29,25 +29,16 @@ export const addMessage = (message: ChatMessage) => {
 	});
 }
 
-export const findMessageById = (messageId: string) => {
-	return get(chatStore).messages.some(message => message.id === messageId);
-}
-
 export const addStreamedMessageToken = (message: ChatMessage) => {
 	chatStore.update(store => {
-		const messageToEdit = store.messages.find(m => message.messageId === m.messageId);
+		const index = store.messages.findIndex(m => message.id === m.id);
 
-		if (messageToEdit) {
-			console.log('adding ', message.text, ' to ', messageToEdit.text);
-			store.messages = store.messages.map(m => {
-				if (m.messageId === message.messageId) {
-					m.text = `${m.text}${message.text}`;
-				}
-
-				return m;
-			});
+		if (index != -1) {
+			store.messages[index] = {
+				...store.messages[index],
+				text: `${store.messages[index].text}${message.text}`
+			}
 		} else {
-			console.log('adding new message', message);
 			store.messages = [...store.messages, message]
 		}
 
