@@ -275,14 +275,12 @@ model Member {
 enum AuthProvider {
 	PASSWORDLESS_EMAIL
 	EMAIL_AND_PASSWORD
+	SMS
 	ANONYMOUS
 	GOOGLE
 	GITHUB
 	GITLAB
 	MICROSOFT
-	FACEBOOK
-	TWITTER
-	APPLE
 }
 
 model MemberIdentity {
