@@ -33,11 +33,6 @@
 	<div class="w-full p-10 pb-32">
 		<div class="max-w-6xl m-auto mt-10">
 			<Spacer size="md" />
-
-			<Alert type="info">
-				The current version only supports passwordless authentication. Come back here in a
-				few weeks :)
-			</Alert>
 		</div>
 	</div>
 </div>
