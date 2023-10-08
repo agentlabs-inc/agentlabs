@@ -6,6 +6,7 @@ import { AgentConnectionModule } from './agent-connection/agent-connection.modul
 import { AgentsModule } from './agents/agents.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AttachmentsModule } from './attachments/attachments.module';
 import { AuthMethodsModule } from './auth-methods/auth-methods.module';
 import { ConfigModule } from './config/config.module';
 import { FrontendConnectionManagerModule } from './frontend-connection-manager/frontend-connection-manager.module';
@@ -13,12 +14,11 @@ import { FrontendConnectionModule } from './frontend-connection/frontend-connect
 import { IamModule } from './iam/iam.module';
 import { MailerModule } from './mailer/mailer.module';
 import { MembersModule } from './members/members.module';
+import { OauthProvidersModule } from './oauth-providers/oauth-providers.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ProjectsModule } from './projects/projects.module';
-import { UsersModule } from './users/users.module';
 import { SdkSecretsModule } from './sdk-secrets/sdk-secrets.module';
-import { AttachmentsModule } from './attachments/attachments.module';
-import { OauthProvidersModule } from './oauth-providers/oauth-providers.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [

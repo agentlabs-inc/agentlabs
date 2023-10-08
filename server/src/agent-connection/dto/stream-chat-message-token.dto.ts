@@ -2,7 +2,7 @@ import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
 import { BaseRealtimeMessageDto } from 'src/common/base-realtime-message.dto';
 
-class AgentMessageDataDto {
+class StreamChatMessageTokenDtoData {
   @IsString()
   text: string;
 
@@ -13,8 +13,8 @@ class AgentMessageDataDto {
   messageId: string;
 }
 
-export class AgentMessageDto extends BaseRealtimeMessageDto {
+export class StreamChatMessageTokenDto extends BaseRealtimeMessageDto {
   @ValidateNested()
-  @Type(() => AgentMessageDataDto)
-  data: AgentMessageDataDto;
+  @Type(() => StreamChatMessageTokenDtoData)
+  data: StreamChatMessageTokenDtoData;
 }
