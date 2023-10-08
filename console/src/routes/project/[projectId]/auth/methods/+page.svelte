@@ -10,6 +10,8 @@
 	import { toastError } from "$lib/utils/toast";
 	import type { AuthMethodListItem } from "$lib/entities/auth-method/auth-method-list-item";
 	import Tag from "$lib/components/common/tag/Tag.svelte";
+	import { authMethodRoute } from "$lib/routes/routes";
+	import { goto } from "$app/navigation";
 
 	const project = $projectStore.currentProject;
 
@@ -72,7 +74,10 @@
 
 				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
 					{#each oauthMethods as method}
-						<Card clickable={method.available} disabled={!method.available}>
+						<Card
+							clickable={method.available}
+							disabled={!method.available}
+							on:click={goto(authMethodRoute.path(project.id, method.id))}>
 							<section
 								class="p-10 antialiased flex flex-col gap-3 items-center text-center">
 								<svelte:component this={method.componentIcon} />
