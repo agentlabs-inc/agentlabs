@@ -3,5 +3,5 @@ import { SanitizedSdkSecretDto } from './sanitized.sdk-secret.dto';
 
 export class CreatedSdkSecretDto extends SanitizedSdkSecretDto {
   @IsString()
-  hash: string;
+  clearValue: string;
 }

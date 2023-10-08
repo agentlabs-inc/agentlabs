@@ -1,7 +1,7 @@
+import type { CreatedSdkSecretDto } from "$lib/services/gen-api";
 import { SdkSecretsService } from "$lib/services/gen-api";
-import type { SdkSecret } from "$lib/entities/sdk-secret/sdk-secret";
 
-export const generateSecret = async (projectId: string): Promise<SdkSecret> => {
+export const generateSecret = async (projectId: string): Promise<CreatedSdkSecretDto> => {
 	const secret = await SdkSecretsService.create({
 		requestBody: {
 			description: "SDK Secret generated from the console",
@@ -10,8 +10,6 @@ export const generateSecret = async (projectId: string): Promise<SdkSecret> => {
 	});
 
 	return {
-		...secret,
-		createdAt: new Date(secret.createdAt),
-		updatedAt: new Date(secret.updatedAt)
+		...secret
 	};
 };

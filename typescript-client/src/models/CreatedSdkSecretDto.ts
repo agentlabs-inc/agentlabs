@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 export type CreatedSdkSecretDto = {
-    hash: string;
+    clearValue: string;
     id: string;
     description: string | null;
     projectId: string;

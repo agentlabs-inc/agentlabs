@@ -3,11 +3,11 @@
 	import { Key } from "svelte-hero-icons";
 	import { generateSecret } from "$lib/usecases/sdk-secrets/generateSecret";
 	import { toastError } from "$lib/utils/toast";
-	import type { SdkSecret } from "$lib/entities/sdk-secret/sdk-secret";
 	import CopiableTag from "$lib/components/common/copiable/CopiableTag.svelte";
 	import { projectStore } from "$lib/stores/project";
 	import Alert from "$lib/components/common/alert/Alert.svelte";
 	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
+	import type { CreatedSdkSecretDto } from "$lib/services/gen-api";
 
 	const project = $projectStore.currentProject;
 
@@ -15,7 +15,7 @@
 
 	let loading = false;
 
-	let generatedSecret: SdkSecret | undefined;
+	let generatedSecret: CreatedSdkSecretDto | undefined;
 	const generate = async () => {
 		try {
 			loading = true;
@@ -39,7 +39,9 @@
 				able to see it again.
 			</div>
 			<Spacer size="sm" />
-			<CopiableTag value={generatedSecret.hash} displayedValue={generatedSecret.preview} />
+			<CopiableTag
+				value={generatedSecret.clearValue}
+				displayedValue={generatedSecret.preview} />
 		</Alert>
 	{/if}
 </div>

@@ -919,7 +919,7 @@ components:
     CreatedSdkSecretDto:
       type: object
       properties:
-        hash:
+        clearValue:
           type: string
         id:
           type: string
@@ -937,7 +937,7 @@ components:
           format: date-time
           type: string
       required:
-        - hash
+        - clearValue
         - id
         - description
         - projectId

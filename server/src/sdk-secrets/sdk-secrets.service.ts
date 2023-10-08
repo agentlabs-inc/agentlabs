@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { SdkSecret } from '@prisma/client';
 import { createHash, randomBytes } from 'crypto';
 import { PResult, err, ok } from '../common/result';
 import { PrismaService } from '../prisma/prisma.service';
+import { CreatedSdkSecretDto } from './dtos/created.sdk-secret.dto';
+import { SanitizedSdkSecretDto } from './dtos/sanitized.sdk-secret.dto';
 import { VerifyIfIsProjectUserError } from './sdk-secrets.errors';
 
 @Injectable()
@@ -49,7 +52,21 @@ export class SdkSecretsService {
     return ok({ isVerified: true });
   }
 
-  async createSecret(dto: { projectId: string; creatorId: string }) {
+  private sanitizeSecret(secret: SdkSecret): SanitizedSdkSecretDto {
+    return {
+      id: secret.id,
+      description: secret.description,
+      projectId: secret.projectId,
+      preview: secret.preview,
+      createdAt: secret.createdAt,
+      updatedAt: secret.updatedAt,
+    };
+  }
+
+  async createSecret(dto: {
+    projectId: string;
+    creatorId: string;
+  }): PResult<CreatedSdkSecretDto, VerifyIfIsProjectUserError> {
     const { projectId, creatorId } = dto;
 
     const verifyResult = await this.verifyIfProjectUser({
@@ -82,7 +99,10 @@ export class SdkSecretsService {
       },
     });
 
-    return ok(created);
+    return ok({
+      ...this.sanitizeSecret(created),
+      clearValue: clearSecret,
+    });
   }
 
   async verifySdkSecret(
