@@ -5,7 +5,7 @@
 
 export type ListAuthMethodItem = {
     type: 'OAUTH2' | 'EMAIL' | 'ANONYMOUS';
-    provider: 'PASSWORDLESS_EMAIL' | 'EMAIL_AND_PASSWORD' | 'ANONYMOUS' | 'GOOGLE' | 'GITHUB' | 'GITLAB' | 'MICROSOFT' | 'FACEBOOK' | 'TWITTER' | 'APPLE';
+    provider: 'PASSWORDLESS_EMAIL' | 'EMAIL_AND_PASSWORD' | 'SMS' | 'ANONYMOUS' | 'GOOGLE' | 'GITHUB' | 'GITLAB' | 'MICROSOFT';
     projectId: string;
     isEnabled: boolean;
     clientId: string | null;

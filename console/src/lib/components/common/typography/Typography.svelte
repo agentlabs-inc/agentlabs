@@ -3,6 +3,7 @@
 		| "mainTitle"
 		| "mainSectionTitle"
 		| "sectionTitle"
+		| "cardSmallTitle"
 		| "subTitle"
 		| "label"
 		| "body";
@@ -15,6 +16,7 @@
 		mainTitle: "text-body-accent dark:text-body-accent-dark font-semibold text-2xl",
 		mainSectionTitle: "text-body-accent dark:text-body-accent-dark font-medium text-2xl",
 		sectionTitle: "text-body-accent dark:text-body-accent-dark font-medium text-xl",
+		cardSmallTitle: "text-sm text-body-base dark:text-body-base-dark text-md",
 		subTitle: "text-sm text-body-base dark:text-body-base-dark",
 		label: "text-body-subdued dark:text-body-subdued-dark uppercase font-medium text-sm",
 		body: "text-sm text-body-base dark:text-body-base-dark"

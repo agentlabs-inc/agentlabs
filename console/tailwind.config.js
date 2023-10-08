@@ -1,5 +1,5 @@
-import defaultTheme from "tailwindcss/defaultTheme";
 import tailwindCssAnimate from "tailwindcss-animate";
+import defaultTheme from "tailwindcss/defaultTheme";
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -17,7 +17,7 @@ export default {
 				"background-tertiary": "#ffffff",
 				"background-quaternary": "#E5E7EB",
 				"background-accent": "#F2F2F8",
-				"background-success": "#00C48C",
+				"background-success": "#acffe5",
 				"background-error": "#ef434b",
 				"background-warning": "#fff6e0",
 				"background-info": "#d8dcff",
@@ -28,7 +28,7 @@ export default {
 				"background-tertiary-dark": "#1B1B27",
 				"background-quaternary-dark": "#2e2e41",
 				"background-accent-dark": "#272A3A",
-				"background-success-dark": "#00C48C",
+				"background-success-dark": "#00563b",
 				"background-error-dark": "#DB1A5B",
 				"background-warning-dark": "#342e17",
 				"background-info-dark": "#272A3A",
@@ -61,7 +61,7 @@ export default {
 				"body-filled-info": "#033f7a",
 				"body-filled-error": "#ffebf4",
 				"body-filled-warning": "#5d5440",
-				"body-filled-success": "#00C48C",
+				"body-filled-success": "#00936b",
 
 				// Colors for text elements when filled
 				"body-filled-base-dark": "#C5C8D8",

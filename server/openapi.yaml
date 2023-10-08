@@ -1071,14 +1071,12 @@ components:
           enum:
             - PASSWORDLESS_EMAIL
             - EMAIL_AND_PASSWORD
+            - SMS
             - ANONYMOUS
             - GOOGLE
             - GITHUB
             - GITLAB
             - MICROSOFT
-            - FACEBOOK
-            - TWITTER
-            - APPLE
         clientId:
           type: string
         isUsingDemoConfig:
@@ -1270,14 +1268,12 @@ components:
           enum:
             - PASSWORDLESS_EMAIL
             - EMAIL_AND_PASSWORD
+            - SMS
             - ANONYMOUS
             - GOOGLE
             - GITHUB
             - GITLAB
             - MICROSOFT
-            - FACEBOOK
-            - TWITTER
-            - APPLE
         projectId:
           type: string
         isEnabled:
@@ -1312,14 +1308,12 @@ components:
           enum:
             - PASSWORDLESS_EMAIL
             - EMAIL_AND_PASSWORD
+            - SMS
             - ANONYMOUS
             - GOOGLE
             - GITHUB
             - GITLAB
             - MICROSOFT
-            - FACEBOOK
-            - TWITTER
-            - APPLE
         projectId:
           type: string
         isEnabled:
@@ -1384,14 +1378,12 @@ components:
           enum:
             - PASSWORDLESS_EMAIL
             - EMAIL_AND_PASSWORD
+            - SMS
             - ANONYMOUS
             - GOOGLE
             - GITHUB
             - GITLAB
             - MICROSOFT
-            - FACEBOOK
-            - TWITTER
-            - APPLE
         projectId:
           type: string
         isEnabled:
