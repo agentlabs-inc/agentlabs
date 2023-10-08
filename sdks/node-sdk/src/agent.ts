@@ -16,11 +16,20 @@ export type OnChatMessageHandler = (message: IncomingChatMessage) => void;
 
 class StreamedMessage {
 	private readonly messageId = randomUUID()
+	private isEnded = false;
 
 	constructor(private readonly io: Socket, private readonly conversationId: string) {
 	}
 
+	/**
+	 * Write the next part of the message.
+	 * Writing to the stream after calling `end` will throw an error.
+	 */
 	write(message: string) {
+		if (this.isEnded) {
+			throw new Error('Cannot write to a stream after calling end');
+		}
+
 		this.io.emit('stream-chat-message-token', {
 			timestamp: new Date().toISOString(),
 			data: {
@@ -32,7 +41,13 @@ class StreamedMessage {
 		})
 	}
 
+	/**
+	 * Indicate that the message is complete, releasing the user's prompt.
+	 * This MUST be called after all the calls to `write` have been made.
+	 * Writing to the stream after calling `end` will throw an error.
+	 */
 	end() {
+		this.isEnded = true;
 		this.io.emit('stream-chat-message-end', {
 			data: {
 				conversationId: this.conversationId,
@@ -55,10 +70,21 @@ class IncomingChatMessage {
 		this.memberId = rawChatMessage.memberId;
 	}
 
+	/**
+	 * Get a stream that can be used to reply to the message in parts.
+	 * Handy for handling LLM outputs.
+	 * You should not use a streamed reply if you plan it to take a long time to complete.
+	 * Such reply is intended to be read by the user in realtime.
+	 * If you are looking to send the entire message at once, use `reply` instead.
+	 */
 	streamedReply() {
 		return new StreamedMessage(this.io, this.conversationId);
 	}
 
+	/**
+	 * Reply to the message, sending the entire message at once.
+	 * If you are looking to stream the reply as multiple parts, use `streamedReply` instead.
+	 */
 	reply(message: string) {
 		this.io.emit('chat-message', {
 			timestamp: new Date().toISOString(),
