@@ -112,7 +112,7 @@
 										type="primary"
 										fullWidth
 										center
-										on:click={handleValidation}>Sign Up</Button>
+										on:click={handleValidation}>Sign In</Button>
 								</div>
 							</form>
 						{/if}

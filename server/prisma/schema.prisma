@@ -130,6 +130,7 @@ model Project {
 enum AuthMethodType {
 	OAUTH2
 	EMAIL
+	PHONE_NUMBER
 	ANONYMOUS
 }
 
@@ -153,7 +154,7 @@ model SmtpConfiguration {
 }
 
 model AuthMethod {
-	@@id([projectId, provider, type])
+	@@id([projectId, provider])
 
 	createdAt 		DateTime @default(now())
 	updatedAt 		DateTime @updatedAt @default(now())
@@ -164,9 +165,10 @@ model AuthMethod {
 
 	// Only for OAuth2 providers
 	// If these fields are null, it means we will use the demo IDs
-	clientId			String?
-	clientSecret	String?
-	scopes				String[]
+	clientId				String?
+	clientSecret		String?
+	clientSecretIv	String?
+	scopes					String[]
 
 	project				Project @relation(fields: [projectId], references: [id])
 	projectId			String

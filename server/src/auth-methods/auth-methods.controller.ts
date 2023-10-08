@@ -17,6 +17,8 @@ import { CreateDemoAuthMethodsDto } from './dtos/create.demo.auth-method.dto';
 import { CreatedAuthMethodDto } from './dtos/created.auth-method.dto';
 import { CreatedDemoAuthMethodsDto } from './dtos/created.demo.auth-method.dto';
 import { ListAuthMethodResponseDto } from './dtos/list.auth-method.response.dto';
+import { UpsertAuthMethodDto } from './dtos/upsert.auth-method.dto';
+import { UpsertedAuthMethodDto } from './dtos/upserted.auth-method.dto';
 
 @ApiTags('authMethods')
 @ApiBearerAuth()
@@ -25,7 +27,7 @@ export class AuthMethodsController {
   constructor(private readonly authMethodsService: AuthMethodsService) {}
 
   @RequireAuthMethod('user-token')
-  @Post('/create')
+  @Post('/create-for-demo')
   async createAuthMethod(
     @Req() req: UserAuthenticatedRequest,
     @Body() dto: CreateAuthMethodDto,
@@ -56,6 +58,36 @@ export class AuthMethodsController {
         throw new ConflictException({
           message: 'Auth method already exists',
           code: 'AuthMethodAlreadyExists',
+        });
+    }
+  }
+
+  @RequireAuthMethod('user-token')
+  @Post('/upsert')
+  async upsert(
+    @Req() req: UserAuthenticatedRequest,
+    @Body() dto: UpsertAuthMethodDto,
+  ): Promise<UpsertedAuthMethodDto> {
+    const result = await this.authMethodsService.upsertAuthMethod({
+      ...dto,
+      userId: req.user.id,
+    });
+
+    if (result.ok) {
+      return result.value;
+    }
+
+    switch (result.error) {
+      case 'ProjectNotFound':
+        throw new UnauthorizedException({
+          message: 'Project not found',
+          code: 'ProjectNotFound',
+        });
+
+      case 'NotAProjectUser':
+        throw new UnauthorizedException({
+          message: 'Not a project user',
+          code: 'NotAProjectUser',
         });
     }
   }

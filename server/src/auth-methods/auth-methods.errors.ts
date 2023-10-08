@@ -12,6 +12,9 @@ export const CreateAuthMethodErrors = [
 ] as const;
 export type CreateAuthMethodError = (typeof CreateAuthMethodErrors)[number];
 
+export const UpsertAuthMethodErrors = [...VerifyIfIsProjectUserErrors] as const;
+export type UpsertAuthMethodError = (typeof UpsertAuthMethodErrors)[number];
+
 export const ListAuthMethodsErrors = [...VerifyIfIsProjectUserErrors] as const;
 export type ListAuthMethodsError = (typeof ListAuthMethodsErrors)[number];
 

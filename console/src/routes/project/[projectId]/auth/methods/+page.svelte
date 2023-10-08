@@ -49,7 +49,10 @@
 
 			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
 				{#each builtInMethods as method}
-					<Card clickable={method.available} disabled={!method.available}>
+					<Card
+						on:click={() => goto(authMethodRoute.path(project.id, method.id))}
+						clickable={method.available}
+						disabled={!method.available}>
 						<section
 							class="p-10 antialiased flex flex-col gap-3 items-center text-center">
 							<Icon
@@ -77,7 +80,7 @@
 						<Card
 							clickable={method.available}
 							disabled={!method.available}
-							on:click={goto(authMethodRoute.path(project.id, method.id))}>
+							on:click={() => goto(authMethodRoute.path(project.id, method.id))}>
 							<section
 								class="p-10 antialiased flex flex-col gap-3 items-center text-center">
 								<svelte:component this={method.componentIcon} />

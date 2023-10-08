@@ -4,6 +4,7 @@ import * as dayjs from 'dayjs';
 import { readFileSync } from 'fs';
 import * as jose from 'jose';
 import * as path from 'path';
+import { AuthMethodsService } from '../auth-methods/auth-methods.service';
 import { PResult, err, ok } from '../common/result';
 import { MailerService } from '../mailer/mailer.service';
 import { GoogleService } from '../oauth-providers/google/google.service';
@@ -31,6 +32,7 @@ export class MembersService {
     private readonly membersConfig: MembersConfig,
     private readonly mailerService: MailerService,
     private readonly googleService: GoogleService,
+    private readonly authMethodsService: AuthMethodsService,
   ) {}
 
   private async verifyIfProjectUser(params: {
@@ -524,10 +526,9 @@ export class MembersService {
 
     const authMethod = await this.prisma.authMethod.findUnique({
       where: {
-        projectId_provider_type: {
+        projectId_provider: {
           provider: providerId,
           projectId,
-          type: 'OAUTH2',
         },
       },
     });
@@ -537,7 +538,10 @@ export class MembersService {
     }
 
     const clientSecret =
-      authMethod.clientSecret ?? this.membersConfig.googleDemoClientSecret;
+      this.authMethodsService.decryptSecret(
+        authMethod.clientSecret,
+        authMethod.clientSecretIv,
+      ) ?? this.membersConfig.googleDemoClientSecret;
     const clientId =
       authMethod.clientId ?? this.membersConfig.googleDemoClientId;
 

@@ -21,7 +21,7 @@
 
 	const availableAuthMethods: MultiSelectItem[] = [
 		{
-			id: "passwordless-email",
+			id: "passwordless_email",
 			label: "Passwordless email",
 			value: "PASSWORDLESS_EMAIL",
 			heroIcon: Envelope

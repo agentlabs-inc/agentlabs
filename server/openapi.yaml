@@ -206,6 +206,89 @@ paths:
                 $ref: "#/components/schemas/LoginMemberResponseDto"
       tags:
         - Members
+  /authMethods/create-for-demo:
+    post:
+      operationId: createAuthMethod
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAuthMethodDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatedAuthMethodDto"
+      tags:
+        - authMethods
+      security:
+        - bearer: []
+  /authMethods/upsert:
+    post:
+      operationId: upsert
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpsertAuthMethodDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpsertedAuthMethodDto"
+      tags:
+        - authMethods
+      security:
+        - bearer: []
+  /authMethods/createDemoAuthMethods:
+    post:
+      operationId: createDemoAuthMethod
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDemoAuthMethodsDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatedDemoAuthMethodsDto"
+      tags:
+        - authMethods
+      security:
+        - bearer: []
+  /authMethods/listForProject/{projectId}:
+    get:
+      operationId: listAuthMethods
+      parameters:
+        - name: projectId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListAuthMethodResponseDto"
+      tags:
+        - authMethods
+      security:
+        - bearer: []
   /sdk-secrets/create:
     post:
       operationId: create
@@ -507,68 +590,6 @@ paths:
       responses:
         "200":
           description: ""
-  /authMethods/create:
-    post:
-      operationId: createAuthMethod
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateAuthMethodDto"
-      responses:
-        "201":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CreatedAuthMethodDto"
-      tags:
-        - authMethods
-      security:
-        - bearer: []
-  /authMethods/createDemoAuthMethods:
-    post:
-      operationId: createDemoAuthMethod
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateDemoAuthMethodsDto"
-      responses:
-        "201":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CreatedDemoAuthMethodsDto"
-      tags:
-        - authMethods
-      security:
-        - bearer: []
-  /authMethods/listForProject/{projectId}:
-    get:
-      operationId: listAuthMethods
-      parameters:
-        - name: projectId
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ListAuthMethodResponseDto"
-      tags:
-        - authMethods
-      security:
-        - bearer: []
   /conversations/getAll:
     get:
       operationId: getAllConversations
@@ -907,6 +928,257 @@ components:
       required:
         - accessToken
         - member
+    CreateAuthMethodDto:
+      type: object
+      properties:
+        provider:
+          type: string
+          enum:
+            - PASSWORDLESS_EMAIL
+            - EMAIL_AND_PASSWORD
+            - SMS
+            - ANONYMOUS
+            - GOOGLE
+            - GITHUB
+            - GITLAB
+            - MICROSOFT
+        projectId:
+          type: string
+        isEnabled:
+          type: boolean
+        clientId:
+          type: string
+        clientSecret:
+          type: string
+        scopes:
+          type: array
+          items:
+            type: string
+      required:
+        - provider
+        - projectId
+        - isEnabled
+        - clientId
+        - clientSecret
+        - scopes
+    CreatedAuthMethodDto:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - OAUTH2
+            - EMAIL
+            - PHONE_NUMBER
+            - ANONYMOUS
+        provider:
+          type: string
+          enum:
+            - PASSWORDLESS_EMAIL
+            - EMAIL_AND_PASSWORD
+            - SMS
+            - ANONYMOUS
+            - GOOGLE
+            - GITHUB
+            - GITLAB
+            - MICROSOFT
+        projectId:
+          type: string
+        isEnabled:
+          type: boolean
+        clientId:
+          type: string
+          nullable: true
+        clientSecret:
+          type: string
+          nullable: true
+        scopes:
+          type: array
+          items:
+            type: string
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - type
+        - provider
+        - projectId
+        - isEnabled
+        - clientId
+        - clientSecret
+        - scopes
+        - createdAt
+        - updatedAt
+    UpsertAuthMethodDto:
+      type: object
+      properties:
+        provider:
+          type: string
+          enum:
+            - PASSWORDLESS_EMAIL
+            - EMAIL_AND_PASSWORD
+            - SMS
+            - ANONYMOUS
+            - GOOGLE
+            - GITHUB
+            - GITLAB
+            - MICROSOFT
+        projectId:
+          type: string
+        isEnabled:
+          type: boolean
+        clientId:
+          type: string
+        clientSecret:
+          type: string
+        scopes:
+          type: array
+          items:
+            type: string
+      required:
+        - provider
+        - projectId
+        - isEnabled
+        - clientId
+        - clientSecret
+        - scopes
+    UpsertedAuthMethodDto:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - OAUTH2
+            - EMAIL
+            - PHONE_NUMBER
+            - ANONYMOUS
+        provider:
+          type: string
+          enum:
+            - PASSWORDLESS_EMAIL
+            - EMAIL_AND_PASSWORD
+            - SMS
+            - ANONYMOUS
+            - GOOGLE
+            - GITHUB
+            - GITLAB
+            - MICROSOFT
+        projectId:
+          type: string
+        isEnabled:
+          type: boolean
+        clientId:
+          type: string
+          nullable: true
+        clientSecret:
+          type: string
+          nullable: true
+        scopes:
+          type: array
+          items:
+            type: string
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - type
+        - provider
+        - projectId
+        - isEnabled
+        - clientId
+        - clientSecret
+        - scopes
+        - createdAt
+        - updatedAt
+    CreateDemoAuthMethodsDto:
+      type: object
+      properties:
+        methods:
+          type: string
+          enum:
+            - PASSWORDLESS_EMAIL
+            - GOOGLE
+        projectId:
+          type: string
+      required:
+        - methods
+        - projectId
+    CreatedDemoAuthMethodsDto:
+      type: object
+      properties:
+        success:
+          type: boolean
+      required:
+        - success
+    ListAuthMethodItem:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - OAUTH2
+            - EMAIL
+            - PHONE_NUMBER
+            - ANONYMOUS
+        provider:
+          type: string
+          enum:
+            - PASSWORDLESS_EMAIL
+            - EMAIL_AND_PASSWORD
+            - SMS
+            - ANONYMOUS
+            - GOOGLE
+            - GITHUB
+            - GITLAB
+            - MICROSOFT
+        projectId:
+          type: string
+        isEnabled:
+          type: boolean
+        clientId:
+          type: string
+          nullable: true
+        clientSecret:
+          type: string
+          nullable: true
+        scopes:
+          type: array
+          items:
+            type: string
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - type
+        - provider
+        - projectId
+        - isEnabled
+        - clientId
+        - clientSecret
+        - scopes
+        - createdAt
+        - updatedAt
+    ListAuthMethodResponseDto:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ListAuthMethodItem"
+        total:
+          type: number
+      required:
+        - items
+        - total
     CreateSdkSecretDto:
       type: object
       properties:
@@ -1065,6 +1337,7 @@ components:
           enum:
             - OAUTH2
             - EMAIL
+            - PHONE_NUMBER
             - ANONYMOUS
         provider:
           type: string
@@ -1254,175 +1527,3 @@ components:
         - creatorId
         - createdAt
         - updatedAt
-    CreateAuthMethodDto:
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-            - OAUTH2
-            - EMAIL
-            - ANONYMOUS
-        provider:
-          type: string
-          enum:
-            - PASSWORDLESS_EMAIL
-            - EMAIL_AND_PASSWORD
-            - SMS
-            - ANONYMOUS
-            - GOOGLE
-            - GITHUB
-            - GITLAB
-            - MICROSOFT
-        projectId:
-          type: string
-        isEnabled:
-          type: boolean
-        clientId:
-          type: string
-        clientSecret:
-          type: string
-        scopes:
-          type: array
-          items:
-            type: string
-      required:
-        - type
-        - provider
-        - projectId
-        - isEnabled
-        - clientId
-        - clientSecret
-        - scopes
-    CreatedAuthMethodDto:
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-            - OAUTH2
-            - EMAIL
-            - ANONYMOUS
-        provider:
-          type: string
-          enum:
-            - PASSWORDLESS_EMAIL
-            - EMAIL_AND_PASSWORD
-            - SMS
-            - ANONYMOUS
-            - GOOGLE
-            - GITHUB
-            - GITLAB
-            - MICROSOFT
-        projectId:
-          type: string
-        isEnabled:
-          type: boolean
-        clientId:
-          type: string
-          nullable: true
-        clientSecret:
-          type: string
-          nullable: true
-        scopes:
-          type: array
-          items:
-            type: string
-        createdAt:
-          format: date-time
-          type: string
-        updatedAt:
-          format: date-time
-          type: string
-      required:
-        - type
-        - provider
-        - projectId
-        - isEnabled
-        - clientId
-        - clientSecret
-        - scopes
-        - createdAt
-        - updatedAt
-    CreateDemoAuthMethodsDto:
-      type: object
-      properties:
-        methods:
-          type: string
-          enum:
-            - PASSWORDLESS_EMAIL
-            - GOOGLE
-        projectId:
-          type: string
-      required:
-        - methods
-        - projectId
-    CreatedDemoAuthMethodsDto:
-      type: object
-      properties:
-        success:
-          type: boolean
-      required:
-        - success
-    ListAuthMethodItem:
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-            - OAUTH2
-            - EMAIL
-            - ANONYMOUS
-        provider:
-          type: string
-          enum:
-            - PASSWORDLESS_EMAIL
-            - EMAIL_AND_PASSWORD
-            - SMS
-            - ANONYMOUS
-            - GOOGLE
-            - GITHUB
-            - GITLAB
-            - MICROSOFT
-        projectId:
-          type: string
-        isEnabled:
-          type: boolean
-        clientId:
-          type: string
-          nullable: true
-        clientSecret:
-          type: string
-          nullable: true
-        scopes:
-          type: array
-          items:
-            type: string
-        createdAt:
-          format: date-time
-          type: string
-        updatedAt:
-          format: date-time
-          type: string
-      required:
-        - type
-        - provider
-        - projectId
-        - isEnabled
-        - clientId
-        - clientSecret
-        - scopes
-        - createdAt
-        - updatedAt
-    ListAuthMethodResponseDto:
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            $ref: "#/components/schemas/ListAuthMethodItem"
-        total:
-          type: number
-      required:
-        - items
-        - total

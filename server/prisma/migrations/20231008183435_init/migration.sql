@@ -2,7 +2,7 @@
 CREATE TYPE "OrganizationUserRole" AS ENUM ('USER', 'ADMIN');
 
 -- CreateEnum
-CREATE TYPE "AuthMethodType" AS ENUM ('OAUTH2', 'EMAIL', 'ANONYMOUS');
+CREATE TYPE "AuthMethodType" AS ENUM ('OAUTH2', 'EMAIL', 'PHONE_NUMBER', 'ANONYMOUS');
 
 -- CreateEnum
 CREATE TYPE "AuthProvider" AS ENUM ('PASSWORDLESS_EMAIL', 'EMAIL_AND_PASSWORD', 'SMS', 'ANONYMOUS', 'GOOGLE', 'GITHUB', 'GITLAB', 'MICROSOFT');
@@ -117,10 +117,11 @@ CREATE TABLE "AuthMethod" (
     "isEnabled" BOOLEAN NOT NULL DEFAULT false,
     "clientId" TEXT,
     "clientSecret" TEXT,
+    "clientSecretIv" TEXT,
     "scopes" TEXT[],
     "projectId" TEXT NOT NULL,
 
-    CONSTRAINT "AuthMethod_pkey" PRIMARY KEY ("projectId","provider","type")
+    CONSTRAINT "AuthMethod_pkey" PRIMARY KEY ("projectId","provider")
 );
 
 -- CreateTable

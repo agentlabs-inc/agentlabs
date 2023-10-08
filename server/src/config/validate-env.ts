@@ -63,6 +63,9 @@ export class Environment {
 
   @IsString()
   MEMBERS_DEMO_OAUTH_GOOGLE_CLIENT_SECRET: string;
+
+  @IsString()
+  AES_ENCRYPTION_KEY: string;
 }
 
 export const validateEnv = (env: NodeJS.ProcessEnv) => {
