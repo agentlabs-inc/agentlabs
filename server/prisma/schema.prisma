@@ -257,7 +257,11 @@ model Member {
 
 	firstName			String?
 	lastName			String?
+	fullName			String?
+
 	email					String
+
+	profilePictureUrl	String?
 
 	project				Project @relation(fields: [projectId], references: [id])
 	projectId			String

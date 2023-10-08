@@ -7,5 +7,6 @@ export type oauthAuthorizeDto = {
     code: string;
     state: string;
     redirectUri: string;
+    projectId: string;
 };
 

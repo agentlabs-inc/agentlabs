@@ -41,3 +41,17 @@ export type VerifiyIfIsProjectMemberError =
 export const ListMembersErrors = [...VerifyIfIsProjectUserErrors] as const;
 
 export type ListMembersError = (typeof ListMembersErrors)[number];
+
+export const OAuthLoginErrors = [
+  'InvalidRedirectUri',
+  'InvalidState',
+  'InvalidCode',
+  'MissingClientSecret',
+  'MissingClientId',
+  'UnsupportedOAuthProvider',
+  'TokenRequestFailed',
+  'ImpossibleToGetUserInfo',
+  'DisabledAuthMethod',
+] as const;
+
+export type OAuthLoginError = (typeof OAuthLoginErrors)[number];

@@ -6,6 +6,8 @@ export interface MembersConfig {
   accessTokenSecret: string;
   accessTokenExpirationTime: string;
   authCodeExpirationDelayInMinutes: number;
+  googleDemoClientId: string;
+  googleDemoClientSecret: string;
 }
 
 export const membersConfig = registerAs<MembersConfig>(
@@ -18,6 +20,8 @@ export const membersConfig = registerAs<MembersConfig>(
       accessTokenExpirationTime: '24h',
       authCodeExpirationDelayInMinutes:
         env.MEMBERS_AUTH_CODE_EXPIRATION_DELAY_IN_MINUTES,
+      googleDemoClientId: env.MEMBERS_DEMO_OAUTH_GOOGLE_CLIENT_ID,
+      googleDemoClientSecret: env.MEMBERS_DEMO_OAUTH_GOOGLE_CLIENT_SECRET,
     };
   },
 );

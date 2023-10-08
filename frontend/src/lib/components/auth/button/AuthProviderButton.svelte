@@ -6,8 +6,8 @@
 	import GitlabIcon from "$lib/components/auth/GitlabIcon.svelte";
 	import GithubIcon from "$lib/components/auth/GithubIcon.svelte";
 	import type { PublicAuthMethodDto } from "$lib/services/gen-api";
-	import { signInWithRedirect } from "$lib/services/oauth/signInWithRedirect";
-	import GoogleAuthProvider from "$lib/services/oauth/providers/google";
+	import { initSignInWithRedirect } from "$lib/usecases/members/initSignInWithRedirect";
+	import { mainContextStore } from "$lib/stores/main-context";
 
 	export let provider: AuthProvider;
 
@@ -24,29 +24,10 @@
 		GITHUB: GithubIcon
 	};
 
-	const redirectUri = `http://${window.location.origin.split(".", 2)[1]}/oauth/handler/${
-		authMethod.provider
-	}`.toLowerCase();
-
-	console.log(authMethod);
-
-	const providerHandlerMap: Record<AuthProvider, () => void> = {
-		GOOGLE: () => {
-			alert(redirectUri);
-			signInWithRedirect(
-				new GoogleAuthProvider({
-					clientId: authMethod.clientId,
-					scopes: authMethod.scopes
-				}),
-				redirectUri
-			);
-		}
-	};
-
 	const handleLogin = () => {
 		providerCurrentlyLoading = provider;
 
-		providerHandlerMap[provider]();
+		initSignInWithRedirect(authMethod, $mainContextStore?.publicProjectConfig?.id);
 	};
 </script>
 

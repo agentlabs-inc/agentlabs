@@ -3,7 +3,8 @@ import type { AuthorizationParams, OAuthProvider } from "$lib/services/oauth/typ
 
 export const signInWithRedirect = async (
 	provider: OAuthProvider,
-	redirectUri: string
+	redirectUri: string,
+	state: string
 ): Promise<void> => {
 	const authEndpoint = provider.authUrl;
 
@@ -17,8 +18,8 @@ export const signInWithRedirect = async (
 		response_type: provider.responseType,
 		scope: provider.scopes.join(" "),
 		include_granted_scopes: "true",
-		// This state will contain the value of the common portal provider if needed.
-		state: provider.getState(),
+		// This state will contain the value of the demo auth provider if needed.
+		state: state,
 		code_challenge: undefined,
 		code_challenge_method: undefined
 	};

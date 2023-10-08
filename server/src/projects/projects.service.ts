@@ -283,6 +283,7 @@ export class ProjectsService {
       authMethods: project.authMethods.map((authMethod) => ({
         ...authMethod,
         clientId: authMethod.clientId ?? this.config.googleDemoClientId,
+        isUsingDemoConfig: !authMethod.clientId,
       })),
     });
   }

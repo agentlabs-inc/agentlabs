@@ -182,6 +182,30 @@ paths:
                 $ref: "#/components/schemas/LoginMemberResponseDto"
       tags:
         - Members
+  /members/oauth/handleCallback/{providerId}:
+    post:
+      operationId: handleOAuthCallback
+      parameters:
+        - name: providerId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/oauthAuthorizeDto"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginMemberResponseDto"
+      tags:
+        - Members
   /sdk-secrets/create:
     post:
       operationId: create
@@ -716,10 +740,13 @@ components:
           type: string
         redirectUri:
           type: string
+        projectId:
+          type: string
       required:
         - code
         - state
         - redirectUri
+        - projectId
     WhoAmIResultDto:
       type: object
       properties:
@@ -1054,7 +1081,8 @@ components:
             - APPLE
         clientId:
           type: string
-          nullable: true
+        isUsingDemoConfig:
+          type: boolean
         scopes:
           type: array
           items:
@@ -1063,6 +1091,7 @@ components:
         - type
         - provider
         - clientId
+        - isUsingDemoConfig
         - scopes
     PublicProjectConfigDto:
       type: object

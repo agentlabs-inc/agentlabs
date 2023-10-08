@@ -6,7 +6,8 @@
 export type PublicAuthMethodDto = {
     type: 'OAUTH2' | 'EMAIL' | 'ANONYMOUS';
     provider: 'PASSWORDLESS_EMAIL' | 'EMAIL_AND_PASSWORD' | 'ANONYMOUS' | 'GOOGLE' | 'GITHUB' | 'GITLAB' | 'MICROSOFT' | 'FACEBOOK' | 'TWITTER' | 'APPLE';
-    clientId: string | null;
+    clientId: string;
+    isUsingDemoConfig: boolean;
     scopes: Array<string>;
 };
 

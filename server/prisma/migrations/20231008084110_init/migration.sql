@@ -188,7 +188,9 @@ CREATE TABLE "Member" (
     "bannedAt" TIMESTAMP(3),
     "firstName" TEXT,
     "lastName" TEXT,
+    "fullName" TEXT,
     "email" TEXT NOT NULL,
+    "profilePictureUrl" TEXT,
     "projectId" TEXT NOT NULL,
 
     CONSTRAINT "Member_pkey" PRIMARY KEY ("id")

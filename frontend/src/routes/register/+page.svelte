@@ -58,6 +58,8 @@
 	);
 	$: isGoogleActivated = !!projectConfig?.authMethods.find((m) => m.provider === "GOOGLE");
 	$: isAnyOAuthMethodActivated = isGoogleActivated;
+
+	$: auth2Methods = projectConfig?.authMethods.filter((m) => m.type == "OAUTH2") ?? [];
 </script>
 
 <div
@@ -121,7 +123,8 @@
 						{#if !isPasswordlessEmailActivated}
 							<Spacer size="sm" />
 						{/if}
-						{#each projectConfig.authMethods as authMethod}
+
+						{#each auth2Methods as authMethod}
 							<div class="flex flex-col">
 								<AuthProviderButton
 									authMethod={authMethod}

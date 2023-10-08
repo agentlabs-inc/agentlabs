@@ -30,9 +30,7 @@
 			id: "google",
 			label: "Google / Gmail",
 			value: "GOOGLE",
-			customIcon: GoogleIcon,
-			disabled: false,
-			disabledLabel: "Coming soon"
+			customIcon: GoogleIcon
 		},
 		{
 			id: "github",
@@ -40,7 +38,7 @@
 			value: "github",
 			customIcon: GithubIcon,
 			disabled: true,
-			disabledLabel: "Coming soon"
+			disabledLabel: "soon"
 		},
 		{
 			id: "gitlab",
@@ -48,15 +46,15 @@
 			value: "gitlab",
 			customIcon: GitlabIcon,
 			disabled: true,
-			disabledLabel: "Coming soon"
+			disabledLabel: "soon"
 		},
 		{
 			id: "microsoft",
-			label: "Microsoft / Outlook",
+			label: "Microsoft",
 			value: "microsoft",
 			customIcon: MicrosoftIcon,
 			disabled: true,
-			disabledLabel: "Coming soon"
+			disabledLabel: "soon"
 		}
 	];
 
