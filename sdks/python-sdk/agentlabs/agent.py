@@ -1,6 +1,7 @@
 import os
 from typing import Any, Callable, Set, TypedDict
 import requests
+from socketio.pubsub_manager import uuid
 from .http import HttpApi
 
 from agentlabs.logger import AgentLogger
@@ -37,6 +38,27 @@ class User:
         self.name = decoded_user["name"]
         self.created_at = decoded_user["createdAt"]
 
+class StreamedChatMessage:
+    def __init__(self, io: socketio.Client, conversation_id: str):
+        self.io = io
+        self.conversation_id = conversation_id
+        self.message_id = str(uuid.uuid4())
+
+    def write(self, token: str):
+        emit(self.io, 'stream-chat-message-token', {
+            "conversationId": self.conversation_id,
+            "messageId": self.message_id,
+            "text": token,
+            "attachments": []
+        })
+
+    def end(self):
+        emit(self.io, 'stream-chat-message-end', {
+            "conversationId": self.conversation_id,
+            "messageId": self.message_id
+        })
+
+
 class IncomingChatMessage:
     def __init__(self, http: HttpApi,io: socketio.Client, message: _ChatMessage):
         self.io = io
@@ -46,6 +68,9 @@ class IncomingChatMessage:
         self.message_id = message["messageId"]
         self.agent_id = message["agentId"]
         self.member_id = message["memberId"]
+
+    def streamed_reply(self):
+        return StreamedChatMessage(self.io, self.conversation_id)
 
     def reply(self, message: str, attachments: list[Attachment] = []):
         attachment_payloads = list(map(lambda attachment: {

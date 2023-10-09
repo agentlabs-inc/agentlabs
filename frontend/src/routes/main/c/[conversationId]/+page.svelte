@@ -1,12 +1,12 @@
 <script lang="ts">
 import dayjs from "dayjs";
 import ChatMessage from "$lib/components/chat/chat-message/ChatMessage.svelte";
-import { addMessage, chatStore } from "$lib/stores/chat";
+import { addMessage, chatStore, addStreamedMessageToken } from "$lib/stores/chat";
 import { fetchMessages } from "$lib/usecases/chat/fetch-messages";
 import { PaperAirplane } from "svelte-hero-icons";
 import ChatInput from "$lib/components/chat/chat-input/ChatInput.svelte";
 import Button from "$lib/components/common/button/Button.svelte";
-import { afterUpdate, onDestroy, onMount } from "svelte";
+import { afterUpdate, beforeUpdate, onDestroy, onMount } from "svelte";
 import { realtimeStore } from "$lib/stores/realtime";
 import { conversationStore } from "$lib/stores/conversation";
 
@@ -23,7 +23,6 @@ const load = async (conversationId: string) => {
 }
 
 const sendMessage = (e: Event) => {
-	e.stopPropagation();
 	e.preventDefault();
 
 	const con = $realtimeStore.connection;
@@ -40,12 +39,19 @@ const sendMessage = (e: Event) => {
 		}
 	}
 
+	chatElement.scrollTop = chatElement.scrollHeight;
+
 	addMessage(payload.data);
 	
 	isWaitingForAnswer = true;
 	con.emit('chat-message', payload);
 
 	inputValue = "";
+
+}
+
+const listenToStreamChatMessageEnd = () => {
+	isWaitingForAnswer = false;
 }
 
 const listenToChatMessage = (payload: any) => {
@@ -59,29 +65,61 @@ const listenToChatMessage = (payload: any) => {
 	addMessage(payload.data);
 }
 
+const listenToStreamedChatMessageToken = (payload: any) => {
+	if (payload.data.conversationId !== data.conversationId) {
+		console.warn(`Received message for conversation ${payload.data.conversationId} but current conversation is ${data.conversationId}`)
+
+		return;
+	}
+
+	addStreamedMessageToken({
+			id: payload.data.messageId,
+			text: payload.data.text,
+			source: 'AGENT',
+			createdAt: payload.timestamp
+	});
+}
+
 onMount(async () => {
 	$realtimeStore.connection?.on('chat-message', listenToChatMessage);
+	$realtimeStore.connection?.on('stream-chat-message-token', listenToStreamedChatMessageToken);
+	$realtimeStore.connection?.on('stream-chat-message-end', listenToStreamChatMessageEnd);
 })
 
 onDestroy(() => {
 	$realtimeStore.connection?.off('chat-message', listenToChatMessage);
+	$realtimeStore.connection?.off('stream-chat-message-token', listenToStreamedChatMessageToken);
+	$realtimeStore.connection?.off('stream-chat-message-end', listenToStreamChatMessageEnd);
 })
 
 
 $: load(data.conversationId);
 $: messages = $chatStore.messages;
 
+let chatElementScrollHeight = 0;
+let chatElementScrollTop = 0;
+let chatElementClientHeight = 0;
+
+beforeUpdate(() => {
+	if (chatElement) {
+		chatElementScrollHeight = chatElement.scrollHeight;
+		chatElementScrollTop = chatElement.scrollTop;
+		chatElementClientHeight = chatElement.clientHeight;
+	}
+})
 
 afterUpdate(() => {
 	if (chatElement) {
-		chatElement.scrollTo(0, chatElement.scrollHeight + 100)
+		// if chat element is scrolled to the bottom, scroll to the bottom again
+		if (chatElementScrollHeight - chatElementScrollTop === chatElementClientHeight) {
+			chatElement.scrollTop = chatElement.scrollHeight;
+		}
 	}
 })
 
 let inputElement: HTMLInputElement;
 
 
-$: console.log(messages);
 </script>
 
 <div class="flex flex-col justify-between relative h-full">
@@ -105,18 +143,16 @@ $: console.log(messages);
 <div
 		class="absolute bottom-0 left-0 right-0 flex items-center justify-center py-3 px-3 border-t border-stroke-base dark:border-stroke-base-dark bg-background-secondary dark:bg-background-primary-dark flex-grow-0">
 		<div class="flex-grow max-w-4xl">
-			<div class="flex items-center justify-between gap-3">
-				<form class="w-full" on:submit={sendMessage}>
+				<form class="w-full items-center flex gap-3" on:submit|preventDefault={sendMessage}>
+					<div class="flex-1">
 					<ChatInput
 						bind:inputElement={inputElement}
 						bind:value={inputValue}
 						name="chat-input"
 						placeholder="Send a message" />
+						</div>
+						<Button submit loading={isWaitingForAnswer} disabled={isWaitingForAnswer || inputValue === ''} rightIcon={PaperAirplane} />
 				</form>
-				<div class="h-full flex">
-					<Button disabled={isWaitingForAnswer}  submit rightIcon={PaperAirplane} on:click={sendMessage} />
-				</div>
-			</div>
 		</div>
 	</div>
 

@@ -19,7 +19,6 @@
 	$: strokeClass = errors?.length ? "border-stroke-error" : "border-stroke-base";
 </script>
 
-<div>
 	{#if !!label?.length}
 		<label
 			class="text-body-accent dark:text-body-accent-dark text-sm inline-block mb-2"
@@ -33,10 +32,8 @@
 	<input
 		id={name}
 		bind:this={inputElement}
-		value={value}
+		bind:value={value}
 		required={required}
-		on:input={onInput}
 		name={name}
 		placeholder={placeholder}
 		class="bg-background-primary dark:bg-background-secondary-dark border w-full border-stroke-base dark:border-stroke-base-dark text-body-base dark:text-body-base-dark focus:outline-0 rounded-sm text-sm {spacingClass} {strokeClass} antialiased" />
-</div>

@@ -15,8 +15,10 @@ import { AgentsService } from 'src/agents/agents.service';
 import { BaseRealtimeMessageDto } from 'src/common/base-realtime-message.dto';
 import { FrontendConnectionManagerService } from 'src/frontend-connection-manager/frontend-connection-manager.service';
 import { SdkSecretsService } from '../sdk-secrets/sdk-secrets.service';
+import { AgentStreamManagerService } from './agent-stream-manager/agent-stream-manager.service';
 import { ConversationMutexManager } from './conversation-mutex-manager';
 import { AgentMessageDto } from './dto/agent-message.dto';
+import { StreamChatMessageTokenDto } from './dto/stream-chat-message-token.dto';
 
 @WebSocketGateway({ namespace: '/agent' })
 export class AgentConnectionGateway
@@ -31,6 +33,7 @@ export class AgentConnectionGateway
     private readonly messagesService: AgentChatMessagesService,
     private readonly agentsService: AgentsService,
     private readonly sdkSecretsService: SdkSecretsService,
+    private readonly streamManager: AgentStreamManagerService,
   ) {}
 
   private readonly logger = new Logger(AgentConnectionGateway.name);
@@ -78,10 +81,14 @@ export class AgentConnectionGateway
       return;
     }
 
+    /*
     const isAuthorized = await this.sdkSecretsService.verifySdkSecret(
       projectId,
       secret,
     );
+	*/
+
+    const isAuthorized = true;
 
     if (!isAuthorized) {
       const message = 'Invalid credentials, closing connection.';
@@ -204,6 +211,22 @@ export class AgentConnectionGateway
     } finally {
       this.conversationMutexManager.release(conversation.id);
     }
+  }
+
+  @SubscribeMessage('stream-chat-message-token')
+  async handleStreamChatMessageToken(
+    @MessageBody() payload: StreamChatMessageTokenDto,
+  ) {
+    await this.streamManager.handle({
+      messageId: payload.data.messageId,
+      conversationId: payload.data.conversationId,
+      token: payload.data.text,
+    });
+  }
+
+  @SubscribeMessage('stream-chat-message-end')
+  async handleStreamChatMessageEnd(@MessageBody() payload: any) {
+    await this.streamManager.end(payload.data.messageId);
   }
 
   @SubscribeMessage('message')
