@@ -6,7 +6,7 @@ export type AuthMethodListItem = {
 	name: string;
 	value: string;
 	heroIcon: IconSource | null;
-	componentIcon: typeof SvelteComponent | null;
+	componentIcon: typeof SvelteComponent<any, any, any> | null;
 	available: boolean;
 	isEnabled: boolean;
 	statusLabel: string;

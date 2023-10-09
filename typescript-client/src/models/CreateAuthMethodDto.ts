@@ -4,7 +4,6 @@
 /* eslint-disable */
 
 export type CreateAuthMethodDto = {
-    type: 'OAUTH2' | 'EMAIL' | 'ANONYMOUS';
     provider: 'PASSWORDLESS_EMAIL' | 'EMAIL_AND_PASSWORD' | 'SMS' | 'ANONYMOUS' | 'GOOGLE' | 'GITHUB' | 'GITLAB' | 'MICROSOFT';
     projectId: string;
     isEnabled: boolean;

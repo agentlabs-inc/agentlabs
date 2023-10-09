@@ -19,7 +19,7 @@ import { UserAuthenticatedRequest } from 'src/iam/iam.types';
 import { RequireAuthMethod } from '../iam/iam.decorators';
 import { LoginResponseDto } from './dtos/login.response.dto';
 import { LoginUserDto } from './dtos/login.user.dto';
-import { oauthAuthorizeDto } from './dtos/oauth.authorize.dto';
+import { oauthUserAuthorizeDto } from './dtos/oauth.authorize.dto';
 import { RegisterUserDto } from './dtos/register.user.dto';
 import { UserCreatedResponseDto } from './dtos/user.created.response.dto';
 import { WhoAmIResultDto } from './dtos/whoami.result.dto';
@@ -99,7 +99,7 @@ export class UsersController {
 
   @Post('oauth/handleCallback/:providerId')
   async handleOAuthCallback(
-    @Body() dto: oauthAuthorizeDto,
+    @Body() dto: oauthUserAuthorizeDto,
     @Param('providerId') providerId: string,
   ): Promise<LoginResponseDto> {
     const result = await this.usersService.completeOAuthLogin({

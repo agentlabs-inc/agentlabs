@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class oauthAuthorizeDto {
+export class oauthUserAuthorizeDto {
   @IsString()
   code: string;
 

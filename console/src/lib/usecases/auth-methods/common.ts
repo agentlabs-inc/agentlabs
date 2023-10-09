@@ -7,7 +7,7 @@ export type AvailableAuthMethod = {
 	name: string;
 	providerId: string;
 	heroIcon: IconSource | null;
-	componentIcon: typeof SvelteComponent | null;
+	componentIcon: typeof SvelteComponent<any, any, any> | null;
 	type: "EMAIL" | "OAUTH2";
 };
 

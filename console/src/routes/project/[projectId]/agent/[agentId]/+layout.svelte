@@ -1,13 +1,10 @@
 <script lang="ts">
 	import TopCover from "$lib/components/common/top-cover/TopCover.svelte";
-	import type { PageData } from "./$types";
 	import { fetchAgentDetails } from "$lib/usecases/agents/fetchAgentDetails";
 	import { page } from "$app/stores";
 	import MainTitleSkeleton from "$lib/components/common/skeleton/MainTitleSkeleton.svelte";
 	import { projectStore } from "$lib/stores/project";
 	import { projectOverviewRoute } from "$lib/routes/routes";
-
-	export let data: PageData;
 
 	import TabNav from "$lib/components/common/navigation/tab-nav/TabNav.svelte";
 	import { agentOverviewRoute, agentSettingsRoute } from "$lib/routes/routes";

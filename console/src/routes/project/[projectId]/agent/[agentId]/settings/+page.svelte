@@ -3,7 +3,6 @@
 	import Card from "$lib/components/common/card/Card.svelte";
 	import Button from "$lib/components/common/button/Button.svelte";
 	import Input from "$lib/components/common/input/Input.svelte";
-	import type { PageData } from "./$types";
 	import { z as zod } from "zod";
 	import { superForm } from "sveltekit-superforms/client";
 	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
@@ -15,8 +14,6 @@
 	import { agentStore } from "$lib/stores/agent";
 	import { deleteAgent } from "$lib/usecases/agents/deleteAgent";
 	import { goto } from "$app/navigation";
-
-	export let data: PageData;
 
 	const agent = $agentStore.currentAgent;
 

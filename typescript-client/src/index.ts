@@ -32,6 +32,7 @@ export type { LoginResponseDto } from './models/LoginResponseDto';
 export type { LoginUserDto } from './models/LoginUserDto';
 export type { MemberItem } from './models/MemberItem';
 export type { oauthAuthorizeDto } from './models/oauthAuthorizeDto';
+export type { oauthUserAuthorizeDto } from './models/oauthUserAuthorizeDto';
 export type { ProjectDto } from './models/ProjectDto';
 export type { ProjectExistsResponseDto } from './models/ProjectExistsResponseDto';
 export type { PublicAuthMethodDto } from './models/PublicAuthMethodDto';
@@ -44,6 +45,7 @@ export type { SanitizedUserResponseDto } from './models/SanitizedUserResponseDto
 export type { UpdateAgentDto } from './models/UpdateAgentDto';
 export type { UpdatedAgentDto } from './models/UpdatedAgentDto';
 export type { UpsertAuthMethodDto } from './models/UpsertAuthMethodDto';
+export type { UpsertedAuthMethodDto } from './models/UpsertedAuthMethodDto';
 export type { UserCreatedResponseDto } from './models/UserCreatedResponseDto';
 export type { VerifyPasswordlessEmailDto } from './models/VerifyPasswordlessEmailDto';
 export type { WhoAmIResultDto } from './models/WhoAmIResultDto';

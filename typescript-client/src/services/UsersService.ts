@@ -4,7 +4,7 @@
 /* eslint-disable */
 import type { LoginResponseDto } from '../models/LoginResponseDto';
 import type { LoginUserDto } from '../models/LoginUserDto';
-import type { oauthAuthorizeDto } from '../models/oauthAuthorizeDto';
+import type { oauthUserAuthorizeDto } from '../models/oauthUserAuthorizeDto';
 import type { RegisterUserDto } from '../models/RegisterUserDto';
 import type { UserCreatedResponseDto } from '../models/UserCreatedResponseDto';
 import type { WhoAmIResultDto } from '../models/WhoAmIResultDto';
@@ -66,7 +66,7 @@ export class UsersService {
         requestBody,
     }: {
         providerId: string,
-        requestBody: oauthAuthorizeDto,
+        requestBody: oauthUserAuthorizeDto,
     }): CancelablePromise<LoginResponseDto> {
         return __request(OpenAPI, {
             method: 'POST',

@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 export type ListAuthMethodItem = {
-    type: 'OAUTH2' | 'EMAIL' | 'ANONYMOUS';
+    type: 'OAUTH2' | 'EMAIL' | 'PHONE_NUMBER' | 'ANONYMOUS';
     provider: 'PASSWORDLESS_EMAIL' | 'EMAIL_AND_PASSWORD' | 'SMS' | 'ANONYMOUS' | 'GOOGLE' | 'GITHUB' | 'GITLAB' | 'MICROSOFT';
     projectId: string;
     isEnabled: boolean;

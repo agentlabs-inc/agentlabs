@@ -8,6 +8,7 @@ import type { CreatedDemoAuthMethodsDto } from '../models/CreatedDemoAuthMethods
 import type { CreateDemoAuthMethodsDto } from '../models/CreateDemoAuthMethodsDto';
 import type { ListAuthMethodResponseDto } from '../models/ListAuthMethodResponseDto';
 import type { UpsertAuthMethodDto } from '../models/UpsertAuthMethodDto';
+import type { UpsertedAuthMethodDto } from '../models/UpsertedAuthMethodDto';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -33,14 +34,14 @@ export class AuthMethodsService {
     }
 
     /**
-     * @returns CreatedAuthMethodDto
+     * @returns UpsertedAuthMethodDto
      * @throws ApiError
      */
     public static upsert({
         requestBody,
     }: {
         requestBody: UpsertAuthMethodDto,
-    }): CancelablePromise<CreatedAuthMethodDto> {
+    }): CancelablePromise<UpsertedAuthMethodDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/authMethods/upsert',

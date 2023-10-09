@@ -3,11 +3,15 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type PublicAuthMethodDto = {
+export type UpsertedAuthMethodDto = {
     type: 'OAUTH2' | 'EMAIL' | 'PHONE_NUMBER' | 'ANONYMOUS';
     provider: 'PASSWORDLESS_EMAIL' | 'EMAIL_AND_PASSWORD' | 'SMS' | 'ANONYMOUS' | 'GOOGLE' | 'GITHUB' | 'GITLAB' | 'MICROSOFT';
-    clientId: string;
-    isUsingDemoConfig: boolean;
+    projectId: string;
+    isEnabled: boolean;
+    clientId: string | null;
+    clientSecret: string | null;
     scopes: Array<string>;
+    createdAt: string;
+    updatedAt: string;
 };
 
