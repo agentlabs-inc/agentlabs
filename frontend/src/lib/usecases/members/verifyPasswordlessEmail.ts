@@ -23,6 +23,8 @@ export const verifyPasswordlessEmail = async (params: {
 		createdAt: dayjs(result.member.createdAt).toDate(),
 		updatedAt: dayjs(result.member.updatedAt).toDate(),
 		email: result.member.email,
+		fullName: result.member.fullName,
+		profilePictureUrl: result.member.profilePictureUrl,
 		firstName: result.member.firstName,
 		lastName: result.member.lastName,
 		verifiedAt: dayjs(result.member.verifiedAt).toDate()
