@@ -9,7 +9,6 @@
 
 	const dispatch = createEventDispatcher();
 	const onClickOutside = () => {
-		console.log("click outside");
 		if (visible) {
 			// todo: fix this
 			// dispatch("close");
@@ -24,24 +23,6 @@
 		: 'hidden'} absolute top-[100%] right-0 min-w-[300px] w-full border border-stroke-base dark:border-stroke-base-dark bg-background-secondary dark:bg-background-primary-dark">
 	<section class="p-3 border-b border-stroke-base dark:border-stroke-base-dark">
 		<ul class="flex flex-col gap-3 antialiased">
-			<NavItem
-				isActive={false}
-				item={{
-					path: "/",
-					label: "Something",
-					icon: Plus
-				}} />
-		</ul>
-	</section>
-	<section class="p-3 border-b border-stroke-base dark:border-stroke-base-dark">
-		<ul class="flex flex-col gap-3 antialiased">
-			<NavItem
-				isActive={false}
-				item={{
-					path: "/",
-					label: "New project",
-					icon: Plus
-				}} />
 			<NavItem
 				isActive={false}
 				item={{

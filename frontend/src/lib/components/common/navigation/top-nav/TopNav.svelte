@@ -5,9 +5,22 @@
 	import ThemeSwitch from "$lib/components/common/theme-switch/ThemeSwitch.svelte";
 	import AgentLabsLogo from "$lib/components/common/logo/AgentLabsLogo.svelte";
 	import { themeStore } from "$lib/stores/theme";
+	import { authStore } from "$lib/stores/auth";
+	import { mainContextStore } from "$lib/stores/main-context";
 
-	$: userName = "Kevin Piacentini";
-	$: projectName = "My First Agent";
+	const member = $authStore.member;
+
+	if (!member) {
+		throw new Error("Member is not available");
+	}
+
+	const projectConfig = $mainContextStore.publicProjectConfig;
+
+	console.log("projectName", projectConfig);
+
+	if (!projectConfig) {
+		throw new Error("projectConfig is not available");
+	}
 
 	let isDropdownVisible = false;
 	const toggleDropdown = () => {
@@ -32,8 +45,8 @@
 				alt="user avatar"
 				src="https://media.licdn.com/dms/image/D4E03AQFXJiFpNFWE0A/profile-displayphoto-shrink_100_100/0/1680893451739?e=1699488000&v=beta&t=WiNliB67TjMHbaIycm8u55JDrX82xu9I20jw-b10u4A" />
 			<div class="antialiased flex flex-col gap-0">
-				<span class="text-body-base text-sm">{userName}</span>
-				<span class="text-body-subdued text-sm">{projectName}</span>
+				<span class="text-body-base text-sm">{member.email}</span>
+				<span class="text-body-subdued text-sm">{projectConfig.name}</span>
 			</div>
 			<div class="">
 				<Icon src={ChevronDown} class="w-4 h-4 text-body-subdued" />
