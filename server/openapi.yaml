@@ -704,6 +704,9 @@ components:
           type: string
         fullName:
           type: string
+        profilePictureUrl:
+          type: string
+          nullable: true
         verifiedAt:
           format: date-time
           type: string
@@ -712,6 +715,7 @@ components:
         - id
         - email
         - fullName
+        - profilePictureUrl
         - verifiedAt
     LoginUserDto:
       type: object

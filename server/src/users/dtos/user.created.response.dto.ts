@@ -1,15 +1,3 @@
-import { IsDate, IsEmail, IsString } from 'class-validator';
+import { SanitizedUserResponseDto } from './sanitized.user.response.dto';
 
-export class UserCreatedResponseDto {
-  @IsString()
-  id: string;
-
-  @IsEmail()
-  email: string;
-
-  @IsString()
-  fullName: string;
-
-  @IsDate()
-  verifiedAt: Date | null;
-}
+export class UserCreatedResponseDto extends SanitizedUserResponseDto {}

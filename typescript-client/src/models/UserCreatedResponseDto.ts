@@ -7,6 +7,7 @@ export type UserCreatedResponseDto = {
     id: string;
     email: string;
     fullName: string;
+    profilePictureUrl: string | null;
     verifiedAt: string | null;
 };
 

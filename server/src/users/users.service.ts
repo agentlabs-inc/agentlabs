@@ -155,12 +155,7 @@ export class UsersService {
         return userResult;
       });
 
-      return ok({
-        id: result.id,
-        email: result.email,
-        fullName: result.fullName,
-        verifiedAt: result.verifiedAt,
-      });
+      return ok(this.sanitizeUser(result));
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         if (e.code === 'P2002') {
