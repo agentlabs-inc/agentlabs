@@ -3,11 +3,11 @@
 	import Input from "$lib/components/common/input/Input.svelte";
 	import AuthProviderButton from "$lib/components/auth/button/AuthProviderButton.svelte";
 	import { superForm } from "sveltekit-superforms/client";
-	import type { LayoutData, PageData } from "./$types";
+	import type { PageData } from "./$types";
 	import { z as zod } from "zod";
 	import ThemeSwitch from "$lib/components/common/theme-switch/ThemeSwitch.svelte";
 	import { toastError } from "$lib/utils/toast";
-	import { loginRoute, selectAgentRoute, verifyPasswordlessEmailRoute } from "$lib/routes/routes";
+	import { loginRoute, verifyPasswordlessEmailRoute } from "$lib/routes/routes";
 	import { requestPasswordlessEmail } from "$lib/usecases/members/requestPasswordlessEmail";
 	import { goto } from "$app/navigation";
 	import Typography from "$lib/components/common/typography/Typography.svelte";
@@ -58,7 +58,6 @@
 	);
 	$: isGoogleActivated = !!projectConfig?.authMethods.find((m) => m.provider === "GOOGLE");
 	$: isAnyOAuthMethodActivated = isGoogleActivated;
-
 	$: auth2Methods = projectConfig?.authMethods.filter((m) => m.type == "OAUTH2") ?? [];
 </script>
 

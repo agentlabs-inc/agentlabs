@@ -13,21 +13,32 @@
 
 	export let authMethod: PublicAuthMethodDto;
 
+	const publicProjectConfig = $mainContextStore?.publicProjectConfig;
+
+	if (!publicProjectConfig) {
+		throw new Error("publicProjectConfig is not defined");
+	}
+
 	let providerCurrentlyLoading: AuthProvider | null = null;
 
 	const providerIconMap: Record<
 		AuthProvider,
-		typeof GoogleIcon | typeof GitlabIcon | typeof GithubIcon
+		typeof GoogleIcon | typeof GitlabIcon | typeof GithubIcon | null
 	> = {
 		GOOGLE: GoogleIcon,
 		GITLAB: GitlabIcon,
-		GITHUB: GithubIcon
+		GITHUB: GithubIcon,
+		MICROSOFT: null,
+		PASSWORDLESS_EMAIL: null,
+		EMAIL_AND_PASSWORD: null,
+		ANONYMOUS: null,
+		SMS: null
 	};
 
 	const handleLogin = () => {
 		providerCurrentlyLoading = provider;
 
-		initSignInWithRedirect(authMethod, $mainContextStore?.publicProjectConfig?.id);
+		initSignInWithRedirect(authMethod, publicProjectConfig.id);
 	};
 </script>
 
