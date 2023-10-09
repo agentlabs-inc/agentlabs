@@ -2,6 +2,8 @@
 	import Avatar from "$lib/components/common/avatar/Avatar.svelte";
 	import LetterAvatar from "$lib/components/common/letter-avatar/LetterAvatar.svelte";
 	import MarkdownRenderer from "$lib/components/markdown/markdown-renderer.svelte";
+	import AgentIcon from "$lib/assets/img/agent-icon.svg";
+	import { authStore } from "$lib/stores/auth";
 
 	export let time: string;
 	export let body: string;
@@ -14,6 +16,8 @@
 		from === "USER"
 			? "bg-background-primary dark:bg-background-primary-dark"
 			: "bg-background-secondary dark:bg-[#282833]";
+
+	const member = $authStore.member;
 </script>
 
 <div class={`${bubbleClass} rounded-md py-5 px-5 antialiased`}>
@@ -21,16 +25,11 @@
 		<div class="flex gap-4">
 			<div class="shrink-0">
 				{#if from === "USER"}
-					<Avatar
-						alt="user avatar"
-						src="https://media.licdn.com/dms/image/D4E03AQFXJiFpNFWE0A/profile-displayphoto-shrink_100_100/0/1680893451739?e=1699488000&v=beta&t=WiNliB67TjMHbaIycm8u55JDrX82xu9I20jw-b10u4A" />
+					<Avatar alt="user avatar" src={member?.profilePictureUrl} />
 				{:else if from === "AGENT"}
 					<LetterAvatar>Ag</LetterAvatar>
 				{:else}
-					<Avatar
-						alt="user avatar"
-						src="https://uploads-ssl.webflow.com/64ee053fe2278d415220a0b0/64f0b039fb591a9b415a6550_mark-icon.svg"
-					/>
+					<Avatar alt="user avatar" src={AgentIcon} />
 				{/if}
 			</div>
 
@@ -39,11 +38,11 @@
 					{time}
 				</div>
 				<div class="text-body-accent dark:text-body-accent-dark text-[11pt] leading-7">
-						{#if from !== 'USER'}
+					{#if from !== "USER"}
 						<MarkdownRenderer source={body} />
-						{:else}
+					{:else}
 						{body}
-						{/if}
+					{/if}
 				</div>
 			</div>
 		</div>

@@ -25,6 +25,8 @@ export const loginWithOAuthCode = async (params: {
 		createdAt: new Date(),
 		id: result.member.id,
 		email: result.member.email,
+		fullName: result.member.fullName,
+		profilePictureUrl: result.member.profilePictureUrl,
 		firstName: result.member.firstName,
 		lastName: result.member.lastName,
 		verifiedAt: dayjs(result.member.verifiedAt).toDate(),

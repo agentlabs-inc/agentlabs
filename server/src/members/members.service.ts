@@ -439,6 +439,8 @@ export class MembersService {
       member: {
         id: member.id,
         email: member.email,
+        fullName: member.fullName,
+        profilePictureUrl: member.profilePictureUrl,
         firstName: member.firstName,
         lastName: member.lastName,
         verifiedAt: member.verifiedAt,

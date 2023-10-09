@@ -891,10 +891,16 @@ components:
           type: string
         email:
           type: string
+        fullName:
+          type: string
+          nullable: true
         firstName:
           type: string
           nullable: true
         lastName:
+          type: string
+          nullable: true
+        profilePictureUrl:
           type: string
           nullable: true
         verifiedAt:
@@ -910,8 +916,10 @@ components:
       required:
         - id
         - email
+        - fullName
         - firstName
         - lastName
+        - profilePictureUrl
         - verifiedAt
         - createdAt
         - updatedAt
