@@ -309,8 +309,8 @@ export class MembersService {
           },
           data: {
             email: email,
-            firstName: null,
-            lastName: null,
+            firstName: member.firstName ?? null,
+            lastName: member.lastName ?? null,
             identities: {
               connectOrCreate: [
                 {
@@ -449,6 +449,7 @@ export class MembersService {
   }
 
   private async upsertMemberWithOAuth(params: {
+    provider: AuthProvider;
     email: string;
     firstName?: string;
     lastName?: string;
@@ -466,6 +467,7 @@ export class MembersService {
         const member = await tx.member.findFirst({
           where: {
             email,
+            projectId,
           },
         });
 
@@ -482,6 +484,19 @@ export class MembersService {
                 connect: {
                   id: projectId,
                 },
+              },
+              identities: {
+                create: [
+                  {
+                    provider: params.provider,
+                    providerUserId: params.providerUserId,
+                    lastSignedInAt: new Date(),
+                    accessToken: null,
+                    refreshToken: null,
+                    accessTokenExpiresAt: null,
+                    refreshTokenExpiresAt: null,
+                  },
+                ],
               },
             },
           });
@@ -501,6 +516,22 @@ export class MembersService {
             profilePictureUrl: pictureUrl ?? member.profilePictureUrl,
             verifiedAt:
               member.verifiedAt ?? (params.isVerified ? new Date() : null),
+            identities: {
+              connectOrCreate: [
+                {
+                  where: {
+                    memberId_provider: {
+                      memberId: member.id,
+                      provider: params.provider,
+                    },
+                  },
+                  create: {
+                    provider: params.provider,
+                    providerUserId: params.providerUserId,
+                  },
+                },
+              ],
+            },
           },
         });
 
@@ -572,6 +603,7 @@ export class MembersService {
 
     const memberCreatedOrUpdated = await this.upsertMemberWithOAuth({
       projectId,
+      provider: providerId,
       email: user.email,
       fullName: user.name,
       firstName: user.given_name,
