@@ -1,8 +1,9 @@
-import { ProjectsService } from "$lib/services/gen-api";
 import type { Project } from "$lib/entities/project/project";
+import { ProjectsService } from "$lib/services/gen-api";
 import dayjs from "dayjs";
 
 export const retrieveProjectById = async (projectId: string): Promise<Project> => {
+	await new Promise((resolve) => setTimeout(resolve, 500));
 	const result = await ProjectsService.getById({
 		projectId
 	});

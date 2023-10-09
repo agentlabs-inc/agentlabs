@@ -11,8 +11,13 @@
 
 	export let projectId: string;
 
-	onMount(async () => {
+	$: if (projectId) {
+		fetchContext();
+	}
+
+	const fetchContext = async () => {
 		try {
+			loading = true;
 			const project = await retrieveProjectById(projectId);
 			console.log(project);
 			setCurrentProject(project);
@@ -26,7 +31,7 @@
 		} finally {
 			loading = false;
 		}
-	});
+	};
 </script>
 
 {#if !loading}

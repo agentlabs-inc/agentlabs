@@ -7,12 +7,7 @@
 	import { z as zod } from "zod";
 	import ThemeSwitch from "$lib/components/common/theme-switch/ThemeSwitch.svelte";
 	import { toastError } from "$lib/utils/toast";
-	import {
-		loginRoute,
-		registerRoute,
-		selectAgentRoute,
-		verifyPasswordlessEmailRoute
-	} from "$lib/routes/routes";
+	import { registerRoute, verifyPasswordlessEmailRoute } from "$lib/routes/routes";
 	import { requestPasswordlessEmail } from "$lib/usecases/members/requestPasswordlessEmail";
 	import { goto } from "$app/navigation";
 	import Typography from "$lib/components/common/typography/Typography.svelte";
