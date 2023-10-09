@@ -1,16 +1,13 @@
 import os
-from typing import Any, Callable, Set, TypedDict
-import requests
+from typing import Any, Callable, TypedDict
 from socketio.pubsub_manager import uuid
 from .http import HttpApi
 
 from agentlabs.logger import AgentLogger
 
-from .server import emit, agent_namespace, emit_sync
+from .server import emit, agent_namespace
 from .attachment import Attachment
 import socketio
-
-from agentlabs import attachment
 
 class AgentConfig(TypedDict):
     agentlabs_url: str;
@@ -39,12 +36,21 @@ class User:
         self.created_at = decoded_user["createdAt"]
 
 class StreamedChatMessage:
+    is_ended: bool = False
+
     def __init__(self, io: socketio.Client, conversation_id: str):
         self.io = io
         self.conversation_id = conversation_id
         self.message_id = str(uuid.uuid4())
 
+    """
+    Writes a token to the stream. This can be used to send a message in multiple parts.
+    Writing to a stream on which end() has been called will raise an exception.
+    """
     def write(self, token: str):
+        if self.is_ended:
+            raise Exception("Cannot write to a stream that has already been ended.")
+
         emit(self.io, 'stream-chat-message-token', {
             "conversationId": self.conversation_id,
             "messageId": self.message_id,
@@ -52,7 +58,12 @@ class StreamedChatMessage:
             "attachments": []
         })
 
+    """
+    Ends the stream. After a stream is ended it cannot be written to anymore, and
+    doing so will raise an exception.
+    """
     def end(self):
+        self.is_ended = True
         emit(self.io, 'stream-chat-message-end', {
             "conversationId": self.conversation_id,
             "messageId": self.message_id
@@ -69,30 +80,35 @@ class IncomingChatMessage:
         self.agent_id = message["agentId"]
         self.member_id = message["memberId"]
 
+    """
+    Creates a new streamed reply to this message. This can be used to send a message
+    in multiple parts.
+    Well suited to stream LLM outputs.
+    """
     def streamed_reply(self):
         return StreamedChatMessage(self.io, self.conversation_id)
 
-    def reply(self, message: str, attachments: list[Attachment] = []):
-        attachment_payloads = list(map(lambda attachment: {
-            "name": attachment.name,
-        }, attachments))
-
+    """
+    Replies to the message instantly. If you are looking to stream a reply in multiple parts,
+    use streamed_reply() instead.
+    """
+    def reply(self, message: str):
         emit(self.io, 'chat-message', {
             "conversationId": self.conversation_id,
             "text": message,
-            "attachments": attachment_payloads
+            "attachments": []
         })
 
-        # TODO: parallelize this
-        for attachment in attachments:
-            try:
-                self.http.create_message_attachment(
-                        agent_id=self.agent_id,
-                        message_id=self.message_id,
-                        attachment=attachment
-                )
-            except Exception as e:
-                print(f"Failed to create message attachment {attachment.name}: {e}")
+        # TODO: we'll come back to this when we officially support attachments
+        #for attachment in attachments:
+        #    try:
+        #        self.http.create_message_attachment(
+        #                agent_id=self.agent_id,
+        #                message_id=self.message_id,
+        #                attachment=attachment
+        #        )
+        #    except Exception as e:
+        #        print(f"Failed to create message attachment {attachment.name}: {e}")
 
 class Agent:
     is_connected: bool = False
@@ -103,19 +119,27 @@ class Agent:
         if not message is None:
             self._server_logger.info(message)
 
-    def __init__(self, config: AgentConfig):
+    def __init__(self, agent_id: str, project_id: str, secret: str, agentlabs_url: str) -> None:
+        self.project_id = project_id
+        self.agent_id = agent_id
+        self.secret = secret
+        self.agentlabs_url = agentlabs_url
         self.is_debug_enabled = bool(os.environ.get('DEBUG', False))
-        self.config = config
         self.io = socketio.Client(logger=self.is_debug_enabled, engineio_logger=self.is_debug_enabled)
         self.io.on('message', self._log_message, namespace=agent_namespace)
-        self._client_logger = AgentLogger(agent_id=config['agent_id'], name="Client")
-        self._server_logger = AgentLogger(agent_id=config['agent_id'], name="Server")
-        self.http = HttpApi({
-            "project_id": config['project_id'],
-            "agentlabs_url": config['agentlabs_url'],
-            "secret": config['secret']
-        })
+        self._client_logger = AgentLogger(agent_id=agent_id, name="Client")
+        self._server_logger = AgentLogger(agent_id=agent_id, name="Server")
+        self.http = HttpApi(
+            project_id=project_id,
+            agentlabs_url=agentlabs_url,
+            secret=secret
+        )
 
+
+    """
+    Defines a handler for when a new chat message is received.
+    It will be called each time a user sends a new message to the agent from the AgentLabs UI.
+    """
     def on_chat_message(self, fn: Callable[[IncomingChatMessage], None]):
         def wrapper(payload: Any):
             chat_message = IncomingChatMessage(http=self.http, io=self.io, message=payload['data'])
@@ -123,31 +147,36 @@ class Agent:
 
         self.io.on('chat-message', wrapper, namespace=agent_namespace)
 
-    def on_heartbeat(self, fn: Callable[[], None]):
-        def wrapper(_: dict):
-            fn()
+    """
+    Connects the agent to the AgentLabs server.
+    Does not block the main thread by itself, use wait() if this is desired.
+    May raise an exception if the connection fails.
 
-        self.io.on('heartbeat', wrapper, namespace=agent_namespace)
-
+    Note that as of now, only one connection per agent is permitted. This will be changed very soon.
+    """
     def connect(self):
         self._client_logger.info("Connecting to AgentLabs server...")
-        self.io.connect(url=self.config['agentlabs_url'], namespaces=[agent_namespace], transports=['websocket'], headers={
-            "x-agentlabs-project-id": self.config['project_id'],
-            "x-agentlabs-agent-id": self.config['agent_id'],
-            "x-agentlabs-sdk-secret": self.config['secret'],
+        self.io.connect(url=self.agentlabs_url, namespaces=[agent_namespace], transports=['websocket'], headers={
+            "x-agentlabs-project-id": self.project_id,
+            "x-agentlabs-agent-id": self.agent_id,
+            "x-agentlabs-sdk-secret": self.secret,
             "user-agent": "agentlabs-python-sdk"
             })
         self.is_connected = True
 
-    # Blocks the main thread until the agent is disconnected
-    # Useful if you have only one agent and want to keep the program running
-    # without having to bother with your own loop.
+    """
+    Blocks the main thread until the agent is disconnected
+    Useful if you have only one agent and want to keep the program running
+    without having to bother with your own loop.
+    """
     def wait(self):
         if not self.is_connected:
             raise Exception("Agent is not connected, please call connect() before calling wait().")
         self._client_logger.info("Blocking main thread until agent is disconnected.")
         self.io.wait()
 
-    # Abruptly disconnects the agent from the server
+    """
+    Abruptly disconnects the agent from the server
+    """
     def terminate(self):
         self.io.disconnect()

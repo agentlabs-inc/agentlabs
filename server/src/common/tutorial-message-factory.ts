@@ -15,18 +15,18 @@ Using the python SDK, this would look like this:
 from agentlabs.agent import IncomingChatMessage
 from agentlabs.project import Project
 
-project = Project({
-    'project_id': '${projectId}',
-    'agentlabs_url': 'http://localhost',
-	'secret': '<SDK_SECRET_FROM_ADMIN_CONSOLE>'
-})
+project = Project(
+    project_id='${projectId}',
+    agentlabs_url='http://localhost',
+	secret='<SDK_SECRET_FROM_ADMIN_CONSOLE>'
+)
 
 agent = project.agent(id="${agentId}")
 
 def handle_task(message: IncomingChatMessage):
-	if message.text === 'ping':
+	if message.text == 'ping':
 		message.reply('pong')
-	else
+	else:
 		message.reply('I do not understand')
 
 agent.on_chat_message(handle_task)
