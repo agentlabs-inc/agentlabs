@@ -8,10 +8,16 @@ export class SanitizedMemberDto {
   email: string;
 
   @IsString()
+  fullName: string | null;
+
+  @IsString()
   firstName: string | null;
 
   @IsString()
   lastName: string | null;
+
+  @IsString()
+  profilePictureUrl: string | null;
 
   @IsDate()
   verifiedAt: Date | null;

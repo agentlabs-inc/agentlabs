@@ -36,6 +36,7 @@ export class UsersService {
       id: user.id,
       email: user.email,
       fullName: user.fullName,
+      profilePictureUrl: user.profilePictureUrl,
       verifiedAt: user.verifiedAt,
     };
   }

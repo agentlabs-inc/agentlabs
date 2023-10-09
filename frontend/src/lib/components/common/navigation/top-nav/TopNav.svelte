@@ -16,8 +16,6 @@
 
 	const projectConfig = $mainContextStore.publicProjectConfig;
 
-	console.log("projectName", projectConfig);
-
 	if (!projectConfig) {
 		throw new Error("projectConfig is not available");
 	}
@@ -41,9 +39,7 @@
 			on:keydown={() => {}}
 			tabindex="0"
 			class="relative flex gap-4 border-l border-stroke-base dark:border-stroke-base-dark h-full items-center justify-center px-3 cursor-pointer">
-			<Avatar
-				alt="user avatar"
-				src="https://media.licdn.com/dms/image/D4E03AQFXJiFpNFWE0A/profile-displayphoto-shrink_100_100/0/1680893451739?e=1699488000&v=beta&t=WiNliB67TjMHbaIycm8u55JDrX82xu9I20jw-b10u4A" />
+			<Avatar alt="user avatar" src={member.profilePictureUrl} />
 			<div class="antialiased flex flex-col gap-0">
 				<span class="text-body-base text-sm">{member.email}</span>
 				<span class="text-body-subdued text-sm">{projectConfig.name}</span>

@@ -10,6 +10,9 @@ export class SanitizedUserResponseDto {
   @IsString()
   fullName: string;
 
+  @IsString()
+  profilePictureUrl: string | null;
+
   @IsDate()
   verifiedAt: Date | null;
 }

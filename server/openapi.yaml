@@ -733,6 +733,9 @@ components:
           type: string
         fullName:
           type: string
+        profilePictureUrl:
+          type: string
+          nullable: true
         verifiedAt:
           format: date-time
           type: string
@@ -741,6 +744,7 @@ components:
         - id
         - email
         - fullName
+        - profilePictureUrl
         - verifiedAt
     LoginResponseDto:
       type: object
@@ -891,10 +895,16 @@ components:
           type: string
         email:
           type: string
+        fullName:
+          type: string
+          nullable: true
         firstName:
           type: string
           nullable: true
         lastName:
+          type: string
+          nullable: true
+        profilePictureUrl:
           type: string
           nullable: true
         verifiedAt:
@@ -910,8 +920,10 @@ components:
       required:
         - id
         - email
+        - fullName
         - firstName
         - lastName
+        - profilePictureUrl
         - verifiedAt
         - createdAt
         - updatedAt
