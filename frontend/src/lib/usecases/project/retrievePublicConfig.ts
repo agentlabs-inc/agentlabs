@@ -6,7 +6,5 @@ export const retrievePublicConfig = async (hostname: string) => {
 
 	setPublicProjectConfig(config);
 
-	console.log("Public config retrieved.", config);
-
 	return config;
 };
