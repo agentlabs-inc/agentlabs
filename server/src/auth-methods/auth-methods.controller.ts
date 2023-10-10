@@ -1,6 +1,5 @@
 import {
   Body,
-  ConflictException,
   Controller,
   Get,
   Param,
@@ -11,10 +10,9 @@ import {
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UserAuthenticatedRequest } from 'src/iam/iam.types';
 import { RequireAuthMethod } from '../iam/iam.decorators';
+import { TelemetryService } from '../telemetry/telemetry.service';
 import { AuthMethodsService } from './auth-methods.service';
-import { CreateAuthMethodDto } from './dtos/create.auth-method.dto';
 import { CreateDemoAuthMethodsDto } from './dtos/create.demo.auth-method.dto';
-import { CreatedAuthMethodDto } from './dtos/created.auth-method.dto';
 import { CreatedDemoAuthMethodsDto } from './dtos/created.demo.auth-method.dto';
 import { ListAuthMethodResponseDto } from './dtos/list.auth-method.response.dto';
 import { UpsertAuthMethodDto } from './dtos/upsert.auth-method.dto';
@@ -24,43 +22,10 @@ import { UpsertedAuthMethodDto } from './dtos/upserted.auth-method.dto';
 @ApiBearerAuth()
 @Controller('authMethods')
 export class AuthMethodsController {
-  constructor(private readonly authMethodsService: AuthMethodsService) {}
-
-  @RequireAuthMethod('user-token')
-  @Post('/create-for-demo')
-  async createAuthMethod(
-    @Req() req: UserAuthenticatedRequest,
-    @Body() dto: CreateAuthMethodDto,
-  ): Promise<CreatedAuthMethodDto> {
-    const result = await this.authMethodsService.createAuthMethod({
-      ...dto,
-      creatorId: req.user.id,
-    });
-
-    if (result.ok) {
-      return result.value;
-    }
-
-    switch (result.error) {
-      case 'ProjectNotFound':
-        throw new UnauthorizedException({
-          message: 'Project not found',
-          code: 'ProjectNotFound',
-        });
-
-      case 'NotAProjectUser':
-        throw new UnauthorizedException({
-          message: 'Not a project user',
-          code: 'NotAProjectUser',
-        });
-
-      case 'AuthMethodAlreadyExists':
-        throw new ConflictException({
-          message: 'Auth method already exists',
-          code: 'AuthMethodAlreadyExists',
-        });
-    }
-  }
+  constructor(
+    private readonly authMethodsService: AuthMethodsService,
+    private readonly telemetryService: TelemetryService,
+  ) {}
 
   @RequireAuthMethod('user-token')
   @Post('/upsert')
@@ -74,6 +39,13 @@ export class AuthMethodsController {
     });
 
     if (result.ok) {
+      this.telemetryService.track({
+        event: 'AuthMethod Configured',
+        userId: req.user.id,
+        properties: {
+          provider: dto.provider,
+        },
+      });
       return result.value;
     }
 
@@ -104,6 +76,13 @@ export class AuthMethodsController {
     });
 
     if (result.ok) {
+      this.telemetryService.track({
+        event: 'Demo AuthMethod Configured',
+        userId: req.user.id,
+        properties: {
+          methods: [...dto.methods],
+        },
+      });
       return result.value;
     }
 

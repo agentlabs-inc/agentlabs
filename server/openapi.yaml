@@ -206,27 +206,6 @@ paths:
                 $ref: "#/components/schemas/LoginMemberResponseDto"
       tags:
         - Members
-  /authMethods/create-for-demo:
-    post:
-      operationId: createAuthMethod
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateAuthMethodDto"
-      responses:
-        "201":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CreatedAuthMethodDto"
-      tags:
-        - authMethods
-      security:
-        - bearer: []
   /authMethods/upsert:
     post:
       operationId: upsert
@@ -800,6 +779,8 @@ components:
           type: number
         projectCreatedCount:
           type: number
+        agentCreatedCount:
+          type: number
       required:
         - id
         - email
@@ -811,6 +792,7 @@ components:
         - onboarding
         - projectCount
         - projectCreatedCount
+        - agentCreatedCount
     MemberItem:
       type: object
       properties:
@@ -957,90 +939,6 @@ components:
         - state
         - redirectUri
         - projectId
-    CreateAuthMethodDto:
-      type: object
-      properties:
-        provider:
-          type: string
-          enum:
-            - PASSWORDLESS_EMAIL
-            - EMAIL_AND_PASSWORD
-            - SMS
-            - ANONYMOUS
-            - GOOGLE
-            - GITHUB
-            - GITLAB
-            - MICROSOFT
-        projectId:
-          type: string
-        isEnabled:
-          type: boolean
-        clientId:
-          type: string
-        clientSecret:
-          type: string
-        scopes:
-          type: array
-          items:
-            type: string
-      required:
-        - provider
-        - projectId
-        - isEnabled
-        - clientId
-        - clientSecret
-        - scopes
-    CreatedAuthMethodDto:
-      type: object
-      properties:
-        type:
-          type: string
-          enum:
-            - OAUTH2
-            - EMAIL
-            - PHONE_NUMBER
-            - ANONYMOUS
-        provider:
-          type: string
-          enum:
-            - PASSWORDLESS_EMAIL
-            - EMAIL_AND_PASSWORD
-            - SMS
-            - ANONYMOUS
-            - GOOGLE
-            - GITHUB
-            - GITLAB
-            - MICROSOFT
-        projectId:
-          type: string
-        isEnabled:
-          type: boolean
-        clientId:
-          type: string
-          nullable: true
-        clientSecret:
-          type: string
-          nullable: true
-        scopes:
-          type: array
-          items:
-            type: string
-        createdAt:
-          format: date-time
-          type: string
-        updatedAt:
-          format: date-time
-          type: string
-      required:
-        - type
-        - provider
-        - projectId
-        - isEnabled
-        - clientId
-        - clientSecret
-        - scopes
-        - createdAt
-        - updatedAt
     UpsertAuthMethodDto:
       type: object
       properties:

@@ -18,6 +18,8 @@ import { OauthProvidersModule } from './oauth-providers/oauth-providers.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ProjectsModule } from './projects/projects.module';
 import { SdkSecretsModule } from './sdk-secrets/sdk-secrets.module';
+import { TelemetryModule } from './telemetry/telemetry.module';
+import { TelemetryService } from './telemetry/telemetry.service';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -40,8 +42,9 @@ import { UsersModule } from './users/users.module';
     SdkSecretsModule,
     AttachmentsModule,
     OauthProvidersModule,
+    TelemetryModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, TelemetryService],
 })
 export class AppModule {}

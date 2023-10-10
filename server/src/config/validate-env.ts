@@ -66,6 +66,10 @@ export class Environment {
 
   @IsString()
   AES_ENCRYPTION_KEY: string;
+
+  @IsString()
+  @IsOptional()
+  SECRET_TELEMETRY_KEY?: string;
 }
 
 export const validateEnv = (env: NodeJS.ProcessEnv) => {

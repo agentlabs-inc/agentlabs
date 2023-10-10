@@ -11,6 +11,8 @@
 	import { loginRoute, onboardingRoute } from "$lib/routes/routes";
 	import { loginUser } from "$lib/usecases/users/login";
 	import { goto } from "$app/navigation";
+	import { onMount } from "svelte";
+	import { telemetryService } from "$lib/services/telemetry";
 
 	export let data: PageData;
 
@@ -53,6 +55,10 @@
 			submitting = false;
 		}
 	};
+
+	onMount(() => {
+		telemetryService.page("console", "register");
+	});
 </script>
 
 <div
