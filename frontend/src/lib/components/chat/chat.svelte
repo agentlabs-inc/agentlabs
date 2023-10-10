@@ -59,7 +59,8 @@
 		addMessage({
 			id: uuidv4(), // this is a fake id, the real id will be set by the server
 			...payload.data, 
-			createdAt: timestamp
+			createdAt: timestamp,
+			format: 'PLAIN_TEXT'
 		});
 		
 		isWaitingForAnswer = true;
@@ -108,12 +109,15 @@
 			shouldRedirectToConversation = false;
 		}
 
+		console.log(payload);
+
 		isWaitingForAnswer = false;
 		addMessage({
 				id: payload.data.messageId,
 				text: payload.data.text,
 				source: payload.data.source,
-				createdAt: payload.timestamp
+				createdAt: payload.timestamp,
+				format: payload.data.format
 			});
 	}
 
@@ -128,7 +132,8 @@
 				id: payload.data.messageId,
 				text: payload.data.text,
 				source: 'AGENT',
-				createdAt: payload.timestamp
+				createdAt: payload.timestamp,
+				format: payload.data.format
 		});
 	}
 
@@ -186,7 +191,9 @@
 							<ChatMessage
 								from={message.source}
 								time={dayjs(message.createdAt).format("M/D/YYYY hh:mm A")}
-								body={message.text} />
+								body={message.text}
+								format={message.format}
+							/>
 						</div>
 					{/each}
 				</div>

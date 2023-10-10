@@ -28,6 +28,7 @@ export class AgentChatMessagesService {
         text: payload.text,
         source: payload.source,
         conversationId: payload.conversationId,
+        format: payload.format,
       },
     });
 

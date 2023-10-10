@@ -325,6 +325,12 @@ enum AgentMessageSource {
 	SYSTEM // reserved for future use
 }
 
+enum MessageFormat {
+	PLAIN_TEXT
+	MARKDOWN
+	HTML // reserved for future use
+}
+
 model AgentMessage {
 	id				String				@id			@default(uuid())
 	createdAt		DateTime						@default(now())
@@ -337,6 +343,7 @@ model AgentMessage {
 	conversation	AgentConversation	@relation(fields: [conversationId], references: [id])
 	
 	attachments		AgentMessageAttachment[]
+	format			MessageFormat @default(PLAIN_TEXT)
 }
 
 model AgentMessageAttachment {

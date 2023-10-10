@@ -1,3 +1,4 @@
+from enum import Enum
 import os
 from typing import Any, Callable, TypedDict
 from socketio.pubsub_manager import uuid
@@ -6,14 +7,11 @@ from .http import HttpApi
 from agentlabs.logger import AgentLogger
 
 from .server import emit, agent_namespace
-from .attachment import Attachment
 import socketio
 
-class AgentConfig(TypedDict):
-    agentlabs_url: str;
-    project_id: str;
-    agent_id: str;
-    secret: str;
+class MessageFormat(Enum):
+    PLAIN_TEXT = "PLAIN_TEXT"
+    MARKDOWN = "MARKDOWN"
 
 class _DecodedUser(TypedDict):
     id: str
@@ -38,10 +36,11 @@ class User:
 class StreamedChatMessage:
     is_ended: bool = False
 
-    def __init__(self, io: socketio.Client, conversation_id: str):
+    def __init__(self, io: socketio.Client, conversation_id: str, format: MessageFormat):
         self.io = io
         self.conversation_id = conversation_id
         self.message_id = str(uuid.uuid4())
+        self.format = format
 
     """
     Writes a token to the stream. This can be used to send a message in multiple parts.
@@ -55,7 +54,8 @@ class StreamedChatMessage:
             "conversationId": self.conversation_id,
             "messageId": self.message_id,
             "text": token,
-            "attachments": []
+            "attachments": [],
+            "format": self.format.value
         })
 
     """
@@ -85,18 +85,19 @@ class IncomingChatMessage:
     in multiple parts.
     Well suited to stream LLM outputs.
     """
-    def streamed_reply(self):
-        return StreamedChatMessage(self.io, self.conversation_id)
+    def streamed_reply(self, format: MessageFormat = MessageFormat.PLAIN_TEXT):
+        return StreamedChatMessage(self.io, self.conversation_id, format)
 
     """
     Replies to the message instantly. If you are looking to stream a reply in multiple parts,
     use streamed_reply() instead.
     """
-    def reply(self, message: str):
+    def reply(self, message: str, format: MessageFormat = MessageFormat.PLAIN_TEXT):
         emit(self.io, 'chat-message', {
             "conversationId": self.conversation_id,
             "text": message,
-            "attachments": []
+            "attachments": [],
+            "format": format.value
         })
 
         # TODO: we'll come back to this when we officially support attachments

@@ -172,10 +172,11 @@ export class AgentConnectionGateway
     try {
       await this.conversationMutexManager.acquire(conversation.id);
 
-      await this.messagesService.createMessage({
+      const message = await this.messagesService.createMessage({
         conversationId: conversation.id,
         text: payload.data.text,
         source: 'AGENT',
+        format: payload.data.format,
       });
 
       const frontendConnection =
@@ -201,7 +202,16 @@ export class AgentConnectionGateway
         };
       }
 
-      frontendConnection.socket.emit('chat-message', payload);
+      frontendConnection.socket.emit('chat-message', {
+        timestamp: new Date().toISOString(),
+        data: {
+          conversationId: conversation.id,
+          text: payload.data.text,
+          format: payload.data.format,
+          source: 'AGENT',
+          messageId: message.id,
+        },
+      });
 
       return {
         message: 'Message sent successfully',
@@ -221,6 +231,7 @@ export class AgentConnectionGateway
       messageId: payload.data.messageId,
       conversationId: payload.data.conversationId,
       token: payload.data.text,
+      format: payload.data.format,
     });
   }
 

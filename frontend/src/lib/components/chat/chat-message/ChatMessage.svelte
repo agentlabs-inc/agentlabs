@@ -4,10 +4,12 @@
 	import MarkdownRenderer from "$lib/components/markdown/markdown-renderer.svelte";
 	import AgentIcon from "$lib/assets/img/agent-icon.svg";
 	import { authStore } from "$lib/stores/auth";
+	import type { ChatMessageFormat } from "$lib/stores/chat";
 
 	export let time: string;
 	export let body: string;
 	export let from: "USER" | "AGENT" | "SYSTEM";
+	export let format: ChatMessageFormat;
 
 	let bubbleClass: string;
 
@@ -37,7 +39,7 @@
 					{time}
 				</div>
 				<div class="text-body-accent dark:text-body-accent-dark text-[11pt] leading-7">
-					{#if from !== "USER"}
+					{#if format === "MARKDOWN"}
 						<MarkdownRenderer source={body} />
 					{:else}
 						{body}
