@@ -8,5 +8,6 @@ export default defineConfig({
 	},
 	ssr: {
 		noExternal: ["svelte-hero-icons"]
-	}
+	},
+	server: {}
 });

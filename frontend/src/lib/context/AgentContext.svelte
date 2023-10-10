@@ -12,6 +12,7 @@
 	onMount(async () => {
 		const { list, selectedAgent } = get<AgentStore>(agentStore);
 
+
 		if (list.length > 0 && !!selectedAgent) {
 			loading = false;
 			return;

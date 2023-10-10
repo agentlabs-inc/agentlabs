@@ -4,6 +4,7 @@
 	import AgentContext from "$lib/context/AgentContext.svelte";
 	import AuthOnly from "$lib/gates/AuthOnly.svelte";
 	import RealtimeContext from "$lib/context/RealtimeContext.svelte";
+	import Chat from "$lib/components/chat/chat.svelte";
 </script>
 
 <AuthOnly>
@@ -14,6 +15,7 @@
 				<div class="flex flex-row flex-grow">
 					<LeftNav />
 					<div class="flex-grow">
+						<Chat />
 						<slot />
 					</div>
 				</div>

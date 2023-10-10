@@ -49,6 +49,7 @@ export class AgentChatConversationsService {
       data: {
         memberId: payload.memberId,
         agentId: payload.agentId,
+        id: payload.id,
       },
     });
 

@@ -1,5 +1,6 @@
 import type { Conversation } from "$lib/entities/conversation/conversation";
-import { derived, get, writable } from "svelte/store";
+import { v4 as uuidv4 } from 'uuid'
+import { get, writable } from "svelte/store";
 
 export interface ConversationStore {
 	list: Conversation[];
@@ -41,3 +42,5 @@ export const addConversation = (conversation: Conversation) => {
 		return store;
 	});
 }
+
+export const generateConversationId = () => uuidv4();

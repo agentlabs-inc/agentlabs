@@ -5,10 +5,12 @@ import { writable } from "svelte/store";
 
 export interface RealtimeStore {
 	connection: Socket | null;
+	startConversationMessage: string | null;
 }
 
 export const realtimeStore = writable<RealtimeStore>({
-	connection: null
+	connection: null,
+	startConversationMessage: null
 });
 
 export const openRealtimeConnection = async (projectId: string, agentId: string, idToken: string) => {

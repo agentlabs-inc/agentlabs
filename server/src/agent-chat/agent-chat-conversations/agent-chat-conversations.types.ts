@@ -1,4 +1,5 @@
 export interface CreateAgentChatConversationPayload {
+  id: string;
   agentId: string;
   memberId: string;
 }

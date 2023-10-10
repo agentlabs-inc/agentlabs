@@ -8,7 +8,7 @@ class FrontendChatMessageDtoData {
 
   @IsOptional()
   @IsString()
-  conversationId?: string;
+  conversationId: string;
 }
 
 export class FrontendChatMessageDto extends BaseRealtimeMessageDto {

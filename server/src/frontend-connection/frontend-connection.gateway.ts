@@ -25,7 +25,6 @@ export class FrontendConnectionGateway
   private readonly logger = new Logger(FrontendConnectionGateway.name);
   private readonly projectIdHeader = 'x-agentlabs-project-id';
   private readonly agentIdHeader = 'x-agentlabs-agent-id';
-  private readonly memberIdHeader = 'x-agentlabs-member-id';
 
   constructor(
     private readonly frontendConnectionManagerService: FrontendConnectionManagerService,
@@ -137,28 +136,29 @@ export class FrontendConnectionGateway
       };
     }
 
-    let conversationId = payload.data.conversationId;
+    let conversation = await this.conversationsService.findConversationById(
+      payload.data.conversationId,
+    );
 
-    if (!conversationId) {
-      const { id } = await this.conversationsService.createConversation({
+    if (!conversation) {
+      conversation = await this.conversationsService.createConversation({
+        id: payload.data.conversationId,
         agentId: frontendConnection.agentId,
         memberId: frontendConnection.memberId,
       });
-
-      conversationId = id;
     }
 
     const message = await this.messagesService.createMessage({
       source: 'USER',
       text: payload.data.text,
-      conversationId,
+      conversationId: conversation.id,
     });
 
     const clientPayload: BaseRealtimeMessageDto = {
       timestamp: new Date().toISOString(),
       data: {
         text: message.text,
-        conversationId,
+        conversationId: conversation.id,
         source: 'USER',
       },
       message: 'Message sent',
@@ -189,7 +189,7 @@ export class FrontendConnectionGateway
       // Send  a link to the documentation on how to connect an agent.
 
       await this.messagesService.createMessage({
-        conversationId,
+        conversationId: conversation.id,
         source: 'SYSTEM',
         text,
       });
@@ -198,7 +198,7 @@ export class FrontendConnectionGateway
         timestamp: new Date().toISOString(),
         data: {
           text,
-          conversationId,
+          conversationId: conversation.id,
           source: 'SYSTEM',
         },
         message: 'Agent is offline',
@@ -212,7 +212,7 @@ export class FrontendConnectionGateway
     agentConnection.socket.emit('chat-message', {
       data: {
         text: payload.data.text,
-        conversationId,
+        conversationId: conversation.id,
         agentId: frontendConnection.agentId,
         messageId: message.id,
         memberId: frontendConnection.memberId,
