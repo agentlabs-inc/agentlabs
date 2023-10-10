@@ -1,7 +1,8 @@
 import type { User } from "$lib/entities/user/user";
-import { persist, createLocalStorage } from "@macfja/svelte-persistent-store";
-import { get, writable } from "svelte/store";
+import { telemetryService } from "$lib/services/telemetry";
 import { genStoreKey } from "$lib/utils/genStoreKey";
+import { createLocalStorage, persist } from "@macfja/svelte-persistent-store";
+import { get, writable } from "svelte/store";
 
 export const AUTH_STORE_KEY = genStoreKey("auth-store");
 
@@ -18,6 +19,12 @@ export const authStore = persist(
 	createLocalStorage(),
 	AUTH_STORE_KEY
 );
+
+authStore.subscribe((store) => {
+	if (store.user) {
+		telemetryService.identify(store.user.id);
+	}
+});
 
 export const setUserAuth = (user: User, accessToken: string) => {
 	authStore.set({

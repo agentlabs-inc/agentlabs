@@ -10,6 +10,8 @@
 	import { toastError } from "$lib/utils/toast";
 	import { homeRoute, registerRoute } from "$lib/routes/routes";
 	import { goto } from "$app/navigation";
+	import { onMount } from "svelte";
+	import { telemetryService } from "$lib/services/telemetry";
 
 	export let data: PageData;
 
@@ -41,6 +43,10 @@
 			submitting = false;
 		}
 	};
+
+	onMount(() => {
+		telemetryService.page("console", "login");
+	});
 </script>
 
 <div

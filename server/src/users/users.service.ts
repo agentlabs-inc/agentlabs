@@ -8,6 +8,7 @@ import { PResult, Result, err, ok } from '../common/result';
 import { MailerService } from '../mailer/mailer.service';
 import { GoogleService } from '../oauth-providers/google/google.service';
 import { LoginResponseDto } from './dtos/login.response.dto';
+import { OAuthLoginUserResponseDto } from './dtos/oauthlogin.user.response.dto';
 import { RegisterUserDto } from './dtos/register.user.dto';
 import { SanitizedUserResponseDto } from './dtos/sanitized.user.response.dto';
 import { UserCreatedResponseDto } from './dtos/user.created.response.dto';
@@ -176,6 +177,7 @@ export class UsersService {
       },
       include: {
         projectCreated: true,
+        agentCreated: true,
         onboardings: true,
         organizations: {
           include: {
@@ -217,6 +219,7 @@ export class UsersService {
         0,
       ),
       projectCreatedCount: user.projectCreated.length,
+      agentCreatedCount: user.agentCreated.length,
     });
   }
 
@@ -298,7 +301,7 @@ export class UsersService {
     signInMethod: 'google';
     providerUserId: string;
     isVerified: boolean;
-  }): Promise<User> {
+  }): Promise<{ created: boolean; user: User }> {
     const { email, fullName, pictureUrl } = params;
     const userCreatedOrUpdated = await this.prisma.$transaction(async (tx) => {
       const user = await tx.user.findFirst({
@@ -348,7 +351,7 @@ export class UsersService {
           },
         });
 
-        return userCreated;
+        return { created: true, user: userCreated };
       }
 
       const userUpdated = await tx.user.update({
@@ -364,7 +367,7 @@ export class UsersService {
         },
       });
 
-      return userUpdated;
+      return { created: false, user: userUpdated };
     });
 
     return userCreatedOrUpdated;
@@ -375,7 +378,7 @@ export class UsersService {
     state: string;
     redirectUri: string;
     providerId: string;
-  }): PResult<LoginResponseDto, OAuthLoginError> {
+  }): PResult<OAuthLoginUserResponseDto, OAuthLoginError> {
     const { providerId, code, state, redirectUri } = params;
 
     if (providerId !== 'google') {
@@ -419,11 +422,14 @@ export class UsersService {
       isVerified: user.email_verified,
     });
 
-    const ourAccessToken = await this.generateAccessToken(userCreatedOrUpdated);
+    const ourAccessToken = await this.generateAccessToken(
+      userCreatedOrUpdated.user,
+    );
 
     return ok({
       accessToken: ourAccessToken,
-      user: this.sanitizeUser(userCreatedOrUpdated),
+      user: this.sanitizeUser(userCreatedOrUpdated.user),
+      created: userCreatedOrUpdated.created,
     });
   }
 }

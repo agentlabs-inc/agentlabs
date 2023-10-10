@@ -2,8 +2,6 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { CreateAuthMethodDto } from '../models/CreateAuthMethodDto';
-import type { CreatedAuthMethodDto } from '../models/CreatedAuthMethodDto';
 import type { CreatedDemoAuthMethodsDto } from '../models/CreatedDemoAuthMethodsDto';
 import type { CreateDemoAuthMethodsDto } from '../models/CreateDemoAuthMethodsDto';
 import type { ListAuthMethodResponseDto } from '../models/ListAuthMethodResponseDto';
@@ -15,23 +13,6 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 
 export class AuthMethodsService {
-
-    /**
-     * @returns CreatedAuthMethodDto
-     * @throws ApiError
-     */
-    public static createAuthMethod({
-        requestBody,
-    }: {
-        requestBody: CreateAuthMethodDto,
-    }): CancelablePromise<CreatedAuthMethodDto> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/authMethods/create-for-demo',
-            body: requestBody,
-            mediaType: 'application/json',
-        });
-    }
 
     /**
      * @returns UpsertedAuthMethodDto

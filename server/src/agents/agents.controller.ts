@@ -18,13 +18,13 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { AttachmentsService } from 'src/attachments/attachments.service';
 import {
   MemberAuthenticatedRequest,
   UserAuthenticatedRequest,
 } from 'src/iam/iam.types';
 import { ProjectsService } from 'src/projects/projects.service';
 import { RequireAuthMethod } from '../iam/iam.decorators';
+import { TelemetryService } from '../telemetry/telemetry.service';
 import { AgentsService } from './agents.service';
 import { CreateAgentDto } from './dtos/create.agent.dto';
 import { DeletedAgentResponseDto } from './dtos/deleted.agent.response.dto';
@@ -41,7 +41,7 @@ export class AgentsController {
   constructor(
     private readonly agentsService: AgentsService,
     private readonly projectsService: ProjectsService,
-    private readonly attachmentsService: AttachmentsService,
+    private readonly telemetryService: TelemetryService,
   ) {}
 
   @RequireAuthMethod('user-token')
@@ -59,6 +59,10 @@ export class AgentsController {
     });
 
     if (result.ok) {
+      this.telemetryService.track({
+        event: 'Agent Created',
+        userId: user.id,
+      });
       return result.value;
     }
 
@@ -150,6 +154,10 @@ export class AgentsController {
     });
 
     if (result.ok) {
+      this.telemetryService.track({
+        event: 'Agent Updated',
+        userId: req.user.id,
+      });
       return result.value;
     }
 
@@ -188,6 +196,10 @@ export class AgentsController {
     });
 
     if (result.ok) {
+      this.telemetryService.track({
+        event: 'Agent Deleted',
+        userId: req.user.id,
+      });
       return { success: true };
     }
 

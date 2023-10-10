@@ -14,5 +14,6 @@ export type WhoAmIResultDto = {
     onboarding: Record<string, any>;
     projectCount: number;
     projectCreatedCount: number;
+    agentCreatedCount: number;
 };
 

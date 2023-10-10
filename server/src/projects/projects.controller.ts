@@ -18,6 +18,7 @@ import {
 } from '@nestjs/swagger';
 import { UserAuthenticatedRequest } from 'src/iam/iam.types';
 import { RequireAuthMethod } from '../iam/iam.decorators';
+import { TelemetryService } from '../telemetry/telemetry.service';
 import { CreateProjectDto } from './dtos/create.project.dto';
 import { CreatedProjectDto } from './dtos/created.project.dto';
 import { GetPublicConfigDto } from './dtos/get.public.config.dto';
@@ -31,7 +32,10 @@ import { ProjectsService } from './projects.service';
 @ApiBearerAuth()
 @Controller('projects')
 export class ProjectsController {
-  constructor(private readonly projectsService: ProjectsService) {}
+  constructor(
+    private readonly projectsService: ProjectsService,
+    private readonly telemetryService: TelemetryService,
+  ) {}
 
   @RequireAuthMethod('user-token')
   @Post('/create')
@@ -47,6 +51,10 @@ export class ProjectsController {
     });
 
     if (result.ok) {
+      this.telemetryService.track({
+        userId: user.id,
+        event: 'Project Created',
+      });
       return result.value;
     }
 

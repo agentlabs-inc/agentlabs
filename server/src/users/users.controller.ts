@@ -17,6 +17,7 @@ import {
 } from '@nestjs/swagger';
 import { UserAuthenticatedRequest } from 'src/iam/iam.types';
 import { RequireAuthMethod } from '../iam/iam.decorators';
+import { TelemetryService } from '../telemetry/telemetry.service';
 import { LoginResponseDto } from './dtos/login.response.dto';
 import { LoginUserDto } from './dtos/login.user.dto';
 import { oauthUserAuthorizeDto } from './dtos/oauth.authorize.dto';
@@ -31,7 +32,10 @@ import { UsersService } from './users.service';
 })
 @Controller('/users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly telemetryService: TelemetryService,
+  ) {}
 
   @ApiConflictResponse({
     description: 'User already exists, please login.',
@@ -51,6 +55,11 @@ export class UsersController {
           });
       }
     }
+
+    this.telemetryService.track({
+      userId: result.value.id,
+      event: 'User Created',
+    });
 
     return result.value;
   }
@@ -94,6 +103,11 @@ export class UsersController {
       }
     }
 
+    this.telemetryService.track({
+      userId: result.value.user.id,
+      event: 'User Logged In',
+    });
+
     return result.value;
   }
 
@@ -113,6 +127,18 @@ export class UsersController {
       throw new UnauthorizedException({
         message: result.error,
         description: result.error,
+      });
+    }
+
+    if (result.value.created) {
+      this.telemetryService.track({
+        userId: result.value.user.id,
+        event: 'User Created',
+      });
+    } else {
+      this.telemetryService.track({
+        userId: result.value.user.id,
+        event: 'User Logged In',
       });
     }
 
@@ -137,6 +163,16 @@ export class UsersController {
           });
       }
     }
+
+    this.telemetryService.identify({
+      userId: result.value.id,
+      traits: {
+        projectCreatedCount: result.value.projectCreatedCount,
+        agentCreatedCount: result.value.agentCreatedCount,
+        organizationCount: result.value.organizationCount,
+        hasAddedAuthMethod: result.value.onboarding.hasAddedAuthMethod,
+      },
+    });
 
     return result.value;
   }

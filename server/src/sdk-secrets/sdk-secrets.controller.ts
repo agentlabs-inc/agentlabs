@@ -12,6 +12,7 @@ import {
 } from '@nestjs/swagger';
 import { RequireAuthMethod } from '../iam/iam.decorators';
 import { UserAuthenticatedRequest } from '../iam/iam.types';
+import { TelemetryService } from '../telemetry/telemetry.service';
 import { CreateSdkSecretDto } from './dtos/create.sdk-secret.dto';
 import { CreatedSdkSecretDto } from './dtos/created.sdk-secret.dto';
 import { SdkSecretsService } from './sdk-secrets.service';
@@ -20,7 +21,10 @@ import { SdkSecretsService } from './sdk-secrets.service';
 @ApiBearerAuth()
 @Controller('sdk-secrets')
 export class SdkSecretsController {
-  constructor(private readonly sdkSecretsService: SdkSecretsService) {}
+  constructor(
+    private readonly sdkSecretsService: SdkSecretsService,
+    private readonly telemetryService: TelemetryService,
+  ) {}
 
   @ApiUnauthorizedResponse({
     description: 'You are not authorized to perform this action',
@@ -39,6 +43,13 @@ export class SdkSecretsController {
     });
 
     if (result.ok) {
+      this.telemetryService.track({
+        event: 'SDK Secret Created',
+        userId: user.id,
+        properties: {
+          projectId: dto.projectId,
+        },
+      });
       return result.value;
     }
 

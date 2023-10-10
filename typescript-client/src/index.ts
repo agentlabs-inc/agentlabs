@@ -8,9 +8,7 @@ export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
 export type { CreateAgentDto } from './models/CreateAgentDto';
-export type { CreateAuthMethodDto } from './models/CreateAuthMethodDto';
 export type { CreatedAgentDto } from './models/CreatedAgentDto';
-export type { CreatedAuthMethodDto } from './models/CreatedAuthMethodDto';
 export type { CreatedDemoAuthMethodsDto } from './models/CreatedDemoAuthMethodsDto';
 export type { CreateDemoAuthMethodsDto } from './models/CreateDemoAuthMethodsDto';
 export type { CreatedProjectDto } from './models/CreatedProjectDto';

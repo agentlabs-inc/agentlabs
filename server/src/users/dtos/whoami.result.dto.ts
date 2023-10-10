@@ -67,4 +67,7 @@ export class WhoAmIResultDto {
 
   @IsNumber()
   projectCreatedCount: number;
+
+  @IsNumber()
+  agentCreatedCount: number;
 }
