@@ -222,6 +222,7 @@ export class AgentConnectionGateway
       messageId: payload.data.messageId,
       conversationId: payload.data.conversationId,
       token: payload.data.text,
+      format: payload.data.format,
     });
   }
 

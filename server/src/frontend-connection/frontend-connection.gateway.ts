@@ -200,6 +200,7 @@ export class FrontendConnectionGateway
           conversationId: conversation.id,
           source: 'SYSTEM',
           messageId: message.id,
+          format: 'MARKDOWN',
         },
         message: 'Agent is offline',
       };

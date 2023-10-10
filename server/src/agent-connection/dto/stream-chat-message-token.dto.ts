@@ -1,5 +1,6 @@
+import { MessageFormat } from '@prisma/client';
 import { Type } from 'class-transformer';
-import { IsString, ValidateNested } from 'class-validator';
+import { IsEnum, IsString, ValidateNested } from 'class-validator';
 import { BaseRealtimeMessageDto } from 'src/common/base-realtime-message.dto';
 
 class StreamChatMessageTokenDtoData {
@@ -11,6 +12,9 @@ class StreamChatMessageTokenDtoData {
 
   @IsString()
   messageId: string;
+
+  @IsEnum(MessageFormat)
+  format: MessageFormat;
 }
 
 export class StreamChatMessageTokenDto extends BaseRealtimeMessageDto {

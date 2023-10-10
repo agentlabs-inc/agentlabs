@@ -12,13 +12,26 @@ export interface RawChatMessage {
 	memberId: string;
 }
 
+export interface ReplyMessageOptions {
+	format?: MessageFormat;
+}
+
+const MessageFormats = [
+	'PLAIN_TEXT',
+	'MARKDOWN',
+] as const;
+
+export type MessageFormat = typeof MessageFormats[number];
+
 export type OnChatMessageHandler = (message: IncomingChatMessage) => void;
 
 class StreamedMessage {
 	private readonly messageId = randomUUID()
 	private isEnded = false;
+	private format: MessageFormat;
 
-	constructor(private readonly io: Socket, private readonly conversationId: string) {
+	constructor(private readonly io: Socket, private readonly conversationId: string, options: ReplyMessageOptions) {
+		this.format = options.format ?? 'PLAIN_TEXT';
 	}
 
 	/**
@@ -37,6 +50,7 @@ class StreamedMessage {
 				attachments: [],
 				conversationId: this.conversationId,
 				messageId: this.messageId,
+				format: this.format
 			}
 		})
 	}
@@ -77,21 +91,24 @@ class IncomingChatMessage {
 	 * Such reply is intended to be read by the user in realtime.
 	 * If you are looking to send the entire message at once, use `reply` instead.
 	 */
-	streamedReply() {
-		return new StreamedMessage(this.io, this.conversationId);
+	streamedReply(options: ReplyMessageOptions = {}) {
+		return new StreamedMessage(this.io, this.conversationId, options);
 	}
 
 	/**
 	 * Reply to the message, sending the entire message at once.
 	 * If you are looking to stream the reply as multiple parts, use `streamedReply` instead.
 	 */
-	reply(message: string) {
+	reply(message: string, options: ReplyMessageOptions = {}) {
+		const format = options.format ?? 'PLAIN_TEXT';
+
 		this.io.emit('chat-message', {
 			timestamp: new Date().toISOString(),
 			data: {
 				text: message,
 				attachments: [],
 				conversationId: this.conversationId,
+				format
 			}
 		});
 	}

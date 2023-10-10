@@ -1,10 +1,18 @@
 import { writable } from "svelte/store";
 
+export const ChatMessageFormats = [
+	'PLAIN_TEXT',
+	'MARKDOWN',
+] as const;
+
+export type ChatMessageFormat = typeof ChatMessageFormats[number];
+
 export interface ChatMessage {
 	id: string;
 	text: string;
 	source: 'USER' | 'AGENT' | 'SYSTEM';
 	createdAt: string;
+	format: ChatMessageFormat;
 }
 
 export interface ChatStore {

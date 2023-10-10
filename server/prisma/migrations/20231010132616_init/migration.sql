@@ -11,6 +11,9 @@ CREATE TYPE "AuthProvider" AS ENUM ('PASSWORDLESS_EMAIL', 'EMAIL_AND_PASSWORD', 
 CREATE TYPE "AgentMessageSource" AS ENUM ('USER', 'AGENT', 'SYSTEM');
 
 -- CreateEnum
+CREATE TYPE "MessageFormat" AS ENUM ('PLAIN_TEXT', 'MARKDOWN', 'HTML');
+
+-- CreateEnum
 CREATE TYPE "AttachmentStorageDriver" AS ENUM ('AWS_S3', 'AZURE_BLOB_STORAGE', 'GOOGLE_CLOUD_STORAGE', 'LOCAL_FILE_SYSTEM');
 
 -- CreateTable
@@ -232,6 +235,7 @@ CREATE TABLE "AgentMessage" (
     "source" "AgentMessageSource" NOT NULL,
     "text" TEXT NOT NULL,
     "conversationId" TEXT NOT NULL,
+    "format" "MessageFormat" NOT NULL DEFAULT 'PLAIN_TEXT',
 
     CONSTRAINT "AgentMessage_pkey" PRIMARY KEY ("id")
 );

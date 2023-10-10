@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { MessageFormat } from '@prisma/client';
 import { Socket } from 'socket.io';
 import { seconds } from 'src/common/ms-time';
 import { FrontendConnectionManagerService } from 'src/frontend-connection-manager/frontend-connection-manager.service';
@@ -11,12 +12,14 @@ export interface StreamData {
   conversationId: string;
   messageId: string;
   createdAtTs: number;
+  format: MessageFormat;
 }
 
 interface HandlePayload {
   messageId: string;
   conversationId: string;
   token: string;
+  format: MessageFormat;
 }
 
 @Injectable()
@@ -86,6 +89,7 @@ export class AgentStreamManagerService {
           text: stream.buffer,
           source: 'AGENT',
           conversationId: stream.conversationId,
+          format: stream.format,
         },
       });
     } else {
@@ -143,6 +147,7 @@ export class AgentStreamManagerService {
           buffer: '',
           messageId: data.messageId,
           createdAtTs: Date.now(),
+          format: data.format,
         };
 
         this.activeStreams.set(data.messageId, stream);
@@ -154,6 +159,7 @@ export class AgentStreamManagerService {
           text: data.token,
           conversationId: stream.conversationId,
           messageId: stream.messageId,
+          format: stream.format,
         },
       });
     } finally {
