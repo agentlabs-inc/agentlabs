@@ -59,7 +59,8 @@
 		addMessage({
 			id: uuidv4(), // this is a fake id, the real id will be set by the server
 			...payload.data, 
-			createdAt: timestamp
+			createdAt: timestamp,
+			format: 'PLAIN_TEXT'
 		});
 		
 		isWaitingForAnswer = true;
