@@ -176,6 +176,7 @@ export class AgentConnectionGateway
         conversationId: conversation.id,
         text: payload.data.text,
         source: 'AGENT',
+        format: payload.data.format,
       });
 
       const frontendConnection =

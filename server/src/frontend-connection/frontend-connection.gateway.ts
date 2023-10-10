@@ -152,6 +152,7 @@ export class FrontendConnectionGateway
       source: 'USER',
       text: payload.data.text,
       conversationId: conversation.id,
+      format: 'PLAIN_TEXT',
     });
 
     const clientPayload: BaseRealtimeMessageDto = {
@@ -189,6 +190,7 @@ export class FrontendConnectionGateway
         conversationId: conversation.id,
         source: 'SYSTEM',
         text,
+        format: 'MARKDOWN',
       });
 
       const payload: BaseRealtimeMessageDto = {
