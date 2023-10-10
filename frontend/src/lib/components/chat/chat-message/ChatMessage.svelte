@@ -8,7 +8,6 @@
 	export let time: string;
 	export let body: string;
 	export let from: "USER" | "AGENT" | "SYSTEM";
-	export let typewriter = false;
 
 	let bubbleClass: string;
 
@@ -25,7 +24,7 @@
 		<div class="flex gap-4">
 			<div class="shrink-0">
 				{#if from === "USER"}
-					<Avatar alt="user avatar" src={member?.profilePictureUrl} />
+					<Avatar alt="user avatar" src={member?.profilePictureUrl ?? ''} />
 				{:else if from === "AGENT"}
 					<LetterAvatar>Ag</LetterAvatar>
 				{:else}

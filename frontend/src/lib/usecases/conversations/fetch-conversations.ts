@@ -3,9 +3,8 @@ import { AgentChatConversationsService } from "$lib/services/gen-api";
 import { setConversationList } from "$lib/stores/conversation";
 
 
-export const fetchConversations = async (agentId: string, memberId: string): Promise<Conversation[]> => {
+export const fetchConversations = async (agentId: string): Promise<Conversation[]> => {
 	const conversations = await AgentChatConversationsService.getAllConversations({
-		memberId,
 		agentId
 	})
 

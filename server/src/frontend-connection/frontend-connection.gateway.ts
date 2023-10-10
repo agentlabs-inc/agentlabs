@@ -185,9 +185,6 @@ export class FrontendConnectionGateway
         );
       }
 
-      // TODO: if the agent was never connected, assume it is the platform owner testing his app out.
-      // Send  a link to the documentation on how to connect an agent.
-
       await this.messagesService.createMessage({
         conversationId: conversation.id,
         source: 'SYSTEM',
@@ -200,6 +197,7 @@ export class FrontendConnectionGateway
           text,
           conversationId: conversation.id,
           source: 'SYSTEM',
+          messageId: message.id,
         },
         message: 'Agent is offline',
       };

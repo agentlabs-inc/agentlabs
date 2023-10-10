@@ -16,7 +16,7 @@
 			return;
 		}
 
-		await fetchConversations(agent.id, member.id);
+		await fetchConversations(agent.id);
 	});
 
 

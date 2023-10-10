@@ -11,6 +11,7 @@
 	import { afterNavigate, goto } from "$app/navigation";
 	import { agentStore } from "$lib/stores/agent";
 	import { authStore } from "$lib/stores/auth";
+	import { v4 as uuidv4 } from "uuid";
 
 	let chatElement: HTMLDivElement;
 	let chatInputElement: HTMLInputElement;
@@ -24,8 +25,6 @@
 
 	$: messages = $chatStore.messages;
 	$: conversationId = $conversationStore.selectedConversationId;
-
-
 	
 
 	let shouldRedirectToConversation = false;
@@ -45,7 +44,9 @@
 
 		const actualConversationId = conversationId ?? generateConversationId();
 
+		const timestamp = new Date().toISOString();
 		const payload = {
+			timestamp,
 			data: {
 				text: chatInputValue,
 				conversationId: actualConversationId,
@@ -55,10 +56,15 @@
 
 		chatElement.scrollTop = chatElement.scrollHeight;
 
-		addMessage(payload.data);
+		addMessage({
+			id: uuidv4(), // this is a fake id, the real id will be set by the server
+			...payload.data, 
+			createdAt: timestamp
+		});
 		
 		isWaitingForAnswer = true;
 		$conversationStore.selectedConversationId = actualConversationId;
+
 		con.emit('chat-message', payload);
 
 		chatInputValue = "";
@@ -103,7 +109,12 @@
 		}
 
 		isWaitingForAnswer = false;
-		addMessage(payload.data);
+		addMessage({
+				id: payload.data.messageId,
+				text: payload.data.text,
+				source: payload.data.source,
+				createdAt: payload.timestamp
+			});
 	}
 
 	const listenToStreamedChatMessageToken = (payload: any) => {
@@ -170,12 +181,11 @@
 		class="absolute top-0 bottom-[80px] left-0 right-0 overflow-y-scroll bg-background-primary dark:bg-background-secondary-dark">
 			{#if messages?.length > 0}
 				<div class="flex flex-col grow gap-4 py-4 px-3 items-start">
-					{#each messages as message, idx}
+					{#each messages as message(message.id)}
 						<div class="w-full">
 							<ChatMessage
-								typewriter={idx === messages.length - 1}
 								from={message.source}
-								time={dayjs(message.createdAt).format("hh:mm A")}
+								time={dayjs(message.createdAt).format("M/D/YYYY hh:mm A")}
 								body={message.text} />
 						</div>
 					{/each}
