@@ -1,8 +1,9 @@
 <script lang="ts">
 	import AgentLabsLogo from "$lib/components/common/logo/AgentLabsLogo.svelte";
 	import type { Theme } from "$lib/stores/theme";
+	import { themeStore } from "$lib/stores/theme";
 
-	export let theme: Theme = "light";
+	export let theme: Theme = $themeStore;
 </script>
 
 <div
