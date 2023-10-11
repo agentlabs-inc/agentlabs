@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://agentlabs.dev"><img src="./imgs/agentlabs-banner.jpg" alt="agentlabs.dev"></a>
+  <a href="https://agentlabs.dev"><img src="./.readme/agentlabs-banner.jpg" alt="agentlabs.dev"></a>
 </p>
 
 <p align="center">
@@ -47,13 +47,13 @@ AgentLabs is <b>fully open-sourced (Apache 2.0)</b> and AgentLabs Inc. offers cl
 ## How it works
 
 <p align="center">
-  <a href="https://agentlabs.dev"><img src="./imgs/how-it-works.jpg" alt="agentlabs.dev"></a>
+  <a href="https://agentlabs.dev"><img src="./.readme/how-it-works.jpg" alt="agentlabs.dev"></a>
 </p>
 
 ## Python SDK example
 
 <p align="center">
-  <a href="https://agentlabs.dev"><img src="./imgs/python-sdk-example.jpeg" alt="agentlabs.dev"></a>
+  <a href="https://agentlabs.dev"><img src="./.readme/python-sdk-example.jpeg" alt="agentlabs.dev"></a>
 </p>
 
 ## Status (UNDER ACTIVE DEVELOPMENT 🏗️)
