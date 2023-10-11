@@ -1,13 +1,6 @@
-#!/bin/bash
+#! /bin/bash
 
 set -e
-
-function populate_client_env() {
-	OPENAPI_BASE=${OPENAPI_BASE:-http://localhost:3001}
-
-	echo 'Setting environment variables for OpenAPI_BASE:' ${OPENAPI_BASE}
-	echo "OpenAPI.BASE = '${OPENAPI_BASE}';" >> src/client.ts
-}
 
 npx --yes openapi-typescript-codegen \
   --input ../server/openapi.yaml \
@@ -17,7 +10,10 @@ npx --yes openapi-typescript-codegen \
 
 cp client.ts src/
 
-populate_client_env
+OPENAPI_BASE=${OPENAPI_BASE:-http://localhost:3001}
+
+echo 'Setting environment variables for OpenAPI_BASE:' ${OPENAPI_BASE}
+echo "OpenAPI.BASE = '${OPENAPI_BASE}';" >> src/client.ts
 
 echo 'export { getToken } from "./client";' >> src/index.ts
 
