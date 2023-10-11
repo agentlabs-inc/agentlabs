@@ -5,6 +5,8 @@ import MarkdownParagraph from './markdown-paragraph.svelte';
 import MarkdownHeading from './markdown-heading.svelte';
 import MarkdownImage from './markdown-image.svelte';
 import MarkdownLink from './markdown-link.svelte';
+import MarkdownList from './markdown-list.svelte';
+import MarkdownListItem from './markdown-list-item.svelte';
 
 export let source: string;
 </script>
@@ -16,6 +18,8 @@ export let source: string;
 	paragraph: MarkdownParagraph,
 	heading: MarkdownHeading,
 	image: MarkdownImage,
-	link: MarkdownLink
+	link: MarkdownLink,
+	list: MarkdownList,
+	list_item: MarkdownListItem,
 	}}
 />
