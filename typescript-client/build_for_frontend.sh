@@ -2,7 +2,7 @@
 
 set -e
 
-source ./utils.sh
+. utils.sh
 
 npx --yes openapi-typescript-codegen \
   --input ../server/openapi.yaml \
