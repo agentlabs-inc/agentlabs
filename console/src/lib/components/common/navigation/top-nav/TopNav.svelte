@@ -31,7 +31,7 @@
 			on:keydown={() => {}}
 			tabindex="0"
 			class="relative flex gap-4 border-l border-stroke-base dark:border-stroke-base-dark h-full items-center justify-center px-3 cursor-pointer">
-			<Avatar alt="user avatar" src={user?.profilePictureUrl} />
+			<Avatar alt="user avatar" src={user?.profilePictureUrl ?? ""} />
 			<div class="antialiased flex flex-col gap-0">
 				<span class="text-body-base text-sm">{user?.email ?? "guest"}</span>
 				<span class="text-body-subdued text-sm">{projectName}</span>
