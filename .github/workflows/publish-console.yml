@@ -28,10 +28,7 @@ jobs:
       
       - name: Compile SDKs
         run: |
-          docker build -f ./server/print-oas.Dockerfile -t print-oas ./server
-          docker run --rm print-oas > ./server/openapi.yaml
-          docker rmi print-oas
-          OPENAPI_BASE=/api ./build-clients.sh
+          OPENAPI_BASE=/api make frontend-clients
 
       - name: Docker meta
         id: meta
