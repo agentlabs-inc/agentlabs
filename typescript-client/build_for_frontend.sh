@@ -1,5 +1,8 @@
 #!/bin/bash
+
 set -e
+
+source ./utils.sh
 
 npx --yes openapi-typescript-codegen \
   --input ../server/openapi.yaml \
@@ -7,8 +10,10 @@ npx --yes openapi-typescript-codegen \
   --useOptions \
   --useUnionTypes
 
-
 cp client.ts src/
+
+populate_client_env
+
 echo 'export { getToken } from "./client";' >> src/index.ts
 
 rm -rf ../frontend/src/lib/services/gen-api

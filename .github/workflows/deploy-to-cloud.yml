@@ -2,9 +2,6 @@ name: Deploy to cloud
 
 on:
   workflow_dispatch:
-  push:
-    tags:
-      - "v*.*.*"
 
 jobs:
   build:
@@ -16,7 +13,7 @@ jobs:
           chmod 400 /tmp/privkey
 
       - name: Pull latest images
-        run: ssh -i /tmp/privkey -o StrictHostKeyChecking=no main@${{ secrets.DEPLOY_HOST }} 'cd agentlabs && docker compose pull'
+        run: ssh -i /tmp/privkey -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} 'cd agentlabs && docker compose pull'
 
       - name: Up
-        run: ssh -i /tmp/privkey -o StrictHostKeyChecking=no main@${{ secrets.DEPLOY_HOST }} 'cd agentlabs && docker compose up --force-recreate -d'
+        run: ssh -i /tmp/privkey -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} 'cd agentlabs && docker compose up --build --force-recreate -d'
