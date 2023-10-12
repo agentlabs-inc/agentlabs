@@ -10,7 +10,7 @@ export const signInWithRedirect = async (provider: OAuthProvider): Promise<void>
 
 	const params: AuthorizationParams = {
 		client_id: provider.clientId,
-		redirect_uri: `${window.location.origin}/console/oauth/handler/${provider.id}`,
+		redirect_uri: `${window.location.origin}/admin/oauth/handler/${provider.id}`,
 		response_type: provider.responseType,
 		scope: provider.scopes.join(" "),
 		include_granted_scopes: "true",

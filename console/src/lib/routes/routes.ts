@@ -1,4 +1,4 @@
-const basePath = "/console";
+const basePath = "/admin";
 
 export const homeRoute = {
 	path: () => `${basePath}/project/overview`

@@ -8,7 +8,7 @@
 
 {$CLOUD_CONSOLE_URL}:443 {
 		@console {
-			path /console/*
+			path /admin/*
 		}
 
 		@api {
@@ -24,7 +24,7 @@
 		}
 
 		handle {
-			rewrite * /console{path}
+			redir * /admin{path}
 			reverse_proxy gateway
 		}
 }
