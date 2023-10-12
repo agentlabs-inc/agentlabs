@@ -264,12 +264,13 @@ CREATE TABLE "Attachment" (
 );
 
 -- CreateTable
-CREATE TABLE "AgentConnectionEvent" (
+CREATE TABLE "AgentConnectionLog" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "ipAddress" TEXT NOT NULL,
     "agentId" TEXT NOT NULL,
 
-    CONSTRAINT "AgentConnectionEvent_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "AgentConnectionLog_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -375,4 +376,4 @@ ALTER TABLE "AgentMessageAttachment" ADD CONSTRAINT "AgentMessageAttachment_atta
 ALTER TABLE "AgentMessageAttachment" ADD CONSTRAINT "AgentMessageAttachment_messageId_fkey" FOREIGN KEY ("messageId") REFERENCES "AgentMessage"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "AgentConnectionEvent" ADD CONSTRAINT "AgentConnectionEvent_agentId_fkey" FOREIGN KEY ("agentId") REFERENCES "Agent"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "AgentConnectionLog" ADD CONSTRAINT "AgentConnectionLog_agentId_fkey" FOREIGN KEY ("agentId") REFERENCES "Agent"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

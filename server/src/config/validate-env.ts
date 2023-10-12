@@ -91,7 +91,5 @@ export const validateEnv = (env: NodeJS.ProcessEnv) => {
     );
   }
 
-  console.log(validatedEnv);
-
   return validatedEnv;
 };

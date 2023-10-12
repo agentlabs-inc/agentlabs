@@ -1,5 +1,4 @@
 <script lang="ts">
-	import TopCover from "$lib/components/common/top-cover/TopCover.svelte";
 	import Input from "$lib/components/common/input/Input.svelte";
 	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
 	import Table from "$lib/components/common/table/Table.svelte";
