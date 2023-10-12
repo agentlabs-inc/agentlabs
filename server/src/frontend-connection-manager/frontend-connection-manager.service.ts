@@ -37,6 +37,7 @@ export class FrontendConnectionManagerService {
     agentId,
     projectId,
     memberId,
+    host,
   }: RegisterFrontendConnectionPayload) {
     const key = this.computeKey({
       agentId,
@@ -50,6 +51,7 @@ export class FrontendConnectionManagerService {
       createdAt: new Date(),
       key: key,
       memberId,
+      host,
     };
 
     this.sidToConnection.set(socket.id, connection);

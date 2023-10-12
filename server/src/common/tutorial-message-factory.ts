@@ -1,5 +1,5 @@
 export class TutorialMessageFactory {
-  static createMessage(projectId: string, agentId: string) {
+  static createMessage(projectId: string, agentId: string, host: string) {
     return `
 # Agent is not connected
 
@@ -17,7 +17,7 @@ from agentlabs.project import Project
 
 project = Project(
     project_id='${projectId}',
-    agentlabs_url='http://localhost',
+    agentlabs_url='https://${host}',
 	secret='<SDK_SECRET_FROM_ADMIN_CONSOLE>'
 )
 

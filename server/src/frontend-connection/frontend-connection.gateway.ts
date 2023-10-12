@@ -51,6 +51,7 @@ export class FrontendConnectionGateway
     const projectId = client.handshake.headers[this.projectIdHeader];
     const agentId = client.handshake.headers[this.agentIdHeader];
     const authorization = client.handshake.headers['authorization'];
+    const host = client.handshake.headers['host'];
 
     if (!authorization) {
       return closeWithError('Missing header: authorization');
@@ -79,6 +80,10 @@ export class FrontendConnectionGateway
       return closeWithError(`Missing header: ${this.agentIdHeader}`);
     }
 
+    if (typeof host !== 'string') {
+      return closeWithError(`Missing header: host`);
+    }
+
     this.logger.debug(
       `Frontend client connected: project=${projectId} agent=${agentId} user=${memberId}`,
     );
@@ -105,6 +110,7 @@ export class FrontendConnectionGateway
       agentId,
       projectId,
       memberId: memberId,
+      host,
     });
 
     client.send('Connected to server, waiting for messages...');
@@ -183,6 +189,7 @@ export class FrontendConnectionGateway
         text = TutorialMessageFactory.createMessage(
           frontendConnection.projectId,
           frontendConnection.agentId,
+          frontendConnection.host,
         );
       }
 

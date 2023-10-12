@@ -7,6 +7,7 @@ export interface FrontendConnection {
   createdAt: Date;
   key: string;
   memberId: string;
+  host: string;
 }
 
 export interface RegisterFrontendConnectionPayload {
@@ -14,6 +15,7 @@ export interface RegisterFrontendConnectionPayload {
   agentId: string;
   socket: Socket;
   memberId: string;
+  host: string;
 }
 
 export interface ComputeFrontendConnectionKeyPayload {
