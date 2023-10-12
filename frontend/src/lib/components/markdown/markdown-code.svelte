@@ -1,6 +1,6 @@
 <script lang="ts">
 import Highlight from 'svelte-highlight';
-import { python, typescript } from 'svelte-highlight/languages';
+import { python, shell, typescript } from 'svelte-highlight/languages';
 import atomOneDark from 'svelte-highlight/styles/atom-one-dark';
 
 export let token: any
@@ -9,6 +9,7 @@ const languages: Record<string, Highlight['language']> = {
 	'typescript': typescript,
 	'javascript': typescript,
 	'python': python,
+	'shell': shell,
 }
 
 const language = languages[token.lang] || typescript
