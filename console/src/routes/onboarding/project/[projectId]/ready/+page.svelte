@@ -2,11 +2,9 @@
 	import TopCover from "$lib/components/common/top-cover/TopCover.svelte";
 	import Typography from "$lib/components/common/typography/Typography.svelte";
 	import Card from "$lib/components/common/card/Card.svelte";
-	import { Icon, CheckCircle, CursorArrowRays, ArrowRight } from "svelte-hero-icons";
+	import { ArrowRight } from "svelte-hero-icons";
 	import Button from "$lib/components/common/button/Button.svelte";
 	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
-	import Monaco from "svelte-monaco";
-	import { PUBLIC_AI_AGENT_DOMAIN } from "$env/static/public";
 
 	import {
 		onboardingPythonCode,
