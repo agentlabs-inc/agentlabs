@@ -197,6 +197,15 @@
 						</div>
 					{/each}
 				</div>
+			{:else}
+				<div class="mt-32 flex flex-col items-center">
+					<div class="flex items-center">
+						<h2 class="text-body-base dark:text-body-base-dark font-semibold text-3xl antialiased">AgentLabs</h2>
+						<div class="ml-4 text-sm font-semibold text-button-label-primary dark:text-button-label-primary-dark bg-button-bg-primary dark:bg-button-bg-primary-dark rounded-md px-2 py-1 antialiased">
+							ALPHA
+						</div>
+					</div>
+				</div>
 			{/if}
 	</div>
 	<div
