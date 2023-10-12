@@ -7,6 +7,10 @@ export const Environment = z.object({
 });
 
 export const validateEnv = (env: NodeJS.ProcessEnv) => {
+	if (Object.keys(env).length === 0) {
+		return null;
+	}
+
 	const parsed = Environment.safeParse(env);
 
 	if (!parsed.success) {

@@ -29,7 +29,13 @@
 		throw new Error("Agent not found");
 	}
 
-	const { PUBLIC_AI_AGENT_DOMAIN } = validateEnv(env);
+	const validatedEnv = validateEnv(env);
+
+	if (!validatedEnv) {
+		throw new Error("Invalid env");
+	}
+
+	const { PUBLIC_AI_AGENT_DOMAIN } = validatedEnv;
 
 	const tabItems: {
 		value: string;

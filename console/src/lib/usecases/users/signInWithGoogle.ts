@@ -4,11 +4,15 @@ import { signInWithRedirect } from "$lib/services/oauth/signInWithRedirect";
 import { validateEnv } from "$lib/utils/validateEnv";
 
 export const signInWithGoogle = async () => {
-	const { PUBLIC_OAUTH_GOOGLE_CLIENT_ID } = validateEnv(env);
+	const validatedEnv = validateEnv(env);
+
+	if (!validatedEnv) {
+		throw new Error("Environment validation error");
+	}
 
 	await signInWithRedirect(
 		new GoogleAuthProvider({
-			clientId: PUBLIC_OAUTH_GOOGLE_CLIENT_ID,
+			clientId: validatedEnv.PUBLIC_OAUTH_GOOGLE_CLIENT_ID,
 			scopes: [
 				"https://www.googleapis.com/auth/userinfo.email",
 				"https://www.googleapis.com/auth/userinfo.profile"

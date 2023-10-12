@@ -42,6 +42,6 @@ export class TelemetryService {
 	}
 }
 
-const { PUBLIC_TELEMETRY_KEY } = validateEnv(env);
+const validatedEnv = validateEnv(env);
 
-export const telemetryService = new TelemetryService(PUBLIC_TELEMETRY_KEY);
+export const telemetryService = new TelemetryService(validatedEnv?.PUBLIC_TELEMETRY_KEY);
