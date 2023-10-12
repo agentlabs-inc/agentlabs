@@ -13,9 +13,10 @@
 	} from "$lib/components/project/agents/code-snippets/onboarding.snippet";
 
 	import Monaco from "svelte-monaco";
-	import { PUBLIC_AI_AGENT_DOMAIN } from "$env/static/public";
+	import { env } from "$env/dynamic/public";
 	import SDKSecretGenerator from "$lib/components/project/secret/SDKSecretGenerator.svelte";
 	import { agentStore } from "$lib/stores/agent";
+	import { validateEnv } from "$lib/utils/validateEnv";
 
 	const project = $projectStore.currentProject;
 	const agent = $agentStore.currentAgent;
@@ -27,6 +28,8 @@
 	if (!agent) {
 		throw new Error("Agent not found");
 	}
+
+	const { PUBLIC_AI_AGENT_DOMAIN } = validateEnv(env);
 
 	const tabItems: {
 		value: string;

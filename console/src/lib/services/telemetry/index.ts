@@ -1,5 +1,6 @@
-import { PUBLIC_TELEMETRY_KEY } from "$env/static/public";
+import { env } from "$env/dynamic/public";
 import type { PageCategory } from "$lib/services/telemetry/types";
+import { validateEnv } from "$lib/utils/validateEnv";
 import type { EventProperties, UserTraits } from "@segment/analytics-next";
 import { AnalyticsBrowser } from "@segment/analytics-next";
 
@@ -40,5 +41,7 @@ export class TelemetryService {
 		return this.analytics.page(category, name, properties);
 	}
 }
+
+const { PUBLIC_TELEMETRY_KEY } = validateEnv(env);
 
 export const telemetryService = new TelemetryService(PUBLIC_TELEMETRY_KEY);
