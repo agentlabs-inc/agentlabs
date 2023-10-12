@@ -184,7 +184,7 @@ export class AgentsService {
     });
   }
   async getConnectionCount(agentId: string): Promise<number> {
-    const eventCount = await this.prisma.agentConnectionEvent.count({
+    const eventCount = await this.prisma.agentConnectionLog.count({
       where: {
         agentId,
       },

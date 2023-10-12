@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { AgentConnectionDto } from 'src/agents/dtos/agent-connection.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
   AgentConnection,
@@ -41,10 +42,30 @@ export class AgentConnectionManagerService {
     return this.sidToConnection.get(sid) || null;
   }
 
+  serializeConnection(connection: AgentConnection): AgentConnectionDto {
+    return {
+      agentId: connection.agentId,
+      createdAt: connection.createdAt.toISOString(),
+      ip: connection.ip,
+      sid: connection.socket.id,
+    };
+  }
+
+  listSerializedConnectionsByAgentId(agentId: string): AgentConnectionDto[] {
+    const connections = Array.from(this.agentKeyToConnection.values()).filter(
+      (connection) => connection.agentId === agentId,
+    );
+
+    return connections.map((connection) =>
+      this.serializeConnection(connection),
+    );
+  }
+
   async registerConnection({
     socket,
     projectId,
     agentId,
+    ip,
   }: RegisterAgentConnectionPayload): Promise<void> {
     const key = this.computeAgentKey(projectId, agentId);
     const connection: AgentConnection = {
@@ -53,11 +74,14 @@ export class AgentConnectionManagerService {
       agentKey: key,
       socket,
       createdAt: new Date(),
+      ip,
     };
 
-    await this.prisma.agentConnectionEvent.create({
+    await this.prisma.agentConnectionLog.create({
       data: {
         agentId,
+        ipAddress: ip,
+        id: socket.id,
       },
     });
 
