@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "@macfja/svelte-persistent-store": "^2.4.0",
+    "@magidoc/plugin-svelte-marked": "^4.1.2",
     "@segment/analytics-next": "^1.58.0",
     "@storybook/addon-essentials": "^7.4.0",
     "@storybook/addon-interactions": "^7.4.0",
@@ -48,7 +49,7 @@
     "storybook": "^7.4.0",
     "svelte": "^4.0.5",
     "svelte-check": "^3.4.3",
-    "svelte-monaco": "^0.3.0",
+    "svelte-highlight": "^7.3.0",
     "sveltekit-superforms": "^1.6.1",
     "tailwindcss": "^3.3.3",
     "tailwindcss-animate": "^1.0.7",
