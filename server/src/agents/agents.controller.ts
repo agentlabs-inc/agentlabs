@@ -4,7 +4,6 @@ import {
   Controller,
   Delete,
   ForbiddenException,
-  Get,
   Param,
   Post,
   Req,
@@ -18,7 +17,6 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { AgentConnectionManagerService } from 'src/agent-connection-manager/agent-connection-manager.service';
 import {
   MemberAuthenticatedRequest,
   UserAuthenticatedRequest,
@@ -29,9 +27,7 @@ import { TelemetryService } from '../telemetry/telemetry.service';
 import { AgentsService } from './agents.service';
 import { CreateAgentDto } from './dtos/create.agent.dto';
 import { DeletedAgentResponseDto } from './dtos/deleted.agent.response.dto';
-import { DidAgentEverConnectResponse } from './dtos/did-agent-ever-connect.dto';
 import { GetAgentResponseDto } from './dtos/get.agent.response.dto';
-import { ListAgentConnectionsDto } from './dtos/list-agent-connections.response.dto';
 import { ListAgentsResponseDto } from './dtos/list.agents.response.dto';
 import { UpdateAgentDto } from './dtos/update.agent.dto';
 import { UpdatedAgentDto } from './dtos/updated.agent.dto';
@@ -44,33 +40,7 @@ export class AgentsController {
     private readonly agentsService: AgentsService,
     private readonly projectsService: ProjectsService,
     private readonly telemetryService: TelemetryService,
-    private readonly agentConnectionManagerService: AgentConnectionManagerService,
   ) {}
-
-  @RequireAuthMethod('user-token')
-  @Get('getRealtimeConnections/:agentId')
-  async getAllConnectionsByAgent(
-    @Param('agentId') agentId: string,
-    @Req() req: UserAuthenticatedRequest,
-  ): Promise<ListAgentConnectionsDto> {
-    const connections =
-      this.agentConnectionManagerService.listSerializedConnectionsByAgentId(
-        agentId,
-      );
-
-    const canUpdateRes = await this.agentsService.verifyIfCanUpdateAgent({
-      agentId,
-      userId: req.user.id,
-    });
-
-    if (!canUpdateRes.ok) {
-      throw new ForbiddenException('You are not allowed to update this agent');
-    }
-
-    return {
-      items: connections,
-    };
-  }
 
   @RequireAuthMethod('user-token')
   @Post('/create')
@@ -148,18 +118,6 @@ export class AgentsController {
 
     return {
       success: true,
-    };
-  }
-
-  @RequireAuthMethod('user-token')
-  @Get('/didEverConnect/:agentId')
-  async didEverConnect(
-    @Param('agentId') agentId: string,
-  ): Promise<DidAgentEverConnectResponse> {
-    const count = await this.agentsService.getConnectionCount(agentId);
-
-    return {
-      didEverConnect: count > 0,
     };
   }
 

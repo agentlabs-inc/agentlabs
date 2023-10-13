@@ -22,10 +22,9 @@ export class FrontendConnectionManagerService {
 
   private computeKey({
     projectId,
-    agentId,
     memberId,
   }: ComputeFrontendConnectionKeyPayload) {
-    return `${projectId}:${agentId}:${memberId}`;
+    return `${projectId}:${memberId}`;
   }
 
   getConnectionBySid(sid: string): FrontendConnection | undefined {
@@ -34,18 +33,15 @@ export class FrontendConnectionManagerService {
 
   registerConnection({
     socket,
-    agentId,
     projectId,
     memberId,
     host,
   }: RegisterFrontendConnectionPayload) {
     const key = this.computeKey({
-      agentId,
       projectId,
       memberId,
     });
     const connection: FrontendConnection = {
-      agentId,
       projectId,
       socket,
       createdAt: new Date(),

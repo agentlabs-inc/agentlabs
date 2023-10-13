@@ -10,12 +10,12 @@ import {
 import { Socket } from 'socket.io';
 import { AgentChatConversationsService } from 'src/agent-chat/agent-chat-conversations/agent-chat-conversations.service';
 import { AgentChatMessagesService } from 'src/agent-chat/agent-chat-messages/agent-chat-messages.service';
-import { AgentConnectionManagerService } from 'src/agent-connection-manager/agent-connection-manager.service';
-import { AgentsService } from 'src/agents/agents.service';
+import { ProjectBackendConnectionManagerService } from 'src/project-backend-connection-manager/project-backend-connection-manager.service';
 import { BaseRealtimeMessageDto } from 'src/common/base-realtime-message.dto';
 import { TutorialMessageFactory } from 'src/common/tutorial-message-factory';
 import { FrontendConnectionManagerService } from 'src/frontend-connection-manager/frontend-connection-manager.service';
 import { MembersService } from 'src/members/members.service';
+import { ProjectsService } from 'src/projects/projects.service';
 import { FrontendChatMessageDto } from './dto/frontend-chat-message.dto';
 
 @WebSocketGateway({ namespace: '/frontend' })
@@ -24,15 +24,14 @@ export class FrontendConnectionGateway
 {
   private readonly logger = new Logger(FrontendConnectionGateway.name);
   private readonly projectIdHeader = 'x-agentlabs-project-id';
-  private readonly agentIdHeader = 'x-agentlabs-agent-id';
 
   constructor(
     private readonly frontendConnectionManagerService: FrontendConnectionManagerService,
-    private readonly agentConnectionManagerService: AgentConnectionManagerService,
+    private readonly agentConnectionManagerService: ProjectBackendConnectionManagerService,
     private readonly conversationsService: AgentChatConversationsService,
     private readonly messagesService: AgentChatMessagesService,
-    private readonly agentsService: AgentsService,
     private readonly membersService: MembersService,
+    private readonly projectsService: ProjectsService,
   ) {}
 
   extractToken(authorization: string) {
@@ -49,7 +48,6 @@ export class FrontendConnectionGateway
     };
 
     const projectId = client.handshake.headers[this.projectIdHeader];
-    const agentId = client.handshake.headers[this.agentIdHeader];
     const authorization = client.handshake.headers['authorization'];
     const host = client.handshake.headers['host'];
 
@@ -76,16 +74,12 @@ export class FrontendConnectionGateway
       return closeWithError(`Missing header: ${this.projectIdHeader}`);
     }
 
-    if (typeof agentId !== 'string') {
-      return closeWithError(`Missing header: ${this.agentIdHeader}`);
-    }
-
     if (typeof host !== 'string') {
       return closeWithError(`Missing header: host`);
     }
 
     this.logger.debug(
-      `Frontend client connected: project=${projectId} agent=${agentId} user=${memberId}`,
+      `Frontend client connected: project=${projectId} user=${memberId}`,
     );
 
     const result = await this.membersService.verifyIfProjectMember({
@@ -99,15 +93,8 @@ export class FrontendConnectionGateway
       );
     }
 
-    const agent = await this.agentsService.findProjectAgent(projectId, agentId);
-
-    if (!agent) {
-      return closeWithError(`Agent not found: ${agentId}`);
-    }
-
     this.frontendConnectionManagerService.registerConnection({
       socket: client,
-      agentId,
       projectId,
       memberId: memberId,
       host,
@@ -173,22 +160,21 @@ export class FrontendConnectionGateway
 
     const agentConnection = this.agentConnectionManagerService.getConnection(
       frontendConnection.projectId,
-      frontendConnection.agentId,
     );
 
     if (!agentConnection) {
-      const connectionCount = await this.agentsService.getConnectionCount(
-        frontendConnection.agentId,
-      );
+      const connectionCount =
+        await this.projectsService.getBackendConnectionLogCountByProjectId(
+          frontendConnection.projectId,
+        );
 
       let text = '';
 
       if (connectionCount > 0) {
-        text = 'Agent is offline. Please ask the platform owner for help.';
+        text = 'Project is offline. Please ask the platform owner for help.';
       } else {
         text = TutorialMessageFactory.createMessage(
           frontendConnection.projectId,
-          frontendConnection.agentId,
           frontendConnection.host,
         );
       }
@@ -221,7 +207,6 @@ export class FrontendConnectionGateway
       data: {
         text: payload.data.text,
         conversationId: conversation.id,
-        agentId: frontendConnection.agentId,
         messageId: message.id,
         memberId: frontendConnection.memberId,
       },

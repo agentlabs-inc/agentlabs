@@ -126,6 +126,8 @@ model Project {
 	agentConversations	Conversation[]
 
 	smtpConfiguration							SmtpConfiguration?
+
+	projectBackendConnectionLogs	ProjectBackendConnectionLog[]
 }
 
 enum AuthMethodType {
@@ -206,8 +208,6 @@ model Agent {
 
 	project				Project @relation(fields: [projectId], references: [id])
 	projectId			String
-
-	connectionEvents AgentConnectionLog[]
 
 	logoUrl				String?
 }
@@ -383,13 +383,13 @@ model Attachment {
 
 
 // Log one each time an agent initializes a connection to the server
-model AgentConnectionLog {
+model ProjectBackendConnectionLog {
 	id				String				@id		
 	createdAt		DateTime						@default(now())
 
 	// The IP address of the connecting agent.
 	ipAddress			String
 
-	agentId			String
-	agent			Agent		@relation(fields: [agentId], references: [id])
+	projectId			String
+	project				Project @relation(fields: [projectId], references: [id])
 }

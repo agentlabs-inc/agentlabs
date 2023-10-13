@@ -8,8 +8,5 @@ export class AgentConnectionDto {
   sid: string;
 
   @IsString()
-  agentId: string;
-
-  @IsString()
   createdAt: string;
 }

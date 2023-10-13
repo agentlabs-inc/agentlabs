@@ -1,9 +1,9 @@
 export class TutorialMessageFactory {
-  static createMessage(projectId: string, agentId: string, host: string) {
+  static createMessage(projectId: string, host: string) {
     return `
-# Agent is not connected
+# No backend connected to this project
 
-It looks like the agent  \`${agentId}\` was never connected to this project.
+It looks like no backend was ever connected to this project.
 
 This most likely means that you are the project owner.
 
@@ -29,19 +29,14 @@ project = Project(
 	secret='<SDK_SECRET_FROM_ADMIN_CONSOLE>'
 )
 
-agent = project.agent(id="${agentId}")
-
 def handle_task(message: IncomingChatMessage):
-	if message.text == 'ping':
-		message.reply('pong')
-	else:
-		message.reply('I do not understand')
+	print(f"Received message {message.text} from member with ID {message.member_id} in conversation {message.conversation_id}")
 
-agent.on_chat_message(handle_task)
+project.on_chat_message(handle_task)
 
-agent.connect()
+project.connect()
 
-agent.wait() # if blocking main thread is desired
+project.wait() # if blocking main thread is desired
 \`\`\`
 
 Finally, run the code and you are done!

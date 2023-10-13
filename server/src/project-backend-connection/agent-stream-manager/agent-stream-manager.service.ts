@@ -126,7 +126,6 @@ export class AgentStreamManagerService {
         }
 
         const frontend = this.frontendConnectionManagerService.getConnection({
-          agentId: '', // TODO: no more agentId, previously: conversation.agent.id,
           memberId: conversation.memberId,
           projectId: conversation.projectId,
         });

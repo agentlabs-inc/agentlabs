@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { AgentAttachmentsModule } from './agent-attachments/agent-attachments.module';
 import { AgentChatModule } from './agent-chat/agent-chat.module';
-import { AgentConnectionManagerModule } from './agent-connection-manager/agent-connection-manager.module';
-import { AgentConnectionModule } from './agent-connection/agent-connection.module';
+import { ProjectBackendConnectionManagerModule } from './project-backend-connection-manager/project-backend-connection-manager.module';
+import { AgentConnectionModule } from './project-backend-connection/project-backend-connection.module';
 import { AgentsModule } from './agents/agents.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -31,7 +31,7 @@ import { UsersModule } from './users/users.module';
     ProjectsModule,
     AgentsModule,
     AuthMethodsModule,
-    AgentConnectionManagerModule,
+    ProjectBackendConnectionManagerModule,
     FrontendConnectionManagerModule,
     AgentConnectionModule,
     FrontendConnectionModule,

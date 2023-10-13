@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common';
 import { AgentChatModule } from 'src/agent-chat/agent-chat.module';
-import { AgentConnectionManagerModule } from 'src/agent-connection-manager/agent-connection-manager.module';
-import { AgentsModule } from 'src/agents/agents.module';
+import { ProjectBackendConnectionManagerModule } from 'src/project-backend-connection-manager/project-backend-connection-manager.module';
 import { FrontendConnectionManagerModule } from 'src/frontend-connection-manager/frontend-connection-manager.module';
 import { MembersModule } from 'src/members/members.module';
+import { ProjectsModule } from 'src/projects/projects.module';
 import { FrontendConnectionGateway } from './frontend-connection.gateway';
 
 @Module({
   imports: [
-    AgentConnectionManagerModule,
+    ProjectBackendConnectionManagerModule,
     FrontendConnectionManagerModule,
     AgentChatModule,
-    AgentsModule,
+    ProjectsModule,
     MembersModule,
   ],
   providers: [FrontendConnectionGateway],

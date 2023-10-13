@@ -394,26 +394,6 @@ paths:
         - projects
       security:
         - bearer: []
-  /agents/getRealtimeConnections/{agentId}:
-    get:
-      operationId: getAllConnectionsByAgent
-      parameters:
-        - name: agentId
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ListAgentConnectionsDto"
-      tags:
-        - agents
-      security:
-        - bearer: []
   /agents/create:
     post:
       operationId: createAgent
@@ -447,26 +427,6 @@ paths:
       responses:
         "201":
           description: ""
-      tags:
-        - agents
-      security:
-        - bearer: []
-  /agents/didEverConnect/{agentId}:
-    get:
-      operationId: didEverConnect
-      parameters:
-        - name: agentId
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/DidAgentEverConnectResponse"
       tags:
         - agents
       security:
@@ -1335,31 +1295,6 @@ components:
         - name
         - organizationId
         - authMethods
-    AgentConnectionDto:
-      type: object
-      properties:
-        ip:
-          type: string
-        sid:
-          type: string
-        agentId:
-          type: string
-        createdAt:
-          type: string
-      required:
-        - ip
-        - sid
-        - agentId
-        - createdAt
-    ListAgentConnectionsDto:
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            $ref: "#/components/schemas/AgentConnectionDto"
-      required:
-        - items
     CreateAgentDto:
       type: object
       properties:
@@ -1394,13 +1329,6 @@ components:
         - creatorId
         - createdAt
         - updatedAt
-    DidAgentEverConnectResponse:
-      type: object
-      properties:
-        didEverConnect:
-          type: boolean
-      required:
-        - didEverConnect
     UpdateAgentDto:
       type: object
       properties:

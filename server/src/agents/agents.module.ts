@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AgentConnectionManagerModule } from 'src/agent-connection-manager/agent-connection-manager.module';
+import { ProjectBackendConnectionManagerModule } from 'src/project-backend-connection-manager/project-backend-connection-manager.module';
 import { AttachmentsModule } from 'src/attachments/attachments.module';
 import { ProjectsModule } from 'src/projects/projects.module';
 import { TelemetryModule } from '../telemetry/telemetry.module';
@@ -11,7 +11,7 @@ import { AgentsService } from './agents.service';
     ProjectsModule,
     AttachmentsModule,
     TelemetryModule,
-    AgentConnectionManagerModule,
+    ProjectBackendConnectionManagerModule,
   ],
   controllers: [AgentsController],
   providers: [AgentsService],
