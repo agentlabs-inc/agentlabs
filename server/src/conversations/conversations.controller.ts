@@ -2,15 +2,13 @@ import { Controller, Get, Query, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { RequireAuthMethod } from 'src/iam/iam.decorators';
 import { MemberAuthenticatedRequest } from 'src/iam/iam.types';
-import { AgentChatConversationsService } from './agent-chat-conversations.service';
+import { ConversationsService } from './conversations.service';
 import { GetAllConversationsDto } from './dto/get-all-conversations.dto';
 
-@ApiTags('Agent Chat Conversations')
+@ApiTags('conversations')
 @Controller('conversations')
-export class AgentChatConversationsController {
-  constructor(
-    private readonly conversationsService: AgentChatConversationsService,
-  ) {}
+export class ConversationsController {
+  constructor(private readonly conversationsService: ConversationsService) {}
 
   @RequireAuthMethod('member-token')
   @Get('getAll')

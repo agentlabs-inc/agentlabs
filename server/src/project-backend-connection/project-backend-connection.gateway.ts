@@ -8,18 +8,18 @@ import {
   WebSocketGateway,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { AgentChatConversationsService } from 'src/agent-chat/agent-chat-conversations/agent-chat-conversations.service';
-import { AgentChatMessagesService } from 'src/agent-chat/agent-chat-messages/agent-chat-messages.service';
-import { ProjectBackendConnectionManagerService } from 'src/project-backend-connection-manager/project-backend-connection-manager.service';
+import { AgentMessagesService } from 'src/agent-messages/agent-messages.service';
 import { BaseRealtimeMessageDto } from 'src/common/base-realtime-message.dto';
+import { ConversationsService } from 'src/conversations/conversations.service';
 import { FrontendConnectionManagerService } from 'src/frontend-connection-manager/frontend-connection-manager.service';
+import { ProjectBackendConnectionManagerService } from 'src/project-backend-connection-manager/project-backend-connection-manager.service';
 import { AgentStreamManagerService } from './agent-stream-manager/agent-stream-manager.service';
 import { ConversationMutexManager } from './conversation-mutex-manager';
 import { AgentMessageDto } from './dto/agent-message.dto';
 import { StreamChatMessageTokenDto } from './dto/stream-chat-message-token.dto';
 
 @WebSocketGateway({ namespace: '/agent' })
-export class AgentConnectionGateway
+export class ProjectBackendConnectionGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
   private readonly conversationMutexManager = new ConversationMutexManager();
@@ -27,12 +27,12 @@ export class AgentConnectionGateway
   constructor(
     private readonly agentConnectionManagerService: ProjectBackendConnectionManagerService,
     private readonly frontendConnectionManagerService: FrontendConnectionManagerService,
-    private readonly conversationsService: AgentChatConversationsService,
-    private readonly messagesService: AgentChatMessagesService,
+    private readonly conversationsService: ConversationsService,
+    private readonly messagesService: AgentMessagesService,
     private readonly streamManager: AgentStreamManagerService,
   ) {}
 
-  private readonly logger = new Logger(AgentConnectionGateway.name);
+  private readonly logger = new Logger(ProjectBackendConnectionGateway.name);
 
   async handleConnection(client: Socket) {
     const projectId = client.handshake.headers['x-agentlabs-project-id'];

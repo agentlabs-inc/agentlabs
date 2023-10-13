@@ -1,4 +1,4 @@
-export interface CreateAgentChatConversationPayload {
+export interface CreateConversationPayload {
   id: string;
   projectId: string;
   memberId: string;

@@ -8,13 +8,13 @@ import {
   WebSocketGateway,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { AgentChatConversationsService } from 'src/agent-chat/agent-chat-conversations/agent-chat-conversations.service';
-import { AgentChatMessagesService } from 'src/agent-chat/agent-chat-messages/agent-chat-messages.service';
-import { ProjectBackendConnectionManagerService } from 'src/project-backend-connection-manager/project-backend-connection-manager.service';
+import { AgentMessagesService } from 'src/agent-messages/agent-messages.service';
 import { BaseRealtimeMessageDto } from 'src/common/base-realtime-message.dto';
 import { TutorialMessageFactory } from 'src/common/tutorial-message-factory';
+import { ConversationsService } from 'src/conversations/conversations.service';
 import { FrontendConnectionManagerService } from 'src/frontend-connection-manager/frontend-connection-manager.service';
 import { MembersService } from 'src/members/members.service';
+import { ProjectBackendConnectionManagerService } from 'src/project-backend-connection-manager/project-backend-connection-manager.service';
 import { ProjectsService } from 'src/projects/projects.service';
 import { FrontendChatMessageDto } from './dto/frontend-chat-message.dto';
 
@@ -28,8 +28,8 @@ export class FrontendConnectionGateway
   constructor(
     private readonly frontendConnectionManagerService: FrontendConnectionManagerService,
     private readonly agentConnectionManagerService: ProjectBackendConnectionManagerService,
-    private readonly conversationsService: AgentChatConversationsService,
-    private readonly messagesService: AgentChatMessagesService,
+    private readonly conversationsService: ConversationsService,
+    private readonly messagesService: AgentMessagesService,
     private readonly membersService: MembersService,
     private readonly projectsService: ProjectsService,
   ) {}

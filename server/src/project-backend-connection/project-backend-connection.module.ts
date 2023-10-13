@@ -1,20 +1,22 @@
 import { Module } from '@nestjs/common';
-import { AgentChatModule } from 'src/agent-chat/agent-chat.module';
-import { ProjectBackendConnectionManagerModule } from 'src/project-backend-connection-manager/project-backend-connection-manager.module';
+import { AgentMessagesModule } from 'src/agent-messages/agent-messages.module';
 import { AgentsModule } from 'src/agents/agents.module';
+import { ConversationsModule } from 'src/conversations/conversations.module';
 import { FrontendConnectionManagerModule } from 'src/frontend-connection-manager/frontend-connection-manager.module';
+import { ProjectBackendConnectionManagerModule } from 'src/project-backend-connection-manager/project-backend-connection-manager.module';
 import { SdkSecretsModule } from '../sdk-secrets/sdk-secrets.module';
-import { AgentConnectionGateway } from './project-backend-connection.gateway';
 import { AgentStreamManagerService } from './agent-stream-manager/agent-stream-manager.service';
+import { ProjectBackendConnectionGateway } from './project-backend-connection.gateway';
 
 @Module({
   imports: [
+    ConversationsModule,
+    AgentMessagesModule,
     ProjectBackendConnectionManagerModule,
     FrontendConnectionManagerModule,
-    AgentChatModule,
     AgentsModule,
     SdkSecretsModule,
   ],
-  providers: [AgentConnectionGateway, AgentStreamManagerService],
+  providers: [ProjectBackendConnectionGateway, AgentStreamManagerService],
 })
-export class AgentConnectionModule {}
+export class ProjectBackendConnectionModule {}

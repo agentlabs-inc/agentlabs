@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { Conversation } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
-  CreateAgentChatConversationPayload,
+  CreateConversationPayload,
   FindAllConversationsPayload,
-} from './agent-chat-conversations.types';
+} from './conversations.types';
 
 @Injectable()
-export class AgentChatConversationsService {
+export class ConversationsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findAllConversations({
@@ -43,7 +43,7 @@ export class AgentChatConversationsService {
   }
 
   async createConversation(
-    payload: CreateAgentChatConversationPayload,
+    payload: CreateConversationPayload,
   ): Promise<Conversation> {
     const conversation = await this.prisma.conversation.create({
       data: {

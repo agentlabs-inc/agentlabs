@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { AgentMessage } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateAgentChatMessagePayload } from './agent-chat-messages.types';
+import { CreateAgentMessagePayload } from './agent-messages.types';
 
 @Injectable()
-export class AgentChatMessagesService {
+export class AgentMessagesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async listByConversationId(conversationId: string): Promise<AgentMessage[]> {
@@ -21,7 +21,7 @@ export class AgentChatMessagesService {
   }
 
   async createMessage(
-    payload: CreateAgentChatMessagePayload,
+    payload: CreateAgentMessagePayload,
   ): Promise<AgentMessage> {
     const message = await this.prisma.agentMessage.create({
       data: {

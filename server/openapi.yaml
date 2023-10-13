@@ -562,8 +562,8 @@ paths:
         "200":
           description: ""
       tags:
-        - Agent Chat Conversations
-  /agent-chat-messages/listByConversationId/{conversationId}:
+        - conversations
+  /agent-messages/listByConversationId/{conversationId}:
     get:
       operationId: listByConversationId
       parameters:
@@ -576,7 +576,7 @@ paths:
         "200":
           description: ""
       tags:
-        - Agent Chat Messages
+        - agent-messages
   /agent-attachments/listByMessageId/{messageId}:
     get:
       operationId: listByMessageId
