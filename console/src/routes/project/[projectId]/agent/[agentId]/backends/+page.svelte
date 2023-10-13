@@ -1,14 +1,15 @@
 <script lang="ts">
 	import Alert from "$lib/components/common/alert/Alert.svelte";
 	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
-import CopiableCell from "$lib/components/common/table/CopiableCell.svelte";
+	import CopiableCell from "$lib/components/common/table/CopiableCell.svelte";
 	import Table from "$lib/components/common/table/Table.svelte";
 	import type { TableColumn } from "$lib/components/common/table/types";
 	import type { AgentConnection } from "$lib/entities/agent/agent-connection";
 	import { agentStore } from "$lib/stores/agent";
 	import { fetchRealtimeConnections } from "$lib/usecases/agents/fetchRealtimeConnections";
+	import { durationToHumanReadable } from "$lib/utils/time";
 	import dayjs from "dayjs";
-	import { onMount } from "svelte";
+	import { onDestroy, onMount } from "svelte";
 
 	interface AgentConnectionRow {
 		id: string;
@@ -30,7 +31,7 @@ import CopiableCell from "$lib/components/common/table/CopiableCell.svelte";
 		{
 			name: "Lifetime",
 			key: "lifetime",
-			format: ({ lifetime }: AgentConnectionRow) => lifetimeToHumanReadable(lifetime)
+			format: ({ lifetime }: AgentConnectionRow) => durationToHumanReadable(lifetime)
 		},
 		{
 			name: "Connected at",
@@ -52,36 +53,32 @@ import CopiableCell from "$lib/components/common/table/CopiableCell.svelte";
 	const agent = $agentStore.currentAgent;
 	let connections: AgentConnection[] = [];
 	let isLoadingData = false;
-
-	export const lifetimeToHumanReadable = (lifetime: number) => {
-		const seconds = Math.floor(lifetime / 1000);
-		const minutes = Math.floor(seconds / 60);
-		const hours = Math.floor(minutes / 60);
-
-		const secondsString = `${seconds % 60}s`;
-		const minutesString = minutes > 0 ? `${minutes % 60}m ` : "";
-		const hoursString = hours > 0 ? `${hours}h ` : "";
-
-		return `${hoursString}${minutesString}${secondsString}`;
-	};
+	let lifetimeInterval: ReturnType<typeof setInterval> | null = null;
 
 	onMount(async () => {
-		if (!agent) return;
+		if (!agent) {
+			return ;
+		}
 
 		try {
 			 isLoadingData = true
 			 connections = await fetchRealtimeConnections(agent.id);
 			 rows = connections.map(agentConnectionToRow);
 
-			 setInterval(async () => {
+			 lifetimeInterval = setInterval(async () => {
 			 	rows = connections.map(agentConnectionToRow);
 			 }, 1000);
-
 		} finally {
 			isLoadingData = false
 		}
+
 	});
 
+	onDestroy(() => {
+		if (lifetimeInterval) {
+			clearInterval(lifetimeInterval);
+		}
+	});
 </script>
 
 <div class="w-full p-10 pb-32">
