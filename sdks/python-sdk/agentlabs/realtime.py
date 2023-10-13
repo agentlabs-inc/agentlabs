@@ -4,7 +4,7 @@ from typing import Any, Callable
 import socketio
 
 class RealtimeClient:
-    agent_namespace = '/agents'
+    agent_namespace = '/agent'
     is_connected: bool = False
 
     def __init__(self, project_id: str, secret: str, url: str):
@@ -19,10 +19,12 @@ class RealtimeClient:
             self._io.connect(self._url, 
                 headers={
                     'x-agentlabs-project-id': self._project_id,
-                    'x-agentlabs-secret': self._secret
+                    'x-agentlabs-sdk-secret': self._secret
                 },
-                namespaces=[self.agent_namespace]
+                namespaces=[self.agent_namespace],
+                transports=['websocket']
             )
+            self.is_connected = True
         except Exception as e:
             print(e)
             raise Exception('Failed to connect backend to AgentLabs')
@@ -33,7 +35,7 @@ class RealtimeClient:
         self._io.disconnect()
 
     def on(self, event: str, callback: Callable[[Any], Any]):
-        self._io.on(event, callback)
+        self._io.on(event, callback, namespace=self.agent_namespace)
 
     def emit(self, event: str, data: Any):
         ts = datetime.now().isoformat()

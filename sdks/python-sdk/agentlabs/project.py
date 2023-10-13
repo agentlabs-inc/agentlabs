@@ -1,57 +1,41 @@
-from enum import Enum
-from typing import Any, Callable, TypedDict
-from engineio.middleware import os
+from typing import Any, Callable, Dict
+import os
 
-import socketio
-from agentlabs import realtime
+from .http import HttpApi
+from .logger import Logger
+from .realtime import RealtimeClient
 
-from agentlabs.http import HttpApi
-from agentlabs.logger import AgentLogger
-from agentlabs.realtime import RealtimeClient
+from .types import _ChatMessage
 from .agent import Agent
-
-from .server import emit, agent_namespace
-
-class MessageFormat(Enum):
-    PLAIN_TEXT = "PLAIN_TEXT"
-    MARKDOWN = "MARKDOWN"
-
-class _DecodedUser(TypedDict):
-    id: str
-    email: str
-    name: str
-    createdAt: str
-
-class _ChatMessage(TypedDict):
-    text: str
-    conversationId: str
-    messageId: str
-    agentId: str
-    memberId: str
 
 class IncomingChatMessage:
     def __init__(self, message: _ChatMessage):
         self.text = message["text"]
         self.conversation_id = message["conversationId"]
         self.message_id = message["messageId"]
-        self.agent_id = message["agentId"]
         self.member_id = message["memberId"]
 
 class Project:
-    _is_connected: bool = False
+    _client_logger = Logger(name="Client")
+    _server_logger = Logger(name="Server")
+
+    def _log_message(self, payload: Dict[str, Any]):
+        message = payload.get('message')
+        if not message is None:
+            self._server_logger.info(message)
 
     def __init__(self, agentlabs_url: str, project_id: str, secret: str) -> None:
         self.is_debug_enabled = bool(os.environ.get('DEBUG', False))
         self.agentlabs_url = agentlabs_url
         self.project_id = project_id
         self._secret = secret
-        self._realtime = RealtimeClient(project_id=project_id, secret=secret, url=agentlabs_url)
-
         self._http = HttpApi(
             project_id=project_id,
             agentlabs_url=agentlabs_url,
             secret=secret
         )
+        self._realtime = RealtimeClient(project_id=project_id, secret=secret, url=agentlabs_url)
+        self._realtime.on('message', self._log_message)
     
     """
     Defines a handler for when a new chat message is received.
@@ -62,7 +46,7 @@ class Project:
             chat_message = IncomingChatMessage(message=payload['data'])
             fn(chat_message)
 
-        self._realtime.on('chat-message', wrapper, namespace=agent_namespace)
+        self._realtime.on('chat-message', wrapper)
 
     """
     Connects the project to the AgentLabs server.
@@ -72,6 +56,7 @@ class Project:
     Note that as of now, only one connection per project is permitted. This will be changed very soon.
     """
     def connect(self):
+        self._client_logger.info("Connecting to AgentLabs...")
         self._realtime.connect()
 
     """
@@ -80,13 +65,9 @@ class Project:
     without having to bother with your own loop.
     """
     def wait(self):
-        if not self._is_connected:
-            raise Exception("Project is not connected. Please call connect() first.")
         self._realtime.wait()
 
     def disconnect(self):
-        if not self._is_connected:
-            raise Exception("Project is not connected. Can't end a connection that doesn't exist.")
         self._realtime.disconnect()
 
     def agent(self, id: str) -> Agent:

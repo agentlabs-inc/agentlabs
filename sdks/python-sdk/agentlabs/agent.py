@@ -1,16 +1,14 @@
-from enum import Enum
-import os
-from socketio.pubsub_manager import uuid
-from agentlabs.project import MessageFormat
+from uuid import uuid4
 
-from agentlabs.realtime import RealtimeClient
+from .realtime import RealtimeClient
+from .types import MessageFormat
 
 class AgentStream:
     is_ended: bool = False
 
     def __init__(self, realtime: RealtimeClient, agent_id: str, conversation_id: str, format: MessageFormat):
         self.conversation_id = conversation_id
-        self.message_id = str(uuid.uuid4())
+        self.message_id = str(uuid4())
         self.format = format
         self._realtime = realtime
         self.agent_id = agent_id
