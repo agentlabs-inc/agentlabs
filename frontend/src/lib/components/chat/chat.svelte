@@ -6,7 +6,11 @@
 	import ChatMessage from "./chat-message/ChatMessage.svelte";
 	import dayjs from "dayjs";
 	import { afterUpdate, beforeUpdate, onDestroy, onMount } from "svelte";
-	import { addConversation, conversationStore, generateConversationId } from "$lib/stores/conversation";
+	import {
+		addConversation,
+		conversationStore,
+		generateConversationId
+	} from "$lib/stores/conversation";
 	import { realtimeStore } from "$lib/stores/realtime";
 	import { afterNavigate, goto } from "$app/navigation";
 	import { agentStore } from "$lib/stores/agent";
@@ -16,16 +20,15 @@
 	let chatElement: HTMLDivElement;
 	let chatInputElement: HTMLInputElement;
 	let isWaitingForAnswer = false;
-	let chatInputValue = '';
-	
+	let chatInputValue = "";
+
 	$: agentId = $agentStore.selectedAgent?.id;
 	$: memberId = $authStore.member?.id;
 
-	$: isChatInputDisabled = isWaitingForAnswer || chatInputValue === '';
+	$: isChatInputDisabled = isWaitingForAnswer || chatInputValue === "";
 
 	$: messages = $chatStore.messages;
 	$: conversationId = $conversationStore.selectedConversationId;
-	
 
 	let shouldRedirectToConversation = false;
 
@@ -50,26 +53,26 @@
 			data: {
 				text: chatInputValue,
 				conversationId: actualConversationId,
-				source: 'USER' as 'USER' | 'AGENT' | 'SYSTEM',
+				source: "USER" as "USER" | "AGENT" | "SYSTEM"
 			}
-		}
+		};
 
 		chatElement.scrollTop = chatElement.scrollHeight;
 
 		addMessage({
 			id: uuidv4(), // this is a fake id, the real id will be set by the server
-			...payload.data, 
+			...payload.data,
 			createdAt: timestamp,
-			format: 'PLAIN_TEXT'
+			format: "PLAIN_TEXT"
 		});
-		
+
 		isWaitingForAnswer = true;
 		$conversationStore.selectedConversationId = actualConversationId;
 
-		con.emit('chat-message', payload);
+		con.emit("chat-message", payload);
 
 		chatInputValue = "";
-	}
+	};
 
 	const makeConversation = async () => {
 		if (!agentId || !memberId || !conversationId) {
@@ -79,14 +82,14 @@
 		const timestamp = new Date().toISOString();
 
 		addConversation({
-				id: conversationId,
-				agentId,
-				memberId,
-				createdAt: timestamp,
-				updatedAt: timestamp,
-		})
+			id: conversationId,
+			agentId,
+			memberId,
+			createdAt: timestamp,
+			updatedAt: timestamp
+		});
 		await goto(`/main/c/${conversationId}`);
-	}
+	};
 
 	const listenToStreamChatMessageEnd = () => {
 		isWaitingForAnswer = false;
@@ -95,11 +98,13 @@
 			makeConversation();
 			shouldRedirectToConversation = false;
 		}
-	}
+	};
 
 	const listenToChatMessage = (payload: any) => {
 		if (payload.data.conversationId !== conversationId) {
-			console.warn(`Received message for conversation ${payload.data.conversationId} but current conversation is ${conversationId}`)
+			console.warn(
+				`Received message for conversation ${payload.data.conversationId} but current conversation is ${conversationId}`
+			);
 
 			return;
 		}
@@ -109,54 +114,60 @@
 			shouldRedirectToConversation = false;
 		}
 
-		console.log(payload);
-
 		isWaitingForAnswer = false;
 		addMessage({
-				id: payload.data.messageId,
-				text: payload.data.text,
-				source: payload.data.source,
-				createdAt: payload.timestamp,
-				format: payload.data.format
-			});
-	}
+			id: payload.data.messageId,
+			text: payload.data.text,
+			source: payload.data.source,
+			createdAt: payload.timestamp,
+			format: payload.data.format
+		});
+	};
 
 	const listenToStreamedChatMessageToken = (payload: any) => {
 		if (payload.data.conversationId !== conversationId) {
-			console.warn(`Received message for conversation ${payload.data.conversationId} but current conversation is ${conversationId}`)
+			console.warn(
+				`Received message for conversation ${payload.data.conversationId} but current conversation is ${conversationId}`
+			);
 
 			return;
 		}
 
 		addStreamedMessageToken({
-				id: payload.data.messageId,
-				text: payload.data.text,
-				source: 'AGENT',
-				createdAt: payload.timestamp,
-				format: payload.data.format
+			id: payload.data.messageId,
+			text: payload.data.text,
+			source: "AGENT",
+			createdAt: payload.timestamp,
+			format: payload.data.format
 		});
-	}
+	};
 
 	afterNavigate(() => {
-			chatInputElement?.focus();
-	})
+		chatInputElement?.focus();
+	});
 
 	$: if (chatInputElement) {
 		chatInputElement.focus();
 	}
 
 	onMount(async () => {
-		$realtimeStore.connection?.on('chat-message', listenToChatMessage);
-		$realtimeStore.connection?.on('stream-chat-message-token', listenToStreamedChatMessageToken);
-		$realtimeStore.connection?.on('stream-chat-message-end', listenToStreamChatMessageEnd);
-	})
+		$realtimeStore.connection?.on("chat-message", listenToChatMessage);
+		$realtimeStore.connection?.on(
+			"stream-chat-message-token",
+			listenToStreamedChatMessageToken
+		);
+		$realtimeStore.connection?.on("stream-chat-message-end", listenToStreamChatMessageEnd);
+	});
 
 	onDestroy(() => {
-		$realtimeStore.connection?.off('chat-message', listenToChatMessage);
-		$realtimeStore.connection?.off('stream-chat-message-token', listenToStreamedChatMessageToken);
-		$realtimeStore.connection?.off('stream-chat-message-end', listenToStreamChatMessageEnd);
-		$realtimeStore.connection?.disconnect()
-	})
+		$realtimeStore.connection?.off("chat-message", listenToChatMessage);
+		$realtimeStore.connection?.off(
+			"stream-chat-message-token",
+			listenToStreamedChatMessageToken
+		);
+		$realtimeStore.connection?.off("stream-chat-message-end", listenToStreamChatMessageEnd);
+		$realtimeStore.connection?.disconnect();
+	});
 
 	let chatElementScrollHeight = 0;
 	let chatElementScrollTop = 0;
@@ -168,7 +179,7 @@
 			chatElementScrollTop = chatElement.scrollTop;
 			chatElementClientHeight = chatElement.clientHeight;
 		}
-	})
+	});
 
 	afterUpdate(() => {
 		if (chatElement) {
@@ -177,51 +188,57 @@
 				chatElement.scrollTop = chatElement.scrollHeight;
 			}
 		}
-	})
+	});
 </script>
 
 <div class="flex flex-col justify-between relative h-full">
-	<div 
+	<div
 		bind:this={chatElement}
 		class="absolute top-0 bottom-[80px] left-0 right-0 overflow-y-scroll bg-background-primary dark:bg-background-secondary-dark">
-			{#if messages?.length > 0}
-				<div class="flex flex-col grow gap-4 py-4 px-3 items-start">
-					{#each messages as message(message.id)}
-						<div class="w-full">
-							<ChatMessage
-								from={message.source}
-								time={dayjs(message.createdAt).format("M/D/YYYY hh:mm A")}
-								body={message.text}
-								format={message.format}
-							/>
-						</div>
-					{/each}
-				</div>
-			{:else}
-				<div class="mt-32 flex flex-col items-center">
-					<div class="flex items-center">
-						<h2 class="text-body-base dark:text-body-base-dark font-semibold text-3xl antialiased">AgentLabs</h2>
-						<div class="ml-4 text-sm font-semibold text-button-label-primary dark:text-button-label-primary-dark bg-button-bg-primary dark:bg-button-bg-primary-dark rounded-md px-2 py-1 antialiased">
-							ALPHA
-						</div>
+		{#if messages?.length > 0}
+			<div class="flex flex-col grow gap-4 py-4 px-3 items-start">
+				{#each messages as message (message.id)}
+					<div class="w-full">
+						<ChatMessage
+							from={message.source}
+							time={dayjs(message.createdAt).format("M/D/YYYY hh:mm A")}
+							body={message.text}
+							format={message.format} />
+					</div>
+				{/each}
+			</div>
+		{:else}
+			<div class="mt-32 flex flex-col items-center">
+				<div class="flex items-center">
+					<h2
+						class="text-body-base dark:text-body-base-dark font-semibold text-3xl antialiased">
+						AgentLabs
+					</h2>
+					<div
+						class="ml-4 text-sm font-semibold text-button-label-primary dark:text-button-label-primary-dark bg-button-bg-primary dark:bg-button-bg-primary-dark rounded-md px-2 py-1 antialiased">
+						ALPHA
 					</div>
 				</div>
-			{/if}
+			</div>
+		{/if}
 	</div>
 	<div
 		class="absolute bottom-0 left-0 right-0 flex items-center justify-center py-3 px-3 border-t border-stroke-base dark:border-stroke-base-dark bg-background-secondary dark:bg-background-primary-dark flex-grow-0">
 		<div class="flex-grow max-w-4xl">
-				<form class="w-full items-center flex gap-3" on:submit|preventDefault={sendMessage}>
-					<div class="flex-1">
-						<ChatInput
-							bind:inputElement={chatInputElement}
-							bind:value={chatInputValue}
-							name="chat-input"
-							placeholder="Send a message"
-						/>
-					</div>
-						<Button submit loading={isWaitingForAnswer} disabled={isChatInputDisabled} rightIcon={PaperAirplane} />
-				</form>
+			<form class="w-full items-center flex gap-3" on:submit|preventDefault={sendMessage}>
+				<div class="flex-1">
+					<ChatInput
+						bind:inputElement={chatInputElement}
+						bind:value={chatInputValue}
+						name="chat-input"
+						placeholder="Send a message" />
+				</div>
+				<Button
+					submit
+					loading={isWaitingForAnswer}
+					disabled={isChatInputDisabled}
+					rightIcon={PaperAirplane} />
+			</form>
 		</div>
 	</div>
 </div>

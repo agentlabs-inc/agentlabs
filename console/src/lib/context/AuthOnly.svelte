@@ -17,7 +17,6 @@
 
 	onMount(async () => {
 		if (!$authStore.user) {
-			console.log("Not logged in.");
 			return await goto(loginRoute.path());
 		}
 

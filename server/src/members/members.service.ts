@@ -258,10 +258,12 @@ export class MembersService {
 
     const memberCreatedOrUpdated = await this.prisma.$transaction(
       async (tx) => {
-        const member = await tx.member.findFirst({
+        const member = await tx.member.findUnique({
           where: {
-            projectId,
-            email,
+            projectId_email: {
+              projectId,
+              email,
+            },
           },
         });
 

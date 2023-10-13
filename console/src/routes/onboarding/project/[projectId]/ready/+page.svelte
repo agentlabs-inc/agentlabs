@@ -5,64 +5,16 @@
 	import { ArrowRight } from "svelte-hero-icons";
 	import Button from "$lib/components/common/button/Button.svelte";
 	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
-
-	import {
-		onboardingPythonCode,
-		onboardingTypescriptCode
-	} from "$lib/components/project/agents/code-snippets/onboarding.snippet";
-	import Tabs from "$lib/components/common/tabs/Tabs.svelte";
 	import { projectStore } from "$lib/stores/project";
-	import { onMount } from "svelte";
 	import OnboardingIllustration from "$lib/assets/img/illustrations/success.svg";
 	import { goto } from "$app/navigation";
 	import { projectOverviewRoute } from "$lib/routes/routes";
-
-	let currentStep: "open-frontend" | "authentication" | "send-message" = "open-frontend";
-
-	let selectedTab = "python";
 
 	const project = $projectStore.currentProject;
 
 	if (!project) {
 		throw new Error("No project context found");
 	}
-
-	const tabItems: {
-		value: string;
-		id: string;
-		label: string;
-	}[] = [
-		{
-			id: "python",
-			label: "Python",
-			value: "python"
-		},
-		{
-			id: "typescript",
-			label: "Typescript",
-			value: "typescript"
-		}
-	];
-
-	$: snippetValue =
-		selectedTab === "python"
-			? onboardingPythonCode({
-					projectId: project.id,
-					projectSlug: project.slug,
-					agentId: "the-agent-id"
-			  })
-			: onboardingTypescriptCode({
-					projectId: project.id,
-					projectSlug: project.slug,
-					// TODO: replace with the real agent id
-					agentId: "the-agent-id"
-			  });
-
-	$: projectSlug = project.slug;
-
-	onMount(() => {
-		console.log("Mounted", $projectStore.currentProject, $projectStore.list);
-	});
 </script>
 
 <div>

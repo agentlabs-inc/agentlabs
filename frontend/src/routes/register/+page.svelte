@@ -31,6 +31,7 @@
 
 	const handleValidation = async (e: Event) => {
 		e.preventDefault();
+		e.stopPropagation();
 		const res = await validate();
 
 		if (!res.valid) {
@@ -105,8 +106,7 @@
 										submit
 										type="primary"
 										fullWidth
-										center
-										on:click={handleValidation}>Sign Up</Button>
+										center>Sign Up</Button>
 								</div>
 							</form>
 						{/if}

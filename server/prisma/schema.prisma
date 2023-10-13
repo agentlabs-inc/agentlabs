@@ -249,6 +249,8 @@ model Member {
 	createdAt 		DateTime @default(now())
 	updatedAt 		DateTime @updatedAt @default(now())
 
+	@@unique([projectId, email])
+
 	// If these fields are null, it means they are falsy
 	verifiedAt		DateTime?
 	bannedAt			DateTime?

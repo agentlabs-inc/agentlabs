@@ -8,7 +8,6 @@
 	let loading = true;
 
 	onMount(async () => {
-	console.log({ auth: 'loading auth' })
 		if (!$authStore.member) {
 			return await goto(loginRoute.path());
 		}

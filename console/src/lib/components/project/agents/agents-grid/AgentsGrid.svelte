@@ -32,7 +32,6 @@
 	});
 
 	const handleOpenAgent = (agent: Agent) => {
-		console.log(agent);
 		goto(agentOverviewRoute.path(projectId, agent.id));
 	};
 </script>

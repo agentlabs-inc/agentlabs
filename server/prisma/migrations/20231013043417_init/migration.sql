@@ -300,6 +300,9 @@ CREATE UNIQUE INDEX "MemberAuthVerificationCode_memberId_key" ON "MemberAuthVeri
 CREATE UNIQUE INDEX "MemberAuth_memberId_key" ON "MemberAuth"("memberId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Member_projectId_email_key" ON "Member"("projectId", "email");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "AgentMessageAttachment_attachmentId_key" ON "AgentMessageAttachment"("attachmentId");
 
 -- AddForeignKey
