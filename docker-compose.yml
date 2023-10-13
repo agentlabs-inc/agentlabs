@@ -28,6 +28,7 @@ services:
       - PUBLIC_AI_AGENT_DOMAIN=${PUBLIC_AI_AGENT_DOMAIN}
       - PUBLIC_OAUTH_GOOGLE_CLIENT_ID=${PUBLIC_OAUTH_GOOGLE_CLIENT_ID}
       - PUBLIC_TELEMETRY_KEY=${PUBLIC_TELEMETRY_KEY}
+      - PUBLIC_DISCORD_URL=${PUBLIC_DISCORD_URL}
     depends_on:
       - server
     restart: unless-stopped

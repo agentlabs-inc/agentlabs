@@ -35,7 +35,7 @@
 		throw new Error("Invalid env");
 	}
 
-	const { PUBLIC_AI_AGENT_DOMAIN } = validatedEnv;
+	const { PUBLIC_AI_AGENT_DOMAIN, PUBLIC_DISCORD_URL } = validatedEnv;
 
 	const tabItems: {
 		value: string;
@@ -171,14 +171,23 @@
 								</div>
 								<div>Documentation</div>
 							</div>
-							<div
-								class="antialiased border rounded-xl py-7 px-7 border-stroke-base dark:border-stroke-base-dark flex items-center justify-center gap-3 text-body-base dark:text-body-base-dark hover:bg-background-accent dark:hover:bg-background-accent-dark cursor-pointer">
-								<div
-									class="rounded-full border border-stroke-base dark:border-stroke-base-dark p-3 bg-background-secondary dark:bg-background-secondary-dark">
-									<img alt={"discord"} class="w-5" src={DiscordIcon} width="20" />
-								</div>
-								<div>Join the Discord</div>
-							</div>
+
+							{#if !!PUBLIC_DISCORD_URL}
+								<a
+									href={PUBLIC_DISCORD_URL}
+									target="_blank"
+									class="antialiased border rounded-xl py-7 px-7 border-stroke-base dark:border-stroke-base-dark flex items-center justify-center gap-3 text-body-base dark:text-body-base-dark hover:bg-background-accent dark:hover:bg-background-accent-dark cursor-pointer">
+									<div
+										class="rounded-full border border-stroke-base dark:border-stroke-base-dark p-3 bg-background-secondary dark:bg-background-secondary-dark">
+										<img
+											alt={"discord"}
+											class="w-5"
+											src={DiscordIcon}
+											width="20" />
+									</div>
+									<div>Join the Discord</div>
+								</a>
+							{/if}
 						</div>
 					</div>
 				</section>
