@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AgentAttachmentsModule } from './agent-attachments/agent-attachments.module';
-import { AgentMessagesModule } from './agent-messages/agent-messages.module';
+import { ChatMessagesModule } from './chat-messages/chat-messages.module';
 import { AgentsModule } from './agents/agents.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -44,7 +44,7 @@ import { UsersModule } from './users/users.module';
     OauthProvidersModule,
     TelemetryModule,
     ConversationsModule,
-    AgentMessagesModule,
+    ChatMessagesModule,
   ],
   controllers: [AppController],
   providers: [AppService, TelemetryService],

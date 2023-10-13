@@ -13,7 +13,7 @@
 		const member = $authStore.member;
 		const projectId = $mainContextStore.publicProjectConfig?.id;
 
-		if (!member || projectId) {
+		if (!member || !projectId) {
 			return;
 		}
 

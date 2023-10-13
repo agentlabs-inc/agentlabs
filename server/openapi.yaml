@@ -549,7 +549,7 @@ paths:
       responses:
         "200":
           description: ""
-  /conversations/getAll:
+  /conversations/getAllByProjectId:
     get:
       operationId: getAllConversations
       parameters:
@@ -563,7 +563,7 @@ paths:
           description: ""
       tags:
         - conversations
-  /agent-messages/listByConversationId/{conversationId}:
+  /chat-messages/listByConversationId/{conversationId}:
     get:
       operationId: listByConversationId
       parameters:
@@ -576,7 +576,7 @@ paths:
         "200":
           description: ""
       tags:
-        - agent-messages
+        - chat-messages
   /agent-attachments/listByMessageId/{messageId}:
     get:
       operationId: listByMessageId

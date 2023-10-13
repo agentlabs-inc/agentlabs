@@ -11,7 +11,7 @@ export class ConversationsController {
   constructor(private readonly conversationsService: ConversationsService) {}
 
   @RequireAuthMethod('member-token')
-  @Get('getAll')
+  @Get('getAllByProjectId')
   async getAllConversations(
     @Query() { projectId }: GetAllConversationsDto,
     @Req() req: MemberAuthenticatedRequest,

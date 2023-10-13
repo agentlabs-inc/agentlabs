@@ -8,11 +8,12 @@ import {
   WebSocketGateway,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { AgentMessagesService } from 'src/agent-messages/agent-messages.service';
+import { ChatMessagesService } from 'src/chat-messages/chat-messages.service';
 import { BaseRealtimeMessageDto } from 'src/common/base-realtime-message.dto';
 import { ConversationsService } from 'src/conversations/conversations.service';
 import { FrontendConnectionManagerService } from 'src/frontend-connection-manager/frontend-connection-manager.service';
 import { ProjectBackendConnectionManagerService } from 'src/project-backend-connection-manager/project-backend-connection-manager.service';
+import { SdkSecretsService } from 'src/sdk-secrets/sdk-secrets.service';
 import { AgentStreamManagerService } from './agent-stream-manager/agent-stream-manager.service';
 import { ConversationMutexManager } from './conversation-mutex-manager';
 import { AgentMessageDto } from './dto/agent-message.dto';
@@ -28,8 +29,9 @@ export class ProjectBackendConnectionGateway
     private readonly agentConnectionManagerService: ProjectBackendConnectionManagerService,
     private readonly frontendConnectionManagerService: FrontendConnectionManagerService,
     private readonly conversationsService: ConversationsService,
-    private readonly messagesService: AgentMessagesService,
+    private readonly messagesService: ChatMessagesService,
     private readonly streamManager: AgentStreamManagerService,
+    private readonly sdkSecretsService: SdkSecretsService,
   ) {}
 
   private readonly logger = new Logger(ProjectBackendConnectionGateway.name);
@@ -65,14 +67,10 @@ export class ProjectBackendConnectionGateway
       return;
     }
 
-    /*
     const isAuthorized = await this.sdkSecretsService.verifySdkSecret(
       projectId,
       secret,
     );
-	*/
-
-    const isAuthorized = true;
 
     if (!isAuthorized) {
       const message = 'Invalid credentials, closing connection.';

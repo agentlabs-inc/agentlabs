@@ -8,7 +8,7 @@ CREATE TYPE "AuthMethodType" AS ENUM ('OAUTH2', 'EMAIL', 'PHONE_NUMBER', 'ANONYM
 CREATE TYPE "AuthProvider" AS ENUM ('PASSWORDLESS_EMAIL', 'EMAIL_AND_PASSWORD', 'SMS', 'ANONYMOUS', 'GOOGLE', 'GITHUB', 'GITLAB', 'MICROSOFT');
 
 -- CreateEnum
-CREATE TYPE "AgentMessageSource" AS ENUM ('USER', 'AGENT', 'SYSTEM');
+CREATE TYPE "ChatMessageSource" AS ENUM ('USER', 'AGENT', 'SYSTEM');
 
 -- CreateEnum
 CREATE TYPE "MessageFormat" AS ENUM ('PLAIN_TEXT', 'MARKDOWN', 'HTML');
@@ -228,25 +228,26 @@ CREATE TABLE "Conversation" (
 );
 
 -- CreateTable
-CREATE TABLE "AgentMessage" (
+CREATE TABLE "ChatMessage" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updateAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "source" "AgentMessageSource" NOT NULL,
+    "source" "ChatMessageSource" NOT NULL,
     "text" TEXT NOT NULL,
     "conversationId" TEXT NOT NULL,
     "format" "MessageFormat" NOT NULL DEFAULT 'PLAIN_TEXT',
+    "agentId" TEXT,
 
-    CONSTRAINT "AgentMessage_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "ChatMessage_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "AgentMessageAttachment" (
+CREATE TABLE "ChatMessageAttachment" (
     "id" TEXT NOT NULL,
     "attachmentId" TEXT NOT NULL,
     "messageId" TEXT NOT NULL,
 
-    CONSTRAINT "AgentMessageAttachment_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "ChatMessageAttachment_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -264,13 +265,13 @@ CREATE TABLE "Attachment" (
 );
 
 -- CreateTable
-CREATE TABLE "AgentConnectionLog" (
+CREATE TABLE "ProjectBackendConnectionLog" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "ipAddress" TEXT NOT NULL,
-    "agentId" TEXT NOT NULL,
+    "projectId" TEXT NOT NULL,
 
-    CONSTRAINT "AgentConnectionLog_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "ProjectBackendConnectionLog_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -304,7 +305,7 @@ CREATE UNIQUE INDEX "MemberAuth_memberId_key" ON "MemberAuth"("memberId");
 CREATE UNIQUE INDEX "Member_projectId_email_key" ON "Member"("projectId", "email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "AgentMessageAttachment_attachmentId_key" ON "AgentMessageAttachment"("attachmentId");
+CREATE UNIQUE INDEX "ChatMessageAttachment_attachmentId_key" ON "ChatMessageAttachment"("attachmentId");
 
 -- AddForeignKey
 ALTER TABLE "PasswordHashConfig" ADD CONSTRAINT "PasswordHashConfig_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -370,13 +371,16 @@ ALTER TABLE "Conversation" ADD CONSTRAINT "Conversation_projectId_fkey" FOREIGN 
 ALTER TABLE "Conversation" ADD CONSTRAINT "Conversation_memberId_fkey" FOREIGN KEY ("memberId") REFERENCES "Member"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "AgentMessage" ADD CONSTRAINT "AgentMessage_conversationId_fkey" FOREIGN KEY ("conversationId") REFERENCES "Conversation"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ChatMessage" ADD CONSTRAINT "ChatMessage_conversationId_fkey" FOREIGN KEY ("conversationId") REFERENCES "Conversation"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "AgentMessageAttachment" ADD CONSTRAINT "AgentMessageAttachment_attachmentId_fkey" FOREIGN KEY ("attachmentId") REFERENCES "Attachment"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ChatMessage" ADD CONSTRAINT "ChatMessage_agentId_fkey" FOREIGN KEY ("agentId") REFERENCES "Agent"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "AgentMessageAttachment" ADD CONSTRAINT "AgentMessageAttachment_messageId_fkey" FOREIGN KEY ("messageId") REFERENCES "AgentMessage"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ChatMessageAttachment" ADD CONSTRAINT "ChatMessageAttachment_attachmentId_fkey" FOREIGN KEY ("attachmentId") REFERENCES "Attachment"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "AgentConnectionLog" ADD CONSTRAINT "AgentConnectionLog_agentId_fkey" FOREIGN KEY ("agentId") REFERENCES "Agent"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ChatMessageAttachment" ADD CONSTRAINT "ChatMessageAttachment_messageId_fkey" FOREIGN KEY ("messageId") REFERENCES "ChatMessage"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ProjectBackendConnectionLog" ADD CONSTRAINT "ProjectBackendConnectionLog_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

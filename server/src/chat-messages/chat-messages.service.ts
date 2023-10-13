@@ -5,10 +5,10 @@ import {
   CreateAgentChatMessagePayload,
   CreateSystemChatMessagePayload,
   CreateUserChatMessagePayload,
-} from './agent-messages.types';
+} from './chat-messages.types';
 
 @Injectable()
-export class AgentMessagesService {
+export class ChatMessagesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async listByConversationId(conversationId: string): Promise<ChatMessage[]> {

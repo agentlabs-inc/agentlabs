@@ -14,6 +14,7 @@ export class ConversationsService {
     memberId,
     projectId,
   }: FindAllConversationsPayload): Promise<Conversation[]> {
+    console.log('findAllConversations', memberId, projectId);
     return await this.prisma.conversation.findMany({
       where: {
         projectId,

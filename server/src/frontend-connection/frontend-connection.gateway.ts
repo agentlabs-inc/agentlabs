@@ -8,7 +8,7 @@ import {
   WebSocketGateway,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { AgentMessagesService } from 'src/agent-messages/agent-messages.service';
+import { ChatMessagesService } from 'src/chat-messages/chat-messages.service';
 import { BaseRealtimeMessageDto } from 'src/common/base-realtime-message.dto';
 import { TutorialMessageFactory } from 'src/common/tutorial-message-factory';
 import { ConversationsService } from 'src/conversations/conversations.service';
@@ -29,7 +29,7 @@ export class FrontendConnectionGateway
     private readonly frontendConnectionManagerService: FrontendConnectionManagerService,
     private readonly agentConnectionManagerService: ProjectBackendConnectionManagerService,
     private readonly conversationsService: ConversationsService,
-    private readonly messagesService: AgentMessagesService,
+    private readonly messagesService: ChatMessagesService,
     private readonly membersService: MembersService,
     private readonly projectsService: ProjectsService,
   ) {}

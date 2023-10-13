@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AgentMessagesModule } from 'src/agent-messages/agent-messages.module';
+import { ChatMessagesModule } from 'src/chat-messages/chat-messages.module';
 import { ConversationsModule } from 'src/conversations/conversations.module';
 import { FrontendConnectionManagerModule } from 'src/frontend-connection-manager/frontend-connection-manager.module';
 import { MembersModule } from 'src/members/members.module';
@@ -13,7 +13,7 @@ import { FrontendConnectionGateway } from './frontend-connection.gateway';
     FrontendConnectionManagerModule,
     ConversationsModule,
     ProjectsModule,
-    AgentMessagesModule,
+    ChatMessagesModule,
     MembersModule,
   ],
   providers: [FrontendConnectionGateway],

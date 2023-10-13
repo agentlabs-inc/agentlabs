@@ -9,13 +9,13 @@ import { ApiTags } from '@nestjs/swagger';
 import { ConversationsService } from 'src/conversations/conversations.service';
 import { RequireAuthMethod } from 'src/iam/iam.decorators';
 import { MemberAuthenticatedRequest } from 'src/iam/iam.types';
-import { AgentMessagesService } from './agent-messages.service';
+import { ChatMessagesService } from './chat-messages.service';
 
-@ApiTags('agent-messages')
-@Controller('agent-messages')
-export class AgentMessagesController {
+@ApiTags('chat-messages')
+@Controller('chat-messages')
+export class ChatMessagesController {
   constructor(
-    private readonly agentMessagesService: AgentMessagesService,
+    private readonly agentMessagesService: ChatMessagesService,
     private readonly conversationsService: ConversationsService,
   ) {}
 
