@@ -141,8 +141,7 @@ export class FrontendConnectionGateway
       });
     }
 
-    const message = await this.messagesService.createMessage({
-      source: 'USER',
+    const message = await this.messagesService.createUserMessage({
       text: payload.data.text,
       conversationId: conversation.id,
       format: 'PLAIN_TEXT',
@@ -179,9 +178,8 @@ export class FrontendConnectionGateway
         );
       }
 
-      await this.messagesService.createMessage({
+      await this.messagesService.createSystemMessage({
         conversationId: conversation.id,
-        source: 'SYSTEM',
         text,
         format: 'MARKDOWN',
       });

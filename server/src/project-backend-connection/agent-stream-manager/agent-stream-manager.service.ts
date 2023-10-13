@@ -76,14 +76,14 @@ export class AgentStreamManagerService {
       return;
     }
 
-    const message = await this.prisma.agentMessage.findUnique({
+    const message = await this.prisma.chatMessage.findUnique({
       where: {
         id: messageId,
       },
     });
 
     if (!message) {
-      await this.prisma.agentMessage.create({
+      await this.prisma.chatMessage.create({
         data: {
           id: messageId,
           text: stream.buffer,
@@ -93,7 +93,7 @@ export class AgentStreamManagerService {
         },
       });
     } else {
-      await this.prisma.agentMessage.update({
+      await this.prisma.chatMessage.update({
         where: {
           id: messageId,
         },

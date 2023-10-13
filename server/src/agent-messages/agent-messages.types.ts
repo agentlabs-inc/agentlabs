@@ -1,8 +1,15 @@
-import { AgentMessageSource, MessageFormat } from 'prisma/prisma-client';
+import { MessageFormat } from 'prisma/prisma-client';
 
-export interface CreateAgentMessagePayload {
+interface BaseMessagePayload {
   text: string;
-  source: AgentMessageSource;
   conversationId: string;
   format: MessageFormat;
 }
+
+export type CreateUserChatMessagePayload = BaseMessagePayload;
+
+export interface CreateAgentChatMessagePayload extends BaseMessagePayload {
+  agentId: string;
+}
+
+export type CreateSystemChatMessagePayload = BaseMessagePayload;

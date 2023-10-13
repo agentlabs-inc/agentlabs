@@ -210,6 +210,8 @@ model Agent {
 	projectId			String
 
 	logoUrl				String?
+
+	messages			ChatMessage[]
 }
 
 model MemberAuthVerificationCode {
@@ -319,10 +321,10 @@ model Conversation {
 
 	memberId 		String
 	member			Member		@relation(fields: [memberId], references: [id])
-	messages		AgentMessage[]
+	messages		ChatMessage[]
 }
 
-enum AgentMessageSource {
+enum ChatMessageSource {
 	USER
 	AGENT		
 	SYSTEM // reserved for future use
@@ -334,29 +336,32 @@ enum MessageFormat {
 	HTML // reserved for future use
 }
 
-model AgentMessage {
+model ChatMessage {
 	id				String				@id			@default(uuid())
 	createdAt		DateTime						@default(now())
 	updateAt		DateTime			@updatedAt	@default(now())
 
-	source			AgentMessageSource
+	source			ChatMessageSource
 	text			String
 
 	conversationId	String
 	conversation	Conversation	@relation(fields: [conversationId], references: [id])
 	
-	attachments		AgentMessageAttachment[]
+	attachments		ChatMessageAttachment[]
 	format			MessageFormat @default(PLAIN_TEXT)
+
+	agent 			Agent? @relation(fields: [agentId], references: [id])
+	agentId			String?
 }
 
-model AgentMessageAttachment {
+model ChatMessageAttachment {
 	id				String				@id			@default(uuid())
 
 	attachmentId	String @unique
 	attachment		Attachment	@relation(fields: [attachmentId], references: [id])
 
 	messageId		String
-	message			AgentMessage	@relation(fields: [messageId], references: [id])
+	message			ChatMessage	@relation(fields: [messageId], references: [id])
 }
 
 enum AttachmentStorageDriver {
@@ -378,7 +383,7 @@ model Attachment {
 	driver					AttachmentStorageDriver
 	isPublic				Boolean @default(false)
 
-	agentMessageAttachment	AgentMessageAttachment?
+	agentMessageAttachment	ChatMessageAttachment?
 }
 
 

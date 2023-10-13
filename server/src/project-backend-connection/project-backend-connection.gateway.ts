@@ -117,7 +117,6 @@ export class ProjectBackendConnectionGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: AgentMessageDto,
   ): Promise<BaseRealtimeMessageDto> {
-    // TODO: Aurelien
     const conversation =
       await this.conversationsService.findConversationByIdWithAgent(
         payload.data.conversationId,
@@ -145,11 +144,11 @@ export class ProjectBackendConnectionGateway
     try {
       await this.conversationMutexManager.acquire(conversation.id);
 
-      const message = await this.messagesService.createMessage({
+      const message = await this.messagesService.createAgentMessage({
         conversationId: conversation.id,
         text: payload.data.text,
-        source: 'AGENT',
         format: payload.data.format,
+        agentId: payload.data.agentId,
       });
 
       const frontendConnection =
@@ -159,8 +158,7 @@ export class ProjectBackendConnectionGateway
         });
 
       if (!frontendConnection) {
-        const agentId = ''; // TODO no more agentId
-        const message = `Frontend connection not found: MEMBER_ID=${conversation.memberId},PROJECT_ID=${conversation.projectId},AGENT_ID=${agentId}`;
+        const message = `Frontend connection not found: MEMBER_ID=${conversation.memberId},PROJECT_ID=${conversation.projectId},AGENT_ID=${payload.data.agentId}`;
 
         this.logger.error(message);
 
@@ -183,6 +181,7 @@ export class ProjectBackendConnectionGateway
           format: payload.data.format,
           source: 'AGENT',
           messageId: message.id,
+          agentId: payload.data.agentId,
         },
       });
 

@@ -13,6 +13,9 @@ class AgentMessageDataDto {
   @IsString()
   messageId: string;
 
+  @IsString()
+  agentId: string;
+
   @IsEnum(MessageFormat)
   format: MessageFormat;
 }
