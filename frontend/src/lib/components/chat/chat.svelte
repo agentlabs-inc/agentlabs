@@ -19,6 +19,7 @@
 	import Typography from "$lib/components/common/typography/Typography.svelte";
 	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
 	import { mainContextStore } from "$lib/stores/main-context";
+	import LetterAvatar from "$lib/components/common/letter-avatar/LetterAvatar.svelte";
 
 	let chatElement: HTMLDivElement;
 	let chatInputElement: HTMLInputElement;
@@ -198,12 +199,41 @@
 			}
 		}
 	});
+
+	const availableAgent = [
+		{
+			name: "Sama Gasse",
+			status: "online"
+		},
+		{
+			name: "Tupu Dépié",
+			status: "offline"
+		},
+		{
+			name: "Fro Magekipu",
+			status: "online"
+		}
+	];
 </script>
 
 <div class="flex flex-col justify-between relative h-full">
 	<div
 		bind:this={chatElement}
 		class="absolute top-0 bottom-[80px] left-0 right-0 overflow-y-scroll bg-background-primary dark:bg-background-secondary-dark">
+		<Spacer size="xs" />
+		<div class="flex gap-2 px-5 py-3 justify-end items-center">
+			{#each availableAgent as agent}
+				<div class="relative">
+					<LetterAvatar rounded={true}>
+						{agent.name[0] + agent.name[1]}
+						<div
+							class="h-2 w-2 {agent.status === 'online'
+								? 'bg-background-success dark:bg-background-success-dark'
+								: 'bg-background-error dark:bg-background-error-dark'} rounded-full absolute top-0 right-1" />
+					</LetterAvatar>
+				</div>
+			{/each}
+		</div>
 		{#if messages?.length > 0}
 			<div class="flex flex-col grow gap-4 py-4 px-3 items-start">
 				{#each messages as message, index (message.id)}
@@ -232,7 +262,7 @@
 				<Spacer size="xs" />
 				<div>
 					<Typography type="subTitle"
-						>Send a message to start interacting with the agent.</Typography>
+						>Send a message to start interacting with the agents.</Typography>
 				</div>
 			</div>
 		{/if}
