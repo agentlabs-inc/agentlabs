@@ -6,10 +6,12 @@ export interface AgentConnection {
   projectId: string;
   agentKey: string;
   createdAt: Date;
+  ip: string;
 }
 
 export interface RegisterAgentConnectionPayload {
   socket: Socket;
   agentId: string;
   projectId: string;
+  ip: string;
 }

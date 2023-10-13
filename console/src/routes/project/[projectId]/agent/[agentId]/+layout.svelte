@@ -4,7 +4,7 @@
 	import { page } from "$app/stores";
 	import MainTitleSkeleton from "$lib/components/common/skeleton/MainTitleSkeleton.svelte";
 	import { projectStore } from "$lib/stores/project";
-	import { projectOverviewRoute } from "$lib/routes/routes";
+	import { projectOverviewRoute, agentBackendsRoute } from "$lib/routes/routes";
 
 	import TabNav from "$lib/components/common/navigation/tab-nav/TabNav.svelte";
 	import { agentOverviewRoute, agentSettingsRoute } from "$lib/routes/routes";
@@ -40,6 +40,13 @@
 				{
 					label: "Settings",
 					path: agentSettingsRoute.path(
+						$projectStore.currentProjectId,
+						$page.params.agentId
+					)
+				},
+				{
+					label: 'Connected backends',
+					path: agentBackendsRoute.path(
 						$projectStore.currentProjectId,
 						$page.params.agentId
 					)

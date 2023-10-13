@@ -62,6 +62,11 @@ export const agentSettingsRoute = {
 		`${basePath}/project/${projectId}/agent/${agentId}/settings`
 };
 
+export const agentBackendsRoute = {
+	path: (projectId: string, agentId: string) =>
+		`${basePath}/project/${projectId}/agent/${agentId}/backends`
+};
+
 export const projectMembersRoute = {
 	path: (projectId: string) => `${basePath}/project/${projectId}/auth/members`
 };

@@ -207,7 +207,7 @@ model Agent {
 	projectId			String
 
 	conversations	AgentConversation[]
-	connectionEvents AgentConnectionEvent[]
+	connectionEvents AgentConnectionLog[]
 
 	logoUrl				String?
 }
@@ -380,10 +380,14 @@ model Attachment {
 	agentMessageAttachment	AgentMessageAttachment?
 }
 
-model AgentConnectionEvent {
 
-	id				String				@id			@default(uuid())
+// Log one each time an agent initializes a connection to the server
+model AgentConnectionLog {
+	id				String				@id		
 	createdAt		DateTime						@default(now())
+
+	// The IP address of the connecting agent.
+	ipAddress			String
 
 	agentId			String
 	agent			Agent		@relation(fields: [agentId], references: [id])

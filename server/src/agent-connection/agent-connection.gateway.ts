@@ -128,6 +128,7 @@ export class AgentConnectionGateway
       projectId,
       agentId,
       socket: client,
+      ip: client.handshake.address,
     });
 
     client.send({
