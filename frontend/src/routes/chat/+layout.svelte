@@ -4,19 +4,22 @@
 	import AuthOnly from "$lib/gates/AuthOnly.svelte";
 	import RealtimeContext from "$lib/context/RealtimeContext.svelte";
 	import Chat from "$lib/components/chat/chat.svelte";
+	import AgentContext from "$lib/context/AgentContext.svelte";
 </script>
 
 <AuthOnly>
-	<RealtimeContext>
-		<div class="bg-background-primary dark:bg-background-primary-dark h-screen flex flex-col">
-			<TopNav />
-			<div class="flex flex-row flex-grow">
-				<LeftNav />
-				<div class="flex-grow">
-					<Chat />
-					<slot />
+	<AgentContext>
+		<RealtimeContext>
+			<div class="bg-background-primary dark:bg-background-primary-dark h-screen flex flex-col">
+				<TopNav />
+				<div class="flex flex-row flex-grow">
+					<LeftNav />
+					<div class="flex-grow">
+						<Chat />
+						<slot />
+					</div>
 				</div>
 			</div>
-		</div>
-	</RealtimeContext>
+		</RealtimeContext>
+	</AgentContext>
 </AuthOnly>

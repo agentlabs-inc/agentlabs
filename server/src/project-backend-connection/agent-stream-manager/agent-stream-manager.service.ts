@@ -13,6 +13,7 @@ export interface StreamData {
   messageId: string;
   createdAtTs: number;
   format: MessageFormat;
+  agentId: string;
 }
 
 interface HandlePayload {
@@ -20,6 +21,7 @@ interface HandlePayload {
   conversationId: string;
   token: string;
   format: MessageFormat;
+  agentId: string;
 }
 
 @Injectable()
@@ -90,6 +92,7 @@ export class AgentStreamManagerService {
           source: 'AGENT',
           conversationId: stream.conversationId,
           format: stream.format,
+          agentId: stream.agentId,
         },
       });
     } else {
@@ -116,9 +119,6 @@ export class AgentStreamManagerService {
           where: {
             id: data.conversationId,
           },
-          include: {
-            // TODO: no more agent, previously: agent: true
-          },
         });
 
         if (!conversation) {
@@ -130,11 +130,9 @@ export class AgentStreamManagerService {
           projectId: conversation.projectId,
         });
 
-        const agentId = ''; // TODO: no more agent id
-
         if (!frontend) {
           throw new Error(
-            `Frontend connection not found: MEMBER_ID=${conversation.memberId},PROJECT_ID=${conversation.projectId},AGENT_ID=${agentId}`,
+            `Frontend connection not found: MEMBER_ID=${conversation.memberId},PROJECT_ID=${conversation.projectId},AGENT_ID=${data.agentId}`,
           );
         }
 
@@ -149,6 +147,7 @@ export class AgentStreamManagerService {
           messageId: data.messageId,
           createdAtTs: Date.now(),
           format: data.format,
+          agentId: data.agentId,
         };
 
         this.activeStreams.set(data.messageId, stream);
@@ -161,6 +160,7 @@ export class AgentStreamManagerService {
           conversationId: stream.conversationId,
           messageId: stream.messageId,
           format: stream.format,
+          agentId: stream.agentId,
         },
       });
     } finally {

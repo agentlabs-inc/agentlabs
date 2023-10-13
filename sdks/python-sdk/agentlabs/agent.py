@@ -48,10 +48,11 @@ class Agent:
         self.id = id
 
     def send(self, text: str, conversation_id: str):
-        self._realtime.emit('send-message', {
+        self._realtime.emit('chat-message', {
             "conversationId": conversation_id,
             "text": text,
-            "agentId": self.id
+            "agentId": self.id,
+            "source": "AGENT"
         })
 
     def create_stream(self, conversation_id: str, format: MessageFormat) -> AgentStream:

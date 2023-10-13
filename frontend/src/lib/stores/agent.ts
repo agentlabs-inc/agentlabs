@@ -1,23 +1,13 @@
-import { writable } from "svelte/store";
+import { get, writable } from "svelte/store";
 import type { Agent } from "$lib/entities/agent/agent";
-import { createLocalStorage, persist } from "@macfja/svelte-persistent-store";
-import { genStoreKey } from "$lib/utils/genStoreKey";
 
 export type AgentStore = {
-	selectedAgent: Agent | null;
 	list: Agent[];
 };
 
-const AGENT_STORE_KEY = genStoreKey("agent-store");
-
-export const agentStore = persist(
-	writable<AgentStore>({
-		selectedAgent: null,
-		list: [],
-	}),
-	createLocalStorage(),
-	AGENT_STORE_KEY
-);
+export const agentStore =  writable<AgentStore>({
+	list: [],
+});
 
 export const setSelectedAgent = (agent: Agent) => {
 	agentStore.update((store) => {
@@ -36,3 +26,7 @@ export const setAvailableAgents = (agents: Agent[]) => {
 		};
 	});
 };
+
+export const getAgentById = (id: string) => {
+	return get(agentStore).list.find((agent) => agent.id === id);
+}

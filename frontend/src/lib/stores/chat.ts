@@ -13,6 +13,7 @@ export interface ChatMessage {
 	source: 'USER' | 'AGENT' | 'SYSTEM';
 	createdAt: string;
 	format: ChatMessageFormat;
+	agentId?: string;
 }
 
 export interface ChatStore {

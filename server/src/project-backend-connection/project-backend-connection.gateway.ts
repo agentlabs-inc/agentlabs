@@ -8,6 +8,7 @@ import {
   WebSocketGateway,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
+import { AgentsService } from 'src/agents/agents.service';
 import { ChatMessagesService } from 'src/chat-messages/chat-messages.service';
 import { BaseRealtimeMessageDto } from 'src/common/base-realtime-message.dto';
 import { ConversationsService } from 'src/conversations/conversations.service';
@@ -32,6 +33,7 @@ export class ProjectBackendConnectionGateway
     private readonly messagesService: ChatMessagesService,
     private readonly streamManager: AgentStreamManagerService,
     private readonly sdkSecretsService: SdkSecretsService,
+    private readonly agentsService: AgentsService,
   ) {}
 
   private readonly logger = new Logger(ProjectBackendConnectionGateway.name);
@@ -142,6 +144,29 @@ export class ProjectBackendConnectionGateway
     try {
       await this.conversationMutexManager.acquire(conversation.id);
 
+      const isProjectAgent = await this.agentsService.isProjectAgent(
+        conversation.projectId,
+        payload.data.agentId,
+      );
+
+      if (!isProjectAgent) {
+        const message = `Message rejected: agent ${payload.data.agentId} is not an agent of project ${conversation.projectId}.`;
+
+        client.send({
+          message,
+        });
+
+        return {
+          message,
+          timestamp: new Date().toISOString(),
+          data: {},
+          error: {
+            code: 'AGENT_NOT_FOUND',
+            message,
+          },
+        };
+      }
+
       const message = await this.messagesService.createAgentMessage({
         conversationId: conversation.id,
         text: payload.data.text,
@@ -202,6 +227,7 @@ export class ProjectBackendConnectionGateway
       conversationId: payload.data.conversationId,
       token: payload.data.text,
       format: payload.data.format,
+      agentId: payload.data.agentId,
     });
   }
 

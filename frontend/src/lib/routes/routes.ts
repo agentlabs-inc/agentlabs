@@ -1,15 +1,15 @@
 const basePath = "";
 
 export const homeRoute = {
-	path: () => `${basePath}/main`
-};
-
-export const selectAgentRoute = {
-	path: () => `${basePath}/agents`
+	path: () => `${basePath}/chat`
 };
 
 export const agentChatRoute = {
-	path: () => `${basePath}/main`
+	path: () => `${basePath}/chat`
+};
+
+export const chatConversationRoute = {
+	path: (conversationId: string) => `${basePath}/chat/c/${conversationId}`
 };
 
 export const logoutRoute = {

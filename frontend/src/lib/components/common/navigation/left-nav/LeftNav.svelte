@@ -8,6 +8,7 @@
 	import { conversationStore } from "$lib/stores/conversation";
 	import Button from "../../button/Button.svelte";
 	import { mainContextStore } from "$lib/stores/main-context.js";
+	import { agentChatRoute, chatConversationRoute } from "$lib/routes/routes";
 
 	onMount(async () => {
 		const member = $authStore.member;
@@ -21,13 +22,13 @@
 	});
 
 	const handleNewChat = () => {
-		goto("/main").then(() => {
+		goto(agentChatRoute.path()).then(() => {
 			$conversationStore.selectedConversationId = null;
 		});
 	};
 
 	const handleConversationClick = async (conversationId: string) => {
-		await goto(`/main/c/${conversationId}`);
+		await goto(chatConversationRoute.path(conversationId));
 	};
 
 	$: conversations = $conversationStore.list;

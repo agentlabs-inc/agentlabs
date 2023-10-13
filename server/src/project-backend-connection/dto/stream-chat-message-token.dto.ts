@@ -15,6 +15,9 @@ class StreamChatMessageTokenDtoData {
 
   @IsEnum(MessageFormat)
   format: MessageFormat;
+
+  @IsString()
+  agentId: string;
 }
 
 export class StreamChatMessageTokenDto extends BaseRealtimeMessageDto {

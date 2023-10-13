@@ -13,19 +13,19 @@
 	} from "$lib/stores/conversation";
 	import { realtimeStore } from "$lib/stores/realtime";
 	import { afterNavigate, goto } from "$app/navigation";
-	import { agentStore } from "$lib/stores/agent";
 	import { authStore } from "$lib/stores/auth";
 	import { v4 as uuidv4 } from "uuid";
 	import Typography from "$lib/components/common/typography/Typography.svelte";
 	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
 	import { mainContextStore } from "$lib/stores/main-context";
+	import AgentChatMessage from "./chat-message/AgentChatMessage.svelte";
+	import { chatConversationRoute } from "$lib/routes/routes";
 
 	let chatElement: HTMLDivElement;
 	let chatInputElement: HTMLInputElement;
 	let isWaitingForAnswer = false;
 	let chatInputValue = "";
 
-	$: agentId = $agentStore.selectedAgent?.id;
 	$: memberId = $authStore.member?.id;
 
 	$: isChatInputDisabled = isWaitingForAnswer || chatInputValue === "";
@@ -97,7 +97,7 @@
 			createdAt: timestamp,
 			updatedAt: timestamp
 		});
-		await goto(`/main/c/${conversationId}`);
+		await goto(chatConversationRoute.path(conversationId));
 	};
 
 	const listenToStreamChatMessageEnd = () => {
@@ -129,7 +129,8 @@
 			text: payload.data.text,
 			source: payload.data.source,
 			createdAt: payload.timestamp,
-			format: payload.data.format
+			format: payload.data.format,
+			agentId: payload.data.agentId
 		});
 	};
 
@@ -147,7 +148,8 @@
 			text: payload.data.text,
 			source: "AGENT",
 			createdAt: payload.timestamp,
-			format: payload.data.format
+			format: payload.data.format,
+			agentId: payload.data.agentId
 		});
 	};
 
@@ -208,12 +210,23 @@
 			<div class="flex flex-col grow gap-4 py-4 px-3 items-start">
 				{#each messages as message, index (message.id)}
 					<div class="w-full">
-						<ChatMessage
-							isLoading={isWaitingForAnswer && messages.length - 1 === index}
-							from={message.source}
-							time={dayjs(message.createdAt).format("M/D/YYYY hh:mm A")}
-							body={message.text}
-							format={message.format} />
+						{#if message.agentId}
+							<AgentChatMessage
+								isLoading={isWaitingForAnswer && messages.length - 1 === index}
+								time={dayjs(message.createdAt).format("M/D/YYYY hh:mm A")}
+								body={message.text}
+								format={message.format}
+								agentId={message.agentId}
+							/>
+						{:else}
+							<ChatMessage
+								isLoading={isWaitingForAnswer && messages.length - 1 === index}
+								from={message.source}
+								time={dayjs(message.createdAt).format("M/D/YYYY hh:mm A")}
+								body={message.text}
+								format={message.format} 
+							/>
+						{/if}
 					</div>
 				{/each}
 			</div>
