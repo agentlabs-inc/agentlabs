@@ -593,7 +593,7 @@ paths:
     get:
       operationId: getAllConversations
       parameters:
-        - name: agentId
+        - name: projectId
           required: true
           in: query
           schema:

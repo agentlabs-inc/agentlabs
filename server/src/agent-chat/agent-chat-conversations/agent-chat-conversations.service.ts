@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AgentConversation } from '@prisma/client';
+import { Conversation } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
   CreateAgentChatConversationPayload,
@@ -12,11 +12,11 @@ export class AgentChatConversationsService {
 
   async findAllConversations({
     memberId,
-    agentId,
-  }: FindAllConversationsPayload): Promise<AgentConversation[]> {
-    return await this.prisma.agentConversation.findMany({
+    projectId,
+  }: FindAllConversationsPayload): Promise<Conversation[]> {
+    return await this.prisma.conversation.findMany({
       where: {
-        agentId,
+        projectId,
         memberId,
       },
       orderBy: {
@@ -32,7 +32,7 @@ export class AgentChatConversationsService {
     memberId: string;
     conversationId: string;
   }) {
-    const count = await this.prisma.agentConversation.count({
+    const count = await this.prisma.conversation.count({
       where: {
         id: conversationId,
         memberId,
@@ -44,11 +44,11 @@ export class AgentChatConversationsService {
 
   async createConversation(
     payload: CreateAgentChatConversationPayload,
-  ): Promise<AgentConversation> {
-    const conversation = await this.prisma.agentConversation.create({
+  ): Promise<Conversation> {
+    const conversation = await this.prisma.conversation.create({
       data: {
         memberId: payload.memberId,
-        agentId: payload.agentId,
+        projectId: payload.projectId,
         id: payload.id,
       },
     });
@@ -56,8 +56,8 @@ export class AgentChatConversationsService {
     return conversation;
   }
 
-  async findConversationById(id: string): Promise<AgentConversation | null> {
-    const conversation = await this.prisma.agentConversation.findUnique({
+  async findConversationById(id: string): Promise<Conversation | null> {
+    const conversation = await this.prisma.conversation.findUnique({
       where: {
         id,
       },
@@ -67,7 +67,7 @@ export class AgentChatConversationsService {
   }
 
   async findConversationByIdWithMessages(id: string) {
-    const conversation = await this.prisma.agentConversation.findUnique({
+    const conversation = await this.prisma.conversation.findUnique({
       where: {
         id,
       },
@@ -80,12 +80,12 @@ export class AgentChatConversationsService {
   }
 
   async findConversationByIdWithAgent(id: string) {
-    const conversation = await this.prisma.agentConversation.findUnique({
+    const conversation = await this.prisma.conversation.findUnique({
       where: {
         id,
       },
       include: {
-        agent: true,
+        // TODO: no more agent, previously: agent: true,
       },
     });
 

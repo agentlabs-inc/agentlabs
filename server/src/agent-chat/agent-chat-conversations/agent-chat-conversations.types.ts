@@ -1,10 +1,10 @@
 export interface CreateAgentChatConversationPayload {
   id: string;
-  agentId: string;
+  projectId: string;
   memberId: string;
 }
 
 export interface FindAllConversationsPayload {
-  agentId: string;
+  projectId: string;
   memberId: string;
 }

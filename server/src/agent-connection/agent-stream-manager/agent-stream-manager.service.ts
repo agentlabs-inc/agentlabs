@@ -112,12 +112,12 @@ export class AgentStreamManagerService {
       let stream = this.activeStreams.get(data.messageId) ?? null;
 
       if (!stream) {
-        const conversation = await this.prisma.agentConversation.findUnique({
+        const conversation = await this.prisma.conversation.findUnique({
           where: {
             id: data.conversationId,
           },
           include: {
-            agent: true,
+            // TODO: no more agent, previously: agent: true
           },
         });
 
@@ -126,14 +126,16 @@ export class AgentStreamManagerService {
         }
 
         const frontend = this.frontendConnectionManagerService.getConnection({
-          agentId: conversation.agent.id,
+          agentId: '', // TODO: no more agentId, previously: conversation.agent.id,
           memberId: conversation.memberId,
-          projectId: conversation.agent.projectId,
+          projectId: conversation.projectId,
         });
+
+        const agentId = ''; // TODO: no more agent id
 
         if (!frontend) {
           throw new Error(
-            `Frontend connection not found: MEMBER_ID=${conversation.memberId},PROJECT_ID=${conversation.agent.projectId},AGENT_ID=${conversation.agent.id}`,
+            `Frontend connection not found: MEMBER_ID=${conversation.memberId},PROJECT_ID=${conversation.projectId},AGENT_ID=${agentId}`,
           );
         }
 

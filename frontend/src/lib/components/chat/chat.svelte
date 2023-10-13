@@ -18,6 +18,7 @@
 	import { v4 as uuidv4 } from "uuid";
 	import Typography from "$lib/components/common/typography/Typography.svelte";
 	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
+	import { mainContextStore } from "$lib/stores/main-context";
 
 	let chatElement: HTMLDivElement;
 	let chatInputElement: HTMLInputElement;
@@ -31,6 +32,12 @@
 
 	$: messages = $chatStore.messages;
 	$: conversationId = $conversationStore.selectedConversationId;
+
+	const projectId = $mainContextStore.publicProjectConfig?.id;
+
+	if (!projectId) {
+		throw new Error("Project id is not defined");
+	}
 
 	let shouldRedirectToConversation = false;
 
@@ -77,7 +84,7 @@
 	};
 
 	const makeConversation = async () => {
-		if (!agentId || !memberId || !conversationId) {
+		if (!memberId || !conversationId) {
 			return;
 		}
 
@@ -85,7 +92,7 @@
 
 		addConversation({
 			id: conversationId,
-			agentId,
+			projectId,
 			memberId,
 			createdAt: timestamp,
 			updatedAt: timestamp

@@ -15,11 +15,11 @@ export class AgentChatConversationsController {
   @RequireAuthMethod('member-token')
   @Get('getAll')
   async getAllConversations(
-    @Query() { agentId }: GetAllConversationsDto,
+    @Query() { projectId }: GetAllConversationsDto,
     @Req() req: MemberAuthenticatedRequest,
   ) {
     const conversations = await this.conversationsService.findAllConversations({
-      agentId,
+      projectId,
       memberId: req.member.id,
     });
 
