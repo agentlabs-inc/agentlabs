@@ -12,7 +12,6 @@
 		onboardingTypescriptCode
 	} from "$lib/components/project/agents/code-snippets/onboarding.snippet";
 
-	import Monaco from "svelte-monaco";
 	import { env } from "$env/dynamic/public";
 	import SDKSecretGenerator from "$lib/components/project/secret/SDKSecretGenerator.svelte";
 	import { agentStore } from "$lib/stores/agent";
