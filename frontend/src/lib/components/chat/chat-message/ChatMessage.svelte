@@ -26,7 +26,7 @@
 		<div class="flex gap-4">
 			<div class="shrink-0">
 				{#if from === "USER"}
-					<Avatar alt="user avatar" src={member?.profilePictureUrl ?? ''} />
+					<Avatar alt="user avatar" src={member?.profilePictureUrl ?? ""} />
 				{:else if from === "AGENT"}
 					<LetterAvatar>Ag</LetterAvatar>
 				{:else}
@@ -34,11 +34,12 @@
 				{/if}
 			</div>
 
-			<div>
+			<div class="flex flex-col flex-grow relative overflow-x-scroll">
 				<div class="text-body-subdued dark:text-body-subdued-dark text-xs mb-3">
 					{time}
 				</div>
-				<div class="text-body-accent dark:text-body-accent-dark text-[11pt] leading-7">
+				<div
+					class="text-body-accent dark:text-body-accent-dark text-[11pt] leading-7 w-full">
 					{#if format === "MARKDOWN"}
 						<MarkdownRenderer source={body} />
 					{:else}
