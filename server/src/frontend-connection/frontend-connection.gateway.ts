@@ -149,7 +149,7 @@ export class FrontendConnectionGateway
     if (!conversation) {
       conversation = await this.conversationsService.createConversation({
         id: payload.data.conversationId,
-        agentId: frontendConnection.agentId,
+        projectId: frontendConnection.projectId,
         memberId: frontendConnection.memberId,
       });
     }

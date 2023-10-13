@@ -1,7 +1,5 @@
 <script lang="ts">
 	import TopCover from "$lib/components/common/top-cover/TopCover.svelte";
-	import Typography from "$lib/components/common/typography/Typography.svelte";
-	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
 	import AgentsGrid from "$lib/components/project/agents/agents-grid/AgentsGrid.svelte";
 	import { page } from "$app/stores";
 	import CopiableTag from "$lib/components/common/copiable/CopiableTag.svelte";

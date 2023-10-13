@@ -7,28 +7,28 @@
 	import { authStore } from "$lib/stores/auth";
 	import { conversationStore } from "$lib/stores/conversation";
 	import Button from "../../button/Button.svelte";
-	
-	onMount(async () => {
-		const agent = $agentStore.selectedAgent;
-		const member = $authStore.member;
+	import { mainContextStore } from "$lib/stores/main-context.js";
 
-		if (!agent || !member) {
+	onMount(async () => {
+		const member = $authStore.member;
+		const projectId = $mainContextStore.publicProjectConfig?.id;
+
+		if (!member || projectId) {
 			return;
 		}
 
-		await fetchConversations(agent.id);
+		await fetchConversations(projectId);
 	});
 
-
 	const handleNewChat = () => {
-		goto('/main').then(() => {
+		goto("/main").then(() => {
 			$conversationStore.selectedConversationId = null;
-		})
-	}
+		});
+	};
 
 	const handleConversationClick = async (conversationId: string) => {
 		await goto(`/main/c/${conversationId}`);
-	}
+	};
 
 	$: conversations = $conversationStore.list;
 	$: selectedConversationId = $conversationStore.selectedConversationId;
@@ -38,17 +38,14 @@
 	class="sticky top-0 h-[calc(100vh-60px)] overflow-y-auto border-r border-stroke-base dark:border-stroke-base-dark w-[250px] bg-background-secondary dark:bg-background-primary-dark">
 	<section class="py-5 px-3">
 		<div class="flex flex-col gap-3 antialiased">
-			<Button type='primary' on:click={handleNewChat}>
-			New chat
-			</Button>
+			<Button type="primary" on:click={handleNewChat}>New chat</Button>
 			{#each conversations as conversation}
 				<button
 					on:click={() => handleConversationClick(conversation.id)}
 					class="text-ellipsis overflow-ellipsis flex gap-2 items-center justify-start hover:bg-background-accent dark:hover:bg-background-accent-dark text-sm text-body-base dark:text-body-base-dark py-3 px-2 rounded-lg cursor-pointer"
-					class:dark:bg-background-accent-dark={conversation.id === selectedConversationId}
-					class:bg-background-accent={conversation.id === selectedConversationId}
-					>
-
+					class:dark:bg-background-accent-dark={conversation.id ===
+						selectedConversationId}
+					class:bg-background-accent={conversation.id === selectedConversationId}>
 					<Icon src={ChatBubbleLeft} class="w-4 flex-shrink-0" />
 					<span class="block h-5 truncate grow-0">conversation #{conversation.id}</span>
 				</button>

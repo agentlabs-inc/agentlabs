@@ -123,6 +123,7 @@ model Project {
 	authMethods		AuthMethod[]
 	onboardings		Onboarding[]
 	memberAuthVerificationCodes MemberAuthVerificationCode[]
+	agentConversations	Conversation[]
 
 	smtpConfiguration							SmtpConfiguration?
 }
@@ -206,7 +207,6 @@ model Agent {
 	project				Project @relation(fields: [projectId], references: [id])
 	projectId			String
 
-	conversations	AgentConversation[]
 	connectionEvents AgentConnectionLog[]
 
 	logoUrl				String?
@@ -271,7 +271,7 @@ model Member {
 	projectId			String
 
 	identities		MemberIdentity[]
-	conversations	AgentConversation[]
+	conversations			Conversation[]
 	auth 				  		MemberAuth?
 	verificationCode	MemberAuthVerificationCode?
 }
@@ -309,13 +309,14 @@ model MemberIdentity {
 	@@id([memberId, provider])
 }
 
-model AgentConversation {
+model Conversation {
 	id				String		@id 		@default(uuid())
 	createdAt 		DateTime				@default(now())
 	updatedAt 		DateTime	@updatedAt	@default(now())
 
-	agentId			String
-	agent			Agent		@relation(fields: [agentId], references: [id])
+	project			Project		@relation(fields: [projectId], references: [id])
+	projectId		String
+
 	memberId 		String
 	member			Member		@relation(fields: [memberId], references: [id])
 	messages		AgentMessage[]
@@ -342,7 +343,7 @@ model AgentMessage {
 	text			String
 
 	conversationId	String
-	conversation	AgentConversation	@relation(fields: [conversationId], references: [id])
+	conversation	Conversation	@relation(fields: [conversationId], references: [id])
 	
 	attachments		AgentMessageAttachment[]
 	format			MessageFormat @default(PLAIN_TEXT)

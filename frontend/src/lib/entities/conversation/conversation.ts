@@ -5,7 +5,7 @@ export interface Conversation {
 	createdAt: string;
 	updatedAt: string;
 
-	agentId: string;
+	projectId: string;
 	memberId: string;
 }
 
