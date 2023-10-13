@@ -20,8 +20,8 @@ pip install agentlabs-sdk
 Then, write basic code to handle incoming chat messages:
 
 \`\`\`python
-from agentlabs.agent import IncomingChatMessage
 from agentlabs.project import Project
+from agentlabs.chat import IncomingChatMessage
 
 project = Project(
     project_id='${projectId}',

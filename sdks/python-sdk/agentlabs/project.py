@@ -1,21 +1,19 @@
-from typing import Any, Callable, Dict
 import os
+from typing import Any, Callable, Dict
 
-from .http import HttpApi
-from .logger import Logger
-from .realtime import RealtimeClient
-
-from .types import _ChatMessage
 from .agent import Agent
+from .chat import IncomingChatMessage
 
-class IncomingChatMessage:
-    def __init__(self, message: _ChatMessage):
-        self.text = message["text"]
-        self.conversation_id = message["conversationId"]
-        self.message_id = message["messageId"]
-        self.member_id = message["memberId"]
+from ._internals.http import HttpApi
+from ._internals.logger import Logger
+from ._internals.realtime import RealtimeClient
 
 class Project:
+    """Represents a project on the AgentLabs server.
+    This class is used to instantiate a backend connection for
+    the configured project.
+    """
+
     _client_logger = Logger(name="Client")
     _server_logger = Logger(name="Server")
 
@@ -37,40 +35,48 @@ class Project:
         self._realtime = RealtimeClient(project_id=project_id, secret=secret, url=agentlabs_url)
         self._realtime.on('message', self._log_message)
     
-    """
-    Defines a handler for when a new chat message is received.
-    It will be called each time a user sends a new message to the agent from the AgentLabs UI.
-    """
     def on_chat_message(self, fn: Callable[[IncomingChatMessage], None]):
+        """Defines a handler for when a new chat message is received.
+        It will be called each time a member of your project sends a new message.
+        """
         def wrapper(payload: Any):
             chat_message = IncomingChatMessage(message=payload['data'])
             fn(chat_message)
 
         self._realtime.on('chat-message', wrapper)
 
-    """
-    Connects the project to the AgentLabs server.
-    Does not block the main thread by itself, use wait() if this is desired.
-    May raise an exception if the connection fails.
-
-    Note that as of now, only one connection per project is permitted. This will be changed very soon.
-    """
     def connect(self):
+        """Connects the project to the AgentLabs server.
+        Does not block the main thread by itself, use wait() if this is desired.
+        May raise an exception if the connection fails.
+
+        Note that as of now, only one connection per project is permitted.
+        This will be changed very soon.
+        """
         self._client_logger.info("Connecting to AgentLabs...")
         self._realtime.connect()
 
-    """
-    Blocks the main thread until the agent is disconnected
-    Useful if you have only one agent and want to keep the program running
-    without having to bother with your own loop.
-    """
     def wait(self):
+        """Blocks the main thread until the agent is disconnected
+        Useful if you have only one agent and want to keep the program running
+        without having to bother with your own loop.
+        """
         self._realtime.wait()
 
     def disconnect(self):
+        """Interrupt the current project backend connection.
+        If this is the only backend connection used for the project, the project
+        will be considered offline and unusable by members.
+
+        Support for multiple connections per project is not yet implemented
+        and will be added soon.
+        """
         self._realtime.disconnect()
 
     def agent(self, id: str) -> Agent:
+        """Embodies an agent defined for the project.
+        This agent can be used to send and stream messages.
+        """
         return Agent(
             realtime=self._realtime,
             id=id,

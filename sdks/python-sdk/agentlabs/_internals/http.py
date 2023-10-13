@@ -1,8 +1,6 @@
 from typing import TypedDict
 import requests
 
-from .attachment import Attachment
-
 class HttpApiConfig(TypedDict):
     agentlabs_url: str;
     project_id: str;
@@ -24,14 +22,3 @@ class HttpApi:
 
     def _make_url(self, path: str):
         return self.agentlabs_url + path
-
-    def create_message_attachment(self, agent_id: str, message_id: str, attachment: Attachment):
-        url = self._make_url("/agent-attachments/createMessageAttachmentSync")
-        res = requests.post(url, params={
-            message_id: message_id,
-            "projectId": self.project_id,
-            "agentId": agent_id
-        }, files={
-            "file": attachment.buffer
-        })
-        res.raise_for_status()
