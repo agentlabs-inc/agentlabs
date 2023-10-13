@@ -5,13 +5,10 @@
 	import {
 		loginRoute,
 		onboardingRoute,
-		projectOnboardingAuthMethodRoute,
-		projectOnboardingUseApplicationRoute,
-		projectOverviewRoute
+		projectOnboardingAuthMethodRoute
 	} from "$lib/routes/routes";
 	import { goto } from "$app/navigation";
 	import { fetchRequiredUserConfig } from "$lib/usecases/users/fetchRequiredUserConfig";
-	import { themeStore } from "$lib/stores/theme";
 
 	let loading = true;
 
@@ -48,5 +45,5 @@
 {#if !loading}
 	<slot />
 {:else}
-	<LoadingFrame theme={$themeStore} />
+	<LoadingFrame />
 {/if}

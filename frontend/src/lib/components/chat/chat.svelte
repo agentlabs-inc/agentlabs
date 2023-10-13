@@ -16,6 +16,8 @@
 	import { agentStore } from "$lib/stores/agent";
 	import { authStore } from "$lib/stores/auth";
 	import { v4 as uuidv4 } from "uuid";
+	import Typography from "$lib/components/common/typography/Typography.svelte";
+	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
 
 	let chatElement: HTMLDivElement;
 	let chatInputElement: HTMLInputElement;
@@ -215,9 +217,14 @@
 						AgentLabs
 					</h2>
 					<div
-						class="ml-4 text-sm font-semibold text-button-label-primary dark:text-button-label-primary-dark bg-button-bg-primary dark:bg-button-bg-primary-dark rounded-md px-2 py-1 antialiased">
+						class="ml-4 text-xs font-medium bg-gray-200 dark:bg-gray-800 text-body-base dark:text-body-accent-dark rounded-md px-2 py-1 antialiased">
 						ALPHA
 					</div>
+				</div>
+				<Spacer size="xs" />
+				<div>
+					<Typography type="subTitle"
+						>Send a message to start interacting with the agent.</Typography>
 				</div>
 			</div>
 		{/if}

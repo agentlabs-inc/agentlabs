@@ -9,21 +9,17 @@
 	import { browser } from "$app/environment";
 	import { SvelteToast } from "@zerodevx/svelte-toast";
 
-	let darkMode = $themeStore === "dark";
-
 	if (browser) {
-		if (darkMode) {
+		if ($themeStore === "dark") {
 			document.documentElement.classList.add("dark");
-			darkMode = true;
 		} else {
 			document.documentElement.classList.remove("dark");
-			darkMode = false;
 		}
 	}
 </script>
 
 {#await data.mainLayoutLazy.isLoaded}
-	<LoadingFrame theme={$themeStore} />
+	<LoadingFrame />
 {:then context}
 	<slot />
 	<SvelteToast />
