@@ -2,7 +2,10 @@ export const onboardingTypescriptCode = (params: {
 	projectId: string;
 	projectSlug: string;
 	agentId: string;
-}) => `import { Attachment, Project, IncomingChatMessage } from 'agentlabs';
+}) => `\`\`\`typescript
+// npm install @agentlabs/node-sdk
+
+import { Attachment, Project, IncomingChatMessage } from 'agentlabs';
 
 function handleChatMessage(message: IncomingChatMessage): void {
     if (message.text !== 'ping') {
@@ -28,7 +31,10 @@ export const onboardingPythonCode = (params: {
 	projectId: string;
 	projectSlug: string;
 	agentId: string;
-}) => `from agentlabs import Attachment, Project, IncomingChatMessage
+}) => `\`\`\`python
+# pip install agentlabs-sdk
+
+from agentlabs import Attachment, Project, IncomingChatMessage
 
 def handle_chat_message(message: IncomingChatMessage):
     if message.text != 'ping':

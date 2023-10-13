@@ -17,6 +17,7 @@
 	import SDKSecretGenerator from "$lib/components/project/secret/SDKSecretGenerator.svelte";
 	import { agentStore } from "$lib/stores/agent";
 	import { validateEnv } from "$lib/utils/validateEnv";
+	import MarkdownRenderer from "$lib/components/common/markdown/markdown-renderer.svelte";
 
 	const project = $projectStore.currentProject;
 	const agent = $agentStore.currentAgent;
@@ -124,30 +125,14 @@
 					<SDKSecretGenerator />
 					<Spacer size="md" />
 					<div
-						class="bg-background-quaternary dark:bg-background-quaternary-dark rounded-md py-4 px-4 flex flex-col items-left justify-center w-full h-[500px] relative">
+						class="bg-background-quaternary dark:bg-background-quaternary-dark rounded-md py-4 px-4 flex flex-col items-left justify-center w-full relative">
 						<Tabs
 							on:change={(event) => (selectedTab = event.detail.item.id)}
 							defaultActive="python"
 							items={tabItems} />
 						<div class="w-full h-full rounded-md overflow-hidden">
 							<div id="editor" class="h-full">
-								<!-- event.detail is the monaco instance. All options are reactive! -->
-								<Monaco
-									options={{
-										minimap: {
-											enabled: false
-										},
-										readOnly: true,
-										padding: {
-											top: 30
-										},
-										language: "python",
-										automaticLayout: true,
-										fontSize: 16
-									}}
-									theme="vs-dark"
-									on:ready={(event) => console.log(event.detail)}
-									bind:value={snippetValue} />
+								<MarkdownRenderer source={snippetValue} />
 							</div>
 						</div>
 					</div>
