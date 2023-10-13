@@ -11,6 +11,8 @@
 	export let from: "USER" | "AGENT" | "SYSTEM";
 	export let format: ChatMessageFormat;
 
+	export let isLoading = true;
+
 	let bubbleClass: string;
 
 	$: bubbleClass =
@@ -21,7 +23,7 @@
 	const member = $authStore.member;
 </script>
 
-<div class={`${bubbleClass} rounded-md py-5 px-5 antialiased`}>
+<div class="{bubbleClass} {isLoading ? 'animate-pulse' : ''} rounded-md py-5 px-5 antialiased">
 	<div class="mb-3">
 		<div class="flex gap-4">
 			<div class="shrink-0">

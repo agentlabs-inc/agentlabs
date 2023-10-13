@@ -199,9 +199,10 @@
 		class="absolute top-0 bottom-[80px] left-0 right-0 overflow-y-scroll bg-background-primary dark:bg-background-secondary-dark">
 		{#if messages?.length > 0}
 			<div class="flex flex-col grow gap-4 py-4 px-3 items-start">
-				{#each messages as message (message.id)}
+				{#each messages as message, index (message.id)}
 					<div class="w-full">
 						<ChatMessage
+							isLoading={isWaitingForAnswer && messages.length - 1 === index}
 							from={message.source}
 							time={dayjs(message.createdAt).format("M/D/YYYY hh:mm A")}
 							body={message.text}
