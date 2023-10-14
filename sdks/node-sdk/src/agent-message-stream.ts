@@ -44,10 +44,9 @@ export class AgentMessageStream {
 	end() {
 		this.isEnded = true;
 		this.realtime.emit('stream-chat-message-end', {
-			data: {
-				conversationId: this.conversationId,
-				messageId: this.messageId,
-			}
+			conversationId: this.conversationId,
+			messageId: this.messageId,
+			agentId: this.agentId,
 		})
 	}
 }
