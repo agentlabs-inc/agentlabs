@@ -47,6 +47,16 @@ export class ProjectsService {
     return ok({ isMember: true });
   }
 
+  async getBackendConnectionLogCountByProjectId(projectId: string) {
+    const count = await this.prisma.projectBackendConnectionLog.count({
+      where: {
+        projectId,
+      },
+    });
+
+    return count;
+  }
+
   async isProjectMemberById({
     memberId,
     projectId,

@@ -13,11 +13,10 @@ export const realtimeStore = writable<RealtimeStore>({
 	startConversationMessage: null
 });
 
-export const openRealtimeConnection = async (projectId: string, agentId: string, idToken: string) => {
+export const openRealtimeConnection = async (projectId: string, idToken: string) => {
 	const connection = io('/frontend', {
 		extraHeaders: {
 			'x-agentlabs-project-id': projectId,
-			'x-agentlabs-agent-id': agentId,
 			'authorization': `Bearer ${idToken}`
 		}
 	})

@@ -53,6 +53,17 @@ export class AgentsService {
     return ok({ isVerified: true });
   }
 
+  async isProjectAgent(projectId: string, agentId: string): Promise<boolean> {
+    const count = await this.prisma.agent.count({
+      where: {
+        id: agentId,
+        projectId,
+      },
+    });
+
+    return count > 0;
+  }
+
   async verifyIfCanUpdateAgent(params: {
     userId: string;
     agentId: string;
@@ -182,15 +193,6 @@ export class AgentsService {
     return ok({
       ...result,
     });
-  }
-  async getConnectionCount(agentId: string): Promise<number> {
-    const eventCount = await this.prisma.agentConnectionLog.count({
-      where: {
-        agentId,
-      },
-    });
-
-    return eventCount;
   }
 
   async deleteAgent(params: {

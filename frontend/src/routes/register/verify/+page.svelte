@@ -6,7 +6,7 @@
 	import { z as zod } from "zod";
 	import ThemeSwitch from "$lib/components/common/theme-switch/ThemeSwitch.svelte";
 	import { toastError } from "$lib/utils/toast";
-	import { registerRoute, selectAgentRoute } from "$lib/routes/routes";
+	import { homeRoute, registerRoute } from "$lib/routes/routes";
 	import { goto } from "$app/navigation";
 	import { verifyPasswordlessEmail } from "$lib/usecases/members/verifyPasswordlessEmail";
 	import Typography from "$lib/components/common/typography/Typography.svelte";
@@ -50,7 +50,7 @@
 				code: $form.code
 			});
 
-			goto(selectAgentRoute.path());
+			goto(homeRoute.path());
 		} catch (e: any) {
 			toastError(e?.message ?? "Something went wrong");
 		} finally {
@@ -101,9 +101,9 @@
 						<div class="text-center mt-10">
 							<span
 								class="text-sm text-center m-auto text-body-base dark:text-body-base-dark"
-								>Didn't receive the code <span
-									on:click={() => goto(registerRoute.path())}
-									class="underline">Ask for a new one</span>
+								>Didn't receive the code? <a
+									href={registerRoute.path()}
+									class="underline">Ask for a new one</a>
 							</span>
 						</div>
 					</div>

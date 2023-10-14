@@ -19,15 +19,16 @@ export class AgentAttachmentsService {
   ) {}
 
   async listByMessageId(messageId: string) {
-    const messageAttachments =
-      await this.prisma.agentMessageAttachment.findMany({
+    const messageAttachments = await this.prisma.chatMessageAttachment.findMany(
+      {
         where: {
           messageId,
         },
         include: {
           attachment: true,
         },
-      });
+      },
+    );
 
     return messageAttachments;
   }
@@ -39,7 +40,7 @@ export class AgentAttachmentsService {
       mimeType: payload.mimeType,
     });
     const agentMessageAttachment =
-      await this.prisma.agentMessageAttachment.create({
+      await this.prisma.chatMessageAttachment.create({
         data: {
           attachmentId: attachment.id,
           messageId: payload.messageId,

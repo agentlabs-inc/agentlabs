@@ -1,24 +1,21 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { get } from "svelte/store";
-	import { agentStore } from "$lib/stores/agent";
-	import type { AgentStore } from "$lib/stores/agent";
-	import { goto } from "$app/navigation";
-	import { selectAgentRoute } from "$lib/routes/routes";
 	import LoadingFrame from "$lib/components/common/loading-frame/LoadingFrame.svelte";
+	import { fetchAgents } from "$lib/usecases/agents/fetch-agents";
+	import { mainContextStore } from "$lib/stores/main-context";
 
 	let loading = true;
 
 	onMount(async () => {
-		const { list, selectedAgent } = get<AgentStore>(agentStore);
+		const projectId = $mainContextStore.publicProjectConfig?.id;
 
-
-		if (list.length > 0 && !!selectedAgent) {
-			loading = false;
-			return;
+		if (!projectId) {
+			throw new Error("Project ID not found");
 		}
 
-		await goto(selectAgentRoute.path());
+		await fetchAgents(projectId);
+
+		loading = false;
 	});
 </script>
 
