@@ -1,6 +1,7 @@
 import { randomUUID } from "crypto";
 import { AgentMessageStreamConfig, MessageFormat } from "./types";
 import { RealtimeClient } from "./realtime";
+import { localMessageFormatToRemote } from "./constants";
 
 export class AgentMessageStream {
 	private readonly messageId = randomUUID()
@@ -11,7 +12,7 @@ export class AgentMessageStream {
 	private readonly realtime: RealtimeClient;
 
 	constructor(config: AgentMessageStreamConfig) {
-		this.format = config.format ?? 'PlainText';
+		this.format =  config.format ?? 'PlainText';
 		this.conversationId = config.conversationId;
 		this.agentId = config.agentId;
 		this.realtime = config.realtime;
@@ -30,7 +31,7 @@ export class AgentMessageStream {
 			text: message,
 			conversationId: this.conversationId,
 			messageId: this.messageId,
-			format: this.format,
+			format: localMessageFormatToRemote[this.format],
 			agentId: this.agentId,
 		})
 	}
