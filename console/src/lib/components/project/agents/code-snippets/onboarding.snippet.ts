@@ -5,27 +5,29 @@ export const onboardingTypescriptCode = (params: {
 }) => `\`\`\`typescript
 // npm install @agentlabs/node-sdk
 
-import { Attachment, Project, IncomingChatMessage } from 'agentlabs';
+const project = new Project({
+    projectId: "${params.projectId}",
+    secret: "your-secret",
+    url: agentlabsUrl,
+});
 
-function handleChatMessage(message: IncomingChatMessage): void {
-    if (message.text !== 'ping') {
-        const pingPongRules = Attachment.fromPath('rules.md');
-        message.reply('Sorry but I cannot handle that.', [pingPongRules]);
+const agent = project.agent("${params.agentId}");
+
+project.onChatMessage(async (message) => {
+    if (message.text === 'ping') {
+        agent.send({
+            text: 'pong',
+            conversationId: message.conversationId,
+        });
         return;
     }
-    message.reply('pong!');
-}
+    agent.send({
+		text: "I don't understand.",
+		conversationId: message.conversationId,
+	});
+});
 
-const projectConfig = {
-    agentlabs_url: "https://${params.projectSlug}.agentlabs.ai",
-    project_id: "${params.projectId}",
-};
-
-const project = new Project(projectConfig);
-
-const agent = project.agent({ id: "${params.agentId}" });
-agent.onChatMessage(handleChatMessage);
-`;
+project.connect();`;
 
 export const onboardingPythonCode = (params: {
 	projectId: string;
@@ -34,19 +36,27 @@ export const onboardingPythonCode = (params: {
 }) => `\`\`\`python
 # pip install agentlabs-sdk
 
-from agentlabs import Attachment, Project, IncomingChatMessage
-
-def handle_chat_message(message: IncomingChatMessage):
-    if message.text != 'ping':
-        ping_pong_rules = Attachment.from_path('rules.md')
-        message.reply('Sorry but I cannot handle that.', attachments=[ping_pong_rules])
-        return ;
-    message.reply('pong!')
-
-project = Project({
-    "agentlabs_url": "https://${params.projectSlug}.app.agentlabs.dev",
-    "project_id": "${params.projectId}",
-})
+def handle_message(message: IncomingChatMessage):
+    if message.text == "ping":
+        agent.send(
+            conversation_id=message.conversation_id,
+            text="pong",
+        )
+    else:
+        agent.send(
+            conversation_id=message.conversation_id,
+            text="I don't understand.",
+        )
+        
+project = Project(
+    project_id=${params.projectId},
+    agentlabs_url="https://app.agentlabs.dev",
+    secret="your-secret",
+)
 
 agent = project.agent(id="${params.agentId}")
-agent.on_chat_message(handle_chat_message)`;
+project.on_chat_message(handle_message)
+
+project.connect()
+project.wait()
+`;
