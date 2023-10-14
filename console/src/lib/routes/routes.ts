@@ -88,3 +88,7 @@ export const authMethodRoute = {
 		return `${basePath}/project/${projectId}/auth/methods/${providerId}`;
 	}
 };
+
+export const secretsRoute = {
+	path: (projectId: string) => `${basePath}/project/${projectId}/secrets`
+};

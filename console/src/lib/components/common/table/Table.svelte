@@ -27,7 +27,9 @@
 {/if}
 
 {#if !isLoadingData && totalCount === 0}
-	<EmptyState title={emptyTitle} description={emptyDescription} />
+	<EmptyState title={emptyTitle} description={emptyDescription}>
+		<slot name="empty-state-actions" />
+	</EmptyState>
 {:else if !isLoadingData && rows.length === 0}
 	<NotResultState />
 {/if}

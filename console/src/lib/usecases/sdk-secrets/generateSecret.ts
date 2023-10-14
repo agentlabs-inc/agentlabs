@@ -5,7 +5,6 @@ export const generateSecret = async (projectId: string): Promise<CreatedSdkSecre
 	await new Promise((resolve) => setTimeout(resolve, 500));
 	const secret = await SdkSecretsService.create({
 		requestBody: {
-			description: "SDK Secret generated from the console",
 			projectId
 		}
 	});

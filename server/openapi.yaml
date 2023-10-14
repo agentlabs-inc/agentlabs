@@ -291,6 +291,50 @@ paths:
         - sdk-secrets
       security:
         - bearer: []
+  /sdk-secrets/listForProject/{projectId}:
+    get:
+      operationId: listForProject
+      parameters:
+        - name: projectId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListSdkSecretDto"
+        "401":
+          description: You are not authorized to perform this action
+      tags:
+        - sdk-secrets
+      security:
+        - bearer: []
+  /sdk-secrets/revokeById/{secretId}:
+    delete:
+      operationId: revokedById
+      parameters:
+        - name: secretId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RevokeSdkSecretDto"
+        "401":
+          description: You are not authorized to perform this action
+      tags:
+        - sdk-secrets
+      security:
+        - bearer: []
   /projects/getRealtimeConnections/{projectId}:
     get:
       operationId: getRealtimeConnections
@@ -1143,6 +1187,56 @@ components:
         - preview
         - createdAt
         - updatedAt
+    SanitizedSdkSecretDto:
+      type: object
+      properties:
+        id:
+          type: string
+        description:
+          type: string
+          nullable: true
+        projectId:
+          type: string
+        preview:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - id
+        - description
+        - projectId
+        - preview
+        - createdAt
+        - updatedAt
+    ListSdkSecretDto:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/SanitizedSdkSecretDto"
+        resultCount:
+          type: number
+        hasMore:
+          type: boolean
+        totalCount:
+          type: number
+      required:
+        - items
+        - resultCount
+        - hasMore
+        - totalCount
+    RevokeSdkSecretDto:
+      type: object
+      properties:
+        isRevoked:
+          type: boolean
+      required:
+        - isRevoked
     SerializedProjectBackendConnectionDto:
       type: object
       properties:

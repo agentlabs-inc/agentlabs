@@ -41,7 +41,7 @@
 			<Spacer size="sm" />
 			<CopiableTag
 				value={generatedSecret.clearValue}
-				displayedValue={generatedSecret.preview} />
+				displayedValue={generatedSecret.clearValue} />
 		</Alert>
 	{/if}
 </div>
