@@ -84,15 +84,9 @@
 					<div class="col-span-6">
 						<Typography type="mainSectionTitle">Getting started</Typography>
 						<Typography type="subTitle"
-							>Watch our quick video tour to get started like a pro!</Typography>
+							>Your new Chat UI is ready! Let's get started.</Typography>
 					</div>
-					<div class="col-span-4">
-						<div
-							class="rounded-md overflow-hidden"
-							style="position: relative; padding-bottom: 62.5%; height: 0;">
-							<!-- TUTORIAL / IFRAME GOES HERE -->
-						</div>
-					</div>
+					<div class="col-span-4" />
 				</section>
 				<section
 					class="p-10 antialiased min-h-[200px] border-t border-stroke-base dark:border-stroke-base-dark">
