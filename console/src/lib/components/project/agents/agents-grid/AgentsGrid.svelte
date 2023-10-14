@@ -57,9 +57,20 @@
 		</div>
 	{:else}
 		<section class="antialiased">
-			<Typography type="mainSectionTitle">Your AI Agents</Typography>
-			<Typography type="subTitle"
-				>Configure a AI agent so you can use it with your frontend.</Typography>
+			<div class="flex justify-between">
+				<div>
+					<Typography type="mainSectionTitle">Your AI Agents</Typography>
+					<Typography type="subTitle"
+						>Configure a AI agent so you can use it with your frontend.</Typography>
+				</div>
+				<div>
+					<Button
+						type="primary"
+						leftIcon={Plus}
+						on:click={() => goto(createAgentRoute.path(projectId))}
+						>Create an agent</Button>
+				</div>
+			</div>
 		</section>
 		<Spacer size="md" />
 		<div class="grid grid-cols-6 gap-4">
