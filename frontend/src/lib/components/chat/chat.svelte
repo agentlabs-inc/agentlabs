@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { addMessage, addStreamedMessageToken, chatStore } from "$lib/stores/chat";
+	import { addActiveStream, addMessage, addStreamedMessageToken, chatStore, isStreaming, removeActiveStream } from "$lib/stores/chat";
 	import { PaperAirplane } from "svelte-hero-icons";
 	import Button from "../common/button/Button.svelte";
 	import ChatInput from "./chat-input/ChatInput.svelte";
@@ -29,13 +29,13 @@
 
 	$: memberId = $authStore.member?.id;
 
-	$: isChatInputDisabled = isWaitingForAnswer || isUserInteractionBlocked || chatInputValue === "";
+	$: isChatDisabled = isWaitingForAnswer || $isStreaming;
 
 	$: messages = $chatStore.messages;
 	$: conversationId = $conversationStore.selectedConversationId;
 
 	const projectId = $mainContextStore.publicProjectConfig?.id;
-
+	
 	if (!projectId) {
 		throw new Error("Project id is not defined");
 	}
@@ -102,7 +102,11 @@
 		await goto(chatConversationRoute.path(conversationId));
 	};
 
-	const listenToStreamChatMessageEnd = () => {
+	const listenToStreamChatMessageEnd = (payload: any) => {
+		const messageId = payload.data.messageId;
+
+		removeActiveStream(messageId);
+
 		isUserInteractionBlocked = false;
 		isWaitingForAnswer = false;
 
@@ -147,6 +151,10 @@
 
 			return;
 		}
+
+		const messageId = payload.data.messageId;
+
+		addActiveStream(messageId);
 
 		isWaitingForAnswer = false;
 
@@ -270,8 +278,8 @@
 				</div>
 				<Button
 					submit
-					loading={isUserInteractionBlocked}
-					disabled={isChatInputDisabled}
+					loading={isChatDisabled}
+					disabled={isChatDisabled || chatInputValue.length === 0}
 					rightIcon={PaperAirplane} />
 			</form>
 		</div>

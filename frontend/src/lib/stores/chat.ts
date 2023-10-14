@@ -1,4 +1,4 @@
-import { writable } from "svelte/store";
+import { derived, writable } from "svelte/store";
 
 export const ChatMessageFormats = [
 	'PLAIN_TEXT',
@@ -18,11 +18,15 @@ export interface ChatMessage {
 
 export interface ChatStore {
 	messages: ChatMessage[];
+	activeStreams: string[];
 }
 
 export const chatStore = writable(<ChatStore>({
-	messages: []
+	messages: [],
+	activeStreams: [],
 }));
+
+export const isStreaming = derived(chatStore, $chatStore => $chatStore.activeStreams.length > 0);
 
 export const loadMessages = (messages: ChatMessage[]) => {
 	chatStore.update(store => {
@@ -50,6 +54,26 @@ export const addStreamedMessageToken = (message: ChatMessage) => {
 		} else {
 			store.messages = [...store.messages, message]
 		}
+
+		return store;
+	});
+}
+
+export const addActiveStream = (streamId: string) => {
+	chatStore.update(store => {
+		const hasStream = store.activeStreams.includes(streamId);
+
+		if (!hasStream) {
+			store.activeStreams = [...store.activeStreams, streamId];
+		}
+
+		return store;
+	});
+}
+
+export const removeActiveStream = (streamId: string) => {
+	chatStore.update(store => {
+		store.activeStreams = store.activeStreams.filter(s => s !== streamId);
 
 		return store;
 	});
