@@ -10,6 +10,7 @@ services:
     container_name: gateway-dev
     volumes:
       - ./caddy/config/Caddyfile:/etc/caddy/Caddyfile
+      - ./caddy/data:/data
     depends_on:
       - frontend
       - server

@@ -9,6 +9,7 @@ services:
     image: ${CADDY_IMAGE}
     volumes:
       - ./caddy/config/Caddyfile:/etc/caddy/Caddyfile
+      - ./caddy/data:/data
     ports:
       - ${PORT}:80
     depends_on:

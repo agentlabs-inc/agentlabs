@@ -16,6 +16,7 @@ services:
       context: cloud-proxy
     volumes:
       - ./cloud-proxy/Caddyfile:/etc/caddy/Caddyfile
+      - ./cloud-proxy/data:/data
     ports:
       - 80:80
       - 443:443
@@ -31,6 +32,7 @@ services:
     image: ${CADDY_IMAGE}
     volumes:
       - ./caddy/config/Caddyfile:/etc/caddy/Caddyfile
+      - ./caddy/data:/data
     depends_on:
       - frontend
       - server
