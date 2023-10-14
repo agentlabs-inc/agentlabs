@@ -25,10 +25,11 @@
 	let chatInputElement: HTMLInputElement;
 	let isWaitingForAnswer = false;
 	let chatInputValue = "";
+	let isUserInteractionBlocked = false;
 
 	$: memberId = $authStore.member?.id;
 
-	$: isChatInputDisabled = isWaitingForAnswer || chatInputValue === "";
+	$: isChatInputDisabled = isWaitingForAnswer || isUserInteractionBlocked || chatInputValue === "";
 
 	$: messages = $chatStore.messages;
 	$: conversationId = $conversationStore.selectedConversationId;
@@ -76,6 +77,7 @@
 		});
 
 		isWaitingForAnswer = true;
+		isUserInteractionBlocked = true;
 		$conversationStore.selectedConversationId = actualConversationId;
 
 		con.emit("chat-message", payload);
@@ -101,6 +103,7 @@
 	};
 
 	const listenToStreamChatMessageEnd = () => {
+		isUserInteractionBlocked = false;
 		isWaitingForAnswer = false;
 
 		if (shouldRedirectToConversation) {
@@ -124,6 +127,8 @@
 		}
 
 		isWaitingForAnswer = false;
+		isUserInteractionBlocked = false;
+
 		addMessage({
 			id: payload.data.messageId,
 			text: payload.data.text,
@@ -142,6 +147,8 @@
 
 			return;
 		}
+
+		isWaitingForAnswer = false;
 
 		addStreamedMessageToken({
 			id: payload.data.messageId,
@@ -263,7 +270,7 @@
 				</div>
 				<Button
 					submit
-					loading={isWaitingForAnswer}
+					loading={isUserInteractionBlocked}
 					disabled={isChatInputDisabled}
 					rightIcon={PaperAirplane} />
 			</form>
