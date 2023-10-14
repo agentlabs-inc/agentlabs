@@ -5,8 +5,9 @@
 	import Table from "$lib/components/common/table/Table.svelte";
 	import type { TableColumn } from "$lib/components/common/table/types";
 	import type { AgentConnection } from "$lib/entities/agent/agent-connection";
-	import { agentStore } from "$lib/stores/agent";
-	import { fetchRealtimeConnections } from "$lib/usecases/agents/fetchRealtimeConnections";
+	import type { SerializedProjectBackendConnectionDto } from "$lib/services/gen-api";
+	import { projectStore } from "$lib/stores/project";
+	import { fetchRealtimeConnections } from "$lib/usecases/projects/fetchRealtimeBackendConnections";
 	import { durationToHumanReadable } from "$lib/utils/time";
 	import dayjs from "dayjs";
 	import { onDestroy, onMount } from "svelte";
@@ -41,28 +42,28 @@
 	];
 
 
-	const agentConnectionToRow = (connection: AgentConnection): AgentConnectionRow => ({
+	const agentConnectionToRow = (connection: SerializedProjectBackendConnectionDto): AgentConnectionRow => ({
 		id: connection.id,
-		ip: connection.ip,
+		ip: connection.ipAddress,
 		createdAt: connection.createdAt,
 		lifetime: new Date().getTime() - new Date(connection.createdAt).getTime()
 	});
 
 	let rows: AgentConnectionRow[] = [];
 
-	const agent = $agentStore.currentAgent;
-	let connections: AgentConnection[] = [];
+	const projectId = $projectStore.currentProjectId;
+	let connections: SerializedProjectBackendConnectionDto[] = [];
 	let isLoadingData = false;
 	let lifetimeInterval: ReturnType<typeof setInterval> | null = null;
 
 	onMount(async () => {
-		if (!agent) {
+		if (!projectId) {
 			return ;
 		}
 
 		try {
 			 isLoadingData = true
-			 connections = await fetchRealtimeConnections(agent.id);
+			 connections = await fetchRealtimeConnections(projectId);
 			 rows = connections.map(agentConnectionToRow);
 
 			 lifetimeInterval = setInterval(async () => {
@@ -83,6 +84,12 @@
 
 <div class="w-full p-10 pb-32">
 	<div class="max-w-6xl m-auto mt-10">
+		{#if connections.length > 0}
+			<Alert type='warning'>
+				AgentLabs currently only supports one backend connection per agent, which is not ideal from a scalability perspective. Support for multiple backend connections is planned and will ship in the near future.
+			</Alert>
+		<Spacer size='md' />
+		{/if}
 		<Table
 			isLoadingData={isLoadingData}
 			totalCount={connections.length}
@@ -90,11 +97,5 @@
 			rows={rows}
 			emptyTitle="No backend is connected"
 			emptyDescription="Your agent is currently offline as there is no backend to power it. As soon as you connect one, it will appear here." />
-		<Spacer size='md' />
-		{#if connections.length > 0}
-			<Alert type='warning'>
-				AgentLabs currently only supports one backend connection per agent, which is not ideal from a scalability perspective. Support for multiple backend connections is planned and will ship in the near future.
-			</Alert>
-		{/if}
 	</div>
 </div>

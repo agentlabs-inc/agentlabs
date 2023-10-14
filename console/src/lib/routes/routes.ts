@@ -12,6 +12,10 @@ export const authSettingsRoute = {
 	path: (projectId: string) => `${basePath}/project/${projectId}/auth`
 };
 
+export const backendsRoute = {
+	path: (projectId: string) => `${basePath}/project/${projectId}/backends`
+};
+
 export const settingsRoute = {
 	path: (projectId: string) => `${basePath}/project/${projectId}/settings`
 };

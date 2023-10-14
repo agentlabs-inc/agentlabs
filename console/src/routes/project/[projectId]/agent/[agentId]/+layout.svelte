@@ -44,13 +44,6 @@
 						$page.params.agentId
 					)
 				},
-				{
-					label: 'Connected backends',
-					path: agentBackendsRoute.path(
-						$projectStore.currentProjectId,
-						$page.params.agentId
-					)
-				}
 		  ]
 		: [];
 </script>

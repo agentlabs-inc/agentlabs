@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { ChartBar, UserGroup } from "svelte-hero-icons";
+	import { ChartBar, UserGroup, CpuChip } from "svelte-hero-icons";
 	import { page } from "$app/stores";
-	import { authSettingsRoute, overviewRoute } from "$lib/routes/routes";
+	import { authSettingsRoute, overviewRoute, backendsRoute } from "$lib/routes/routes";
 	import NavItem from "$lib/components/common/navigation/nav-item/NavItem.svelte";
 
 	export let projectId: string | null;
@@ -17,6 +17,11 @@
 					label: "Authentication",
 					icon: UserGroup,
 					path: authSettingsRoute.path(projectId)
+				},
+				{
+					label: 'Backends',
+					icon: CpuChip,
+					path: backendsRoute.path(projectId)
 				}
 		  ]
 		: [];
