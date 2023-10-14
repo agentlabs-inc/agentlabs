@@ -1,5 +1,4 @@
 export interface AgentLoggerConfig {
-	agent_id: string;
 	name: string;
 }
 
@@ -12,7 +11,7 @@ export const LogLevels = [
 
 export type LogLevel = typeof LogLevels[number];
 
-export class AgentLogger {
+export class Logger {
 	constructor(private readonly config: AgentLoggerConfig) {
 	}
 
@@ -28,7 +27,7 @@ export class AgentLogger {
 	private log(level: LogLevel, message: string) {
 		const ts = this.generateTimestamp()
 
-		console.log(`[${this.config.agent_id}] [${this.config.name}] [${ts}] ${level} ${message}`);
+		console.log(`[${this.config.name}] [${ts}] ${level} ${message}`);
 	}
 
 	error(message: string) {
