@@ -147,14 +147,16 @@
 								other developers who are currently building successful AI Agents.</Typography>
 						</div>
 						<div class="col-span-3 grid grid-cols-2 gap-5">
-							<div
+							<a
+								href="https://docs.agentlabs.dev"
+								target="_blank"
 								class="antialiased border rounded-xl py-0 px-7 border-stroke-base dark:border-stroke-base-dark flex items-center justify-center gap-3 text-body-base dark:text-body-base-dark hover:bg-background-accent dark:hover:bg-background-accent-dark cursor-pointer">
 								<div
 									class="rounded-full border border-stroke-base dark:border-stroke-base-dark p-3 bg-background-secondary dark:bg-background-secondary-dark">
 									<Icon src={BookOpen} width="20" class="text-body-subdued" />
 								</div>
 								<div>Documentation</div>
-							</div>
+							</a>
 
 							{#if !!PUBLIC_DISCORD_URL}
 								<a
