@@ -4,6 +4,8 @@ import { createHash, randomBytes } from 'crypto';
 import { PResult, err, ok } from '../common/result';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatedSdkSecretDto } from './dtos/created.sdk-secret.dto';
+import { ListSdkSecretDto } from './dtos/list.sdk-secret.dto';
+import { RevokeSdkSecretDto } from './dtos/revoke.sdk-secret.dto';
 import { SanitizedSdkSecretDto } from './dtos/sanitized.sdk-secret.dto';
 import { VerifyIfIsProjectUserError } from './sdk-secrets.errors';
 
@@ -66,6 +68,7 @@ export class SdkSecretsService {
   async createSecret(dto: {
     projectId: string;
     creatorId: string;
+    description?: string;
   }): PResult<CreatedSdkSecretDto, VerifyIfIsProjectUserError> {
     const { projectId, creatorId } = dto;
 
@@ -86,6 +89,7 @@ export class SdkSecretsService {
       data: {
         hash: hashedSecret,
         preview: previewSecret,
+        description: dto.description ?? null,
         project: {
           connect: {
             id: projectId,
@@ -120,5 +124,72 @@ export class SdkSecretsService {
     });
 
     return !!sdkSecrets;
+  }
+
+  async listForProject(params: {
+    userId: string;
+    projectId: string;
+  }): PResult<ListSdkSecretDto, VerifyIfIsProjectUserError> {
+    const { userId, projectId } = params;
+
+    const verifyResult = await this.verifyIfProjectUser({
+      userId,
+      projectId,
+    });
+
+    if (!verifyResult.ok) {
+      return err(verifyResult.error);
+    }
+
+    const secrets = await this.prisma.sdkSecret.findMany({
+      where: {
+        projectId,
+        revokedAt: null,
+      },
+    });
+
+    return ok({
+      items: secrets.map((secret) => this.sanitizeSecret(secret)),
+      resultCount: secrets.length,
+      totalCount: secrets.length,
+      hasMore: false,
+    });
+  }
+
+  async revokeById(params: {
+    userId: string;
+    secretId: string;
+  }): PResult<RevokeSdkSecretDto, VerifyIfIsProjectUserError> {
+    const { userId, secretId } = params;
+
+    const secret = await this.prisma.sdkSecret.findUnique({
+      where: {
+        id: secretId,
+      },
+    });
+
+    if (!secret || secret.revokedAt) {
+      return ok({ isRevoked: true });
+    }
+
+    const verifyResult = await this.verifyIfProjectUser({
+      userId,
+      projectId: secret.projectId,
+    });
+
+    if (!verifyResult.ok) {
+      return err(verifyResult.error);
+    }
+
+    await this.prisma.sdkSecret.update({
+      where: {
+        id: secretId,
+      },
+      data: {
+        revokedAt: new Date(),
+      },
+    });
+
+    return ok({ isRevoked: true });
   }
 }
