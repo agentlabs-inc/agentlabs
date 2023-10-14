@@ -303,6 +303,10 @@ paths:
       responses:
         "200":
           description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetRealtimeConnectionsResponseDto"
       tags:
         - projects
       security:
@@ -1139,6 +1143,31 @@ components:
         - preview
         - createdAt
         - updatedAt
+    SerializedProjectBackendConnectionDto:
+      type: object
+      properties:
+        id:
+          type: string
+        createdAt:
+          type: string
+        projectId:
+          type: string
+        ipAddress:
+          type: string
+      required:
+        - id
+        - createdAt
+        - projectId
+        - ipAddress
+    GetRealtimeConnectionsResponseDto:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/SerializedProjectBackendConnectionDto"
+      required:
+        - items
     CreateProjectDto:
       type: object
       properties:
