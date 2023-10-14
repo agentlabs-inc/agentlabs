@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { SerializedProjectBackendConnectionDto } from './dto/serialized-project-backend-connection.dto';
 import {
   AgentConnection,
   RegisterAgentConnectionPayload,
@@ -27,6 +28,29 @@ export class ProjectBackendConnectionManagerService {
 
   private getConnectionByAgentKey(agentKey: string): AgentConnection | null {
     return this.keyToConnection.get(agentKey) || null;
+  }
+
+  serializeConnection(
+    connection: AgentConnection,
+  ): SerializedProjectBackendConnectionDto {
+    return {
+      id: connection.socket.id,
+      projectId: connection.projectId,
+      createdAt: connection.createdAt.toISOString(),
+      ipAddress: connection.ip,
+    };
+  }
+
+  getSerializedProjectConnections(
+    projectId: string,
+  ): SerializedProjectBackendConnectionDto[] {
+    const projectConnections = Array.from(this.keyToConnection.values()).filter(
+      (connection) => connection.projectId === projectId,
+    );
+
+    return projectConnections.map((connection) =>
+      this.serializeConnection(connection),
+    );
   }
 
   getConnection(projectId: string): AgentConnection | null {

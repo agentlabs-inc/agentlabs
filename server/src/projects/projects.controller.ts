@@ -2,6 +2,7 @@ import {
   Body,
   ConflictException,
   Controller,
+  ForbiddenException,
   Get,
   NotFoundException,
   Param,
@@ -17,10 +18,12 @@ import {
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { UserAuthenticatedRequest } from 'src/iam/iam.types';
+import { ProjectBackendConnectionManagerService } from 'src/project-backend-connection-manager/project-backend-connection-manager.service';
 import { RequireAuthMethod } from '../iam/iam.decorators';
 import { TelemetryService } from '../telemetry/telemetry.service';
 import { CreateProjectDto } from './dtos/create.project.dto';
 import { CreatedProjectDto } from './dtos/created.project.dto';
+import { GetRealtimeConnectionsResponseDto } from './dtos/get-realtime-connections.response.dto';
 import { GetPublicConfigDto } from './dtos/get.public.config.dto';
 import { ListProjectsResultDto } from './dtos/list.projects.result.dto';
 import { ProjectDto } from './dtos/project.dto';
@@ -35,7 +38,31 @@ export class ProjectsController {
   constructor(
     private readonly projectsService: ProjectsService,
     private readonly telemetryService: TelemetryService,
+    private readonly backendConnectionManager: ProjectBackendConnectionManagerService,
   ) {}
+
+  @RequireAuthMethod('user-token')
+  @Get('getRealtimeConnections/:projectId')
+  async getRealtimeConnections(
+    @Param('projectId') projectId: string,
+    @Req() req: UserAuthenticatedRequest,
+  ): Promise<GetRealtimeConnectionsResponseDto> {
+    const isAuthorized = await this.projectsService.isProjectUserById({
+      userId: req.user.id,
+      projectId,
+    });
+
+    if (!isAuthorized) {
+      throw new ForbiddenException('Cannot access this resource');
+    }
+
+    const connections =
+      this.backendConnectionManager.getSerializedProjectConnections(projectId);
+
+    return {
+      items: connections,
+    };
+  }
 
   @RequireAuthMethod('user-token')
   @Post('/create')

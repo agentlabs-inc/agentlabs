@@ -291,6 +291,22 @@ paths:
         - sdk-secrets
       security:
         - bearer: []
+  /projects/getRealtimeConnections/{projectId}:
+    get:
+      operationId: getRealtimeConnections
+      parameters:
+        - name: projectId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+      tags:
+        - projects
+      security:
+        - bearer: []
   /projects/create:
     post:
       operationId: createProject
