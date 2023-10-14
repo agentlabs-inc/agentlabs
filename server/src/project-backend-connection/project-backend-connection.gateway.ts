@@ -38,6 +38,16 @@ export class ProjectBackendConnectionGateway
 
   private readonly logger = new Logger(ProjectBackendConnectionGateway.name);
 
+  private parseOriginIp(client: Socket) {
+    const forwardedFor = client.handshake.headers['x-forwarded-for'];
+
+    if (typeof forwardedFor === 'string') {
+      return forwardedFor.split(',')[0];
+    }
+
+    return client.handshake.address;
+  }
+
   async handleConnection(client: Socket) {
     const projectId = client.handshake.headers['x-agentlabs-project-id'];
     const secret = client.handshake.headers['x-agentlabs-sdk-secret'];
@@ -96,10 +106,12 @@ export class ProjectBackendConnectionGateway
       return;
     }
 
+    const originAddress = this.parseOriginIp(client);
+
     this.agentConnectionManagerService.registerConnection({
       projectId,
       socket: client,
-      ip: client.handshake.address,
+      ip: originAddress,
     });
 
     client.send({
