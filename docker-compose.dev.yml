@@ -64,6 +64,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev
+    environment:
+      - PUBLIC_APP_HOST=${PUBLIC_AI_AGENT_DOMAIN}
     volumes:
       - ./frontend:/app
     ports:

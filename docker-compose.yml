@@ -22,6 +22,8 @@ services:
     depends_on:
       - server
     restart: unless-stopped
+    environment:
+      - PUBLIC_APP_HOST=${PUBLIC_AI_AGENT_DOMAIN}
 
   console:
     image: ${CONSOLE_IMAGE}

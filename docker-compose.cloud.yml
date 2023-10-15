@@ -61,6 +61,8 @@ services:
 
   frontend:
     image: ${FRONTEND_IMAGE}
+    environment:
+      - PUBLIC_APP_HOST=${PUBLIC_AI_AGENT_DOMAIN}
     depends_on:
       - server
     restart: unless-stopped
