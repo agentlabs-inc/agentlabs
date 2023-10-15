@@ -4,11 +4,12 @@ export const onboardingTypescriptCode = (params: {
 	agentId: string;
 }) => `\`\`\`typescript
 // npm install @agentlabs/node-sdk
+import { Project } from "@agentlabs/node-sdk";
 
 const project = new Project({
     projectId: "${params.projectId}",
     secret: "your-secret",
-    url: agentlabsUrl,
+    url: "https://${params.projectSlug}.app.agentlabs.dev",
 });
 
 const agent = project.agent("${params.agentId}");
@@ -35,6 +36,8 @@ export const onboardingPythonCode = (params: {
 	agentId: string;
 }) => `\`\`\`python
 # pip install agentlabs-sdk
+from agentlabs.chat import IncomingChatMessage, MessageFormat
+from agentlabs.project import Agent, Project
 
 def handle_message(message: IncomingChatMessage):
     if message.text == "ping":
@@ -50,7 +53,7 @@ def handle_message(message: IncomingChatMessage):
         
 project = Project(
     project_id=${params.projectId},
-    agentlabs_url="https://app.agentlabs.dev",
+    agentlabs_url="https://${params.projectSlug}.app.agentlabs.dev",
     secret="your-secret",
 )
 
