@@ -22,6 +22,14 @@ class Project:
         if not message is None:
             self._server_logger.info(message)
 
+    def _handle_hearbeat(self, payload: Dict[str, Any]):
+        if self.is_debug_enabled:
+            self._client_logger.debug("Server heartbeat acknowledged.")
+
+        return {
+                'ok': True
+        }
+
     def __init__(self, agentlabs_url: str, project_id: str, secret: str) -> None:
         self.is_debug_enabled = bool(os.environ.get('DEBUG', False))
         self.agentlabs_url = agentlabs_url
@@ -34,7 +42,8 @@ class Project:
         )
         self._realtime = RealtimeClient(project_id=project_id, secret=secret, url=agentlabs_url)
         self._realtime.on('message', self._log_message)
-    
+        self._realtime.on('heartbeat', self._handle_hearbeat)
+   
     def on_chat_message(self, fn: Callable[[IncomingChatMessage], None]):
         """Defines a handler for when a new chat message is received.
         It will be called each time a member of your project sends a new message.

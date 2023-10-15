@@ -42,7 +42,9 @@ export class ProjectBackendConnectionManagerService {
     try {
       await connection.socket
         .timeout(this.heartbeatTimeout)
-        .emitWithAck('heartbeat');
+        .emitWithAck('heartbeat', {
+          timestamp: new Date().toISOString(),
+        });
     } catch (e) {
       this.logger.debug(
         `Removing connection ${sid} from project ${connection.projectId} due to heartbeat timeout`,
