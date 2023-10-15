@@ -35,6 +35,7 @@
 
 	const handleValidation = async (e: Event) => {
 		e.preventDefault();
+		e.stopPropagation();
 		const res = await validate();
 
 		if (!res.valid) {
@@ -88,13 +89,8 @@
 								placeholder="Verification code" />
 							<div class="my-5" />
 							<div class="w-full">
-								<Button
-									loading={submitting}
-									submit
-									type="primary"
-									fullWidth
-									center
-									on:click={handleValidation}>Verify code</Button>
+								<Button loading={submitting} submit type="primary" fullWidth center
+									>Verify code</Button>
 							</div>
 						</form>
 
