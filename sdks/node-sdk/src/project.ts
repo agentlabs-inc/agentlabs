@@ -12,6 +12,7 @@ export interface ProjectConfig {
 
 export class Project {
 	private readonly realtime: RealtimeClient;
+	private readonly isDebugEnabled: boolean = false;
 	private clientLogger = new Logger({
 		name: 'Client',
 	})
@@ -22,11 +23,21 @@ export class Project {
 	constructor(
 	 	config: ProjectConfig,
 	) {
+		this.isDebugEnabled = !!process.env.DEBUG;
 		this.realtime = new RealtimeClient(config);
 		this.realtime.on('message', (data) => {
 			if (typeof data.message === 'string') {
 				this.serverLogger.info(data.message);
 			}
+		})
+		this.realtime.on('heartbeat', (_, ack) => {
+			if (this.isDebugEnabled) {
+				this.clientLogger.debug('Server heartbeat acknowledged');
+			}
+
+			ack({
+				ok: true,
+			});
 		})
 	}
 

@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { minutes, seconds } from 'src/common/ms-time';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SerializedProjectBackendConnectionDto } from './dto/serialized-project-backend-connection.dto';
 import {
@@ -13,6 +14,8 @@ export class ProjectBackendConnectionManagerService {
   private readonly logger = new Logger(
     ProjectBackendConnectionManagerService.name,
   );
+  private readonly heartbeatTimeout = seconds(30);
+  private readonly heartbeatInterval = minutes(1);
 
   constructor(private readonly prisma: PrismaService) {
     setInterval(() => {
@@ -20,6 +23,35 @@ export class ProjectBackendConnectionManagerService {
 
       this.logger.debug(`Connected agents: ${agentCount}`);
     }, 5000);
+
+    setInterval(() => {
+      for (const [, connection] of this.keyToConnection) {
+        this.sendHeartbeat(connection);
+      }
+    }, this.heartbeatInterval);
+  }
+
+  private async sendHeartbeat(connection: AgentConnection) {
+    const sid = connection.socket.id;
+
+    if (connection.socket.disconnected) {
+      this.removeConnectionBySid(sid);
+      return;
+    }
+
+    try {
+      await connection.socket
+        .timeout(this.heartbeatTimeout)
+        .emitWithAck('heartbeat', {
+          timestamp: new Date().toISOString(),
+        });
+    } catch (e) {
+      this.logger.debug(
+        `Removing connection ${sid} from project ${connection.projectId} due to heartbeat timeout`,
+      );
+      this.removeConnectionBySid(sid);
+      connection.socket.disconnect(true);
+    }
   }
 
   private computeAgentKey(projectId: string): string {
