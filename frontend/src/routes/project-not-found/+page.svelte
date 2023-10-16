@@ -4,6 +4,10 @@
 	import Typography from "$lib/components/common/typography/Typography.svelte";
 </script>
 
+<svelte:head>
+	<title>Not Found</title>
+</svelte:head>
+
 <div
 	class="min-h-screen flex items-center justify-center bg-background-primary dark:bg-background-primary-dark">
 	<div class="max-w-5xl">

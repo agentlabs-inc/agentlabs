@@ -62,6 +62,10 @@
 	$: auth2Methods = projectConfig?.authMethods.filter((m) => m.type == "OAUTH2") ?? [];
 </script>
 
+<svelte:head>
+	<title>Sign Up | {projectConfig.name}</title>
+</svelte:head>
+
 <div
 	class="flex min-h-screen items-center justify-center bg-background-primary dark:bg-background-primary-dark">
 	<ThemeSwitch />
