@@ -17,6 +17,11 @@ on:
     tags:
       - "v*.*.*"
 
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
 jobs:
 
   publish_backend:
