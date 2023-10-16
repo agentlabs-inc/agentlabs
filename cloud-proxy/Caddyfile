@@ -1,3 +1,7 @@
+${CLOUD_APP_DOMAIN}:443 {
+	reverse_proxy gateway
+}
+
 {$CLOUD_APP_WILDCARD_DOMAIN}:443 {
 	tls {
 		dns godaddy {$CLOUD_APP_WILDCARD_DOMAIN_DNS_API_KEY}
@@ -6,7 +10,7 @@
 	reverse_proxy gateway
 }
 
-{$CLOUD_CONSOLE_URL}:443 {
+{$CLOUD_CONSOLE_DOMAIN}:443 {
 		@console {
 			path /admin/*
 		}
