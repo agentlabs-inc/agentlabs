@@ -1,4 +1,4 @@
-${CLOUD_APP_DOMAIN}:443 {
+{$CLOUD_APP_DOMAIN}:443 {
 	reverse_proxy gateway
 }
 
