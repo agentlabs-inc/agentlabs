@@ -36,8 +36,8 @@ export const onboardingPythonCode = (params: {
 	agentId: string;
 }) => `\`\`\`python
 # pip install agentlabs-sdk
-from agentlabs.chat import IncomingChatMessage, MessageFormat
-from agentlabs.project import Agent, Project
+from agentlabs.chat import IncomingChatMessage
+from agentlabs.project import Project
 
 def handle_message(message: IncomingChatMessage):
     if message.text == "ping":
