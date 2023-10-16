@@ -49,6 +49,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Login | AgentLabs</title>
+</svelte:head>
+
 <div
 	class="flex min-h-screen items-center justify-center bg-background-primary dark:bg-background-primary-dark">
 	<ThemeSwitch />

@@ -19,5 +19,9 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Home | AgentLabs</title>
+</svelte:head>
+
 <SvelteToast />
 <slot />

@@ -6,6 +6,10 @@
 	import { page } from "$app/stores";
 </script>
 
+<svelte:head>
+	<title>Project | AgentLabs</title>
+</svelte:head>
+
 <ProjectContext projectId={$page.params.projectId}>
 	<div class="bg-background-primary dark:bg-background-primary-dark min-h-screen flex flex-col">
 		<TopNav />

@@ -61,6 +61,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Register | AgentLabs</title>
+</svelte:head>
+
 <div
 	class="flex min-h-screen items-center justify-center bg-background-primary dark:bg-background-primary-dark">
 	<ThemeSwitch />
