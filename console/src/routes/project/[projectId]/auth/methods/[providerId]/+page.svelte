@@ -15,12 +15,24 @@
 	import Switch from "$lib/components/common/switch/Switch.svelte";
 	import { goto } from "$app/navigation";
 	import { projectAuthMethodsRoute } from "$lib/routes/routes";
+	import CopiableTag from "$lib/components/common/copiable/CopiableTag.svelte";
+	import { env } from "$env/dynamic/public";
+	import { validateEnv } from "$lib/utils/validateEnv";
 
 	const project = $projectStore.currentProject;
 
 	if (!project) {
 		throw new Error("Project not found");
 	}
+
+	const environment = validateEnv(env);
+
+	if (!environment) {
+		throw new Error("Environment not found");
+	}
+
+	const redirectUri =
+		`https://${project.slug}.${environment.PUBLIC_AI_AGENT_DOMAIN}/auth/handler/${$page.data.authMethod.providerId}`.toLowerCase();
 
 	const { form, errors, validate } = superForm($page.data.form, {
 		validators: zod.object({
@@ -105,6 +117,12 @@
 									</Typography>
 								</div>
 								<div class="col-span-3 gap-5">
+									<span
+										class="text-body-accent dark:text-body-accent-dark text-sm inline-block mb-2"
+										>Redirect URI (add this url to your OAuth Provider)
+									</span>
+									<CopiableTag value={redirectUri} />
+									<Spacer size="md" />
 									<form
 										on:submit={() => {
 											handleSave;

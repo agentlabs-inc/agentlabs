@@ -24,7 +24,7 @@
 		try {
 			await loginWithOAuthCode({
 				providerId,
-				redirectUri: window.location.href,
+				redirectUri: `${window.location.origin}${window.location.pathname}`,
 				state,
 				code,
 				projectId
