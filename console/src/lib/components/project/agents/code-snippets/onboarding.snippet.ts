@@ -52,7 +52,7 @@ def handle_message(message: IncomingChatMessage):
         )
         
 project = Project(
-    project_id=${params.projectId},
+    project_id="${params.projectId}",
     agentlabs_url="https://${params.projectSlug}.app.agentlabs.dev",
     secret="your-secret",
 )
