@@ -157,7 +157,7 @@ jobs:
     steps:
       - name: Setup ssh
         run: |
-            echo ${{ secrets.DEPLOY_SSH_PRIVATE_KEY_B64 }} | base64 -d > /tmp/privkey
+            echo "${{ secrets.DEPLOY_SSH_PRIVATE_KEY_B64 }}" | base64 -d > /tmp/privkey
             chmod 400 /tmp/privkey
 
       - name: Deploy
