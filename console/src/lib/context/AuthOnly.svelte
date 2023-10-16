@@ -9,6 +9,7 @@
 	} from "$lib/routes/routes";
 	import { goto } from "$app/navigation";
 	import { fetchRequiredUserConfig } from "$lib/usecases/users/fetchRequiredUserConfig";
+	import IntercomContext from "./IntercomContext.svelte";
 
 	let loading = true;
 
@@ -43,7 +44,9 @@
 </script>
 
 {#if !loading}
-	<slot />
+	<IntercomContext>
+		<slot />
+	</IntercomContext>
 {:else}
 	<LoadingFrame />
 {/if}

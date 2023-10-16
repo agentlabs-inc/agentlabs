@@ -89,6 +89,7 @@ services:
       - PUBLIC_OAUTH_GOOGLE_CLIENT_ID=${PUBLIC_OAUTH_GOOGLE_CLIENT_ID}
       - PUBLIC_TELEMETRY_KEY=${PUBLIC_TELEMETRY_KEY}
       - PUBLIC_DISCORD_URL=${PUBLIC_DISCORD_URL}
+      - PUBLIC_INTERCOM_APP_ID=${INTERCOM_APP_ID}
     build:
       context: ./console
       dockerfile: Dockerfile.dev
