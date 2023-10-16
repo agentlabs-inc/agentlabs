@@ -1,8 +1,9 @@
 <script lang="ts">
 import { fetchMessages } from "$lib/usecases/chat/fetch-messages";
 import { conversationStore } from "$lib/stores/conversation";
+import { page } from "$app/stores";
 
-export let data: { conversationId: string };
+$: conversationId = $page.params.conversationId
 
 const load = async (conversationId: string) => {
 	const isConversationAlreadyLoaded = $conversationStore.selectedConversationId === conversationId;
@@ -11,10 +12,10 @@ const load = async (conversationId: string) => {
 		return;
 	}
 
-	await fetchMessages(data.conversationId);
+	await fetchMessages(conversationId);
 	$conversationStore.selectedConversationId = conversationId;
 }
 
-$: load(data.conversationId);
+$: load(conversationId);
 
 </script>

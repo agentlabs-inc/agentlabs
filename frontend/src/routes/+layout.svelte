@@ -4,12 +4,13 @@
 	import LoadingFrame from "$lib/components/common/loading-frame/LoadingFrame.svelte";
 	import { env } from "$env/dynamic/public";
 	import { themeStore } from "$lib/stores/theme";
-
-	export let data: LayoutData;
-
 	import { browser } from "$app/environment";
 	import { SvelteToast } from "@zerodevx/svelte-toast";
 	import { validateEnv } from "$lib/utils/validateEnv";
+	import { onMount } from "svelte";
+
+	export let data: LayoutData;
+
 
 	if (browser) {
 		if ($themeStore === "dark") {
@@ -20,11 +21,18 @@
 	}
 
 	validateEnv(env);
+
+	let isLoaded = false;
+
+	onMount(async () => {
+		isLoaded = await data.mainLayoutLazy.isLoaded;
+	})
+
 </script>
 
-{#await data.mainLayoutLazy.isLoaded}
+{#if !isLoaded}
 	<LoadingFrame />
-{:then context}
+{:else}
 	<slot />
 	<SvelteToast />
-{/await}
+{/if}

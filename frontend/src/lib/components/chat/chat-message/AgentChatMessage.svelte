@@ -18,11 +18,7 @@
 
 	const agent = getAgentById(agentId);
 
-	console.log($agentStore.list)
-
 	$: letter = agent ? agent.name[0] + agent.name[1] : '?'
-
-	console.log(agentId, agent)
 
 	if (!agent) {
 		throw new Error("Agent not found");
