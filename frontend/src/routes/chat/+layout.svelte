@@ -5,17 +5,10 @@
 	import RealtimeContext from "$lib/context/RealtimeContext.svelte";
 	import Chat from "$lib/components/chat/chat.svelte";
 	import AgentContext from "$lib/context/AgentContext.svelte";
-	import { mainContextStore } from "$lib/stores/main-context";
-
-	const projectName = $mainContextStore.publicProjectConfig?.name;
-	
-	if (!projectName) {
-		throw new Error("Project name is not defined, this is not expected to happen!");
-	}
 </script>
 
 <svelte:head>
-	<title>Chat | {projectName}</title>
+	<title>Chat</title>
 </svelte:head>
 
 <AuthOnly>
