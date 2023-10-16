@@ -3,6 +3,13 @@ version: '3.8'
 volumes:
   postgres-data-dev:
 
+networks:
+  # We explicitly define a subnet to avoid unintentional shadowing
+  default:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+
 services:
 
   gateway:
