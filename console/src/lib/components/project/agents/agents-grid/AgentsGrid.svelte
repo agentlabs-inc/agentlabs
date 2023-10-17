@@ -38,11 +38,13 @@
 
 <div>
 	{#if isLoading}
-		<div class="col-span-2">
-			<CardSkeleton />
-		</div>
-		<div class="col-span-2">
-			<CardSkeleton />
+		<div class="grid grid-cols-6 gap-4">
+			<div class="col-span-2">
+				<CardSkeleton />
+			</div>
+			<div class="col-span-2">
+				<CardSkeleton />
+			</div>
 		</div>
 	{:else if agents.length === 0}
 		<div class="col-span-6">

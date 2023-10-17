@@ -49,6 +49,7 @@
     "storybook": "^7.4.0",
     "svelte": "^4.0.5",
     "svelte-check": "^3.4.3",
+    "svelte-device-info": "^1.0.0",
     "svelte-highlight": "^7.3.0",
     "sveltekit-superforms": "^1.6.1",
     "tailwindcss": "^3.3.3",

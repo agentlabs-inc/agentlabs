@@ -10,6 +10,11 @@
 	import { goto } from "$app/navigation";
 	import { fetchRequiredUserConfig } from "$lib/usecases/users/fetchRequiredUserConfig";
 	import IntercomContext from "./IntercomContext.svelte";
+	import Device from "svelte-device-info";
+	import { browser } from "$app/environment";
+	import NotFound from "$lib/assets/img/illustrations/not-found.svg";
+	import Card from "$lib/components/common/card/Card.svelte";
+	import Typography from "$lib/components/common/typography/Typography.svelte";
 
 	let loading = true;
 
@@ -41,11 +46,29 @@
 			loading = false;
 		}
 	});
+
+	$: isEnabledDevice = browser && !(Device.isPhone || Device.isTablet);
 </script>
 
 {#if !loading}
 	<IntercomContext>
-		<slot />
+		{#if isEnabledDevice}
+			<slot />
+		{:else}
+			<div
+				class="min-h-screen flex items-center justify-center bg-background-primary dark:bg-background-primary-dark">
+				<div class="max-w-5xl">
+					<Card>
+						<div class="flex flex-col items-center justify-center gap-3 py-5 px-10">
+							<Typography type="mainTitle">Unsupported device</Typography>
+							<Typography type="subTitle"
+								>We only allow Desktop experience at the moment.</Typography>
+							<img src={NotFound} alt="not found" class="w-43" />
+						</div>
+					</Card>
+				</div>
+			</div>
+		{/if}
 	</IntercomContext>
 {:else}
 	<LoadingFrame />
