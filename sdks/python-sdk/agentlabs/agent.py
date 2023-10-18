@@ -1,8 +1,13 @@
 from uuid import uuid4
-
 from .chat import MessageFormat
-
 from ._internals.realtime import RealtimeClient
+from ._internals.utils import chunk_str
+from ._internals.const import (
+    DEFAULT_STREAM_TOKEN_SIZE,
+    DEFAULT_MESSAGE_TYPING_INTERVAL_MS,
+    DEFAULT_INITIAL_MESSAGE_LOADING_DELAY_MS
+)
+import time
 
 class AgentStream:
     """Creates a stream to send a message in multiple parts.
@@ -16,7 +21,20 @@ class AgentStream:
         self.format = format
         self._realtime = realtime
         self.agent_id = agent_id
-    
+        self._start(self.message_id)
+
+    def _start(self, token: str):
+        if self.is_ended:
+            raise Exception("Cannot write to a stream that has already been ended.")
+
+        self._realtime.emit('stream-chat-message-start', {
+            "conversationId": self.conversation_id,
+            "messageId": self.message_id,
+            "attachments": [],
+            "format": self.format.value,
+            "agentId": self.agent_id
+        })
+
     def write(self, token: str):
         """Writes a token to the stream. This can be used to send a message in multiple parts.
         Writing to a stream on which end() has been called will raise an exception.
@@ -32,7 +50,22 @@ class AgentStream:
             "format": self.format.value,
             "agentId": self.agent_id
         })
-    
+
+    def typewrite(
+        self,
+        token: str,
+        interval_ms: int = DEFAULT_MESSAGE_TYPING_INTERVAL_MS
+        ):
+        """Sends a stream to a conversation, with a typewriter animation.
+        Such message will be displayed smoothly to the user with a nice typewriter animation.
+        """
+        chunks = chunk_str(token, DEFAULT_STREAM_TOKEN_SIZE)
+        for chunk in chunks:
+            self.write(chunk)
+            time.sleep(interval_ms / 1000)
+
+        self.end()
+
     def end(self):
         """
         Ends the stream. After a stream is ended it cannot be written to anymore, and
@@ -67,3 +100,24 @@ class Agent:
         This is done by making successive calls to write() and then calling end() when done.
         """
         return AgentStream(self._realtime, self.id, conversation_id, format)
+
+    def typewrite(
+        self,
+        text: str,
+        conversation_id: str,
+        format: MessageFormat = MessageFormat.PLAIN_TEXT,
+        initial_delay_ms: int = DEFAULT_INITIAL_MESSAGE_LOADING_DELAY_MS,
+        interval_ms: int = DEFAULT_MESSAGE_TYPING_INTERVAL_MS
+        ):
+        """Sends a message to a conversation, with a typewriter animation.
+        Such message will be displayed smoothly to the user with a nice typewriter animation and loading
+        indicator.
+        """
+        stream = self.create_stream(conversation_id, format)
+
+        if (initial_delay_ms > 0):
+            time.sleep(initial_delay_ms / 1000)
+
+        stream.typewrite(text, interval_ms)
+
+        stream.end()

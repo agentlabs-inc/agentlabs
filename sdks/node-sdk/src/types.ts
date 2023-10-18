@@ -20,8 +20,8 @@ export interface SendMessageOptions {
 
 export type TypewriteMessageOptions = {
     format?: MessageFormat;
-    delay?: number;
-    initialDelay?: number;
+    intervalMs?: number;
+    initialDelayMs?: number;
 };
 
 const MessageFormats = ['PlainText', 'Markdown'] as const;

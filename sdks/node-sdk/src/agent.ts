@@ -1,4 +1,8 @@
 import { AgentMessageStream } from './agent-message-stream';
+import {
+    DEFAULT_INITIAL_MESSAGE_LOADING_DELAY_MS,
+    DEFAULT_MESSAGE_TYPING_INTERVAL_MS,
+} from './const';
 import { localMessageFormatToRemote } from './constants';
 import {
     AgentConfig,
@@ -9,6 +13,10 @@ import {
 } from './types';
 
 export class Agent {
+    private defaultTypeWriteInterval = DEFAULT_MESSAGE_TYPING_INTERVAL_MS;
+    private defaultTypeWriteInitialDelay =
+        DEFAULT_INITIAL_MESSAGE_LOADING_DELAY_MS;
+
     constructor(private readonly config: AgentConfig) {}
 
     send(
@@ -28,26 +36,23 @@ export class Agent {
     async typewrite(
         { text, conversationId }: SendMessagePayload,
         options: TypewriteMessageOptions = {
-            delay: 70,
-            initialDelay: 1500,
+            intervalMs: this.defaultTypeWriteInterval,
+            initialDelayMs: this.defaultTypeWriteInitialDelay,
         }
     ) {
-        const initialDelay = options.initialDelay ?? 0;
-        const delay = options.delay ?? 70;
+        const initialDelay =
+            options?.initialDelayMs ?? this.defaultTypeWriteInitialDelay;
+        const interval = options?.intervalMs ?? this.defaultTypeWriteInterval;
 
         const stream = this.createStream({ conversationId }, options);
 
         if (initialDelay !== 0) {
             await new Promise((resolve) =>
-                setTimeout(resolve, options.initialDelay)
+                setTimeout(resolve, options.initialDelayMs)
             );
         }
 
-        const splits = text.split('');
-        for (let i = 0; i < splits.length; i++) {
-            stream.write(splits[i]);
-            await new Promise((resolve) => setTimeout(resolve, delay));
-        }
+        await stream.typewrite(text, { intervalMs: interval });
 
         stream.end();
     }

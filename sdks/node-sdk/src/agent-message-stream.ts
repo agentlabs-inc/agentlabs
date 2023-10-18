@@ -1,7 +1,12 @@
 import { randomUUID } from 'crypto';
+import {
+    DEFAULT_MESSAGE_TYPING_INTERVAL_MS,
+    DEFAULT_STREAM_TOKEN_SIZE,
+} from './const';
 import { localMessageFormatToRemote } from './constants';
 import { RealtimeClient } from './realtime';
 import { AgentMessageStreamConfig, MessageFormat } from './types';
+import { chunk } from './utils/chunk';
 
 export class AgentMessageStream {
     private readonly messageId = randomUUID();
@@ -29,12 +34,20 @@ export class AgentMessageStream {
         });
     }
 
-    async typewrite(message: string, options: { delay?: number } = {}) {
-        const delay = options.delay ?? 100;
+    /**
+     * Write the next part of the message with a typewriter animation.
+     * Writing to the stream after calling `end` will throw an error.
+     */
+    async typewrite(message: string, options: { intervalMs?: number } = {}) {
+        const interval =
+            options?.intervalMs ?? DEFAULT_MESSAGE_TYPING_INTERVAL_MS;
 
-        for (let i = 0; i < message.length; i++) {
-            await new Promise((resolve) => setTimeout(resolve, delay));
-            this.write(message[i]);
+        const chunks = chunk(message, DEFAULT_STREAM_TOKEN_SIZE);
+        for (let i = 0; i < chunks.length; i++) {
+            this.write(chunks[i]);
+            if (interval) {
+                await new Promise((resolve) => setTimeout(resolve, interval));
+            }
         }
         this.end();
     }
