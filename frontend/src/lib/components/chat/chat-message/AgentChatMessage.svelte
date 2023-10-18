@@ -4,6 +4,7 @@
 	import { agentStore, getAgentById } from "$lib/stores/agent";
 	import { authStore } from "$lib/stores/auth";
 	import type { ChatMessageFormat } from "$lib/stores/chat";
+	import TypingLoader from "$lib/components/chat/chat-message/TypingLoader.svelte";
 
 	export let time: string;
 	export let body: string;
@@ -18,7 +19,7 @@
 
 	const agent = getAgentById(agentId);
 
-	$: letter = agent ? agent.name[0] + agent.name[1] : '?'
+	$: letter = agent ? agent.name[0] + agent.name[1] : "?";
 
 	if (!agent) {
 		throw new Error("Agent not found");
@@ -38,6 +39,7 @@
 				</div>
 				<div
 					class="text-body-accent dark:text-body-accent-dark text-[11pt] leading-7 w-full">
+					{#if !body?.length}<TypingLoader />{/if}
 					{#if format === "MARKDOWN"}
 						<MarkdownRenderer source={body} />
 					{:else}

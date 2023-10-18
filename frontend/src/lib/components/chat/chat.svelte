@@ -1,5 +1,12 @@
 <script lang="ts">
-	import { addActiveStream, addMessage, addStreamedMessageToken, chatStore, isStreaming, removeActiveStream } from "$lib/stores/chat";
+	import {
+		addActiveStream,
+		addMessage,
+		addStreamedMessageToken,
+		chatStore,
+		isStreaming,
+		removeActiveStream
+	} from "$lib/stores/chat";
 	import { PaperAirplane } from "svelte-hero-icons";
 	import Button from "../common/button/Button.svelte";
 	import ChatInput from "./chat-input/ChatInput.svelte";
@@ -20,6 +27,7 @@
 	import { mainContextStore } from "$lib/stores/main-context";
 	import AgentChatMessage from "./chat-message/AgentChatMessage.svelte";
 	import { chatConversationRoute } from "$lib/routes/routes";
+	import { list } from "postcss";
 
 	let chatElement: HTMLDivElement;
 	let chatInputElement: HTMLInputElement;
@@ -35,7 +43,7 @@
 	$: conversationId = $conversationStore.selectedConversationId;
 
 	const projectId = $mainContextStore.publicProjectConfig?.id;
-	
+
 	if (!projectId) {
 		throw new Error("Project id is not defined");
 	}
@@ -160,7 +168,7 @@
 
 		addStreamedMessageToken({
 			id: payload.data.messageId,
-			text: payload.data.text,
+			text: payload.data?.text ?? "",
 			source: "AGENT",
 			createdAt: payload.timestamp,
 			format: payload.data.format,
@@ -178,6 +186,10 @@
 
 	onMount(async () => {
 		$realtimeStore.connection?.on("chat-message", listenToChatMessage);
+		$realtimeStore.connection?.on(
+			"stream-chat-message-start",
+			listenToStreamedChatMessageToken
+		);
 		$realtimeStore.connection?.on(
 			"stream-chat-message-token",
 			listenToStreamedChatMessageToken
@@ -231,16 +243,14 @@
 								time={dayjs(message.createdAt).format("M/D/YYYY hh:mm A")}
 								body={message.text}
 								format={message.format}
-								agentId={message.agentId}
-							/>
+								agentId={message.agentId} />
 						{:else}
 							<ChatMessage
 								isLoading={isWaitingForAnswer && messages.length - 1 === index}
 								from={message.source}
 								time={dayjs(message.createdAt).format("M/D/YYYY hh:mm A")}
 								body={message.text}
-								format={message.format} 
-							/>
+								format={message.format} />
 						{/if}
 					</div>
 				{/each}
