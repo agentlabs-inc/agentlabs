@@ -229,7 +229,7 @@
 	});
 </script>
 
-<div class="flex flex-col justify-between relative h-full">
+<div class="flex flex-col justify-between relative flex-grow">
 	<div
 		bind:this={chatElement}
 		class="absolute top-0 bottom-[80px] left-0 right-0 overflow-y-scroll bg-background-primary dark:bg-background-secondary-dark">

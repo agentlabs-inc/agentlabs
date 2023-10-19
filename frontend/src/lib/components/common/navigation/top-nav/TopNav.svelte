@@ -26,7 +26,7 @@
 </script>
 
 <div
-	class="shrink-0 bg-background-secondary dark:bg-background-primary-dark sticky top-0 flex justify-between items-center border-b border-stroke-base dark:border-stroke-base-dark h-[60px] z-20">
+	class="shrink-0 bg-background-secondary dark:bg-background-primary-dark sticky top-0 flex justify-between items-center border-b border-stroke-base dark:border-stroke-base-dark h-[60px] z-20 shrink-0">
 	<div class="pl-5 flex items-center gap-2">
 		<div class={$leftNavStore.isOpened ? "hidden" : "block"}>
 			<Button

@@ -16,10 +16,10 @@
 		<RealtimeContext>
 			<div
 				class="bg-background-primary dark:bg-background-primary-dark h-screen flex flex-col">
-				<TopNav />
 				<div class="flex flex-row flex-grow">
 					<LeftNav />
-					<div class="flex-grow">
+					<div class="flex-grow flex flex-col">
+						<TopNav />
 						<Chat />
 						<slot />
 					</div>

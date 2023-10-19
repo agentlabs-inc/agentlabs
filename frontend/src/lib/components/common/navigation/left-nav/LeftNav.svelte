@@ -48,11 +48,11 @@
 <svelte:body use:watchResize={handleResize} />
 
 <div
-	class="{widthClass} transition-all sticky flex flex-col h-[calc(100vh-60px)] top-0 overflow-y-hidden {$leftNavStore.isOpened
+	class="{widthClass} transition-all sticky flex flex-col h-screen top-0 overflow-y-hidden {$leftNavStore.isOpened
 		? 'border-r'
 		: ''} border-stroke-base dark:border-stroke-base-dark bg-background-secondary dark:bg-background-primary-dark">
 	<div
-		class="g-background-secondary dark:bg-background-primary-dark p-3 flex gap-3 items-center justify-between flex-shrink-0 border-b border-stroke-base dark:border-stroke-base-dark">
+		class="g-background-secondary dark:bg-background-primary-dark h-[60px] p-3 flex gap-3 items-center justify-between flex-shrink-0 border-b border-stroke-base dark:border-stroke-base-dark">
 		<Button fullWidth leftIcon={Plus} type="primary" on:click={handleNewChat} size="smaller"
 			>New chat</Button>
 		<Button
