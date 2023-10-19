@@ -62,7 +62,7 @@
 			size="smaller"
 			on:click={$leftNavStore.toggle} />
 	</div>
-	<section class="py-5 px-3 overflow-x-scroll">
+	<section class="py-5 px-3 overflow-x-scroll flex-grow">
 		<div class="flex flex-col gap-3 antialiased">
 			{#each conversations as conversation}
 				<button
