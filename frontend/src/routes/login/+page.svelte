@@ -68,7 +68,6 @@
 
 <div
 	class="flex min-h-screen items-center justify-center bg-background-primary dark:bg-background-primary-dark">
-	<ThemeSwitch />
 	<div class="p-3 w-full flex flex-col items-center">
 		<div class="max-w-md">
 			<Card>

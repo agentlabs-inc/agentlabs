@@ -14,7 +14,8 @@
 <AuthOnly>
 	<AgentContext>
 		<RealtimeContext>
-			<div class="bg-background-primary dark:bg-background-primary-dark h-screen flex flex-col">
+			<div
+				class="bg-background-primary dark:bg-background-primary-dark h-screen flex flex-col">
 				<TopNav />
 				<div class="flex flex-row flex-grow">
 					<LeftNav />

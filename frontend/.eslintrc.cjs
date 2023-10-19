@@ -2,7 +2,7 @@ module.exports = {
 	root: true,
 	extends: [
         "eslint:recommended",
-        "plugin:@tconversationIdypescript-eslint/recommended",
+        "plugin:typescript-eslint/recommended",
         "plugin:svelte/recommended",
         "prettier",
         "plugin:storybook/recommended",

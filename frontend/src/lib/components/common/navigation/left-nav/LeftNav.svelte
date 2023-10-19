@@ -1,14 +1,16 @@
 <script lang="ts">
-	import { ChatBubbleLeft, Icon } from "svelte-hero-icons";
+	import { Bars3, ChatBubbleLeft, Icon, Plus } from "svelte-hero-icons";
 	import { goto } from "$app/navigation";
 	import { onMount } from "svelte";
 	import { fetchConversations } from "$lib/usecases/conversations/fetch-conversations";
-	import { agentStore } from "$lib/stores/agent";
 	import { authStore } from "$lib/stores/auth";
 	import { conversationStore } from "$lib/stores/conversation";
 	import Button from "../../button/Button.svelte";
 	import { mainContextStore } from "$lib/stores/main-context.js";
 	import { agentChatRoute, chatConversationRoute } from "$lib/routes/routes";
+	import ProfileMenu from "$lib/components/common/navigation/left-nav/ProfileMenu.svelte";
+	import { leftNavStore } from "$lib/stores/left-nav";
+	import { watchResize } from "svelte-watch-resize";
 
 	onMount(async () => {
 		const member = $authStore.member;
@@ -33,13 +35,35 @@
 
 	$: conversations = $conversationStore.list;
 	$: selectedConversationId = $conversationStore.selectedConversationId;
+
+	$: widthClass = $leftNavStore.isOpened ? "w-[250px]" : "w-[0px]";
+
+	const handleResize = (node: HTMLElement) => {
+		if (node.clientWidth < 768) {
+			$leftNavStore.close();
+		}
+	};
 </script>
 
+<svelte:body use:watchResize={handleResize} />
+
 <div
-	class="sticky top-0 h-[calc(100vh-60px)] overflow-y-auto border-r border-stroke-base dark:border-stroke-base-dark w-[250px] bg-background-secondary dark:bg-background-primary-dark">
-	<section class="py-5 px-3">
+	class="{widthClass} transition-all sticky flex flex-col h-[calc(100vh-60px)] top-0 overflow-y-hidden {$leftNavStore.isOpened
+		? 'border-r'
+		: ''} border-stroke-base dark:border-stroke-base-dark bg-background-secondary dark:bg-background-primary-dark">
+	<div
+		class="g-background-secondary dark:bg-background-primary-dark p-3 flex gap-3 items-center justify-between flex-shrink-0 border-b border-stroke-base dark:border-stroke-base-dark">
+		<Button fullWidth leftIcon={Plus} type="primary" on:click={handleNewChat} size="smaller"
+			>New chat</Button>
+		<Button
+			fullHeight
+			leftIcon={Bars3}
+			type="none"
+			size="smaller"
+			on:click={$leftNavStore.toggle} />
+	</div>
+	<section class="py-5 px-3 overflow-x-scroll">
 		<div class="flex flex-col gap-3 antialiased">
-			<Button type="primary" on:click={handleNewChat}>New chat</Button>
 			{#each conversations as conversation}
 				<button
 					on:click={() => handleConversationClick(conversation.id)}
@@ -53,4 +77,7 @@
 			{/each}
 		</div>
 	</section>
+	<div class="shrink-0 w-full border-t border-stroke-base dark:border-stroke-base-dark">
+		<ProfileMenu />
+	</div>
 </div>
