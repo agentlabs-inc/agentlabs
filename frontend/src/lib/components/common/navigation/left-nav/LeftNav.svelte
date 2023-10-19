@@ -48,7 +48,7 @@
 <svelte:body use:watchResize={handleResize} />
 
 <div
-	class="{widthClass} transition-all sticky flex flex-col h-screen top-0 overflow-y-hidden {$leftNavStore.isOpened
+	class="{widthClass} transition-all sticky flex flex-col h-[calc(100dvh)] top-0 overflow-y-hidden {$leftNavStore.isOpened
 		? 'border-r'
 		: ''} border-stroke-base dark:border-stroke-base-dark bg-background-secondary dark:bg-background-primary-dark">
 	<div

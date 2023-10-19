@@ -15,7 +15,7 @@
 	<AgentContext>
 		<RealtimeContext>
 			<div
-				class="bg-background-primary dark:bg-background-primary-dark h-screen flex flex-col">
+				class="bg-background-primary dark:bg-background-primary-dark h-[calc(100dvh)] flex flex-col">
 				<div class="flex flex-row flex-grow">
 					<LeftNav />
 					<div class="flex-grow flex flex-col">
