@@ -168,6 +168,54 @@ export class AgentStreamManagerService {
     }
   }
 
+  async start(data: HandlePayload) {
+    let stream = this.activeStreams.get(data.messageId) ?? null;
+
+    if (!stream) {
+      const conversation = await this.prisma.conversation.findUnique({
+        where: {
+          id: data.conversationId,
+        },
+      });
+
+      if (!conversation) {
+        throw new Error(`Conversation not found: ID=${data.conversationId}`);
+      }
+
+      const frontend = this.frontendConnectionManagerService.getConnection({
+        memberId: conversation.memberId,
+        projectId: conversation.projectId,
+      });
+
+      if (!frontend) {
+        throw new Error(
+          `Frontend connection not found: MEMBER_ID=${conversation.memberId},PROJECT_ID=${conversation.projectId},AGENT_ID=${data.agentId}`,
+        );
+      }
+
+      stream = {
+        frontend: frontend.socket,
+        conversationId: conversation.id,
+        buffer: '',
+        messageId: data.messageId,
+        createdAtTs: Date.now(),
+        format: data.format,
+        agentId: data.agentId,
+      };
+
+      this.activeStreams.set(data.messageId, stream);
+    }
+
+    stream.frontend.emit('stream-chat-message-start', {
+      data: {
+        conversationId: stream.conversationId,
+        messageId: stream.messageId,
+        format: stream.format,
+        agentId: stream.agentId,
+      },
+    });
+  }
+
   async end(messageId: string) {
     try {
       await this.messageMutex.acquire(messageId);

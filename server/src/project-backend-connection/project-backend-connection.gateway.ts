@@ -230,6 +230,19 @@ export class ProjectBackendConnectionGateway
     }
   }
 
+  @SubscribeMessage('stream-chat-message-start')
+  async handleStreamChatMessageStart(
+    @MessageBody() payload: StreamChatMessageTokenDto,
+  ) {
+    await this.streamManager.start({
+      messageId: payload.data.messageId,
+      conversationId: payload.data.conversationId,
+      token: payload.data.text,
+      format: payload.data.format,
+      agentId: payload.data.agentId,
+    });
+  }
+
   @SubscribeMessage('stream-chat-message-token')
   async handleStreamChatMessageToken(
     @MessageBody() payload: StreamChatMessageTokenDto,
