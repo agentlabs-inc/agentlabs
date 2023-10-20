@@ -18,6 +18,7 @@ import {
   OAuthLoginError,
   RegisterMemberVerifyAuthMethodError,
   RegisterPasswordlessEmailError,
+  SignInAnonymousError,
   VerifiyIfIsProjectMemberError,
   VerifyIfIsProjectUserError,
   VerifyPasswordlessEmailError,
@@ -119,6 +120,14 @@ export class MembersService {
     return ok({
       isVerified: true,
     });
+  }
+
+  private async verifyProjectExists(projectId: string): Promise<boolean> {
+    const project = await this.prisma.project.findUnique({
+      where: { id: projectId },
+    });
+
+    return !!project;
   }
 
   private random6DigitCode(): string {
@@ -359,6 +368,26 @@ export class MembersService {
     );
 
     return ok(memberCreatedOrUpdated);
+  }
+
+  async signInAnonymously(
+    projectId: string,
+  ): PResult<LoginMemberResponseDto, SignInAnonymousError> {
+    const projectExists = this.verifyProjectExists(projectId);
+
+    if (!projectExists) {
+      return err('ProjectNotFound');
+    }
+
+    await this.prisma.member.create({
+      data: {
+        project: {
+          connect: {
+            id: projectId,
+          },
+        },
+      },
+    });
   }
 
   async verifyPasswordlessEmail(params: {

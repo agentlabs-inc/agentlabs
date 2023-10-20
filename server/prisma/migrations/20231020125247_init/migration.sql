@@ -193,7 +193,8 @@ CREATE TABLE "Member" (
     "firstName" TEXT,
     "lastName" TEXT,
     "fullName" TEXT,
-    "email" TEXT NOT NULL,
+    "email" TEXT,
+    "isAnonymous" BOOLEAN NOT NULL DEFAULT false,
     "profilePictureUrl" TEXT,
     "projectId" TEXT NOT NULL,
 
