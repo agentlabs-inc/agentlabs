@@ -7,6 +7,7 @@
 		isStreaming,
 		removeActiveStream
 	} from "$lib/stores/chat";
+	import type { ChatMessageFormat } from "$lib/stores/chat";
 	import { PaperAirplane } from "svelte-hero-icons";
 	import Button from "../common/button/Button.svelte";
 	import ChatInput from "./chat-input/ChatInput.svelte";
@@ -52,6 +53,43 @@
 	}
 
 	let shouldRedirectToConversation = false;
+
+	let displayLoginMessage: null | {
+		format: ChatMessageFormat;
+		text: string;
+		agentId: string;
+		timestamp: string;
+	} = null;
+	const onLoginRequested = (payload: {
+		data: {
+			conversationId: string;
+			agentId: string;
+			format: ChatMessageFormat;
+			text: string;
+		};
+		timestamp: string;
+	}) => {
+		if (payload.data.conversationId !== conversationId) {
+			console.warn(
+				`Received message for conversation ${payload.data.conversationId} but current conversation is ${conversationId}`
+			);
+
+			return;
+		}
+
+		if ($mainContextStore.publicProjectConfig?.authMethods?.length === 0) {
+			return;
+		}
+
+		console.log("PAY, ", payload);
+
+		displayLoginMessage = {
+			format: payload.data.format,
+			text: payload.data.text,
+			agentId: payload.data.agentId,
+			timestamp: payload.timestamp
+		};
+	};
 
 	const sendMessage = (e: Event) => {
 		e.preventDefault();
@@ -189,6 +227,7 @@
 
 	onMount(async () => {
 		$realtimeStore.connection?.on("chat-message", listenToChatMessage);
+		$realtimeStore.connection?.on("login-request", onLoginRequested);
 		$realtimeStore.connection?.on(
 			"stream-chat-message-start",
 			listenToStreamedChatMessageToken
@@ -249,8 +288,16 @@
 								agentId={message.agentId} />
 
 							<Spacer size="sm" />
-							<PromptMessage time="22h00" agentId={message.agentId} />
-							<LoginMessage time="22h00" agentId={message.agentId} />
+							<!--							<PromptMessage time="22h00" agentId={message.agentId} />-->
+							{#if !!displayLoginMessage}
+								<LoginMessage
+									time={dayjs(displayLoginMessage.timestamp).format(
+										"M/D/YYYY hh:mm A"
+									)}
+									body={displayLoginMessage.text}
+									format={displayLoginMessage.format}
+									agentId={message.agentId} />
+							{/if}
 						{:else}
 							<ChatMessage
 								isLoading={isWaitingForAnswer && messages.length - 1 === index}

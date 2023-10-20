@@ -1,8 +1,7 @@
 <script lang="ts">
 	import LetterAvatar from "$lib/components/common/letter-avatar/LetterAvatar.svelte";
 	import MarkdownRenderer from "$lib/components/markdown/markdown-renderer.svelte";
-	import { agentStore, getAgentById } from "$lib/stores/agent";
-	import { authStore } from "$lib/stores/auth";
+	import { getAgentById } from "$lib/stores/agent";
 	import type { ChatMessageFormat } from "$lib/stores/chat";
 	import TypingLoader from "$lib/components/chat/chat-message/TypingLoader.svelte";
 

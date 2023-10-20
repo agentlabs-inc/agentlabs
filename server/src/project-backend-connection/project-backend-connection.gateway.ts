@@ -124,6 +124,99 @@ export class ProjectBackendConnectionGateway
     this.logger.debug(`Client disconnected: SID=${client.id}`);
   }
 
+  @SubscribeMessage('login-request')
+  async handleLoginRequest(
+    @ConnectedSocket() client: Socket,
+    @MessageBody()
+    payload: AgentMessageDto,
+  ): Promise<BaseRealtimeMessageDto> {
+    const conversation =
+      await this.conversationsService.findConversationByIdWithAgent(
+        payload.data.conversationId,
+      );
+
+    if (!conversation) {
+      const message = `Conversation not found: ID=${payload.data.conversationId}`;
+
+      this.logger.error(message);
+      client.send({
+        message,
+      });
+
+      return {
+        message,
+        timestamp: new Date().toISOString(),
+        data: {},
+        error: {
+          code: 'CONVERSATION_NOT_FOUND',
+          message,
+        },
+      };
+    }
+
+    const isProjectAgent = await this.agentsService.isProjectAgent(
+      conversation.projectId,
+      payload.data.agentId,
+    );
+
+    if (!isProjectAgent) {
+      const message = `Message rejected: agent ${payload.data.agentId} is not an agent of project ${conversation.projectId}.`;
+
+      client.send({
+        message,
+      });
+
+      return {
+        message,
+        timestamp: new Date().toISOString(),
+        data: {},
+        error: {
+          code: 'AGENT_NOT_FOUND',
+          message,
+        },
+      };
+    }
+
+    const frontendConnection =
+      this.frontendConnectionManagerService.getConnection({
+        memberId: conversation.memberId,
+        projectId: conversation.projectId,
+      });
+
+    if (!frontendConnection) {
+      const message = `Frontend connection not found: MEMBER_ID=${conversation.memberId},PROJECT_ID=${conversation.projectId},AGENT_ID=${payload.data.agentId}`;
+
+      this.logger.error(message);
+
+      return {
+        message,
+        timestamp: new Date().toISOString(),
+        data: {},
+        error: {
+          code: 'FRONTEND_CONNECTION_NOT_FOUND',
+          message,
+        },
+      };
+    }
+
+    frontendConnection.socket.emit('login-request', {
+      timestamp: new Date().toISOString(),
+      data: {
+        conversationId: conversation.id,
+        source: 'AGENT',
+        agentId: payload.data.agentId,
+        text: payload.data.text,
+        format: payload.data.format,
+      },
+    });
+
+    return {
+      message: 'Message sent successfully',
+      timestamp: new Date().toISOString(),
+      data: {},
+    };
+  }
+
   @SubscribeMessage('chat-message')
   async handleChatMessage(
     @ConnectedSocket() client: Socket,

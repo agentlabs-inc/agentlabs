@@ -68,4 +68,21 @@ export class Agent {
             format: options.format,
         });
     }
+
+    requestLogin(
+        params: {
+            conversationId: string;
+            text: string;
+        },
+        options: SendMessageOptions = {}
+    ) {
+        const format: MessageFormat = options.format ?? 'PlainText';
+
+        this.config.realtime.emit('login-request', {
+            conversationId: params.conversationId,
+            agentId: this.config.agentId,
+            text: params.text,
+            format: localMessageFormatToRemote[format],
+        });
+    }
 }
