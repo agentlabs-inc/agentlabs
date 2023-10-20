@@ -28,6 +28,8 @@
 	import AgentChatMessage from "./chat-message/AgentChatMessage.svelte";
 	import { chatConversationRoute } from "$lib/routes/routes";
 	import { list } from "postcss";
+	import AgentIcon from "$lib/assets/img/agent-icon.svg";
+	import PromptMessage from "$lib/components/chat/chat-message/PromptMessage.svelte";
 
 	let chatElement: HTMLDivElement;
 	let chatInputElement: HTMLInputElement;
@@ -244,6 +246,9 @@
 								body={message.text}
 								format={message.format}
 								agentId={message.agentId} />
+
+							<Spacer size="sm" />
+							<PromptMessage time="22h00" agentId={message.agentId} />
 						{:else}
 							<ChatMessage
 								isLoading={isWaitingForAnswer && messages.length - 1 === index}
