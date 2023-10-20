@@ -5,7 +5,7 @@ export class SanitizedMemberDto {
   id: string;
 
   @IsString()
-  email: string;
+  email: string | null;
 
   @IsString()
   fullName: string | null;

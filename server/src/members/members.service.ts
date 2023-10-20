@@ -147,17 +147,26 @@ export class MembersService {
     };
   }
 
-  private async generateAccessToken(member: Member): Promise<string> {
-    return this.signAccessToken({
-      sub: member.id,
-      email: member.email,
-      firstName: member.firstName,
-      lastName: member.lastName,
-      projectId: member.projectId,
-    });
+  private async generateAccessToken(
+    member: Member,
+    expiration?: string,
+  ): Promise<string> {
+    return this.signAccessToken(
+      {
+        sub: member.id,
+        email: member.email,
+        firstName: member.firstName,
+        lastName: member.lastName,
+        projectId: member.projectId,
+      },
+      expiration,
+    );
   }
 
-  private signAccessToken(payload: AccessTokenPayload): Promise<string> {
+  private signAccessToken(
+    payload: AccessTokenPayload,
+    expirationTime?: string,
+  ): Promise<string> {
     const secret = new TextEncoder().encode(
       this.membersConfig.accessTokenSecret,
     );
@@ -167,7 +176,9 @@ export class MembersService {
       })
       .setIssuer('https://agentlabs.dev')
       .setAudience('https://agentlabs.dev')
-      .setExpirationTime(this.membersConfig.accessTokenExpirationTime)
+      .setExpirationTime(
+        expirationTime ?? this.membersConfig.accessTokenExpirationTime,
+      )
       .setIssuedAt()
       .sign(secret);
   }
@@ -379,14 +390,20 @@ export class MembersService {
       return err('ProjectNotFound');
     }
 
-    await this.prisma.member.create({
+    const user = await this.prisma.member.create({
       data: {
+        isAnonymous: true,
         project: {
           connect: {
             id: projectId,
           },
         },
       },
+    });
+
+    return ok({
+      accessToken: await this.generateAccessToken(user, '600h'),
+      member: user,
     });
   }
 

@@ -30,6 +30,7 @@
 	import { list } from "postcss";
 	import AgentIcon from "$lib/assets/img/agent-icon.svg";
 	import PromptMessage from "$lib/components/chat/chat-message/PromptMessage.svelte";
+	import LoginMessage from "$lib/components/chat/chat-message/LoginMessage.svelte";
 
 	let chatElement: HTMLDivElement;
 	let chatInputElement: HTMLInputElement;
@@ -249,6 +250,7 @@
 
 							<Spacer size="sm" />
 							<PromptMessage time="22h00" agentId={message.agentId} />
+							<LoginMessage time="22h00" agentId={message.agentId} />
 						{:else}
 							<ChatMessage
 								isLoading={isWaitingForAnswer && messages.length - 1 === index}

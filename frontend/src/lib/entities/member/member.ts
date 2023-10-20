@@ -5,7 +5,7 @@ export type Member = {
 	lastName: string | null;
 	profilePictureUrl: string | null;
 	verifiedAt: Date | null;
-	email: string;
+	email: string | null;
 	createdAt: Date;
 	updatedAt: Date;
 };

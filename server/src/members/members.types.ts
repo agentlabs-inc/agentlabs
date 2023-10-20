@@ -2,7 +2,7 @@ import { JWTPayload } from 'jose';
 
 export type AccessTokenPayload = {
   sub: string;
-  email: string;
+  email: string | null;
   firstName: string | null;
   lastName: string | null;
   projectId: string;
