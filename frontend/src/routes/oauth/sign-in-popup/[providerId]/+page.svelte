@@ -18,7 +18,13 @@
 	}
 
 	onMount(() => {
-		authMethod = publicProjectConfig.authMethods.find((m) => m.provider === provider);
+		const authMethod_ = publicProjectConfig.authMethods.find((m) => m.provider === provider);
+
+		if (!authMethod_) {
+			throw new Error(`authMethod for provider ${provider} not found`);
+		}
+
+		authMethod = authMethod_;
 
 		initSignInWithRedirect(authMethod, publicProjectConfig.id);
 	});

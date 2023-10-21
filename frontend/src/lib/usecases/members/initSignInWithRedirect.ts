@@ -1,9 +1,13 @@
+import { goto } from "$app/navigation";
 import { env } from "$env/dynamic/public";
+import { agentChatRoute } from "$lib/routes/routes";
 import type { PublicAuthMethodDto } from "$lib/services/gen-api";
 import { createDemoRedirectState } from "$lib/services/oauth/demoRedirectState";
 import GoogleAuthProvider from "$lib/services/oauth/providers/google";
 import { signInWithRedirect } from "$lib/services/oauth/signInWithRedirect";
 import type { OAuthProvider } from "$lib/services/oauth/types";
+import { loginWithOAuthCode } from "$lib/usecases/members/loginWithOAuthCode";
+import { toastError } from "$lib/utils/toast";
 import { validateEnv } from "$lib/utils/validateEnv";
 
 export const initSignInWithRedirect = async (
@@ -76,46 +80,45 @@ export const initSignInWithPopup = async (authMethod: PublicAuthMethodDto, proje
 			`${window.location.protocol}//${environment.PUBLIC_APP_HOST}/oauth/demo_handler/${authMethod.provider}`.toLowerCase();
 	}
 
-	let windowObjectReference = null;
-	let previousUrl = null;
+	let popup: Window | null = null;
 
-	const receiveMessage = (event: MessageEvent) => {
-		console.log("EVENT", event);
-		// Do we trust the sender of this message? (might be
-		// different from what we originally opened, for example).
-		if (event.origin !== "coucou") {
+	const receiveMessage = async (event: MessageEvent) => {
+		// If the sender is not the same domain, it means it's not trustworthy
+		if (event.origin !== window.location.origin) {
 			return;
 		}
 
 		const { data } = event;
 		// if we trust the sender and the source is our popup
-		if (data.source === "lma-login-redirect") {
-			// get the URL params and redirect to our server to use Passport to auth/login
-			const { payload } = data;
-			const redirectUrl = `/auth/google/login${payload}`;
-			window.location.pathname = redirectUrl;
+		if (data.messageType === "OAuthRedirectResult") {
+			try {
+				await loginWithOAuthCode({
+					providerId: authMethod.provider.toLowerCase(),
+					redirectUri:
+						data.redirectUri ?? `${window.location.origin}${window.location.pathname}`,
+					state: data.state,
+					code: data.code,
+					projectId
+				});
+
+				await goto(agentChatRoute.path()).then(() => {
+					window.location.reload();
+				});
+
+				popup?.close();
+			} catch {
+				toastError("Impossible to login with this provider. Please try again later.");
+			}
+		}
+
+		if (data.messageType === "OAuthRedirectError") {
+			toastError("Impossible to login with this provider. Please try again later.");
+			popup?.close();
 		}
 	};
 
-	// remove any existing event listeners
 	window.removeEventListener("message", receiveMessage);
-
-	// window features
-	const strWindowFeatures = "toolbar=no, menubar=no, width=600, height=700, top=100, left=100";
-
 	window.addEventListener("message", (event) => receiveMessage(event), false);
 
-	const popup = window.open(
-		popupUrl,
-		"popup",
-		"popup=true,toolbar=no,menubar=no,width=600,height=700"
-	);
-	const checkPopup = setInterval(() => {
-		if (!popup || !popup.closed) {
-			return;
-		}
-		if (popup.window.location.href.includes("oauth/handler")) {
-			popup.close();
-		}
-	}, 1000);
+	popup = window.open(popupUrl, "popup", "popup=true,toolbar=no,menubar=no,width=600,height=700");
 };

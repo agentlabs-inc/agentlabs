@@ -34,6 +34,9 @@
 	const toggleDropdown = () => {
 		isDropdownVisible = !isDropdownVisible;
 	};
+
+	$: memberEmailOrName = member.email ?? "Guest";
+	$: memberAvatarUrl = member.profilePictureUrl ?? "";
 </script>
 
 <div>
@@ -45,9 +48,11 @@
 			tabindex="0"
 			class="relative flex w-full gap-4 border-l border-stroke-base dark:border-stroke-base-dark h-full items-center justify-between px-3 cursor-pointer">
 			<div class="flex items-center justify-center gap-4">
-				<Avatar alt="user avatar" src={member.profilePictureUrl ?? ""} />
+				{#key memberAvatarUrl}
+					<Avatar alt="user avatar" src={memberAvatarUrl} />
+				{/key}
 				<div class="antialiased flex flex-col gap-0">
-					<span class="text-body-base text-sm">{member.email ?? "Guest"}</span>
+					<span class="text-body-base text-sm">{memberEmailOrName}</span>
 					<span class="text-body-subdued text-sm">{projectConfig.name}</span>
 				</div>
 			</div>
