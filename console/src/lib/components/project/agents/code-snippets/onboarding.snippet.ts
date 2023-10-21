@@ -1,3 +1,5 @@
+import { buildFrontendUrl } from "$lib/utils/buildFrontendUrl";
+
 export const onboardingTypescriptCode = (params: {
 	projectId: string;
 	projectSlug: string;
@@ -63,3 +65,15 @@ project.on_chat_message(handle_message)
 project.connect()
 project.wait()
 `;
+
+export const embedCode = (projectSlug: string) => {
+	return `\`\`\`html
+<iframe
+src="${buildFrontendUrl(projectSlug)}"
+width="100%"
+style="height: 100%; min-height: 700px"
+sandbox="allow-top-navigation allow-scripts allow-forms"
+frameborder="0"
+></iframe>
+\`\`\``;
+};
