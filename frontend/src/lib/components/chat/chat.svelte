@@ -7,7 +7,7 @@
 		isStreaming,
 		removeActiveStream
 	} from "$lib/stores/chat";
-	import type { ChatMessageFormat } from "$lib/stores/chat";
+	import type { ChatMessageFormat, ChatMessageSource } from "$lib/stores/chat";
 	import { PaperAirplane } from "svelte-hero-icons";
 	import Button from "../common/button/Button.svelte";
 	import ChatInput from "./chat-input/ChatInput.svelte";
@@ -28,9 +28,6 @@
 	import { mainContextStore } from "$lib/stores/main-context";
 	import AgentChatMessage from "./chat-message/AgentChatMessage.svelte";
 	import { chatConversationRoute } from "$lib/routes/routes";
-	import { list } from "postcss";
-	import AgentIcon from "$lib/assets/img/agent-icon.svg";
-	import PromptMessage from "$lib/components/chat/chat-message/PromptMessage.svelte";
 	import LoginMessage from "$lib/components/chat/chat-message/LoginMessage.svelte";
 
 	let chatElement: HTMLDivElement;
@@ -62,7 +59,9 @@
 	} = null;
 	const onLoginRequested = (payload: {
 		data: {
+			messageId: string;
 			conversationId: string;
+			source: ChatMessageSource;
 			agentId: string;
 			format: ChatMessageFormat;
 			text: string;
@@ -81,14 +80,18 @@
 			return;
 		}
 
-		console.log("PAY, ", payload);
+		isWaitingForAnswer = false;
+		isUserInteractionBlocked = true;
 
-		displayLoginMessage = {
-			format: payload.data.format,
+		addMessage({
+			id: payload.data.messageId,
 			text: payload.data.text,
+			source: payload.data.source,
+			createdAt: payload.timestamp,
+			format: payload.data.format,
 			agentId: payload.data.agentId,
-			timestamp: payload.timestamp
-		};
+			type: "LOGIN_REQUEST"
+		});
 	};
 
 	const sendMessage = (e: Event) => {
@@ -112,7 +115,7 @@
 			data: {
 				text: chatInputValue,
 				conversationId: actualConversationId,
-				source: "USER" as "USER" | "AGENT" | "SYSTEM"
+				source: "USER" as ChatMessageSource
 			}
 		};
 
@@ -122,7 +125,8 @@
 			id: uuidv4(), // this is a fake id, the real id will be set by the server
 			...payload.data,
 			createdAt: timestamp,
-			format: "PLAIN_TEXT"
+			format: "PLAIN_TEXT",
+			type: "CONVERSATION_MESSAGE"
 		});
 
 		isWaitingForAnswer = true;
@@ -188,7 +192,8 @@
 			source: payload.data.source,
 			createdAt: payload.timestamp,
 			format: payload.data.format,
-			agentId: payload.data.agentId
+			agentId: payload.data.agentId,
+			type: "CONVERSATION_MESSAGE"
 		});
 	};
 
@@ -213,7 +218,8 @@
 			source: "AGENT",
 			createdAt: payload.timestamp,
 			format: payload.data.format,
-			agentId: payload.data.agentId
+			agentId: payload.data.agentId,
+			type: "CONVERSATION_MESSAGE"
 		});
 	};
 
@@ -280,24 +286,22 @@
 				{#each messages as message, index (message.id)}
 					<div class="w-full">
 						{#if message.agentId}
-							<AgentChatMessage
-								isLoading={isWaitingForAnswer && messages.length - 1 === index}
-								time={dayjs(message.createdAt).format("M/D/YYYY hh:mm A")}
-								body={message.text}
-								format={message.format}
-								agentId={message.agentId} />
-
-							<Spacer size="sm" />
-							<!--							<PromptMessage time="22h00" agentId={message.agentId} />-->
-							{#if !!displayLoginMessage}
+							{#if message.type === "LOGIN_REQUEST"}
 								<LoginMessage
-									time={dayjs(displayLoginMessage.timestamp).format(
-										"M/D/YYYY hh:mm A"
-									)}
-									body={displayLoginMessage.text}
-									format={displayLoginMessage.format}
+									time={dayjs(message.createdAt).format("M/D/YYYY hh:mm A")}
+									body={message.text}
+									format={message.format}
 									agentId={message.agentId} />
 							{/if}
+							{#if message.type === "CONVERSATION_MESSAGE"}
+								<AgentChatMessage
+									isLoading={isWaitingForAnswer && messages.length - 1 === index}
+									time={dayjs(message.createdAt).format("M/D/YYYY hh:mm A")}
+									body={message.text}
+									format={message.format}
+									agentId={message.agentId} />
+							{/if}
+							<!--							<PromptMessage time="22h00" agentId={message.agentId} />-->
 						{:else}
 							<ChatMessage
 								isLoading={isWaitingForAnswer && messages.length - 1 === index}

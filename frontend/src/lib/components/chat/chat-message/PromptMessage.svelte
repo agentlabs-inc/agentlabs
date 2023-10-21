@@ -1,14 +1,7 @@
 <script lang="ts">
 	import LetterAvatar from "$lib/components/common/letter-avatar/LetterAvatar.svelte";
-	import MarkdownRenderer from "$lib/components/markdown/markdown-renderer.svelte";
-	import { agentStore, getAgentById } from "$lib/stores/agent";
-	import { authStore } from "$lib/stores/auth";
-	import type { ChatMessageFormat } from "$lib/stores/chat";
-	import TypingLoader from "$lib/components/chat/chat-message/TypingLoader.svelte";
-	import Input from "$lib/components/common/input/Input.svelte";
+	import { getAgentById } from "$lib/stores/agent";
 	import MessageInput from "$lib/components/chat/chat-message/MessageInput.svelte";
-	import Button from "$lib/components/common/button/Button.svelte";
-	import { PaperAirplane } from "svelte-hero-icons";
 
 	export let time: string;
 	export let agentId: string;

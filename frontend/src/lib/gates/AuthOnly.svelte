@@ -9,6 +9,9 @@
 
 	onMount(async () => {
 		if (!$authStore.member) {
+			if (!$mainContextStore.publicProjectConfig?.id)
+				throw new Error("No public project config");
+
 			await signInAnonymously($mainContextStore.publicProjectConfig?.id);
 			loading = false;
 		}

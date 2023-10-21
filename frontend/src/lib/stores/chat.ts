@@ -4,13 +4,17 @@ export const ChatMessageFormats = ["PLAIN_TEXT", "MARKDOWN"] as const;
 
 export type ChatMessageFormat = (typeof ChatMessageFormats)[number];
 
+export type ChatMessageSource = "USER" | "AGENT" | "SYSTEM";
+export type ChatMessageType = "CONVERSATION_MESSAGE" | "LOGIN_REQUEST";
+
 export interface ChatMessage {
 	id: string;
 	text: string;
-	source: "USER" | "AGENT" | "SYSTEM";
+	source: ChatMessageSource;
 	createdAt: string;
 	format: ChatMessageFormat;
 	agentId?: string;
+	type: ChatMessageType;
 }
 
 export interface ChatStore {

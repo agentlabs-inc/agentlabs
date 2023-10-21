@@ -5,7 +5,7 @@
 	import Button from "$lib/components/common/button/Button.svelte";
 	import Input from "$lib/components/common/input/Input.svelte";
 	import AuthProviderButton from "$lib/components/auth/button/AuthProviderButton.svelte";
-	import { superForm } from "sveltekit-superforms/client";
+	import { superForm, superValidateSync } from "sveltekit-superforms/client";
 	import { z as zod } from "zod";
 	import { toastError } from "$lib/utils/toast";
 	import { verifyPasswordlessEmailRoute } from "$lib/routes/routes";
@@ -15,6 +15,7 @@
 	import TypingLoader from "$lib/components/chat/chat-message/TypingLoader.svelte";
 	import type { ChatMessageFormat } from "$lib/stores/chat";
 	import { onMount } from "svelte";
+	import { superValidate } from "sveltekit-superforms/server";
 
 	export let time: string;
 	export let format: ChatMessageFormat;
@@ -41,16 +42,16 @@
 
 	let submitting = false;
 
-	const { form, errors, validate } = superForm(
-		{
-			email: ""
-		}, // TODO: add form instance
-		{
-			validators: zod.object({
-				email: zod.string().email()
-			})
-		}
-	);
+	const schema = zod.object({
+		email: zod.string().email()
+	});
+
+	const { form, errors, validate } = superForm(superValidateSync(schema), {
+		SPA: true,
+		validators: zod.object({
+			email: zod.string().email()
+		})
+	});
 
 	const handleValidation = async (e: Event) => {
 		e.preventDefault();

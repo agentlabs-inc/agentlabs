@@ -15,6 +15,7 @@ import { ConversationsService } from 'src/conversations/conversations.service';
 import { FrontendConnectionManagerService } from 'src/frontend-connection-manager/frontend-connection-manager.service';
 import { ProjectBackendConnectionManagerService } from 'src/project-backend-connection-manager/project-backend-connection-manager.service';
 import { SdkSecretsService } from 'src/sdk-secrets/sdk-secrets.service';
+import { v4 as uuid } from 'uuid';
 import { AgentStreamManagerService } from './agent-stream-manager/agent-stream-manager.service';
 import { ConversationMutexManager } from './conversation-mutex-manager';
 import { AgentMessageDto } from './dto/agent-message.dto';
@@ -202,6 +203,7 @@ export class ProjectBackendConnectionGateway
     frontendConnection.socket.emit('login-request', {
       timestamp: new Date().toISOString(),
       data: {
+        messageId: uuid(),
         conversationId: conversation.id,
         source: 'AGENT',
         agentId: payload.data.agentId,
