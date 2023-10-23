@@ -58,6 +58,25 @@ export class MembersController {
     }
   }
 
+  @Post('/p/:projectId/signInAnonymously')
+  async signInAnonymously(
+    @Param('projectId') projectId: string,
+  ): Promise<LoginMemberResponseDto> {
+    const result = await this.membersService.signInAnonymously(projectId);
+
+    if (result.ok) {
+      return result.value;
+    }
+
+    switch (result.error) {
+      case 'ProjectNotFound':
+        throw new UnauthorizedException({
+          code: 'ProjectNotFound',
+          message: 'Project not found',
+        });
+    }
+  }
+
   @Post('/p/:projectId/requestPasswordlessEmail')
   async requestPasswordlessEmail(
     @Param('projectId') projectId: string,

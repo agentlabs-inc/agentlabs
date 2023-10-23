@@ -18,6 +18,7 @@ import {
   OAuthLoginError,
   RegisterMemberVerifyAuthMethodError,
   RegisterPasswordlessEmailError,
+  SignInAnonymousError,
   VerifiyIfIsProjectMemberError,
   VerifyIfIsProjectUserError,
   VerifyPasswordlessEmailError,
@@ -121,6 +122,14 @@ export class MembersService {
     });
   }
 
+  private async verifyProjectExists(projectId: string): Promise<boolean> {
+    const project = await this.prisma.project.findUnique({
+      where: { id: projectId },
+    });
+
+    return !!project;
+  }
+
   private random6DigitCode(): string {
     return Math.floor(100000 + Math.random() * 900000).toString();
   }
@@ -138,17 +147,26 @@ export class MembersService {
     };
   }
 
-  private async generateAccessToken(member: Member): Promise<string> {
-    return this.signAccessToken({
-      sub: member.id,
-      email: member.email,
-      firstName: member.firstName,
-      lastName: member.lastName,
-      projectId: member.projectId,
-    });
+  private async generateAccessToken(
+    member: Member,
+    expiration?: string,
+  ): Promise<string> {
+    return this.signAccessToken(
+      {
+        sub: member.id,
+        email: member.email,
+        firstName: member.firstName,
+        lastName: member.lastName,
+        projectId: member.projectId,
+      },
+      expiration,
+    );
   }
 
-  private signAccessToken(payload: AccessTokenPayload): Promise<string> {
+  private signAccessToken(
+    payload: AccessTokenPayload,
+    expirationTime?: string,
+  ): Promise<string> {
     const secret = new TextEncoder().encode(
       this.membersConfig.accessTokenSecret,
     );
@@ -158,7 +176,9 @@ export class MembersService {
       })
       .setIssuer('https://agentlabs.dev')
       .setAudience('https://agentlabs.dev')
-      .setExpirationTime(this.membersConfig.accessTokenExpirationTime)
+      .setExpirationTime(
+        expirationTime ?? this.membersConfig.accessTokenExpirationTime,
+      )
       .setIssuedAt()
       .sign(secret);
   }
@@ -359,6 +379,35 @@ export class MembersService {
     );
 
     return ok(memberCreatedOrUpdated);
+  }
+
+  async signInAnonymously(
+    projectId: string,
+  ): PResult<LoginMemberResponseDto, SignInAnonymousError> {
+    const projectExists = this.verifyProjectExists(projectId);
+
+    if (!projectExists) {
+      return err('ProjectNotFound');
+    }
+
+    const user = await this.prisma.member.create({
+      data: {
+        isAnonymous: true,
+        project: {
+          connect: {
+            id: projectId,
+          },
+        },
+      },
+    });
+
+    return ok({
+      // We want to limit the amount of anonymous user account created.
+      // Since we don't support token renewal at the moment, we set the expiration time to 1 year.
+      // Any PR with token renewal mechanism is welcome.
+      accessToken: await this.generateAccessToken(user, '1y'),
+      member: user,
+    });
   }
 
   async verifyPasswordlessEmail(params: {

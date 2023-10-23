@@ -5,8 +5,6 @@
 	import AgentIcon from "$lib/assets/img/agent-icon.svg";
 	import { authStore } from "$lib/stores/auth";
 	import type { ChatMessageFormat } from "$lib/stores/chat";
-	import { Icon } from "svelte-hero-icons";
-	import TypingLoader from "$lib/components/chat/chat-message/TypingLoader.svelte";
 
 	export let time: string;
 	export let body: string;

@@ -168,6 +168,7 @@ export class AgentsController {
     }
   }
 
+  @RequireAuthMethod('member-token', 'user-token')
   @ApiUnauthorizedResponse({
     description: 'You are not authorized to access this resource',
   })
@@ -210,6 +211,7 @@ export class AgentsController {
     }
   }
 
+  @RequireAuthMethod('member-token', 'user-token')
   @ApiUnauthorizedResponse({
     description: 'You are not authorized to access this resource',
   })

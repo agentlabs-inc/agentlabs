@@ -16,14 +16,6 @@ export const logoutRoute = {
 	path: () => `${basePath}/logout`
 };
 
-export const loginRoute = {
-	path: () => `${basePath}/login`
-};
-
-export const registerRoute = {
-	path: () => `${basePath}/register`
-};
-
 export const verifyPasswordlessEmailRoute = {
 	path: (email: string) => `${basePath}/register/verify?email=${email}`
 };

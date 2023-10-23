@@ -6,7 +6,7 @@ export class MemberItem {
   id: string;
 
   @IsString()
-  email: string;
+  email: string | null;
 
   @IsString()
   firstName: string | null;

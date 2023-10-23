@@ -162,7 +162,7 @@
 								<div class="col-span-2">
 									<Typography type="sectionTitle">Configuration</Typography>
 									<Typography type="subTitle"
-										>Configuration the email provider.
+										>Configuration of the email provider.
 									</Typography>
 								</div>
 								<div class="col-span-3 gap-5">

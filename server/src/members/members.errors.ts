@@ -55,3 +55,7 @@ export const OAuthLoginErrors = [
 ] as const;
 
 export type OAuthLoginError = (typeof OAuthLoginErrors)[number];
+
+export const SignInAnonymousErrors = ['ProjectNotFound'] as const;
+
+export type SignInAnonymousError = (typeof SignInAnonymousErrors)[number];

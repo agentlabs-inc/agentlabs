@@ -1,15 +1,9 @@
 <script lang="ts">
 	import LetterAvatar from "$lib/components/common/letter-avatar/LetterAvatar.svelte";
-	import MarkdownRenderer from "$lib/components/markdown/markdown-renderer.svelte";
 	import { getAgentById } from "$lib/stores/agent";
-	import type { ChatMessageFormat } from "$lib/stores/chat";
-	import TypingLoader from "$lib/components/chat/chat-message/TypingLoader.svelte";
+	import MessageInput from "$lib/components/chat/chat-message/MessageInput.svelte";
 
 	export let time: string;
-	export let body: string;
-	export let format: ChatMessageFormat;
-
-	export let isLoading = true;
 	export let agentId: string;
 
 	let bubbleClass: string;
@@ -25,7 +19,7 @@
 	}
 </script>
 
-<div class="{bubbleClass} {isLoading ? 'animate-pulse' : ''} rounded-md py-5 px-5 antialiased">
+<div class="{bubbleClass} rounded-md py-5 px-5 antialiased">
 	<div class="mb-3">
 		<div class="flex gap-4">
 			<div class="shrink-0" title={agent.name}>
@@ -38,12 +32,15 @@
 				</div>
 				<div
 					class="text-body-accent dark:text-body-accent-dark text-[11pt] leading-7 w-full">
-					{#if !body?.length}<TypingLoader />{/if}
-					{#if format === "MARKDOWN"}
-						<MarkdownRenderer source={body} />
-					{:else}
-						{body}
-					{/if}
+					To go further and proceed we'll your email address.
+				</div>
+				<div
+					class="mt-3 max-w-[400px] bg-background-primary border border-stroke-base dark:bg-background-primary-dark dark:border-stroke-base-dark rounded-lg p-4">
+					<MessageInput
+						name="email"
+						type="email"
+						placeholder="Please enter your email"
+						value="" />
 				</div>
 			</div>
 		</div>

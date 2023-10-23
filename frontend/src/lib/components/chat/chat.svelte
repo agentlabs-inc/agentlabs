@@ -7,6 +7,7 @@
 		isStreaming,
 		removeActiveStream
 	} from "$lib/stores/chat";
+	import type { ChatMessageFormat, ChatMessageSource } from "$lib/stores/chat";
 	import { PaperAirplane } from "svelte-hero-icons";
 	import Button from "../common/button/Button.svelte";
 	import ChatInput from "./chat-input/ChatInput.svelte";
@@ -27,7 +28,7 @@
 	import { mainContextStore } from "$lib/stores/main-context";
 	import AgentChatMessage from "./chat-message/AgentChatMessage.svelte";
 	import { chatConversationRoute } from "$lib/routes/routes";
-	import { list } from "postcss";
+	import LoginMessage from "$lib/components/chat/chat-message/LoginMessage.svelte";
 
 	let chatElement: HTMLDivElement;
 	let chatInputElement: HTMLInputElement;
@@ -50,6 +51,49 @@
 
 	let shouldRedirectToConversation = false;
 
+	let displayLoginMessage: null | {
+		format: ChatMessageFormat;
+		text: string;
+		agentId: string;
+		timestamp: string;
+	} = null;
+	const onLoginRequested = (payload: {
+		data: {
+			messageId: string;
+			conversationId: string;
+			source: ChatMessageSource;
+			agentId: string;
+			format: ChatMessageFormat;
+			text: string;
+		};
+		timestamp: string;
+	}) => {
+		if (payload.data.conversationId !== conversationId) {
+			console.warn(
+				`Received message for conversation ${payload.data.conversationId} but current conversation is ${conversationId}`
+			);
+
+			return;
+		}
+
+		if ($mainContextStore.publicProjectConfig?.authMethods?.length === 0) {
+			return;
+		}
+
+		isWaitingForAnswer = false;
+		isUserInteractionBlocked = true;
+
+		addMessage({
+			id: payload.data.messageId,
+			text: payload.data.text,
+			source: payload.data.source,
+			createdAt: payload.timestamp,
+			format: payload.data.format,
+			agentId: payload.data.agentId,
+			type: "LOGIN_REQUEST"
+		});
+	};
+
 	const sendMessage = (e: Event) => {
 		e.preventDefault();
 
@@ -71,7 +115,7 @@
 			data: {
 				text: chatInputValue,
 				conversationId: actualConversationId,
-				source: "USER" as "USER" | "AGENT" | "SYSTEM"
+				source: "USER" as ChatMessageSource
 			}
 		};
 
@@ -81,7 +125,8 @@
 			id: uuidv4(), // this is a fake id, the real id will be set by the server
 			...payload.data,
 			createdAt: timestamp,
-			format: "PLAIN_TEXT"
+			format: "PLAIN_TEXT",
+			type: "CONVERSATION_MESSAGE"
 		});
 
 		isWaitingForAnswer = true;
@@ -147,7 +192,8 @@
 			source: payload.data.source,
 			createdAt: payload.timestamp,
 			format: payload.data.format,
-			agentId: payload.data.agentId
+			agentId: payload.data.agentId,
+			type: "CONVERSATION_MESSAGE"
 		});
 	};
 
@@ -172,7 +218,8 @@
 			source: "AGENT",
 			createdAt: payload.timestamp,
 			format: payload.data.format,
-			agentId: payload.data.agentId
+			agentId: payload.data.agentId,
+			type: "CONVERSATION_MESSAGE"
 		});
 	};
 
@@ -186,6 +233,7 @@
 
 	onMount(async () => {
 		$realtimeStore.connection?.on("chat-message", listenToChatMessage);
+		$realtimeStore.connection?.on("login-request", onLoginRequested);
 		$realtimeStore.connection?.on(
 			"stream-chat-message-start",
 			listenToStreamedChatMessageToken
@@ -227,6 +275,8 @@
 			}
 		}
 	});
+
+	$: projectName = $mainContextStore.publicProjectConfig?.name;
 </script>
 
 <div class="flex flex-col justify-between relative flex-grow">
@@ -238,12 +288,22 @@
 				{#each messages as message, index (message.id)}
 					<div class="w-full">
 						{#if message.agentId}
-							<AgentChatMessage
-								isLoading={isWaitingForAnswer && messages.length - 1 === index}
-								time={dayjs(message.createdAt).format("M/D/YYYY hh:mm A")}
-								body={message.text}
-								format={message.format}
-								agentId={message.agentId} />
+							{#if message.type === "LOGIN_REQUEST"}
+								<LoginMessage
+									time={dayjs(message.createdAt).format("M/D/YYYY hh:mm A")}
+									body={message.text}
+									format={message.format}
+									agentId={message.agentId} />
+							{/if}
+							{#if message.type === "CONVERSATION_MESSAGE"}
+								<AgentChatMessage
+									isLoading={isWaitingForAnswer && messages.length - 1 === index}
+									time={dayjs(message.createdAt).format("M/D/YYYY hh:mm A")}
+									body={message.text}
+									format={message.format}
+									agentId={message.agentId} />
+							{/if}
+							<!--							<PromptMessage time="22h00" agentId={message.agentId} />-->
 						{:else}
 							<ChatMessage
 								isLoading={isWaitingForAnswer && messages.length - 1 === index}
@@ -260,12 +320,8 @@
 				<div class="flex items-center">
 					<h2
 						class="text-body-base dark:text-body-base-dark font-semibold text-3xl antialiased">
-						AgentLabs
+						{projectName}
 					</h2>
-					<div
-						class="ml-4 text-xs font-medium bg-gray-200 dark:bg-gray-800 text-body-base dark:text-body-accent-dark rounded-md px-2 py-1 antialiased">
-						ALPHA
-					</div>
 				</div>
 				<Spacer size="xs" />
 				<div>

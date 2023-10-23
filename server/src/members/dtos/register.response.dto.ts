@@ -2,7 +2,7 @@ import { IsDate, IsString } from 'class-validator';
 
 export class RegisterResponseDto {
   @IsString()
-  email: string;
+  email: string | null;
 
   @IsDate()
   createdAt: Date;

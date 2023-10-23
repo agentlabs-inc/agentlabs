@@ -6,7 +6,10 @@
 	import GitlabIcon from "$lib/components/auth/GitlabIcon.svelte";
 	import GithubIcon from "$lib/components/auth/GithubIcon.svelte";
 	import type { PublicAuthMethodDto } from "$lib/services/gen-api";
-	import { initSignInWithRedirect } from "$lib/usecases/members/initSignInWithRedirect";
+	import {
+		initSignInWithPopup,
+		initSignInWithRedirect
+	} from "$lib/usecases/members/initSignInWithRedirect";
 	import { mainContextStore } from "$lib/stores/main-context";
 
 	export let provider: AuthProvider;
@@ -38,7 +41,9 @@
 	const handleLogin = () => {
 		providerCurrentlyLoading = provider;
 
-		initSignInWithRedirect(authMethod, publicProjectConfig.id);
+		initSignInWithPopup(authMethod, publicProjectConfig.id);
+
+		// initSignInWithRedirect(authMethod, publicProjectConfig.id);
 	};
 </script>
 

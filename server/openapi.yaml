@@ -134,6 +134,24 @@ paths:
                 $ref: "#/components/schemas/ListMembersResponseDto"
       tags:
         - Members
+  /members/p/{projectId}/signInAnonymously:
+    post:
+      operationId: signInAnonymously
+      parameters:
+        - name: projectId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginMemberResponseDto"
+      tags:
+        - Members
   /members/p/{projectId}/requestPasswordlessEmail:
     post:
       operationId: requestPasswordlessEmail
@@ -844,6 +862,7 @@ components:
           type: string
         email:
           type: string
+          nullable: true
         firstName:
           type: string
           nullable: true
@@ -886,38 +905,6 @@ components:
         - resultCount
         - totalCount
         - hasMore
-    RequestPasswordlessEmailDto:
-      type: object
-      properties:
-        email:
-          type: string
-      required:
-        - email
-    RegisterResponseDto:
-      type: object
-      properties:
-        email:
-          type: string
-        createdAt:
-          format: date-time
-          type: string
-        updatedAt:
-          format: date-time
-          type: string
-      required:
-        - email
-        - createdAt
-        - updatedAt
-    VerifyPasswordlessEmailDto:
-      type: object
-      properties:
-        email:
-          type: string
-        code:
-          type: string
-      required:
-        - email
-        - code
     SanitizedMemberDto:
       type: object
       properties:
@@ -925,6 +912,7 @@ components:
           type: string
         email:
           type: string
+          nullable: true
         fullName:
           type: string
           nullable: true
@@ -967,6 +955,39 @@ components:
       required:
         - accessToken
         - member
+    RequestPasswordlessEmailDto:
+      type: object
+      properties:
+        email:
+          type: string
+      required:
+        - email
+    RegisterResponseDto:
+      type: object
+      properties:
+        email:
+          type: string
+          nullable: true
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - email
+        - createdAt
+        - updatedAt
+    VerifyPasswordlessEmailDto:
+      type: object
+      properties:
+        email:
+          type: string
+        code:
+          type: string
+      required:
+        - email
+        - code
     oauthAuthorizeDto:
       type: object
       properties:

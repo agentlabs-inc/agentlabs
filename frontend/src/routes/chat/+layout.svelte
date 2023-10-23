@@ -1,10 +1,10 @@
 <script lang="ts">
 	import TopNav from "$lib/components/common/navigation/top-nav/TopNav.svelte";
 	import LeftNav from "$lib/components/common/navigation/left-nav/LeftNav.svelte";
-	import AuthOnly from "$lib/gates/AuthOnly.svelte";
 	import RealtimeContext from "$lib/context/RealtimeContext.svelte";
 	import Chat from "$lib/components/chat/chat.svelte";
 	import AgentContext from "$lib/context/AgentContext.svelte";
+	import AuthOnly from "$lib/gates/AuthOnly.svelte";
 </script>
 
 <svelte:head>

@@ -9,4 +9,6 @@ export type MultiSelectItem = {
 	customIcon?: ComponentType;
 	disabled?: boolean;
 	disabledLabel?: string;
+	selected?: boolean;
+	required?: boolean;
 };
