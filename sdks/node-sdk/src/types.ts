@@ -11,7 +11,7 @@ export interface RawChatMessage {
     conversationId: string;
     messageId: string;
     agentId: string;
-    memberId: string;
+	member: Member;
 }
 
 export interface SendMessageOptions {
@@ -40,4 +40,25 @@ export interface AgentMessageStreamConfig {
     conversationId: string;
     agentId: string;
     format?: MessageFormat;
+}
+
+export interface Member {
+	id: string,
+
+	createdAt: string
+	updatedAt: string,
+
+	verifiedAt?: string
+	bannedAt?: string
+
+	firstName?: string,
+	lastName?: string,
+	fullName?: string,
+
+	email?: string,
+	isAnonymous?: boolean,
+
+	profilePictureUrl?: string,
+
+	projectId: string
 }
