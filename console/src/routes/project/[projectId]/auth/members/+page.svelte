@@ -72,7 +72,7 @@
 		return users.filter((user) => {
 			const search = searchValue.toLowerCase();
 			return (
-				user.id.toLowerCase().includes(search) || user.email.toLowerCase().includes(search)
+				user.id.toLowerCase().includes(search) || user.email?.toLowerCase().includes(search)
 			);
 		});
 	};
