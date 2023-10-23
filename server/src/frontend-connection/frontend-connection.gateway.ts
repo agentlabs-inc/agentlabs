@@ -201,12 +201,23 @@ export class FrontendConnectionGateway
       return clientPayload;
     }
 
+    const member = await this.membersService.findById(
+      frontendConnection.memberId,
+    );
+
+    if (!member) {
+      this.logger.error(
+        `Member not found: ${frontendConnection.memberId}, this should not happen`,
+      );
+      throw new Error(`Member not found: ${frontendConnection.memberId}`);
+    }
+
     agentConnection.socket.emit('chat-message', {
       data: {
         text: payload.data.text,
         conversationId: conversation.id,
         messageId: message.id,
-        memberId: frontendConnection.memberId,
+        member,
       },
     });
 

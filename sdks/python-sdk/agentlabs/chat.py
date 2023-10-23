@@ -1,12 +1,13 @@
 from enum import Enum
 from typing import TypedDict
+from .member import _ApiMember, Member
 
 class _ChatMessage(TypedDict):
     text: str
     conversationId: str
     messageId: str
     agentId: str
-    memberId: str
+    member: _ApiMember
 
 class MessageFormat(Enum):
     PLAIN_TEXT = "PLAIN_TEXT"
@@ -19,4 +20,6 @@ class IncomingChatMessage:
         self.text = message["text"]
         self.conversation_id = message["conversationId"]
         self.message_id = message["messageId"]
-        self.member_id = message["memberId"]
+        self.member_id = message["member"]["id"]
+        self.sender = Member(message["member"])
+
