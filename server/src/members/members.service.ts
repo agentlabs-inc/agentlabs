@@ -11,7 +11,9 @@ import { GoogleService } from '../oauth-providers/google/google.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { ListMembersResponseDto } from './dtos/list.members.response.dto';
 import { LoginMemberResponseDto } from './dtos/login.member.response.dto';
+import { MemberWhoAmIResultDto } from './dtos/member.whoami.result.dto';
 import { RegisterResponseDto } from './dtos/register.response.dto';
+import { SanitizedMemberDto } from './dtos/sanitized.member.dto';
 import { InjectMembersConfig, MembersConfig } from './members.config';
 import {
   ListMembersError,
@@ -675,5 +677,36 @@ export class MembersService {
       accessToken: ourAccessToken,
       member: memberCreatedOrUpdated,
     });
+  }
+
+  async getSanitizedMemberById(id: string): Promise<SanitizedMemberDto | null> {
+    return this.prisma.member.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        firstName: true,
+        lastName: true,
+        profilePictureUrl: true,
+        verifiedAt: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  }
+
+  async getWhoAmI(
+    id: string,
+  ): PResult<MemberWhoAmIResultDto, 'MemberNotFound'> {
+    const member = await this.getSanitizedMemberById(id);
+
+    if (!member) {
+      return err('MemberNotFound');
+    }
+
+    return ok(member);
   }
 }

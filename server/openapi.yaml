@@ -224,6 +224,23 @@ paths:
                 $ref: "#/components/schemas/LoginMemberResponseDto"
       tags:
         - Members
+  /members/whoami:
+    post:
+      operationId: whoami
+      parameters: []
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MemberWhoAmIResultDto"
+        "404":
+          description: Member not found
+      tags:
+        - Members
+      security:
+        - bearer: []
   /authMethods/upsert:
     post:
       operationId: upsert
@@ -1004,6 +1021,46 @@ components:
         - state
         - redirectUri
         - projectId
+    MemberWhoAmIResultDto:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          nullable: true
+        fullName:
+          type: string
+          nullable: true
+        firstName:
+          type: string
+          nullable: true
+        lastName:
+          type: string
+          nullable: true
+        profilePictureUrl:
+          type: string
+          nullable: true
+        verifiedAt:
+          format: date-time
+          type: string
+          nullable: true
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - id
+        - email
+        - fullName
+        - firstName
+        - lastName
+        - profilePictureUrl
+        - verifiedAt
+        - createdAt
+        - updatedAt
     UpsertAuthMethodDto:
       type: object
       properties:
