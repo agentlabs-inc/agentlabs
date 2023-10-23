@@ -37,7 +37,7 @@ export class AttachmentsController {
 
     const projectId = req.sdkUser.projectId;
 
-    await this.attachmentsService.createOneSync({
+    return this.attachmentsService.createOneSync({
       isPublic: true,
       mimeType: file.mimetype,
       filename: file.originalname,
@@ -57,11 +57,14 @@ export class AttachmentsController {
 
     const data = await this.storageService.download(attachment.id);
 
-    res.setHeader('Content-Type', attachment.mimeType);
+    console.log('attachment.mimeType', attachment.mimeType);
+
     res.setHeader(
       'Content-Disposition',
-      `inline; filename="${attachment.name}"`, // ignored by most browsers
+      `inline; filename="${attachment.name}"`,
     );
+
+    res.setHeader('Content-Type', attachment.mimeType);
     res.setHeader('Content-Length', data.length);
     res.send(data);
   }

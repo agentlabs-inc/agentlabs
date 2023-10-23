@@ -1,8 +1,11 @@
+import { AttachmentItem } from './attachment';
+import { HttpApi } from './http';
 import { IncomingChatMessage } from './incoming-chat-message';
 import { RealtimeClient } from './realtime';
 
 export interface AgentConfig {
     realtime: RealtimeClient;
+	http: HttpApi;
     agentId: string;
 }
 
@@ -33,6 +36,7 @@ export type OnChatMessageHandler = (message: IncomingChatMessage) => void;
 export type SendMessagePayload = {
     text: string;
     conversationId: string;
+	attachments?: AttachmentItem[];
 };
 
 export interface AgentMessageStreamConfig {

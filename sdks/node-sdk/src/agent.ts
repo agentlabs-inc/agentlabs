@@ -1,4 +1,5 @@
 import { AgentMessageStream } from './agent-message-stream';
+import { AttachmentItem, LocalFileAttachment } from './attachment';
 import {
     DEFAULT_INITIAL_MESSAGE_LOADING_DELAY_MS,
     DEFAULT_MESSAGE_TYPING_INTERVAL_MS,
@@ -19,10 +20,31 @@ export class Agent {
 
     constructor(private readonly config: AgentConfig) {}
 
-    send(
-        { text, conversationId }: SendMessagePayload,
+	private async uploadAttachment(attachment: AttachmentItem): Promise<any[]> {
+		let uploaded: any = null;
+
+		await attachment.load();
+
+		if (attachment instanceof LocalFileAttachment) {
+			uploaded = await this.config.http.upload('/attachments/uploadSync', attachment.buffer)
+		}
+
+		if (!uploaded) {
+			throw new Error('Failed to upload attachment');
+		}
+
+		return uploaded;
+	}
+
+	private async uploadAttachments(attachments: AttachmentItem[]): Promise<any[]> {
+		return Promise.all(attachments.map((attachment) => this.uploadAttachment(attachment)));
+	}
+
+    async send(
+        { text, conversationId, attachments = [] }: SendMessagePayload,
         options: SendMessageOptions = {}
     ) {
+		const attachmentIds = await this.uploadAttachments(attachments);
         const format: MessageFormat = options.format ?? 'PlainText';
 
         this.config.realtime.emit('chat-message', {
@@ -30,6 +52,7 @@ export class Agent {
             conversationId,
             format: localMessageFormatToRemote[format],
             agentId: this.config.agentId,
+			attachments: attachmentIds,
         });
     }
 

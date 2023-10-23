@@ -3,6 +3,7 @@ import { RealtimeClient } from "./realtime";
 import { OnChatMessageHandler, RawChatMessage } from "./types";
 import { IncomingChatMessage } from "./incoming-chat-message";
 import { Logger } from "./logger";
+import { HttpApi } from "./http";
 
 export interface ProjectConfig {
 	url: string;
@@ -19,6 +20,7 @@ export class Project {
 	private serverLogger = new Logger({
 		name: 'Server',
 	})
+	private readonly http: HttpApi;
 
 	constructor(
 	 	config: ProjectConfig,
@@ -39,6 +41,7 @@ export class Project {
 				ok: true,
 			});
 		})
+		this.http = new HttpApi(config);
 	}
 
 	async connect() {
@@ -61,6 +64,7 @@ export class Project {
 	agent(agentId: string): Agent {
 		return new Agent({
 			realtime: this.realtime,
+			http: this.http,
 			agentId
 		});
 	}
