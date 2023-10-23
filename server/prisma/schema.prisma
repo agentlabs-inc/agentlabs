@@ -130,6 +130,8 @@ model Project {
 	smtpConfiguration							SmtpConfiguration?
 
 	projectBackendConnectionLogs	ProjectBackendConnectionLog[]
+
+	attachments		Attachment[]
 }
 
 enum AuthMethodType {
@@ -385,8 +387,12 @@ model Attachment {
 	checksumSha256			String
 	driver					AttachmentStorageDriver
 	isPublic				Boolean @default(false)
+	sizeBytes			    Int
 
 	agentMessageAttachment	ChatMessageAttachment?
+
+	projectId				String
+	project					Project @relation(fields: [projectId], references: [id])
 }
 
 

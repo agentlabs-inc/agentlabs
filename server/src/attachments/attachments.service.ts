@@ -37,8 +37,6 @@ export class AttachmentsService {
 
     this.logger.debug(`Creating attachment with checksum ${checksum}.`);
 
-    console.log('payload', payload);
-
     const attachment = await this.prisma.attachment.create({
       data: {
         driver: 'LOCAL_FILE_SYSTEM',
@@ -46,6 +44,8 @@ export class AttachmentsService {
         mimeType: payload.mimeType,
         checksumSha256: checksum,
         isPublic: payload.isPublic,
+        projectId: payload.projectId,
+        sizeBytes: payload.size,
       },
     });
 

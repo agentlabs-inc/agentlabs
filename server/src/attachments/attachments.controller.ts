@@ -1,5 +1,19 @@
-import { Controller, Get, NotFoundException, Param, Res } from '@nestjs/common';
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Post,
+  Req,
+  Res,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
+import { RequireAuthMethod } from 'src/iam/iam.decorators';
+import { ServerSdkAuthenticatedRequest } from 'src/iam/iam.types';
 import { AttachmentStorageService } from './attachment-storage/attachment-storage.service';
 import { AttachmentsService } from './attachments.service';
 
@@ -9,6 +23,29 @@ export class AttachmentsController {
     private readonly attachmentsService: AttachmentsService,
     private readonly storageService: AttachmentStorageService,
   ) {}
+
+  @UseInterceptors(FileInterceptor('file'))
+  @RequireAuthMethod('server-sdk')
+  @Post('uploadSync')
+  async createAttachmentSync(
+    @Req() req: ServerSdkAuthenticatedRequest,
+    @UploadedFile('file') file?: Express.Multer.File,
+  ) {
+    if (!file) {
+      throw new BadRequestException('Expected a field named "file"');
+    }
+
+    const projectId = req.sdkUser.projectId;
+
+    await this.attachmentsService.createOneSync({
+      isPublic: true,
+      mimeType: file.mimetype,
+      filename: file.originalname,
+      data: file.buffer,
+      projectId,
+      size: file.size,
+    });
+  }
 
   @Get('viewById/:id')
   async serveById(@Param('id') id: string, @Res() res: Response) {

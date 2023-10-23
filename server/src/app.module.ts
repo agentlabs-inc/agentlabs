@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
-import { AgentAttachmentsModule } from './agent-attachments/agent-attachments.module';
-import { ChatMessagesModule } from './chat-messages/chat-messages.module';
 import { AgentsModule } from './agents/agents.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AttachmentsModule } from './attachments/attachments.module';
 import { AuthMethodsModule } from './auth-methods/auth-methods.module';
+import { ChatMessagesModule } from './chat-messages/chat-messages.module';
 import { ConfigModule } from './config/config.module';
 import { ConversationsModule } from './conversations/conversations.module';
 import { FrontendConnectionManagerModule } from './frontend-connection-manager/frontend-connection-manager.module';
@@ -37,7 +36,6 @@ import { UsersModule } from './users/users.module';
     ProjectBackendConnectionModule,
     FrontendConnectionModule,
     MembersModule,
-    AgentAttachmentsModule,
     MailerModule,
     SdkSecretsModule,
     AttachmentsModule,

@@ -8,7 +8,6 @@ import {
   CreateAgentError,
   GetAgentByIdError,
   UpdateAgentError,
-  UploadAgentLogoError,
   VerifyIfCanUpdateAgentError,
   VerifyIfIsProjectUserError,
 } from './agents.errors';
@@ -101,6 +100,7 @@ export class AgentsService {
     return agent;
   }
 
+  /*
   async uploadAgentLogo(
     agentId: string,
     buffer: Buffer,
@@ -130,6 +130,7 @@ export class AgentsService {
 
     return ok({ isUploaded: true });
   }
+  */
 
   async createAgent(dto: {
     name: string;
