@@ -9,5 +9,6 @@ if (!validatedEnv) {
 const { PUBLIC_AI_AGENT_DOMAIN } = validatedEnv;
 
 export const buildFrontendUrl = (projectSlug: string) => {
-	return `http://${projectSlug}.${PUBLIC_AI_AGENT_DOMAIN}`;
+	const protocol = window?.location?.protocol ?? "https:";
+	return `${protocol}//${projectSlug}.${PUBLIC_AI_AGENT_DOMAIN}`;
 };
