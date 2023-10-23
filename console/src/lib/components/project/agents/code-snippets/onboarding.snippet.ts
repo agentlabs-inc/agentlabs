@@ -72,7 +72,6 @@ export const embedCode = (projectSlug: string) => {
 src="${buildFrontendUrl(projectSlug)}"
 width="100%"
 style="height: 100%; min-height: 700px"
-sandbox="allow-top-navigation allow-scripts allow-forms"
 frameborder="0"
 ></iframe>
 \`\`\``;

@@ -28,12 +28,13 @@
 	{#each items as item}
 		<button
 			id={item.id}
+			disabled={item.required}
 			on:click={() => handleSelect(item)}
 			class="{item.disabled
 				? 'opacity-60 bg-background-accent dark:bg-background-accent-dark'
 				: ''} antialiased border rounded-md p-3 border-stroke-base dark:border-stroke-base-dark flex items-center justify-left gap-3 text-body-base dark:text-body-base-dark hover:bg-background-accent dark:hover:bg-background-accent-dark cursor-pointer {selectedItems[
 				item.id
-			]
+			] || item.selected
 				? 'border border-stroke-info dark:border-stroke-info-dark'
 				: ''}">
 			{#if item.heroIcon}

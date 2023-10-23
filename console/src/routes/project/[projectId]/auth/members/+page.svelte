@@ -46,7 +46,8 @@
 		},
 		{
 			name: "Email",
-			key: "email"
+			key: "email",
+			format: (member: Member) => member.email ?? "Anonymous"
 		},
 		{
 			name: "Name",

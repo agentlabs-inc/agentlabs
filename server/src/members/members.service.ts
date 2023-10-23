@@ -402,7 +402,10 @@ export class MembersService {
     });
 
     return ok({
-      accessToken: await this.generateAccessToken(user, '600h'),
+      // We want to limit the amount of anonymous user account created.
+      // Since we don't support token renewal at the moment, we set the expiration time to 1 year.
+      // Any PR with token renewal mechanism is welcome.
+      accessToken: await this.generateAccessToken(user, '1y'),
       member: user,
     });
   }

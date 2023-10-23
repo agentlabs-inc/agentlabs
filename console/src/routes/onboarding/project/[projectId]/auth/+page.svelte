@@ -2,7 +2,7 @@
 	import TopCover from "$lib/components/common/top-cover/TopCover.svelte";
 	import Typography from "$lib/components/common/typography/Typography.svelte";
 	import Card from "$lib/components/common/card/Card.svelte";
-	import { ArrowRight, Envelope, Icon } from "svelte-hero-icons";
+	import { ArrowRight, Envelope, EyeSlash, Icon } from "svelte-hero-icons";
 	import Avatar from "$lib/components/common/avatar/Avatar.svelte";
 	import GoogleIcon from "$lib/components/auth/GoogleIcon.svelte";
 	import GitlabIcon from "$lib/components/auth/GitlabIcon.svelte";
@@ -20,6 +20,15 @@
 	import Alert from "$lib/components/common/alert/Alert.svelte";
 
 	const availableAuthMethods: MultiSelectItem[] = [
+		{
+			id: "anonymous",
+			label: "Anonymous",
+			value: "ANONYMOUS",
+			heroIcon: EyeSlash,
+			selected: true,
+			required: true,
+			disabledLabel: "default"
+		},
 		{
 			id: "passwordless_email",
 			label: "Passwordless email",
@@ -57,8 +66,6 @@
 			disabledLabel: "soon"
 		}
 	];
-
-	$: canContinue = selectedItems.length > 0;
 
 	let submitting = false;
 
@@ -138,11 +145,8 @@
 					</div>
 					<div>
 						<Spacer size="md" />
-						<Button
-							loading={submitting}
-							on:click={handleContinue}
-							disabled={!canContinue}
-							leftIcon={ArrowRight}>Continue</Button>
+						<Button loading={submitting} on:click={handleContinue} leftIcon={ArrowRight}
+							>Continue</Button>
 					</div>
 				</section>
 			</Card>

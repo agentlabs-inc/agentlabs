@@ -6,6 +6,7 @@
 	import { mainContextStore } from "$lib/stores/main-context";
 	import Button from "$lib/components/common/button/Button.svelte";
 	import { leftNavStore } from "$lib/stores/left-nav";
+	import PoweredBy from "$lib/components/common/logo/PoweredBy.svelte";
 
 	const member = $authStore.member;
 
@@ -27,8 +28,8 @@
 
 <div
 	class="shrink-0 bg-background-secondary dark:bg-background-primary-dark sticky top-0 flex justify-between items-center border-b border-stroke-base dark:border-stroke-base-dark h-[60px] z-20 shrink-0">
-	<div class="pl-5 flex items-center gap-2">
-		<div class={$leftNavStore.isOpened ? "hidden" : "block"}>
+	<div class="pl-5 flex items-center gap-2 w-full justify-end pr-4">
+		<div class={$leftNavStore.isOpened ? "hidden" : "block absolute left-2"}>
 			<Button
 				fullHeight
 				leftIcon={Bars3}
@@ -36,6 +37,6 @@
 				size="smaller"
 				on:click={$leftNavStore.toggle} />
 		</div>
-		<AgentLabsLogo theme={$themeStore} />
+		<PoweredBy />
 	</div>
 </div>

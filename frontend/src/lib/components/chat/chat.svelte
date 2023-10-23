@@ -275,6 +275,8 @@
 			}
 		}
 	});
+
+	$: projectName = $mainContextStore.publicProjectConfig?.name;
 </script>
 
 <div class="flex flex-col justify-between relative flex-grow">
@@ -318,12 +320,8 @@
 				<div class="flex items-center">
 					<h2
 						class="text-body-base dark:text-body-base-dark font-semibold text-3xl antialiased">
-						AgentLabs
+						{projectName}
 					</h2>
-					<div
-						class="ml-4 text-xs font-medium bg-gray-200 dark:bg-gray-800 text-body-base dark:text-body-accent-dark rounded-md px-2 py-1 antialiased">
-						ALPHA
-					</div>
 				</div>
 				<Spacer size="xs" />
 				<div>
