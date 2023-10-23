@@ -8,14 +8,16 @@
 	import { superForm, superValidateSync } from "sveltekit-superforms/client";
 	import { z as zod } from "zod";
 	import { toastError } from "$lib/utils/toast";
-	import { verifyPasswordlessEmailRoute } from "$lib/routes/routes";
 	import { requestPasswordlessEmail } from "$lib/usecases/members/requestPasswordlessEmail";
-	import { goto } from "$app/navigation";
 	import { getMainContextStore } from "$lib/stores/main-context";
 	import TypingLoader from "$lib/components/chat/chat-message/TypingLoader.svelte";
 	import type { ChatMessageFormat } from "$lib/stores/chat";
 	import { onMount } from "svelte";
-	import { superValidate } from "sveltekit-superforms/server";
+	import { verifyPasswordlessEmail } from "$lib/usecases/members/verifyPasswordlessEmail";
+	import Typography from "$lib/components/common/typography/Typography.svelte";
+	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
+	import { goto } from "$app/navigation";
+	import { agentChatRoute } from "$lib/routes/routes";
 
 	export let time: string;
 	export let format: ChatMessageFormat;
@@ -42,23 +44,40 @@
 
 	let submitting = false;
 
-	const schema = zod.object({
+	const emailFormSchema = zod.object({
 		email: zod.string().email()
 	});
 
-	const { form, errors, validate } = superForm(superValidateSync(schema), {
+	const confirmationCodeSchema = zod.object({
+		code: zod.string()
+	});
+
+	const {
+		form: emailForm,
+		errors: emailErrors,
+		validate: emailValidate
+	} = superForm(superValidateSync(emailFormSchema), {
 		SPA: true,
-		validators: zod.object({
-			email: zod.string().email()
-		})
+		validators: emailFormSchema
+	});
+
+	const {
+		form: codeForm,
+		errors: codeErrors,
+		validate: codeValidate
+	} = superForm(superValidateSync(confirmationCodeSchema), {
+		SPA: true,
+		validators: confirmationCodeSchema
 	});
 
 	const handleValidation = async (e: Event) => {
 		e.preventDefault();
-		const res = await validate();
+		e.stopPropagation();
+
+		const res = await emailValidate();
 
 		if (!res.valid) {
-			errors.set(res.errors);
+			emailErrors.set(res.errors);
 			return;
 		}
 
@@ -66,10 +85,42 @@
 			submitting = true;
 			await requestPasswordlessEmail({
 				projectId: projectConfig.id,
-				email: $form.email
+				email: $emailForm.email
 			});
 
-			goto(verifyPasswordlessEmailRoute.path($form.email));
+			displayVerifyEmailInput = true;
+		} catch (e: any) {
+			toastError(e?.message ?? "Something went wrong");
+		} finally {
+			submitting = false;
+		}
+	};
+
+	const handleConfirmationCode = async (e: Event) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const res = await codeValidate();
+
+		if (!res.valid) {
+			codeErrors.set(res.errors);
+			return;
+		}
+
+		try {
+			submitting = true;
+			await verifyPasswordlessEmail({
+				projectId: projectConfig.id,
+				email: $emailForm.email,
+				code: $codeForm.code
+			});
+
+			// Important to reload the entire state.
+			await goto(agentChatRoute.path()).then(() => {
+				window.location.reload();
+			});
+
+			displayVerifyEmailInput = false;
 		} catch (e: any) {
 			toastError(e?.message ?? "Something went wrong");
 		} finally {
@@ -84,6 +135,8 @@
 	$: isAnyOAuthMethodActivated = isGoogleActivated;
 
 	$: auth2Methods = projectConfig?.authMethods.filter((m) => m.type == "OAUTH2") ?? [];
+
+	let displayVerifyEmailInput = false;
 
 	onMount(() => {
 		showTypingLoader = true;
@@ -122,14 +175,14 @@
 						<div>
 							<div class="px-10 py-10 flex items-center justify-center flex-col">
 								<div class="w-full sm:w-[320px]">
-									{#if isPasswordlessEmailActivated}
+									{#if isPasswordlessEmailActivated && !displayVerifyEmailInput}
 										<form on:submit={handleValidation}>
 											<Input
-												bind:value={$form.email}
+												bind:value={$emailForm.email}
 												label="Email"
 												required
 												name="email"
-												errors={$errors?.email}
+												errors={$emailErrors?.email}
 												type="text"
 												placeholder="Your email" />
 											<div class="my-5" />
@@ -144,6 +197,52 @@
 													>Request code</Button>
 											</div>
 										</form>
+									{/if}
+									{#if isPasswordlessEmailActivated && displayVerifyEmailInput}
+										<div class="flex items-center justify-center flex-col">
+											<div class="text-center">
+												<Typography type="mainSectionTitle"
+													>Verification code</Typography>
+												<Spacer size="xs" />
+												<Typography type="subTitle"
+													>Please enter the code we have sent by email to {$emailForm.email}
+												</Typography>
+											</div>
+
+											<div class="my-5" />
+											<div class="w-full sm:w-[320px]">
+												<form on:submit={handleConfirmationCode}>
+													<Input
+														bind:value={$codeForm.code}
+														label="Code"
+														required
+														name="code"
+														errors={$codeErrors?.code}
+														type="text"
+														placeholder="Verification code" />
+													<div class="my-5" />
+													<div class="w-full">
+														<Button
+															loading={submitting}
+															submit
+															type="primary"
+															fullWidth
+															center>Verify code</Button>
+													</div>
+												</form>
+
+												<div class="text-center mt-10">
+													<span
+														class="text-sm text-center m-auto text-body-base dark:text-body-base-dark"
+														>Didn't receive the code? <span
+															class="underline cursor-pointer"
+															on:click={() => {
+																displayVerifyEmailInput = false;
+															}}>Ask for a new one</span>
+													</span>
+												</div>
+											</div>
+										</div>
 									{/if}
 									{#if isAnyOAuthMethodActivated && isPasswordlessEmailActivated}
 										<div class="my-7 flex gap-5 justify-between items-center">
