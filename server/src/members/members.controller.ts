@@ -8,12 +8,16 @@ import {
   Req,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiNotFoundResponse, ApiTags } from '@nestjs/swagger';
 import { PaginatedQueryDto } from '../common/paginated.query.dto';
 import { RequireAuthMethod } from '../iam/iam.decorators';
-import { UserAuthenticatedRequest } from '../iam/iam.types';
+import {
+  MemberAuthenticatedRequest,
+  UserAuthenticatedRequest,
+} from '../iam/iam.types';
 import { ListMembersResponseDto } from './dtos/list.members.response.dto';
 import { LoginMemberResponseDto } from './dtos/login.member.response.dto';
+import { MemberWhoAmIResultDto } from './dtos/member.whoami.result.dto';
 import { oauthAuthorizeDto } from './dtos/oauth.authorize.dto';
 import { RegisterResponseDto } from './dtos/register.response.dto';
 import { RequestPasswordlessEmailDto } from './dtos/request.passwordless-email.dto';
@@ -178,6 +182,30 @@ export class MembersController {
         message: result.error,
         description: result.error,
       });
+    }
+
+    return result.value;
+  }
+
+  @RequireAuthMethod('member-token')
+  @ApiBearerAuth()
+  @ApiNotFoundResponse({
+    description: 'Member not found',
+  })
+  @Post('/whoami')
+  async whoami(
+    @Req() req: MemberAuthenticatedRequest,
+  ): Promise<MemberWhoAmIResultDto> {
+    const result = await this.membersService.getWhoAmI(req.member.id);
+
+    if (!result.ok) {
+      switch (result.error) {
+        case 'MemberNotFound':
+          throw new UnauthorizedException({
+            message: 'Member not found, please authenticate',
+            code: 'MemberNotFound',
+          });
+      }
     }
 
     return result.value;
