@@ -8,7 +8,7 @@
 		removeActiveStream
 	} from "$lib/stores/chat";
 	import type { ChatMessageFormat, ChatMessageSource } from "$lib/stores/chat";
-	import { PaperAirplane } from "svelte-hero-icons";
+	import { EyeSlash, Heart, PaperAirplane, Plus, Star } from "svelte-hero-icons";
 	import Button from "../common/button/Button.svelte";
 	import ChatInput from "./chat-input/ChatInput.svelte";
 	import ChatMessage from "./chat-message/ChatMessage.svelte";
@@ -29,6 +29,9 @@
 	import AgentChatMessage from "./chat-message/AgentChatMessage.svelte";
 	import { chatConversationRoute } from "$lib/routes/routes";
 	import LoginMessage from "$lib/components/chat/chat-message/LoginMessage.svelte";
+	import SelectMessage from "$lib/components/chat/chat-message/SelectMessage/SelectMessage.svelte";
+	import PromptMessage from "$lib/components/chat/chat-message/PromptMessage.svelte";
+	import type { MultiSelectChoice } from "$lib/components/chat/chat-message/SelectMessage/multi-select/types";
 
 	let chatElement: HTMLDivElement;
 	let chatInputElement: HTMLInputElement;
@@ -132,7 +135,7 @@
 			createdAt: timestamp,
 			format: "PLAIN_TEXT",
 			type: "CONVERSATION_MESSAGE",
-			attachments: [],
+			attachments: []
 		});
 
 		isWaitingForAnswer = true;
@@ -289,6 +292,28 @@
 	});
 
 	$: projectName = $mainContextStore.publicProjectConfig?.name;
+
+	// MOCKS
+	const choices: MultiSelectChoice[] = [
+		{
+			id: "some-id",
+			label: "Pepsi",
+			value: "Value A",
+			heroIcon: Heart
+		},
+		{
+			id: "some-id-2",
+			label: "Coca-Cola",
+			value: "Value b",
+			heroIcon: Heart
+		},
+		{
+			id: "some-id-3",
+			label: "Perrier",
+			value: "Value b",
+			heroIcon: Heart
+		}
+	];
 </script>
 
 <div class="flex flex-col justify-between relative flex-grow">
@@ -313,17 +338,25 @@
 									body={message.text}
 									format={message.format}
 									agentId={message.agentId}
-									attachments={message.attachments}
-								/>
+									attachments={message.attachments} />
 							{/if}
+							<SelectMessage
+								minSelected={1}
+								maxSelected={2}
+								time={dayjs().format("M/D/YYYY hh:mm A")}
+								format="PLAIN_TEXT"
+								body="What brand do you love the most?"
+								choices={choices}
+								agentId={message.agentId} />
+							<Spacer />
+							<PromptMessage time="22h00" agentId={message.agentId} />
 						{:else}
 							<ChatMessage
 								isLoading={isWaitingForAnswer && messages.length - 1 === index}
 								from={message.source}
 								time={dayjs(message.createdAt).format("M/D/YYYY hh:mm A")}
 								body={message.text}
-								format={message.format} 
-							/>
+								format={message.format} />
 						{/if}
 					</div>
 				{/each}
