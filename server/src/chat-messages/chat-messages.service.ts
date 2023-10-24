@@ -19,9 +19,25 @@ export class ChatMessagesService {
       orderBy: {
         createdAt: 'asc',
       },
+      include: {
+        attachments: {
+          include: {
+            attachment: true,
+          },
+        },
+      },
     });
 
     return messages;
+  }
+
+  async linkAttachment(messageId: string, attachmentId: string) {
+    return this.prisma.chatMessageAttachment.create({
+      data: {
+        messageId,
+        attachmentId,
+      },
+    });
   }
 
   async createUserMessage(

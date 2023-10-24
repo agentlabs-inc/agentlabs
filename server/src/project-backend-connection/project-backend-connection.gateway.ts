@@ -281,6 +281,13 @@ export class ProjectBackendConnectionGateway
         agentId: payload.data.agentId,
       });
 
+      const linkAttachmentPromises = payload.data.attachments.map(
+        (attachment) =>
+          this.messagesService.linkAttachment(message.id, attachment.id),
+      );
+
+      await Promise.all(linkAttachmentPromises);
+
       const frontendConnection =
         this.frontendConnectionManagerService.getConnection({
           memberId: conversation.memberId,

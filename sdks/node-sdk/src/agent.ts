@@ -26,7 +26,10 @@ export class Agent {
 		await attachment.load();
 
 		if (attachment instanceof LocalFileAttachment) {
-			uploaded = await this.config.http.upload('/attachments/uploadSync', attachment.buffer)
+			uploaded = await this.config.http.upload('/attachments/uploadSync', attachment.buffer, {
+				filename: attachment.filename,
+				mimeType: attachment.options?.mimeType,
+			})
 		}
 
 		if (!uploaded) {
@@ -44,15 +47,17 @@ export class Agent {
         { text, conversationId, attachments = [] }: SendMessagePayload,
         options: SendMessageOptions = {}
     ) {
-		const attachmentIds = await this.uploadAttachments(attachments);
+		const uploadedAttachments = await this.uploadAttachments(attachments);
         const format: MessageFormat = options.format ?? 'PlainText';
+
+		console.log('uploadedAttachments', uploadedAttachments);
 
         this.config.realtime.emit('chat-message', {
             text,
             conversationId,
             format: localMessageFormatToRemote[format],
             agentId: this.config.agentId,
-			attachments: attachmentIds,
+			attachments: uploadedAttachments,
         });
     }
 

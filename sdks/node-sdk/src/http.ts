@@ -1,5 +1,10 @@
 import { ProjectConfig } from './project';
 
+export interface UploadSettings {
+	filename?: string;
+	mimeType?: string;
+}
+
 export class HttpApi {
 	constructor(private readonly projectConfig: ProjectConfig) {}
 
@@ -35,11 +40,11 @@ export class HttpApi {
 		});
 	}
 
-	async upload<T>(path: string, buffer: Buffer): Promise<T> {
+	async upload<T>(path: string, buffer: Buffer, settings: UploadSettings = {}): Promise<T> {
 		const formData = new FormData();
-		const blob = new Blob([buffer], { type: 'application/octet-stream' });
+		const blob = new Blob([buffer], { type: settings?.mimeType });
 
-		formData.append('file', blob, 'file');
+		formData.append('file', blob, settings?.filename);
 
 		return this.fetchApi(path, {
 			method: 'POST',
