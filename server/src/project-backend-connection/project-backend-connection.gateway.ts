@@ -286,7 +286,7 @@ export class ProjectBackendConnectionGateway
           this.messagesService.linkAttachment(message.id, attachment.id),
       );
 
-      await Promise.all(linkAttachmentPromises);
+      const messageAttachments = await Promise.all(linkAttachmentPromises);
 
       const frontendConnection =
         this.frontendConnectionManagerService.getConnection({
@@ -319,6 +319,7 @@ export class ProjectBackendConnectionGateway
           source: 'AGENT',
           messageId: message.id,
           agentId: payload.data.agentId,
+          attachments: messageAttachments,
         },
       });
 

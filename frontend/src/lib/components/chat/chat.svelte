@@ -90,7 +90,8 @@
 			createdAt: payload.timestamp,
 			format: payload.data.format,
 			agentId: payload.data.agentId,
-			type: "LOGIN_REQUEST"
+			type: "LOGIN_REQUEST",
+			attachments: []
 		});
 	};
 
@@ -130,7 +131,8 @@
 			...payload.data,
 			createdAt: timestamp,
 			format: "PLAIN_TEXT",
-			type: "CONVERSATION_MESSAGE"
+			type: "CONVERSATION_MESSAGE",
+			attachments: [],
 		});
 
 		isWaitingForAnswer = true;
@@ -197,7 +199,8 @@
 			createdAt: payload.timestamp,
 			format: payload.data.format,
 			agentId: payload.data.agentId,
-			type: "CONVERSATION_MESSAGE"
+			type: "CONVERSATION_MESSAGE",
+			attachments: payload.data.attachments
 		});
 	};
 
@@ -302,23 +305,24 @@
 									body={message.text}
 									format={message.format}
 									agentId={message.agentId} />
-							{/if}
-							{#if message.type === "CONVERSATION_MESSAGE"}
+							{:else}
 								<AgentChatMessage
 									isLoading={isWaitingForAnswer && messages.length - 1 === index}
 									time={dayjs(message.createdAt).format("M/D/YYYY hh:mm A")}
 									body={message.text}
 									format={message.format}
-									agentId={message.agentId} />
+									agentId={message.agentId}
+									attachments={message.attachments}
+								/>
 							{/if}
-							<!--							<PromptMessage time="22h00" agentId={message.agentId} />-->
 						{:else}
 							<ChatMessage
 								isLoading={isWaitingForAnswer && messages.length - 1 === index}
 								from={message.source}
 								time={dayjs(message.createdAt).format("M/D/YYYY hh:mm A")}
 								body={message.text}
-								format={message.format} />
+								format={message.format} 
+							/>
 						{/if}
 					</div>
 				{/each}

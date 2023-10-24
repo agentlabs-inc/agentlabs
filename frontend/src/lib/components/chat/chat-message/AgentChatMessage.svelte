@@ -1,13 +1,17 @@
 <script lang="ts">
 	import LetterAvatar from "$lib/components/common/letter-avatar/LetterAvatar.svelte";
-	import MarkdownRenderer from "$lib/components/markdown/markdown-renderer.svelte";
 	import { getAgentById } from "$lib/stores/agent";
 	import type { ChatMessageFormat } from "$lib/stores/chat";
 	import TypingLoader from "$lib/components/chat/chat-message/TypingLoader.svelte";
+	import type { MessageAttachment } from "$lib/entities/message/message";
+	import MarkdownRenderer from "$lib/components/markdown/markdown-renderer.svelte";
+	import Attachment from "./Attachment.svelte";
+	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
 
 	export let time: string;
 	export let body: string;
 	export let format: ChatMessageFormat;
+	export let attachments: MessageAttachment[] = [];
 
 	export let isLoading = true;
 	export let agentId: string;
@@ -48,4 +52,15 @@
 			</div>
 		</div>
 	</div>
+</div>
+
+<Spacer size={'xs'} />
+<div class="flex items-center gap-x-2 flex-wrap">
+	{#each attachments as attachment}
+		<Attachment
+			name={attachment.attachment.name}
+			sizeBytes={attachment.attachment.sizeBytes}
+			mimeType={attachment.attachment.mimeType}
+		/>
+	{/each}
 </div>

@@ -15,6 +15,17 @@ export const AgentMessageSources = [
 
 export type AgentMessageSource  = typeof AgentMessageSources[number]
 
+export interface MessageAttachment {
+	attachment: {
+		id: string;
+		createdAt: string;
+		updatedAt: string;
+		name: string;
+		mimeType: string;
+		sizeBytes: number;
+	}
+}
+
 export interface ConversationMessage {
 	id: string;
 	createdAt: string;
@@ -24,4 +35,6 @@ export interface ConversationMessage {
 	text: string;
 
 	conversationId: string;
+
+	attachments: MessageAttachment[];
 }

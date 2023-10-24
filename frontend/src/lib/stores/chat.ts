@@ -1,3 +1,4 @@
+import type { MessageAttachment } from "$lib/entities/message/message";
 import { derived, writable } from "svelte/store";
 
 export const ChatMessageFormats = ["PLAIN_TEXT", "MARKDOWN"] as const;
@@ -15,6 +16,7 @@ export interface ChatMessage {
 	format: ChatMessageFormat;
 	agentId?: string;
 	type: ChatMessageType;
+	attachments: MessageAttachment[];
 }
 
 export interface ChatStore {

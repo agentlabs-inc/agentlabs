@@ -29,6 +29,7 @@
     "@sveltejs/adapter-auto": "^2.0.0",
     "@sveltejs/adapter-node": "^1.3.1",
     "@sveltejs/kit": "^1.20.4",
+    "@types/bytes": "^3.1.3",
     "@types/marked": "^6.0.0",
     "@types/uuid": "^9.0.5",
     "@typescript-eslint/eslint-plugin": "^5.45.0",
@@ -63,6 +64,7 @@
   },
   "type": "module",
   "dependencies": {
+    "bytes": "^3.1.2",
     "dotenv": "^16.3.1",
     "nanoid": "^4.0.2",
     "socket.io": "^4.7.2",

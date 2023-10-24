@@ -37,6 +37,9 @@ export class ChatMessagesService {
         messageId,
         attachmentId,
       },
+      include: {
+        attachment: true,
+      },
     });
   }
 
