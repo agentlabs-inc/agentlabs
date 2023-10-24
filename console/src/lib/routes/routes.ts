@@ -36,14 +36,6 @@ export const onboardingRoute = {
 	path: () => `${basePath}/onboarding/new`
 };
 
-export const projectOnboardingAuthMethodRoute = {
-	path: (projectId: string) => `${basePath}/onboarding/project/${projectId}/auth`
-};
-
-export const projectOnboardingUseApplicationRoute = {
-	path: (projectId: string) => `${basePath}/onboarding/project/${projectId}/ready`
-};
-
 export const projectOverviewRoute = {
 	path: (projectId: string) => `${basePath}/project/${projectId}/overview`
 };
@@ -69,6 +61,10 @@ export const agentSettingsRoute = {
 export const agentBackendsRoute = {
 	path: (projectId: string, agentId: string) =>
 		`${basePath}/project/${projectId}/agent/${agentId}/backends`
+};
+
+export const projectReadyRoute = {
+	path: (projectId: string) => `${basePath}/onboarding/project/${projectId}/ready`
 };
 
 export const projectMembersRoute = {

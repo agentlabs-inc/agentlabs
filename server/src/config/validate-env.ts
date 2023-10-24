@@ -59,12 +59,6 @@ export class Environment {
   USERS_OAUTH_GOOGLE_CLIENT_SECRET: string;
 
   @IsString()
-  MEMBERS_DEMO_OAUTH_GOOGLE_CLIENT_ID: string;
-
-  @IsString()
-  MEMBERS_DEMO_OAUTH_GOOGLE_CLIENT_SECRET: string;
-
-  @IsString()
   AES_ENCRYPTION_KEY: string;
 
   @IsString()

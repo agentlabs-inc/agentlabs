@@ -262,27 +262,6 @@ paths:
         - authMethods
       security:
         - bearer: []
-  /authMethods/createDemoAuthMethods:
-    post:
-      operationId: createDemoAuthMethod
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateDemoAuthMethodsDto"
-      responses:
-        "201":
-          description: ""
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CreatedDemoAuthMethodsDto"
-      tags:
-        - authMethods
-      security:
-        - bearer: []
   /authMethods/listForProject/{projectId}:
     get:
       operationId: listAuthMethods
@@ -1145,26 +1124,6 @@ components:
         - scopes
         - createdAt
         - updatedAt
-    CreateDemoAuthMethodsDto:
-      type: object
-      properties:
-        methods:
-          type: string
-          enum:
-            - PASSWORDLESS_EMAIL
-            - GOOGLE
-        projectId:
-          type: string
-      required:
-        - methods
-        - projectId
-    CreatedDemoAuthMethodsDto:
-      type: object
-      properties:
-        success:
-          type: boolean
-      required:
-        - success
     ListAuthMethodItem:
       type: object
       properties:

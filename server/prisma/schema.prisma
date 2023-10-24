@@ -29,7 +29,9 @@ model Onboarding {
 	createdAt DateTime @default(now())
 	updatedAt DateTime @updatedAt @default(now())
 
+	// Deprecated, not used anymore
 	hasAddedAuthMethod 		Boolean @default(false)
+	// Deprecated, not used anymore
 	hasUsedTheApplication 	Boolean @default(false)
 
 	organization	Organization @relation(fields: [organizationId], references: [id])

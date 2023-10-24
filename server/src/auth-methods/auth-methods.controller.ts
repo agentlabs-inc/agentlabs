@@ -12,8 +12,6 @@ import { UserAuthenticatedRequest } from 'src/iam/iam.types';
 import { RequireAuthMethod } from '../iam/iam.decorators';
 import { TelemetryService } from '../telemetry/telemetry.service';
 import { AuthMethodsService } from './auth-methods.service';
-import { CreateDemoAuthMethodsDto } from './dtos/create.demo.auth-method.dto';
-import { CreatedDemoAuthMethodsDto } from './dtos/created.demo.auth-method.dto';
 import { ListAuthMethodResponseDto } from './dtos/list.auth-method.response.dto';
 import { UpsertAuthMethodDto } from './dtos/upsert.auth-method.dto';
 import { UpsertedAuthMethodDto } from './dtos/upserted.auth-method.dto';
@@ -44,43 +42,6 @@ export class AuthMethodsController {
         userId: req.user.id,
         properties: {
           provider: dto.provider,
-        },
-      });
-      return result.value;
-    }
-
-    switch (result.error) {
-      case 'ProjectNotFound':
-        throw new UnauthorizedException({
-          message: 'Project not found',
-          code: 'ProjectNotFound',
-        });
-
-      case 'NotAProjectUser':
-        throw new UnauthorizedException({
-          message: 'Not a project user',
-          code: 'NotAProjectUser',
-        });
-    }
-  }
-
-  @RequireAuthMethod('user-token')
-  @Post('/createDemoAuthMethods')
-  async createDemoAuthMethod(
-    @Req() req: UserAuthenticatedRequest,
-    @Body() dto: CreateDemoAuthMethodsDto,
-  ): Promise<CreatedDemoAuthMethodsDto> {
-    const result = await this.authMethodsService.createDemoAuthMethods({
-      ...dto,
-      userId: req.user.id,
-    });
-
-    if (result.ok) {
-      this.telemetryService.track({
-        event: 'Demo AuthMethod Configured',
-        userId: req.user.id,
-        properties: {
-          methods: [...dto.methods],
         },
       });
       return result.value;

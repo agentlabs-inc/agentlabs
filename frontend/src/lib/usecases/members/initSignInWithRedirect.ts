@@ -35,11 +35,6 @@ export const initSignInWithRedirect = async (
 	let redirectUri =
 		`${window.location.protocol}//${window.location.host}/oauth/handler/${authMethod.provider}`.toLowerCase();
 
-	if (authMethod.isUsingDemoConfig) {
-		redirectUri =
-			`${window.location.protocol}//${environment.PUBLIC_APP_HOST}/oauth/demo_handler/${authMethod.provider}`.toLowerCase();
-	}
-
 	const state = createDemoRedirectState({
 		provider: authMethod.provider,
 		projectId,
@@ -71,14 +66,6 @@ export const initSignInWithPopup = async (authMethod: PublicAuthMethodDto, proje
 	}
 
 	const popupUrl = `${window.location.protocol}//${window.location.host}/oauth/sign-in-popup/${authMethod.provider}`;
-
-	let redirectUri =
-		`${window.location.protocol}//${window.location.host}/oauth/handler/${authMethod.provider}`.toLowerCase();
-
-	if (authMethod.isUsingDemoConfig) {
-		redirectUri =
-			`${window.location.protocol}//${environment.PUBLIC_APP_HOST}/oauth/demo_handler/${authMethod.provider}`.toLowerCase();
-	}
 
 	let popup: Window | null = null;
 

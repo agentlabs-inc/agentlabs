@@ -17,6 +17,7 @@ export class PublicAuthMethodDto {
   @IsString()
   clientId: string;
 
+  // Deprecated, will be remove on next release
   @IsBoolean()
   isUsingDemoConfig: boolean;
 

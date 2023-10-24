@@ -623,13 +623,11 @@ export class MembersService {
       return err('DisabledAuthMethod');
     }
 
-    const clientSecret =
-      this.authMethodsService.decryptSecret(
-        authMethod.clientSecret,
-        authMethod.clientSecretIv,
-      ) ?? this.membersConfig.googleDemoClientSecret;
-    const clientId =
-      authMethod.clientId ?? this.membersConfig.googleDemoClientId;
+    const clientSecret = this.authMethodsService.decryptSecret(
+      authMethod.clientSecret,
+      authMethod.clientSecretIv,
+    );
+    const clientId = authMethod.clientId;
 
     if (!clientSecret) {
       return err('MissingClientSecret');

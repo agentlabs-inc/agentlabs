@@ -7,11 +7,9 @@
 	import { z as zod } from "zod";
 	import type { PageData } from "./$types";
 	import { superForm } from "sveltekit-superforms/client";
-	import { createProject } from "$lib/usecases/projects/create";
 	import { toastError } from "$lib/utils/toast";
-	import slugify from "slugify";
 	import { organizationStore } from "$lib/stores/organization";
-	import { agentOverviewRoute, projectOnboardingAuthMethodRoute } from "$lib/routes/routes";
+	import { agentOverviewRoute } from "$lib/routes/routes";
 	import { goto } from "$app/navigation";
 	import Alert from "$lib/components/common/alert/Alert.svelte";
 	import { createAgent } from "$lib/usecases/agents/createAgent";

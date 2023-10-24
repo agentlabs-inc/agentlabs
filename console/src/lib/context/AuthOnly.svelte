@@ -2,11 +2,7 @@
 	import { onMount } from "svelte";
 	import LoadingFrame from "$lib/components/common/loading-frame/LoadingFrame.svelte";
 	import { authStore, forgetUser } from "$lib/stores/auth";
-	import {
-		loginRoute,
-		onboardingRoute,
-		projectOnboardingAuthMethodRoute
-	} from "$lib/routes/routes";
+	import { loginRoute, onboardingRoute } from "$lib/routes/routes";
 	import { goto } from "$app/navigation";
 	import { fetchRequiredUserConfig } from "$lib/usecases/users/fetchRequiredUserConfig";
 	import IntercomContext from "./IntercomContext.svelte";
@@ -29,12 +25,6 @@
 			if (!onboarding?.projectId) {
 				return await goto(onboardingRoute.path());
 			}
-
-			if (!onboarding?.hasAddedAuthMethod) {
-				return await goto(projectOnboardingAuthMethodRoute.path(onboarding.projectId));
-			}
-
-			// return await goto(projectOverviewRoute.path(onboarding.projectId));
 		} catch (e: any) {
 			if (e.status === 401) {
 				forgetUser();

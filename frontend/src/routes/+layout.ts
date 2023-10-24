@@ -21,14 +21,6 @@ export const load: Load = async (event): Promise<MainLayoutContext> => {
 		};
 	}
 
-	if (event.url.href.includes("/oauth/demo_handler")) {
-		return {
-			mainLayoutLazy: {
-				isLoaded: Promise.resolve(true)
-			}
-		};
-	}
-
 	return {
 		mainLayoutLazy: {
 			isLoaded: retrievePublicConfig(hostname)

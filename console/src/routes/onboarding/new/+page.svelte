@@ -11,7 +11,7 @@
 	import { toastError } from "$lib/utils/toast";
 	import slugify from "slugify";
 	import { organizationStore } from "$lib/stores/organization";
-	import { projectOnboardingAuthMethodRoute } from "$lib/routes/routes";
+	import { projectReadyRoute } from "$lib/routes/routes";
 	import { goto } from "$app/navigation";
 
 	export let data: PageData;
@@ -49,7 +49,7 @@
 				slug: slug,
 				organizationId: $organizationStore.currentOrganizationId
 			});
-			goto(projectOnboardingAuthMethodRoute.path(project.id));
+			goto(projectReadyRoute.path(project.id));
 		} catch (e: any) {
 			toastError(e?.message ?? "Something went wrong");
 		} finally {
