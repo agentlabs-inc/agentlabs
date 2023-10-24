@@ -68,13 +68,15 @@
 				<section class="p-3 border-b border-stroke-base dark:border-stroke-base-dark">
 					<ul class="flex flex-col gap-3 antialiased">
 						<ThemeSwitch isNavItem={true} />
-						<NavItem
-							isActive={false}
-							item={{
-								path: logoutRoute.path(),
-								label: "Sign out",
-								icon: ArrowRightOnRectangle
-							}} />
+						{#if !member.isAnonymous}
+							<NavItem
+								isActive={false}
+								item={{
+									path: logoutRoute.path(),
+									label: "Sign out",
+									icon: ArrowRightOnRectangle
+								}} />
+						{/if}
 					</ul>
 				</section>
 			</div>

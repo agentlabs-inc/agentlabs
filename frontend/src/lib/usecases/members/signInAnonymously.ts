@@ -15,6 +15,7 @@ export const signInAnonymously = async (projectId: string): Promise<LoginMemberR
 		email: result.member.email,
 		fullName: result.member.fullName,
 		profilePictureUrl: result.member.profilePictureUrl,
+		isAnonymous: !result.member.email,
 		firstName: result.member.firstName,
 		lastName: result.member.lastName,
 		verifiedAt: dayjs(result.member.verifiedAt).toDate(),

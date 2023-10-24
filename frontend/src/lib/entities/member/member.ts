@@ -4,6 +4,7 @@ export type Member = {
 	firstName: string | null;
 	lastName: string | null;
 	profilePictureUrl: string | null;
+	isAnonymous: boolean;
 	verifiedAt: Date | null;
 	email: string | null;
 	createdAt: Date;
