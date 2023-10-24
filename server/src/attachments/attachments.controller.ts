@@ -37,9 +37,13 @@ export class AttachmentsController {
 
     const projectId = req.sdkUser.projectId;
 
+    const mimeType = this.attachmentsService.isDefaultMimeType(file.mimetype)
+      ? this.attachmentsService.inferMimeTypeFromFilename(file.originalname)
+      : file.mimetype;
+
     return this.attachmentsService.createOneSync({
       isPublic: true,
-      mimeType: file.mimetype,
+      mimeType,
       filename: file.originalname,
       data: file.buffer,
       projectId,
