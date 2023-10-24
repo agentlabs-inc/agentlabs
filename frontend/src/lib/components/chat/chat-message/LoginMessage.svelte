@@ -192,9 +192,7 @@
 													submit
 													type="primary"
 													fullWidth
-													center
-													on:click={handleValidation}
-													>Request code</Button>
+													center>Request code</Button>
 											</div>
 										</form>
 									{/if}
