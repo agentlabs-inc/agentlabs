@@ -94,6 +94,10 @@
 		});
 	};
 
+	const isInIFrame = () => {
+		return window?.parent?.location !== window.location;
+	};
+
 	const sendMessage = (e: Event) => {
 		e.preventDefault();
 
@@ -224,11 +228,15 @@
 	};
 
 	afterNavigate(() => {
-		chatInputElement?.focus();
+		if (!isInIFrame) {
+			chatInputElement?.focus();
+		}
 	});
 
 	$: if (chatInputElement) {
-		chatInputElement.focus();
+		if (!isInIFrame()) {
+			chatInputElement.focus();
+		}
 	}
 
 	onMount(async () => {

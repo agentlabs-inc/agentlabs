@@ -19,21 +19,19 @@
 	$: strokeClass = errors?.length ? "border-stroke-error" : "border-stroke-base";
 </script>
 
-	{#if !!label?.length}
-		<label
-			class="text-body-accent dark:text-body-accent-dark text-sm inline-block mb-2"
-			for={name}
-			>{label}
-			{#if required}
-				<span class="text-body-error dark:text-body-error-dark">*</span>
-			{/if}
-		</label>
-	{/if}
-	<input
-		id={name}
-		bind:this={inputElement}
-		bind:value={value}
-		required={required}
-		name={name}
-		placeholder={placeholder}
-		class="bg-background-primary dark:bg-background-secondary-dark border w-full border-stroke-base dark:border-stroke-base-dark text-body-base dark:text-body-base-dark focus:outline-0 rounded-sm text-sm {spacingClass} {strokeClass} antialiased" />
+{#if !!label?.length}
+	<label class="text-body-accent dark:text-body-accent-dark text-sm inline-block mb-2" for={name}
+		>{label}
+		{#if required}
+			<span class="text-body-error dark:text-body-error-dark">*</span>
+		{/if}
+	</label>
+{/if}
+<input
+	id={name}
+	bind:this={inputElement}
+	bind:value={value}
+	required={required}
+	name={name}
+	placeholder={placeholder}
+	class="bg-background-primary dark:bg-background-secondary-dark border w-full border-stroke-base dark:border-stroke-base-dark text-body-base dark:text-body-base-dark focus:outline-0 rounded-sm text-sm {spacingClass} {strokeClass} antialiased" />
