@@ -226,7 +226,8 @@
 			createdAt: payload.timestamp,
 			format: payload.data.format,
 			agentId: payload.data.agentId,
-			type: "CONVERSATION_MESSAGE"
+			type: "CONVERSATION_MESSAGE",
+			attachments: []
 		});
 	};
 
