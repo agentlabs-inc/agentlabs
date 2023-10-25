@@ -36,7 +36,7 @@
 		<Icon class="w-5 h-5" src={PaperClip} />
 	</div>
 
-	<div class="ml-3 w-32">
+	<div class="ml-3">
 			<p
 				class="text-body-accent dark:text-body-accent-dark text-sm text-left text-[11pt] leading-7"
 			>
@@ -51,9 +51,9 @@
 				</div>
 			{:else}
 				<div
-					class="flex justify-between items-center text-body-subdued dark:text-body-subdued-dark text-xs"
+					class="flex justify-between gap-x-4 items-center text-body-subdued dark:text-body-subdued-dark text-xs"
 				>
-					<div>
+					<div class="min-w-[100px] text-left">
 						{mimeType}
 					</div>
 					{' '}
