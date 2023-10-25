@@ -34,6 +34,7 @@
 	import type { MultiSelectChoice } from "$lib/components/chat/chat-message/SelectMessage/multi-select/types";
 	import EChartMessage from "$lib/components/chat/chat-message/EChartMessage/EChartMessage.svelte";
 	import { themeStore } from "$lib/stores/theme";
+	import DatepickerMessage from "$lib/components/chat/chat-message/DatepickerMessage/DatepickerMessage.svelte";
 
 	let chatElement: HTMLDivElement;
 	let chatInputElement: HTMLInputElement;
@@ -565,6 +566,31 @@
 								chartOptions={eChartOptions4}
 								theme={$themeStore}
 								agentId={message.agentId} />
+							<Spacer />
+
+							<DatepickerMessage
+								time={dayjs().format("M/D/YYYY hh:mm A")}
+								format="PLAIN_TEXT"
+								body="Pick the date that works best for you"
+								agentId={message.agentId}
+								datepickerOptions={{}}
+								on:select={(e) =>
+									alert(`you selected a date ${e.detail.formattedDate}`)} />
+
+							<Spacer />
+
+							<DatepickerMessage
+								time={dayjs().format("M/D/YYYY hh:mm A")}
+								format="MARKDOWN"
+								body="Pick the date **RANGE** that works best for you"
+								agentId={message.agentId}
+								datepickerOptions={{
+									range: true,
+									minDate: new Date(),
+									maxDate: dayjs().add(2, "week").toDate()
+								}}
+								on:select={(e) =>
+									alert(`you selected a date range ${e.detail.formattedDate}`)} />
 						{:else}
 							<ChatMessage
 								isLoading={isWaitingForAnswer && messages.length - 1 === index}
