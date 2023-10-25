@@ -19,6 +19,8 @@ import { AttachmentsService } from './attachments.service';
 
 @Controller('attachments')
 export class AttachmentsController {
+  private readonly UPLOAD_LIMIT = 1024 * 1024 * 50; // 50 MB
+
   constructor(
     private readonly attachmentsService: AttachmentsService,
     private readonly storageService: AttachmentStorageService,
@@ -33,6 +35,12 @@ export class AttachmentsController {
   ) {
     if (!file) {
       throw new BadRequestException('Expected a field named "file"');
+    }
+
+    if (file.size > this.UPLOAD_LIMIT) {
+      throw new BadRequestException(
+        'File is too large, current max is set to 50MB',
+      );
     }
 
     const projectId = req.sdkUser.projectId;
