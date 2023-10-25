@@ -3,6 +3,7 @@
 	import bytes from 'bytes'
 	import { Icon, PaperClip } from 'svelte-hero-icons'
 	import fileSaver from 'file-saver'
+	import { backendService } from '../../../../services/backend-service';
 
 	export let id: string;
 	export let name: string;
@@ -15,9 +16,7 @@
 	const download = async () => {
 		try {
 			isDownloading = true;
-			const data = await ChatMessagesService.downloadAttachment({ attachmentId: id });
-
-			console.log(data instanceof Blob)
+			const data = await backendService.getFile(`/attachments/downloadById/${id}`);
 
 			fileSaver.saveAs(data, name);
 		} catch (e) {
