@@ -50,10 +50,15 @@ export class Project {
 	}
 
 	onChatMessage(handler: OnChatMessageHandler) {
-		this.realtime.on('chat-message', (data: any) => {
+		this.realtime.on('chat-message', async (data: any) => {
 			const rawChatMessage = data.data as RawChatMessage;
 
-			handler(new IncomingChatMessage(rawChatMessage));
+			try {
+				await handler(new IncomingChatMessage(rawChatMessage));
+			} catch (err: any) {
+				this.clientLogger.error('onChatMessage: got uncaught exception while running handler. Consider handling errors in your handler directly.');
+				console.error(err);
+			}
 		});
 	}
 

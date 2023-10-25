@@ -31,7 +31,7 @@ const MessageFormats = ['PlainText', 'Markdown'] as const;
 
 export type MessageFormat = (typeof MessageFormats)[number];
 
-export type OnChatMessageHandler = (message: IncomingChatMessage) => void;
+export type OnChatMessageHandler = (message: IncomingChatMessage) => void | Promise<void>;
 
 export type SendMessagePayload = {
     text: string;

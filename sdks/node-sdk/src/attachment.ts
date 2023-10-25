@@ -7,9 +7,7 @@ export class Attachment {
 	}
 }
 
-export abstract class AttachmentItem {
-	abstract load(): Promise<void> | void;
-}
+export abstract class AttachmentItem {}
 
 export interface LocalFileAttachmentOptions {
 	/**
@@ -21,6 +19,7 @@ export interface LocalFileAttachmentOptions {
 }
 
 export class LocalFileAttachment extends AttachmentItem {
+  static maxFileSize = 50 * 1024 * 1024; // 100 MB
   public buffer = Buffer.alloc(0);
   public filename: string;
 
@@ -31,5 +30,9 @@ export class LocalFileAttachment extends AttachmentItem {
 
   async load(): Promise<void> {
 	  this.buffer = await readFile(this.filePath);
+
+	  if (this.buffer.length > LocalFileAttachment.maxFileSize) {
+		  throw new Error(`File size exceeds 50MB, which is beyond the maximum allowed size for a single attachment. Consider splitting them up if possible.`);
+	  }
   }
 }

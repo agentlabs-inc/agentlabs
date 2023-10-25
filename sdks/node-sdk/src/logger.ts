@@ -24,25 +24,27 @@ export class Logger {
 		return timestamp;
 	}
 
-	private log(level: LogLevel, message: string) {
+	private log(level: LogLevel, ...messages: string[]) {
 		const ts = this.generateTimestamp()
+		const message = messages.join(' ');
+		const logFn = console[level] || console.log;
 
-		console.log(`[${this.config.name}] [${ts}] ${level} ${message}`);
+		logFn(`[${this.config.name}] [${ts}] ${level} ${message}`);
 	}
 
-	error(message: string) {
-		this.log('error', message);
+	error(...messages: string[]) {
+		this.log('error', ...messages);
 	}
 
-	warn(message: string) {
-		this.log('warn', message);
+	warn(...messages: string[]) {
+		this.log('warn', ...messages);
 	}
 
-	info(message: string) {
-		this.log('info', message);
+	info(...messages: string[]) {
+		this.log('info', ...messages);
 	}
 
-	debug(message: string) {
-		this.log('debug', message);
+	debug(...messages: string[]) {
+		this.log('debug', ...messages);
 	}
 }

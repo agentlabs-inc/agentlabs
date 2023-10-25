@@ -23,9 +23,9 @@ export class Agent {
 	private async uploadAttachment(attachment: AttachmentItem): Promise<any[]> {
 		let uploaded: any = null;
 
-		await attachment.load();
-
 		if (attachment instanceof LocalFileAttachment) {
+			await attachment.load();
+
 			uploaded = await this.config.http.upload('/attachments/uploadSync', attachment.buffer, {
 				filename: attachment.filename,
 				mimeType: attachment.options?.mimeType,
@@ -49,8 +49,6 @@ export class Agent {
     ) {
 		const uploadedAttachments = await this.uploadAttachments(attachments);
         const format: MessageFormat = options.format ?? 'PlainText';
-
-		console.log('uploadedAttachments', uploadedAttachments);
 
         this.config.realtime.emit('chat-message', {
             text,
