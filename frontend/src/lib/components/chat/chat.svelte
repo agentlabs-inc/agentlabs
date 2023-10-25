@@ -32,6 +32,8 @@
 	import SelectMessage from "$lib/components/chat/chat-message/SelectMessage/SelectMessage.svelte";
 	import PromptMessage from "$lib/components/chat/chat-message/PromptMessage.svelte";
 	import type { MultiSelectChoice } from "$lib/components/chat/chat-message/SelectMessage/multi-select/types";
+	import EChartMessage from "$lib/components/chat/chat-message/EChartMessage/EChartMessage.svelte";
+	import { themeStore } from "$lib/stores/theme";
 
 	let chatElement: HTMLDivElement;
 	let chatInputElement: HTMLInputElement;
@@ -293,7 +295,7 @@
 
 	$: projectName = $mainContextStore.publicProjectConfig?.name;
 
-	// MOCKS
+	// MOCKED DATA: you can remove it once everything is implemented.
 	const choices: MultiSelectChoice[] = [
 		{
 			id: "some-id",
@@ -314,6 +316,187 @@
 			heroIcon: Heart
 		}
 	];
+
+	function func(x: any) {
+		x /= 10;
+		return Math.sin(x) * Math.cos(x * 2 + 1) * Math.sin(x * 3 + 2) * 50;
+	}
+	function generateData() {
+		let data = [];
+		for (let i = -200; i <= 200; i += 0.1) {
+			data.push([i, func(i)]);
+		}
+		return data;
+	}
+
+	const eChartOptions = {
+		grid: {
+			top: 40,
+			left: 50,
+			right: 40,
+			bottom: 50
+		},
+		xAxis: {
+			name: "x",
+			minorTick: {
+				show: true
+			},
+			minorSplitLine: {
+				show: true
+			}
+		},
+		yAxis: {
+			name: "y",
+			min: -100,
+			max: 100,
+			minorTick: {
+				show: true
+			},
+			minorSplitLine: {
+				show: true
+			}
+		},
+		dataZoom: [
+			{
+				show: true,
+				type: "inside",
+				filterMode: "none",
+				xAxisIndex: [0],
+				startValue: -20,
+				endValue: 20
+			},
+			{
+				show: true,
+				type: "inside",
+				filterMode: "none",
+				yAxisIndex: [0],
+				startValue: -20,
+				endValue: 20
+			}
+		],
+		series: [
+			{
+				type: "line",
+				showSymbol: false,
+				clip: true,
+				data: generateData()
+			}
+		]
+	};
+
+	const eChartOptions2 = {
+		xAxis: {
+			type: "category",
+			data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+		},
+		yAxis: {
+			type: "value"
+		},
+		series: [
+			{
+				data: [
+					120,
+					{
+						value: 200,
+						itemStyle: {
+							color: "#a90000"
+						}
+					},
+					150,
+					80,
+					70,
+					110,
+					130
+				],
+				type: "bar"
+			}
+		]
+	};
+
+	const eChartOptions3 = {
+		title: [
+			{
+				text: "Radial Polar Bar Label Position (middle)"
+			}
+		],
+		polar: {
+			radius: [30, "80%"]
+		},
+		radiusAxis: {
+			max: 4
+		},
+		angleAxis: {
+			type: "category",
+			data: ["a", "b", "c", "d"],
+			startAngle: 75
+		},
+		tooltip: {},
+		series: {
+			type: "bar",
+			data: [2, 1.2, 2.4, 3.6],
+			coordinateSystem: "polar",
+			label: {
+				show: true,
+				position: "middle",
+				formatter: "{b}: {c}"
+			}
+		},
+		animation: false
+	};
+
+	const eChartOptions4 = {
+		xAxis: {
+			data: [
+				"2017-10-24",
+				"2017-10-25",
+				"2017-10-26",
+				"2017-10-27",
+				"2017-10-28",
+				"2017-10-29",
+				"2017-10-30",
+				"2017-10-31",
+				"2017-11-01",
+				"2017-11-02",
+				"2017-11-03",
+				"2017-11-04",
+				"2017-11-05",
+				"2017-11-06",
+				"2017-11-07",
+				"2017-11-08",
+				"2017-11-09",
+				"2017-11-10"
+			]
+		},
+		yAxis: {},
+		series: [
+			{
+				type: "candlestick",
+				data: [
+					[20, 34, 10, 38],
+					[40, 35, 30, 50],
+					[31, 38, 33, 44],
+					[38, 15, 5, 42],
+					[20, 34, 10, 38],
+					[40, 35, 30, 50],
+					[31, 38, 33, 44],
+					[38, 15, 5, 42],
+					[20, 34, 10, 38],
+					[40, 35, 30, 50],
+					[31, 38, 33, 44],
+					[38, 15, 5, 42],
+					[20, 34, 10, 38],
+					[40, 35, 30, 50],
+					[31, 38, 33, 44],
+					[38, 15, 5, 42],
+					[20, 34, 10, 38],
+					[40, 35, 30, 50],
+					[31, 38, 33, 44],
+					[38, 15, 5, 42]
+				]
+			}
+		]
+	};
+	// END OF MOCKED DATA.
 </script>
 
 <div class="flex flex-col justify-between relative flex-grow">
@@ -350,6 +533,38 @@
 								agentId={message.agentId} />
 							<Spacer />
 							<PromptMessage time="22h00" agentId={message.agentId} />
+							<Spacer />
+							<EChartMessage
+								time={dayjs().format("M/D/YYYY hh:mm A")}
+								format="PLAIN_TEXT"
+								body="Here's the chart you asked for"
+								chartOptions={eChartOptions}
+								theme={$themeStore}
+								agentId={message.agentId} />
+							<Spacer />
+							<EChartMessage
+								time={dayjs().format("M/D/YYYY hh:mm A")}
+								format="PLAIN_TEXT"
+								body="Here's the chart you asked for"
+								chartOptions={eChartOptions2}
+								theme={$themeStore}
+								agentId={message.agentId} />
+							<Spacer />
+							<EChartMessage
+								time={dayjs().format("M/D/YYYY hh:mm A")}
+								format="PLAIN_TEXT"
+								body="Here's the chart you asked for"
+								chartOptions={eChartOptions3}
+								theme={$themeStore}
+								agentId={message.agentId} />
+							<Spacer />
+							<EChartMessage
+								time={dayjs().format("M/D/YYYY hh:mm A")}
+								format="PLAIN_TEXT"
+								body="Here's the chart you asked for"
+								chartOptions={eChartOptions4}
+								theme={$themeStore}
+								agentId={message.agentId} />
 						{:else}
 							<ChatMessage
 								isLoading={isWaitingForAnswer && messages.length - 1 === index}
