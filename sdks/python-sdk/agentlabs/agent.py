@@ -1,4 +1,9 @@
+from typing import Set
 from uuid import uuid4
+
+from agentlabs._internals.http import HttpApi
+
+from .attachment import AttachmentItem, _LocalFileAttachment, _UploadedAttachment
 from .chat import MessageFormat
 from ._internals.realtime import RealtimeClient
 from ._internals.utils import chunk_str
@@ -79,20 +84,40 @@ class AgentStream:
         })
 
 class Agent:
-    def __init__(self, id: str, realtime: RealtimeClient) -> None:
+    def __init__(self, id: str, realtime: RealtimeClient, http: HttpApi) -> None:
         self._realtime = realtime
+        self._http = http
         self.id = id
 
-    def send(self, text: str, conversation_id: str, format: MessageFormat = MessageFormat.PLAIN_TEXT):
+    def _upload_attachment(self, attachment: AttachmentItem) -> _UploadedAttachment:
+        uploaded_attachment = None
+
+        if isinstance(attachment, _LocalFileAttachment):
+            attachment.load()
+            uploaded_attachment = self._http.upload('/attachments/uploadSync',
+                    data=attachment.data,
+                    filename=attachment.filename,
+                    mime_type=attachment.mime_type
+            )
+
+        if uploaded_attachment is None:
+            raise Exception("Could not upload attachment")
+
+        return uploaded_attachment
+
+    def send(self, text: str, conversation_id: str, format: MessageFormat = MessageFormat.PLAIN_TEXT, attachments: list[AttachmentItem] = []):
         """Sends a message to a conversation.
         Such message will be communicated instantly to the conversation.
         """
+        uploaded_attachments: list[_UploadedAttachment] = [self._upload_attachment(attachment) for attachment in attachments]
+
         self._realtime.emit('chat-message', {
             "conversationId": conversation_id,
             "text": text,
             "agentId": self.id,
             "source": "AGENT",
-            "format": format.value
+            "format": format.value,
+            "attachments": uploaded_attachments
         })
 
     def create_stream(self, conversation_id: str, format: MessageFormat) -> AgentStream:
