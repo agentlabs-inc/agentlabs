@@ -61,6 +61,7 @@
 			name={attachment.attachment.name}
 			sizeBytes={attachment.attachment.sizeBytes}
 			mimeType={attachment.attachment.mimeType}
+			id={attachment.attachment.id}
 		/>
 	{/each}
 </div>

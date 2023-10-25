@@ -11,6 +11,22 @@ import {
 export class ChatMessagesService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async findMessageAttachment(attachmentId: string) {
+    return this.prisma.chatMessageAttachment.findUnique({
+      where: {
+        attachmentId,
+      },
+      include: {
+        message: {
+          include: {
+            conversation: true,
+          },
+        },
+        attachment: true,
+      },
+    });
+  }
+
   async listByConversationId(conversationId: string): Promise<ChatMessage[]> {
     const messages = await this.prisma.chatMessage.findMany({
       where: {

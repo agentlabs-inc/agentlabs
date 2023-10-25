@@ -1,15 +1,35 @@
 <script lang="ts">
+	import { ChatMessagesService } from '$lib/services/gen-api';
 	import bytes from 'bytes'
 	import { Icon, PaperClip } from 'svelte-hero-icons'
+	import fileSaver from 'file-saver'
 
+	export let id: string;
 	export let name: string;
 	export let sizeBytes: number;
 	export let mimeType: string;
 
 	let isHovering = false;
+	let isDownloading = false;
+
+	const download = async () => {
+		try {
+			isDownloading = true;
+			const data = await ChatMessagesService.downloadAttachment({ attachmentId: id });
+
+			console.log(data instanceof Blob)
+
+			fileSaver.saveAs(data, name);
+		} catch (e) {
+			console.error(e);
+		} finally {
+			isDownloading = false;
+		}
+	}
 </script>
 
 <button 
+	on:click={download}
 	on:mouseenter={() => isHovering = true}
 	on:mouseleave={() => isHovering = false}
 	class="antialiased pl-2 pr-6 border border-stroke-base dark:border-stroke-base-dark py-2 rounded-lg text-white rounded-xl flex items-center bg-background-primary dark:bg-background-primary-dark">
@@ -24,7 +44,7 @@
 				{name}
 			</p>
 		
-			{#if isHovering}
+			{#if isHovering && !isDownloading}
 				<div
 					class="flex justify-between items-center text-body-subdued dark:text-body-subdued-dark text-xs"
 				>

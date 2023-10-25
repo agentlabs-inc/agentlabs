@@ -632,6 +632,25 @@ paths:
           description: ""
       tags:
         - conversations
+  /chat-messages/downloadAttachment/{attachmentId}:
+    get:
+      operationId: downloadAttachment
+      parameters:
+        - name: attachmentId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+      tags:
+        - chat-messages
   /chat-messages/listByConversationId/{conversationId}:
     get:
       operationId: listByConversationId
