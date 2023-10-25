@@ -19,7 +19,7 @@ export interface LocalFileAttachmentOptions {
 }
 
 export class LocalFileAttachment extends AttachmentItem {
-  static maxFileSize = 50 * 1024 * 1024; // 100 MB
+  static maxFileSize = 10 * 1024 * 1024; // 10 MB
   public buffer = Buffer.alloc(0);
   public filename: string;
 
@@ -32,7 +32,7 @@ export class LocalFileAttachment extends AttachmentItem {
 	  this.buffer = await readFile(this.filePath);
 
 	  if (this.buffer.length > LocalFileAttachment.maxFileSize) {
-		  throw new Error(`File size exceeds 50MB, which is beyond the maximum allowed size for a single attachment. Consider splitting them up if possible.`);
+		  throw new Error(`File size exceeds 10MB, which is beyond the maximum allowed size for a single attachment. Consider splitting them up if possible.`);
 	  }
   }
 }

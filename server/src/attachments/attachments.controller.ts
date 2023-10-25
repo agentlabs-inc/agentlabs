@@ -19,7 +19,7 @@ import { AttachmentsService } from './attachments.service';
 
 @Controller('attachments')
 export class AttachmentsController {
-  private readonly UPLOAD_LIMIT = 1024 * 1024 * 50; // 50 MB
+  private readonly UPLOAD_LIMIT = 1024 * 1024 * 10;
 
   constructor(
     private readonly attachmentsService: AttachmentsService,
