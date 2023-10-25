@@ -36,32 +36,39 @@
 				<LetterAvatar>{letter}</LetterAvatar>
 			</div>
 
-			<div class="flex flex-col flex-grow relative overflow-x-scroll">
-				<div class="text-body-subdued dark:text-body-subdued-dark text-xs mb-3">
-					{time} - {agent.name}
+			<div>
+				<div class="flex flex-col flex-grow relative overflow-x-scroll">
+					<div class="text-body-subdued dark:text-body-subdued-dark text-xs mb-3">
+						{time} - {agent.name}
+					</div>
+					<div
+						class="text-body-accent dark:text-body-accent-dark text-[11pt] leading-7 w-full">
+						{#if !body?.length}<TypingLoader />{/if}
+						{#if format === "MARKDOWN"}
+							<MarkdownRenderer source={body} />
+						{:else}
+							{body}
+						{/if}
+					</div>
 				</div>
-				<div
-					class="text-body-accent dark:text-body-accent-dark text-[11pt] leading-7 w-full">
-					{#if !body?.length}<TypingLoader />{/if}
-					{#if format === "MARKDOWN"}
-						<MarkdownRenderer source={body} />
-					{:else}
-						{body}
-					{/if}
+				<Spacer />
+				<div class="flex items-center gap-x-2 flex-wrap">
+					{#each attachments as attachment}
+						<Attachment
+							name={attachment.attachment.name}
+							sizeBytes={attachment.attachment.sizeBytes}
+							mimeType={attachment.attachment.mimeType}
+							id={attachment.attachment.id}
+						/>
+					{/each}
 				</div>
 			</div>
 		</div>
+
+		
 	</div>
+
+	
 </div>
 
-<Spacer size={'xs'} />
-<div class="flex items-center gap-x-2 flex-wrap">
-	{#each attachments as attachment}
-		<Attachment
-			name={attachment.attachment.name}
-			sizeBytes={attachment.attachment.sizeBytes}
-			mimeType={attachment.attachment.mimeType}
-			id={attachment.attachment.id}
-		/>
-	{/each}
-</div>
+
