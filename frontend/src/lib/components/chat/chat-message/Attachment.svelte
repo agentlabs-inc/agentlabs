@@ -27,9 +27,20 @@
 	};
 
 	let isImageBroken = false;
+	let isImageLoaded = false;
 
 	const getImageSrc = () => {
 		return backendService.getImagePreviewUrl(id);
+	};
+
+	const imageLoader = (img: HTMLImageElement) => {
+		img.onload = () => {
+			setTimeout(() => {
+				isImageLoaded = true;
+				img.classList.remove("hidden");
+			}, 200);
+		};
+		return;
 	};
 
 	$: isImage = mimeType?.startsWith("image/");
@@ -42,7 +53,7 @@
 		on:mouseleave={() => (isHovering = false)}>
 		<div
 			on:click={download}
-			class="{!isHovering
+			class="{!isHovering || !isImageLoaded
 				? 'hidden'
 				: ''} flex items-center justify-between rounded-md absolute right-3 top-10 bg-background-accent dark:bg-background-accent-dark hover:bg-background-accent/90 hover:dark:bg-background-accent-dark/90">
 			<div
@@ -64,12 +75,17 @@
 					<Icon src={Photo} size="50px" class="text-body-base dark:text-body-base-dark" />
 				</div>
 			{:else}
+				{#if !isImageLoaded}
+					<div
+						class="w-[300px] h-[150px] bg-background-tertiary dark:bg-background-tertiary-dark rounded-md animate-pulse" />
+				{/if}
 				<Lightbox>
 					<img
+						use:imageLoader
 						on:error={() => (isImageBroken = true)}
 						src={getImageSrc()}
 						alt={name}
-						class="max-w-[400px] max-h-[300px] rounded-md" />
+						class="max-w-[400px] max-h-[300px] rounded-md hidden" />
 				</Lightbox>
 			{/if}
 		</div>
