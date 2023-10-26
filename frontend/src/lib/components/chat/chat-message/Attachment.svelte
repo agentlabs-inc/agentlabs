@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { ChatMessagesService } from "$lib/services/gen-api";
 	import bytes from "bytes";
-	import { CloudArrowDown, Icon, PaperClip } from "svelte-hero-icons";
+	import { CloudArrowDown, EyeSlash, Icon, PaperClip, Photo } from "svelte-hero-icons";
 	import fileSaver from "file-saver";
 	import { backendService } from "../../../../services/backend-service";
-	import Button from "$lib/components/common/button/Button.svelte";
+	import { Lightbox } from "svelte-lightbox";
 
 	export let id: string;
 	export let name: string;
@@ -26,6 +25,8 @@
 			isDownloading = false;
 		}
 	};
+
+	let isImageBroken = false;
 
 	const getImageSrc = () => {
 		return backendService.getImagePreviewUrl(id);
@@ -56,14 +57,29 @@
 				{name}
 			</p>
 		</div>
-		<img src={getImageSrc()} alt={name} class="max-w-[400px] max-h-[300px] rounded-md" />
+		<div class="max-w-[400px] max-h-[400px]">
+			{#if isImageBroken}
+				<div
+					class="flex items-center justify-center w-[200px] h-[100px] border border-stroke-base dark:border-stroke-base-dark py-2 rounded-md flex items-center bg-background-primary dark:bg-background-primary-dark">
+					<Icon src={Photo} size="50px" class="text-body-base dark:text-body-base-dark" />
+				</div>
+			{:else}
+				<Lightbox>
+					<img
+						on:error={() => (isImageBroken = true)}
+						src={getImageSrc()}
+						alt={name}
+						class="max-w-[400px] max-h-[300px] rounded-md" />
+				</Lightbox>
+			{/if}
+		</div>
 	</div>
 {:else}
 	<button
 		on:click={download}
 		on:mouseenter={() => (isHovering = true)}
 		on:mouseleave={() => (isHovering = false)}
-		class="relative antialiased w-[350px] pl-2 pr-6 border border-stroke-base dark:border-stroke-base-dark py-2 rounded-xl flex items-center bg-background-primary dark:bg-background-primary-dark">
+		class="relative antialiased w-[350px] pl-2 pr-6 border border-stroke-base dark:border-stroke-base-dark py-2 rounded-md flex items-center bg-background-primary dark:bg-background-primary-dark">
 		<div
 			class="{!isHovering
 				? 'hidden'
