@@ -1,10 +1,9 @@
-import { OpenAPI } from '$lib/services/gen-api/index'
+import { OpenAPI } from "$lib/services/gen-api/index";
 
 class BackendService {
 	private readonly baseUrl = OpenAPI.BASE;
 
-	constructor() {
-	}
+	constructor() {}
 
 	private async apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
 		const url = this.baseUrl + path;
@@ -23,8 +22,8 @@ class BackendService {
 
 	async post<T>(path: string, body: any): Promise<T> {
 		return await this.apiFetch<T>(path, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify(body)
 		});
 	}
@@ -38,6 +37,10 @@ class BackendService {
 		}
 
 		return await response.blob();
+	}
+
+	getImagePreviewUrl(imageId: string): string {
+		return `${this.baseUrl}/attachments/viewById/${imageId}`;
 	}
 }
 

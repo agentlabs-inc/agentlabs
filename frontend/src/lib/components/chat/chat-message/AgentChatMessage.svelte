@@ -27,6 +27,15 @@
 	if (!agent) {
 		throw new Error("Agent not found");
 	}
+
+	$: imageAttachements = attachments.filter((messageAttachment: MessageAttachment) =>
+		messageAttachment.attachment.mimeType.startsWith("image/")
+	);
+
+	$: otherAttachments = attachments.filter(
+		(messageAttachment: MessageAttachment) =>
+			!messageAttachment.attachment.mimeType.startsWith("image/")
+	);
 </script>
 
 <div class="{bubbleClass} {isLoading ? 'animate-pulse' : ''} rounded-md py-5 px-5 antialiased">
@@ -52,23 +61,26 @@
 					</div>
 				</div>
 				<Spacer />
-				<div class="flex items-center gap-x-2 flex-wrap">
-					{#each attachments as attachment}
+				<div class="flex items-center gap-4 flex-wrap">
+					{#each imageAttachements as attachment}
 						<Attachment
 							name={attachment.attachment.name}
 							sizeBytes={attachment.attachment.sizeBytes}
 							mimeType={attachment.attachment.mimeType}
-							id={attachment.attachment.id}
-						/>
+							id={attachment.attachment.id} />
+					{/each}
+				</div>
+				<Spacer />
+				<div class="flex items-center gap-4 flex-wrap">
+					{#each otherAttachments as attachment}
+						<Attachment
+							name={attachment.attachment.name}
+							sizeBytes={attachment.attachment.sizeBytes}
+							mimeType={attachment.attachment.mimeType}
+							id={attachment.attachment.id} />
 					{/each}
 				</div>
 			</div>
 		</div>
-
-		
 	</div>
-
-	
 </div>
-
-
