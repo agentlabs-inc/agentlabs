@@ -606,6 +606,11 @@ paths:
       responses:
         "200":
           description: ""
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
   /attachments/downloadById/{id}:
     get:
       operationId: downloadById
@@ -618,6 +623,11 @@ paths:
       responses:
         "200":
           description: ""
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
   /conversations/getAllByProjectId:
     get:
       operationId: getAllConversations

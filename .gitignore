@@ -4,3 +4,5 @@ node_modules
 
 gen-api
 caddy/data
+
+/attachments

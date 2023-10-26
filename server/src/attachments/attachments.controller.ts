@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Controller,
   Get,
+  HttpStatus,
   NotFoundException,
   Param,
   Post,
@@ -11,6 +12,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiProduces, ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
 import { RequireAuthMethod } from 'src/iam/iam.decorators';
 import { ServerSdkAuthenticatedRequest } from 'src/iam/iam.types';
@@ -59,17 +61,23 @@ export class AttachmentsController {
     });
   }
 
+  @ApiResponse({
+    schema: {
+      type: 'string',
+      format: 'binary',
+    },
+    status: HttpStatus.OK,
+  })
+  @ApiProduces('application/octet-stream')
   @Get('viewById/:id')
   async serveById(@Param('id') id: string, @Res() res: Response) {
     const attachment = await this.attachmentsService.findById(id);
 
-    if (!attachment || !attachment.isPublic) {
+    if (!attachment) {
       throw new NotFoundException('Attachment not found.');
     }
 
     const data = await this.storageService.download(attachment.id);
-
-    console.log('attachment.mimeType', attachment.mimeType);
 
     res.setHeader(
       'Content-Disposition',
@@ -81,11 +89,19 @@ export class AttachmentsController {
     res.send(data);
   }
 
+  @ApiResponse({
+    schema: {
+      type: 'string',
+      format: 'binary',
+    },
+    status: HttpStatus.OK,
+  })
+  @ApiProduces('application/octet-stream')
   @Get('downloadById/:id')
   async downloadById(@Param('id') id: string, @Res() res: Response) {
     const attachment = await this.attachmentsService.findById(id);
 
-    if (!attachment || !attachment.isPublic) {
+    if (!attachment) {
       throw new NotFoundException('Attachment not found.');
     }
 
