@@ -2,6 +2,7 @@ import { AttachmentItem } from './attachment';
 import { HttpApi } from './http';
 import { IncomingChatMessage } from './incoming-chat-message';
 import { RealtimeClient } from './realtime';
+import { EChartsOption } from './types/echart';
 
 export interface AgentConfig {
     realtime: RealtimeClient;
@@ -26,6 +27,14 @@ export type TypewriteMessageOptions = {
     intervalMs?: number;
     initialDelayMs?: number;
 };
+
+
+export type SendEchartOptions = {
+	textFormat?: MessageFormat;
+	echart: EChartsOption;
+	conversationId: string;
+	text?: string;
+}
 
 const MessageFormats = ['PlainText', 'Markdown'] as const;
 

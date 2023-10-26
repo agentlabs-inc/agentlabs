@@ -279,6 +279,8 @@ export class ProjectBackendConnectionGateway
         text: payload.data.text,
         format: payload.data.format,
         agentId: payload.data.agentId,
+        type: payload.data.type,
+        metadata: payload.data.metadata,
       });
 
       const linkAttachmentPromises = payload.data.attachments.map(
@@ -320,6 +322,8 @@ export class ProjectBackendConnectionGateway
           messageId: message.id,
           agentId: payload.data.agentId,
           attachments: messageAttachments,
+          type: payload.data.type,
+          metadata: payload.data.metadata,
         },
       });
 

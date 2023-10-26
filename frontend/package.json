@@ -67,8 +67,10 @@
   "type": "module",
   "dependencies": {
     "bytes": "^3.1.2",
+    "air-datepicker": "^3.4.0",
     "dotenv": "^16.3.1",
     "file-saver": "^2.0.5",
+    "echarts": "^5.4.3",
     "nanoid": "^4.0.2",
     "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.2",

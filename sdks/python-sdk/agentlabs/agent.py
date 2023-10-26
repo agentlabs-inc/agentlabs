@@ -56,6 +56,7 @@ class AgentStream:
             "agentId": self.agent_id
         })
 
+
     def typewrite(
         self,
         token: str,
@@ -104,6 +105,25 @@ class Agent:
             raise Exception("Could not upload attachment")
 
         return uploaded_attachment
+
+    def echart(self, conversation_id: str, echart: dict, text = '', text_format: MessageFormat = MessageFormat.PLAIN_TEXT):
+        """Sends an [echart](https://echarts.apache.org/en/index.html) chart to a conversation, with an optional text message attached.
+
+        The echart parameter holds the chart configuration, including styling and data, and should only contain JSON serializable values.
+        Because echart is a Javascript library, this python SDK does not provide strong typing for the echart parameter.
+
+        You may want to refer to the examples from [this page](https://echarts.apache.org/examples/en/index.html) to get an idea of what the echart parameter should look like.
+        """
+        self._realtime.emit('chat-message', {
+            "conversationId": conversation_id,
+            "text": text,
+            "agentId": self.id,
+            "source": "AGENT",
+            "format": text_format.value,
+            "attachments": [],
+            "type": "ECHART",
+            "metadata": echart
+        });
 
     def send(self, text: str, conversation_id: str, format: MessageFormat = MessageFormat.PLAIN_TEXT, attachments: list[AttachmentItem] = []):
         """Sends a message to a conversation.

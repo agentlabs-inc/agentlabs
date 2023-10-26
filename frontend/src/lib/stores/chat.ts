@@ -6,7 +6,7 @@ export const ChatMessageFormats = ["PLAIN_TEXT", "MARKDOWN"] as const;
 export type ChatMessageFormat = (typeof ChatMessageFormats)[number];
 
 export type ChatMessageSource = "USER" | "AGENT" | "SYSTEM";
-export type ChatMessageType = "CONVERSATION_MESSAGE" | "LOGIN_REQUEST";
+export type ChatMessageType = "CONVERSATION_MESSAGE" | "LOGIN_REQUEST" | "ECHART";
 
 export interface ChatMessage {
 	id: string;
@@ -17,6 +17,7 @@ export interface ChatMessage {
 	agentId?: string;
 	type: ChatMessageType;
 	attachments: MessageAttachment[];
+	metadata: any;
 }
 
 export interface ChatStore {

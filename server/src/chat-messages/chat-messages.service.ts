@@ -68,6 +68,8 @@ export class ChatMessagesService {
         source: 'USER',
         conversationId: payload.conversationId,
         format: payload.format,
+        type: payload.type,
+        metadata: payload.metadata,
       },
     });
 
@@ -82,6 +84,8 @@ export class ChatMessagesService {
         conversationId: payload.conversationId,
         format: payload.format,
         agentId: payload.agentId,
+        type: payload.type,
+        metadata: payload.metadata,
       },
     });
 
@@ -95,6 +99,8 @@ export class ChatMessagesService {
         source: 'SYSTEM',
         conversationId: payload.conversationId,
         format: payload.format,
+        type: payload.type,
+        metadata: payload.metadata,
       },
     });
 
