@@ -39,9 +39,8 @@ class BackendService {
 		return await response.blob();
 	}
 
-	getImagePreviewUrl(path: string): string {
-		const url = this.baseUrl + path;
-		return url;
+	getImagePreviewUrl(imageId: string): string {
+		return `${this.baseUrl}/attachments/viewById/${imageId}`;
 	}
 }
 
