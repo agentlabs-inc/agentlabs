@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { createHash } from 'crypto';
+import { getType } from 'mime';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AttachmentStorageService } from './attachment-storage/attachment-storage.service';
 import { CreateAttachmentPayload } from './attachments.types';
@@ -7,6 +8,7 @@ import { CreateAttachmentPayload } from './attachments.types';
 @Injectable()
 export class AttachmentsService {
   private readonly logger = new Logger(AttachmentsService.name);
+  private readonly DEFAULT_ATTACHMENT_MIME_TYPE = 'application/octet-stream';
 
   constructor(
     private readonly storageService: AttachmentStorageService,
@@ -15,6 +17,14 @@ export class AttachmentsService {
 
   private computeChecksum(data: Buffer): string {
     return createHash('sha256').update(data).digest('hex');
+  }
+
+  inferMimeTypeFromFilename(filename: string): string {
+    return getType(filename) ?? this.DEFAULT_ATTACHMENT_MIME_TYPE;
+  }
+
+  isDefaultMimeType(mimeType: string): boolean {
+    return mimeType === this.DEFAULT_ATTACHMENT_MIME_TYPE;
   }
 
   async findById(id: string) {
@@ -37,8 +47,6 @@ export class AttachmentsService {
 
     this.logger.debug(`Creating attachment with checksum ${checksum}.`);
 
-    console.log('payload', payload);
-
     const attachment = await this.prisma.attachment.create({
       data: {
         driver: 'LOCAL_FILE_SYSTEM',
@@ -46,6 +54,8 @@ export class AttachmentsService {
         mimeType: payload.mimeType,
         checksumSha256: checksum,
         isPublic: payload.isPublic,
+        projectId: payload.projectId,
+        sizeBytes: payload.size,
       },
     });
 

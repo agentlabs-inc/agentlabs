@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -8,10 +7,7 @@ import {
   Post,
   Req,
   UnauthorizedException,
-  UploadedFile,
-  UseInterceptors,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBearerAuth,
   ApiTags,
@@ -79,6 +75,7 @@ export class AgentsController {
     }
   }
 
+  /*
   @UseInterceptors(FileInterceptor('file'))
   @RequireAuthMethod('user-token')
   @Post('uploadLogo/:agentId')
@@ -120,6 +117,7 @@ export class AgentsController {
       success: true,
     };
   }
+  */
 
   @RequireAuthMethod('member-token', 'user-token')
   @ApiUnauthorizedResponse({

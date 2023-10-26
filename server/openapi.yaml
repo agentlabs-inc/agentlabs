@@ -493,22 +493,6 @@ paths:
         - agents
       security:
         - bearer: []
-  /agents/uploadLogo/{agentId}:
-    post:
-      operationId: uploadLogo
-      parameters:
-        - name: agentId
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        "201":
-          description: ""
-      tags:
-        - agents
-      security:
-        - bearer: []
   /agents/update/{agentId}:
     post:
       operationId: updateAgent
@@ -603,6 +587,13 @@ paths:
         - agents
       security:
         - bearer: []
+  /attachments/uploadSync:
+    post:
+      operationId: createAttachmentSync
+      parameters: []
+      responses:
+        "201":
+          description: ""
   /attachments/viewById/{id}:
     get:
       operationId: serveById
@@ -641,6 +632,25 @@ paths:
           description: ""
       tags:
         - conversations
+  /chat-messages/downloadAttachment/{attachmentId}:
+    get:
+      operationId: downloadAttachment
+      parameters:
+        - name: attachmentId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+      tags:
+        - chat-messages
   /chat-messages/listByConversationId/{conversationId}:
     get:
       operationId: listByConversationId
@@ -655,54 +665,6 @@ paths:
           description: ""
       tags:
         - chat-messages
-  /agent-attachments/listByMessageId/{messageId}:
-    get:
-      operationId: listByMessageId
-      parameters:
-        - name: messageId
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        "200":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-      tags:
-        - Agent Attachments
-  /agent-attachments/createMessageAttachmentSync:
-    post:
-      operationId: createSync
-      parameters:
-        - name: projectId
-          required: true
-          in: query
-          schema:
-            type: string
-        - name: agentId
-          required: true
-          in: query
-          schema:
-            type: string
-        - name: messageId
-          required: true
-          in: query
-          schema:
-            type: string
-      responses:
-        "201":
-          description: ""
-          content:
-            application/json:
-              schema:
-                type: object
-      tags:
-        - Agent Attachments
 info:
   title: AgentLabs API
   description: Build AI Agents in minutes, not months.

@@ -89,4 +89,5 @@ class Project:
         return Agent(
             realtime=self._realtime,
             id=id,
+            http=self._http
         )

@@ -3,6 +3,7 @@ import { RealtimeClient } from "./realtime";
 import { OnChatMessageHandler, RawChatMessage } from "./types";
 import { IncomingChatMessage } from "./incoming-chat-message";
 import { Logger } from "./logger";
+import { HttpApi } from "./http";
 
 export interface ProjectConfig {
 	url: string;
@@ -19,6 +20,7 @@ export class Project {
 	private serverLogger = new Logger({
 		name: 'Server',
 	})
+	private readonly http: HttpApi;
 
 	constructor(
 	 	config: ProjectConfig,
@@ -39,6 +41,7 @@ export class Project {
 				ok: true,
 			});
 		})
+		this.http = new HttpApi(config);
 	}
 
 	async connect() {
@@ -47,10 +50,15 @@ export class Project {
 	}
 
 	onChatMessage(handler: OnChatMessageHandler) {
-		this.realtime.on('chat-message', (data: any) => {
+		this.realtime.on('chat-message', async (data: any) => {
 			const rawChatMessage = data.data as RawChatMessage;
 
-			handler(new IncomingChatMessage(rawChatMessage));
+			try {
+				await handler(new IncomingChatMessage(rawChatMessage));
+			} catch (err: any) {
+				this.clientLogger.error('onChatMessage: got uncaught exception while running handler. Consider handling errors in your handler directly.');
+				console.error(err);
+			}
 		});
 	}
 
@@ -61,6 +69,7 @@ export class Project {
 	agent(agentId: string): Agent {
 		return new Agent({
 			realtime: this.realtime,
+			http: this.http,
 			agentId
 		});
 	}

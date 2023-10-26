@@ -1,4 +1,4 @@
-from typing import TypedDict
+from typing import Any, Optional, TypedDict
 import requests
 
 class HttpApiConfig(TypedDict):
@@ -20,5 +20,15 @@ class HttpApi:
             "x-agentlabs-project-id": self.project_id,
         })
 
+
+    def upload(self, path: str, filename: str, data: bytes, mime_type: Optional[str]) -> Any:
+        mime_type = mime_type or "application/octet-stream"
+        response = self.client.post(self._make_url(path), files={
+            "file": (filename, data, mime_type)
+        })
+        response.raise_for_status()
+
+        return response.json()
+
     def _make_url(self, path: str):
-        return self.agentlabs_url + path
+        return f"{self.agentlabs_url}/api{path}"
