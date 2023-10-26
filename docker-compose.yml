@@ -56,6 +56,8 @@ services:
 
   server:
     image: ${SERVER_IMAGE}
+    volumes:
+      - ./attachments:/app/attachments
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
       - USERS_ACCESS_TOKEN_SECRET=${USERS_ACCESS_TOKEN_SECRET}
