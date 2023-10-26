@@ -52,23 +52,16 @@
 					</div>
 				</div>
 				<Spacer />
-				<div class="flex items-center gap-x-2 flex-wrap">
+				<div class="flex items-center gap-2 flex-wrap">
 					{#each attachments as attachment}
 						<Attachment
 							name={attachment.attachment.name}
 							sizeBytes={attachment.attachment.sizeBytes}
 							mimeType={attachment.attachment.mimeType}
-							id={attachment.attachment.id}
-						/>
+							id={attachment.attachment.id} />
 					{/each}
 				</div>
 			</div>
 		</div>
-
-		
 	</div>
-
-	
 </div>
-
-
