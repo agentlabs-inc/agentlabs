@@ -8,10 +8,12 @@ import { localMessageFormatToRemote } from './constants';
 import {
     AgentConfig,
     MessageFormat,
+    SendEchartOptions,
     SendMessageOptions,
     SendMessagePayload,
     TypewriteMessageOptions,
 } from './types';
+import { EChartsOption } from './types/echart';
 
 export class Agent {
     private defaultTypeWriteInterval = DEFAULT_MESSAGE_TYPING_INTERVAL_MS;
@@ -41,6 +43,21 @@ export class Agent {
 
 	private async uploadAttachments(attachments: AttachmentItem[]): Promise<any[]> {
 		return Promise.all(attachments.map((attachment) => this.uploadAttachment(attachment)));
+	}
+
+	/**
+	 * Send a message that contains a drawn echart, with an optional text added.
+	*/
+	async echart({ echart, text = '', conversationId, textFormat = 'PlainText' }: SendEchartOptions): Promise<void> {
+		this.config.realtime.emit('chat-message', {
+            text,
+            conversationId,
+            format: localMessageFormatToRemote[textFormat],
+            agentId: this.config.agentId,
+			type: 'ECHART',
+			metadata: echart,
+			attachments: [],
+        });
 	}
 
     async send(

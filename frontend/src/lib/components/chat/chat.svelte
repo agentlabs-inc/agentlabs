@@ -97,7 +97,8 @@
 			format: payload.data.format,
 			agentId: payload.data.agentId,
 			type: "LOGIN_REQUEST",
-			attachments: []
+			attachments: [],
+			metadata: {},
 		});
 	};
 
@@ -138,7 +139,8 @@
 			createdAt: timestamp,
 			format: "PLAIN_TEXT",
 			type: "CONVERSATION_MESSAGE",
-			attachments: []
+			attachments: [],
+			metadata: {},
 		});
 
 		isWaitingForAnswer = true;
@@ -198,6 +200,8 @@
 		isWaitingForAnswer = false;
 		isUserInteractionBlocked = false;
 
+		console.log("Received message", payload);
+
 		addMessage({
 			id: payload.data.messageId,
 			text: payload.data.text,
@@ -205,8 +209,9 @@
 			createdAt: payload.timestamp,
 			format: payload.data.format,
 			agentId: payload.data.agentId,
-			type: "CONVERSATION_MESSAGE",
-			attachments: payload.data.attachments
+			type: payload.data.type,
+			attachments: payload.data.attachments,
+			metadata: payload.data.metadata,
 		});
 	};
 
@@ -233,7 +238,8 @@
 			format: payload.data.format,
 			agentId: payload.data.agentId,
 			type: "CONVERSATION_MESSAGE",
-			attachments: []
+			attachments: [],
+			metadata: {},
 		});
 	};
 
@@ -515,6 +521,15 @@
 									body={message.text}
 									format={message.format}
 									agentId={message.agentId} />
+							{:else if message.type === 'ECHART'}
+								<EChartMessage
+									time={dayjs().format("M/D/YYYY hh:mm A")}
+									format={message.format}
+									body={message.text}
+									chartOptions={message.metadata}
+									theme={$themeStore}
+									agentId={message.agentId} 
+								/>
 							{:else}
 								<AgentChatMessage
 									isLoading={isWaitingForAnswer && messages.length - 1 === index}
@@ -524,6 +539,7 @@
 									agentId={message.agentId}
 									attachments={message.attachments} />
 							{/if}
+							<!--
 							<SelectMessage
 								minSelected={1}
 								maxSelected={2}
@@ -591,6 +607,7 @@
 								}}
 								on:select={(e) =>
 									alert(`you selected a date range ${e.detail.formattedDate}`)} />
+							-->
 						{:else}
 							<ChatMessage
 								isLoading={isWaitingForAnswer && messages.length - 1 === index}

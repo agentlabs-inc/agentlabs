@@ -1,6 +1,17 @@
 import { MessageFormat } from '@prisma/client';
 import { Type } from 'class-transformer';
-import { IsEnum, IsString, ValidateNested } from 'class-validator';
+import {
+  IsEnum,
+  IsIn,
+  IsObject,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+import {
+  MessageType,
+  MessageTypes,
+} from 'src/chat-messages/chat-messages.types';
 import { BaseRealtimeMessageDto } from 'src/common/base-realtime-message.dto';
 
 class AttachmentDto {
@@ -27,6 +38,13 @@ class AgentMessageDataDto {
   @ValidateNested({ each: true })
   @Type(() => AttachmentDto)
   attachments: AttachmentDto[];
+
+  @IsIn(MessageTypes)
+  type: MessageType;
+
+  @IsOptional()
+  @IsObject()
+  metadata?: any;
 }
 
 export class AgentMessageDto extends BaseRealtimeMessageDto {

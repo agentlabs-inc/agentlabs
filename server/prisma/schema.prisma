@@ -354,6 +354,8 @@ model ChatMessage {
 	
 	attachments		ChatMessageAttachment[]
 	format			MessageFormat @default(PLAIN_TEXT)
+	type			String @default("TEXT")
+	metadata		Json @default("{}")
 
 	agent 			Agent? @relation(fields: [agentId], references: [id])
 	agentId			String?
