@@ -54,7 +54,7 @@ export class Project {
 			const rawChatMessage = data.data as RawChatMessage;
 
 			try {
-				await handler(new IncomingChatMessage(rawChatMessage));
+				await handler(new IncomingChatMessage(this.http, rawChatMessage));
 			} catch (err: any) {
 				this.clientLogger.error('onChatMessage: got uncaught exception while running handler. Consider handling errors in your handler directly.');
 				console.error(err);

@@ -148,6 +148,12 @@ export class FrontendConnectionGateway
       type: 'TEXT',
     });
 
+    const linkAttachmentPromises = payload.data.attachments.map((attachment) =>
+      this.messagesService.linkAttachment(message.id, attachment.id),
+    );
+
+    const messageAttachments = await Promise.all(linkAttachmentPromises);
+
     const clientPayload: BaseRealtimeMessageDto = {
       timestamp: new Date().toISOString(),
       data: {
@@ -220,6 +226,7 @@ export class FrontendConnectionGateway
         conversationId: conversation.id,
         messageId: message.id,
         member,
+        attachments: payload.data.attachments,
       },
     });
 
