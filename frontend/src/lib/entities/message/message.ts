@@ -15,15 +15,17 @@ export const AgentMessageSources = [
 
 export type AgentMessageSource  = typeof AgentMessageSources[number]
 
+export interface MessageAttachmentWrapper {
+	attachment: MessageAttachment;
+}
+
 export interface MessageAttachment {
-	attachment: {
 		id: string;
 		createdAt: string;
 		updatedAt: string;
 		name: string;
 		mimeType: string;
 		sizeBytes: number;
-	}
 }
 
 export interface ConversationMessage {
@@ -36,5 +38,5 @@ export interface ConversationMessage {
 
 	conversationId: string;
 
-	attachments: MessageAttachment[];
+	attachments: MessageAttachmentWrapper[];
 }

@@ -4,12 +4,12 @@
 		addMessage,
 		addStreamedMessageToken,
 		chatStore,
+		consumePendingAttachments,
 		isStreaming,
 		removeActiveStream
 	} from "$lib/stores/chat";
 	import type { ChatMessageFormat, ChatMessageSource } from "$lib/stores/chat";
-	import { EyeSlash, Heart, PaperAirplane, Plus, Star } from "svelte-hero-icons";
-	import Button from "../common/button/Button.svelte";
+	import { Heart } from "svelte-hero-icons";
 	import ChatInput from "./chat-input/ChatInput.svelte";
 	import ChatMessage from "./chat-message/ChatMessage.svelte";
 	import dayjs from "dayjs";
@@ -29,15 +29,12 @@
 	import AgentChatMessage from "./chat-message/AgentChatMessage.svelte";
 	import { chatConversationRoute } from "$lib/routes/routes";
 	import LoginMessage from "$lib/components/chat/chat-message/LoginMessage.svelte";
-	import SelectMessage from "$lib/components/chat/chat-message/SelectMessage/SelectMessage.svelte";
-	import PromptMessage from "$lib/components/chat/chat-message/PromptMessage.svelte";
 	import type { MultiSelectChoice } from "$lib/components/chat/chat-message/SelectMessage/multi-select/types";
 	import EChartMessage from "$lib/components/chat/chat-message/EChartMessage/EChartMessage.svelte";
 	import { themeStore } from "$lib/stores/theme";
-	import DatepickerMessage from "$lib/components/chat/chat-message/DatepickerMessage/DatepickerMessage.svelte";
 
 	let chatElement: HTMLDivElement;
-	let chatInputElement: HTMLInputElement;
+	let chatInputElement: HTMLTextAreaElement;
 	let isWaitingForAnswer = false;
 	let chatInputValue = "";
 	let isUserInteractionBlocked = false;
@@ -106,9 +103,7 @@
 		return window?.parent?.location !== window.location;
 	};
 
-	const sendMessage = (e: Event) => {
-		e.preventDefault();
-
+	const sendMessage = (value: string) => {
 		const con = $realtimeStore.connection;
 
 		if (!con) {
@@ -122,12 +117,15 @@
 		const actualConversationId = conversationId ?? generateConversationId();
 
 		const timestamp = new Date().toISOString();
+		const pendingAttachments = consumePendingAttachments();
+
 		const payload = {
 			timestamp,
 			data: {
-				text: chatInputValue,
+				text: value,
 				conversationId: actualConversationId,
-				source: "USER" as ChatMessageSource
+				source: "USER" as ChatMessageSource,
+				attachments: pendingAttachments,
 			}
 		};
 
@@ -139,7 +137,7 @@
 			createdAt: timestamp,
 			format: "PLAIN_TEXT",
 			type: "CONVERSATION_MESSAGE",
-			attachments: [],
+			attachments: pendingAttachments.map(a => ({ attachment: a })),
 			metadata: {},
 		});
 
@@ -610,6 +608,7 @@
 							-->
 						{:else}
 							<ChatMessage
+								attachments={message.attachments || []}
 								isLoading={isWaitingForAnswer && messages.length - 1 === index}
 								from={message.source}
 								time={dayjs(message.createdAt).format("M/D/YYYY hh:mm A")}
@@ -638,20 +637,15 @@
 	<div
 		class="absolute bottom-0 left-0 right-0 flex items-center justify-center py-3 px-3 border-t border-stroke-base dark:border-stroke-base-dark bg-background-secondary dark:bg-background-primary-dark flex-grow-0">
 		<div class="flex-grow max-w-4xl">
-			<form class="w-full items-center flex gap-3" on:submit|preventDefault={sendMessage}>
-				<div class="flex-1">
-					<ChatInput
-						bind:inputElement={chatInputElement}
-						bind:value={chatInputValue}
-						name="chat-input"
-						placeholder="Send a message" />
-				</div>
-				<Button
-					submit
-					loading={isChatDisabled}
-					disabled={isChatDisabled || chatInputValue.length === 0}
-					rightIcon={PaperAirplane} />
-			</form>
+			<ChatInput
+				inputElement={chatInputElement}
+				isDisabled={isChatDisabled}
+				onSubmit={sendMessage}
+				name="chat-input"
+				placeholder="Type a message..."
+				bind:value={chatInputValue} 
+			/>
+
 		</div>
 	</div>
 </div>

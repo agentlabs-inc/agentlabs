@@ -1,5 +1,5 @@
-import type { MessageAttachment } from "$lib/entities/message/message";
-import { derived, writable } from "svelte/store";
+import type { MessageAttachment, MessageAttachmentWrapper } from "$lib/entities/message/message";
+import { derived, get, writable } from "svelte/store";
 
 export const ChatMessageFormats = ["PLAIN_TEXT", "MARKDOWN"] as const;
 
@@ -16,18 +16,21 @@ export interface ChatMessage {
 	format: ChatMessageFormat;
 	agentId?: string;
 	type: ChatMessageType;
-	attachments: MessageAttachment[];
+	attachments: MessageAttachmentWrapper[];
 	metadata: any;
 }
 
 export interface ChatStore {
 	messages: ChatMessage[];
 	activeStreams: string[];
+	/* Uploaded attachments to attach to the next message */
+	pendingAttachments: MessageAttachment[];
 }
 
 export const chatStore = writable(<ChatStore>{
 	messages: [],
-	activeStreams: []
+	activeStreams: [],
+	pendingAttachments: [],
 });
 
 export const isStreaming = derived(chatStore, ($chatStore) => $chatStore.activeStreams.length > 0);
@@ -37,6 +40,25 @@ export const loadMessages = (messages: ChatMessage[]) => {
 		store.messages = messages;
 		return store;
 	});
+};
+
+export const addPendingAttachment = (attachment: MessageAttachment) => {
+	chatStore.update((store) => {
+		store.pendingAttachments = [...store.pendingAttachments, attachment];
+		return store;
+	});
+};
+
+export const consumePendingAttachments = () => {
+	const attachments = get(chatStore).pendingAttachments;
+
+	chatStore.update((store) => {
+		store.pendingAttachments = [];
+
+		return store;
+	});
+
+	return attachments;
 };
 
 export const addMessage = (message: ChatMessage) => {

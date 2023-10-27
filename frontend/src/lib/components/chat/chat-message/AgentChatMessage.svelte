@@ -3,7 +3,7 @@
 	import { getAgentById } from "$lib/stores/agent";
 	import type { ChatMessageFormat } from "$lib/stores/chat";
 	import TypingLoader from "$lib/components/chat/chat-message/TypingLoader.svelte";
-	import type { MessageAttachment } from "$lib/entities/message/message";
+	import type {  MessageAttachmentWrapper } from "$lib/entities/message/message";
 	import MarkdownRenderer from "$lib/components/markdown/markdown-renderer.svelte";
 	import Attachment from "./Attachment.svelte";
 	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
@@ -11,7 +11,7 @@
 	export let time: string;
 	export let body: string;
 	export let format: ChatMessageFormat;
-	export let attachments: MessageAttachment[] = [];
+	export let attachments: MessageAttachmentWrapper[] = [];
 
 	export let isLoading = true;
 	export let agentId: string;
@@ -28,12 +28,12 @@
 		throw new Error("Agent not found");
 	}
 
-	$: imageAttachements = attachments.filter((messageAttachment: MessageAttachment) =>
+	$: imageAttachements = attachments.filter((messageAttachment: MessageAttachmentWrapper) =>
 		messageAttachment.attachment.mimeType.startsWith("image/")
 	);
 
 	$: otherAttachments = attachments.filter(
-		(messageAttachment: MessageAttachment) =>
+		(messageAttachment: MessageAttachmentWrapper) =>
 			!messageAttachment.attachment.mimeType.startsWith("image/")
 	);
 </script>
