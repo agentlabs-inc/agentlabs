@@ -7,7 +7,6 @@ from .member import _ApiMember, Member
 class _MessageAttachment(TypedDict):
     id: str;
     createdAt: str;
-    updatedAt: str;
     name: str;
     mimeType: str;
     checksumSha256: str;
@@ -45,7 +44,6 @@ class MessageAttachment:
         self._http = _http
         self.id = attachment["id"]
         self.created_at = attachment["createdAt"]
-        self.updated_at = attachment["updatedAt"]
         self.name = attachment["name"]
         self.mime_type = attachment["mimeType"]
         self.checksum_sha256 = attachment["checksumSha256"]

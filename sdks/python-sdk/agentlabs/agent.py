@@ -3,7 +3,7 @@ from uuid import uuid4
 
 from agentlabs._internals.http import HttpApi
 
-from .attachment import AttachmentItem, _LocalFileAttachment, _UploadedAttachment
+from .attachment import AttachmentItem, _LocalFileAttachment, _UploadedAttachment, _BufferFileAttachment
 from .chat import MessageFormat
 from ._internals.realtime import RealtimeClient
 from ._internals.utils import chunk_str
@@ -93,7 +93,7 @@ class Agent:
     def _upload_attachment(self, attachment: AttachmentItem) -> _UploadedAttachment:
         uploaded_attachment = None
 
-        if isinstance(attachment, _LocalFileAttachment):
+        if isinstance(attachment, _LocalFileAttachment) or isinstance(attachment, _BufferFileAttachment):
             attachment.load()
             uploaded_attachment = self._http.upload('/attachments/uploadSync',
                     data=attachment.data,
