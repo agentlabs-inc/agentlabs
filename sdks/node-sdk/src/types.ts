@@ -1,6 +1,7 @@
 import { AttachmentItem } from './attachment';
 import { HttpApi } from './http';
 import { IncomingChatMessage } from './incoming-chat-message';
+import { ApiMessageAttachment } from './message-attachment';
 import { RealtimeClient } from './realtime';
 import { EChartsOption } from './types/echart';
 
@@ -16,6 +17,7 @@ export interface RawChatMessage {
     messageId: string;
     agentId: string;
 	member: Member;
+	attachments: ApiMessageAttachment[];
 }
 
 export interface SendMessageOptions {

@@ -1,5 +1,5 @@
 import { AgentMessageStream } from './agent-message-stream';
-import { AttachmentItem, LocalFileAttachment } from './attachment';
+import { AttachmentItem, BufferFileAttachment, LocalFileAttachment } from './attachment';
 import {
     DEFAULT_INITIAL_MESSAGE_LOADING_DELAY_MS,
     DEFAULT_MESSAGE_TYPING_INTERVAL_MS,
@@ -13,7 +13,6 @@ import {
     SendMessagePayload,
     TypewriteMessageOptions,
 } from './types';
-import { EChartsOption } from './types/echart';
 
 export class Agent {
     private defaultTypeWriteInterval = DEFAULT_MESSAGE_TYPING_INTERVAL_MS;
@@ -25,7 +24,7 @@ export class Agent {
 	private async uploadAttachment(attachment: AttachmentItem): Promise<any[]> {
 		let uploaded: any = null;
 
-		if (attachment instanceof LocalFileAttachment) {
+		if (attachment instanceof LocalFileAttachment || attachment instanceof BufferFileAttachment) {
 			await attachment.load();
 
 			uploaded = await this.config.http.upload('/attachments/uploadSync', attachment.buffer, {

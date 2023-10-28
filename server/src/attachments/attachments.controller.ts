@@ -15,7 +15,10 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiProduces, ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
 import { RequireAuthMethod } from 'src/iam/iam.decorators';
-import { ServerSdkAuthenticatedRequest } from 'src/iam/iam.types';
+import {
+  MemberAuthenticatedRequest,
+  ServerSdkAuthenticatedRequest,
+} from 'src/iam/iam.types';
 import { AttachmentStorageService } from './attachment-storage/attachment-storage.service';
 import { AttachmentsService } from './attachments.service';
 
@@ -29,12 +32,17 @@ export class AttachmentsController {
   ) {}
 
   @UseInterceptors(FileInterceptor('file'))
-  @RequireAuthMethod('server-sdk')
+  @RequireAuthMethod('server-sdk', 'member-token')
   @Post('uploadSync')
   async createAttachmentSync(
-    @Req() req: ServerSdkAuthenticatedRequest,
+    @Req() req: ServerSdkAuthenticatedRequest | MemberAuthenticatedRequest,
     @UploadedFile('file') file?: Express.Multer.File,
   ) {
+    const projectId =
+      req.authMethod === 'member-token'
+        ? req.member.projectId
+        : req.sdkUser.projectId;
+
     if (!file) {
       throw new BadRequestException('Expected a field named "file"');
     }
@@ -44,8 +52,6 @@ export class AttachmentsController {
         'File is too large, current max is set to 50MB',
       );
     }
-
-    const projectId = req.sdkUser.projectId;
 
     const mimeType = this.attachmentsService.isDefaultMimeType(file.mimetype)
       ? this.attachmentsService.inferMimeTypeFromFilename(file.originalname)

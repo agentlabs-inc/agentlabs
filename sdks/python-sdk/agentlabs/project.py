@@ -49,7 +49,7 @@ class Project:
         It will be called each time a member of your project sends a new message.
         """
         def wrapper(payload: Any):
-            chat_message = IncomingChatMessage(message=payload['data'])
+            chat_message = IncomingChatMessage(self._http, message=payload['data'])
             fn(chat_message)
 
         self._realtime.on('chat-message', wrapper)
