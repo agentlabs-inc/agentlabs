@@ -85,10 +85,10 @@ We're constantly improving the project, feel free to open an issue if you have a
 
 | Component                | Status | Features                                                                                                                                    |
 |:-------------------------|:------:|---------------------------------------------------------------------------------------------------------------------------------------------|
-| Make it embeddable       |   🏗️   | <ul><li>Embed in any website as an iFrame</li><li>Embed as a Chat Bot</li></ul>                                                             |
-| Move login into the chat |  🏗️    | <ul><li>Add support for anonymous mode</li><li>Integrate the login inside the chat for a better UX experience with embedded mode.</li></ul> |
-| Add Rich components      |   🏗️    | <ul><li>Ability to send some interactif component into the chat (like text inputs, charts, or more).</li></ul>                              |
-| Improve SDK              |   🏗️   | <ul><li>List the conversations</li><li>Get user's information and more...</li></ul>                                                         |
+| Make it embeddable       |  ✅️️   | <ul><li>Embed in any website as an iFrame</li><li>Embed as a Chat Bot</li></ul>                                                             |
+| Move login into the chat |   ✅️   | <ul><li>Add support for anonymous mode</li><li>Integrate the login inside the chat for a better UX experience with embedded mode.</li></ul> |
+| Add Rich components      |  ✅️️   | <ul><li>Ability to send some interactif component into the chat (like text inputs, charts, or more).</li></ul>                              |
+| Improve SDK              |  🏗️   | <ul><li>List the conversations</li><li>Get user's information and more...</li></ul>                                                         |
 
 
 
