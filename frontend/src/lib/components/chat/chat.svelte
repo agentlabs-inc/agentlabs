@@ -242,7 +242,7 @@
 	};
 
 	afterNavigate(() => {
-		if (!isInIFrame) {
+		if (!isInIFrame()) {
 			chatInputElement?.focus();
 		}
 	});
@@ -638,7 +638,7 @@
 		class="absolute bottom-0 left-0 right-0 flex items-center justify-center py-3 px-3 border-t border-stroke-base dark:border-stroke-base-dark bg-background-secondary dark:bg-background-primary-dark flex-grow-0">
 		<div class="flex-grow max-w-4xl">
 			<ChatInput
-				inputElement={chatInputElement}
+				bind:inputElement={chatInputElement}
 				isDisabled={isChatDisabled}
 				onSubmit={sendMessage}
 				name="chat-input"
