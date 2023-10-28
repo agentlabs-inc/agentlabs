@@ -4,7 +4,6 @@ import { HttpApi } from "./http";
 export interface ApiMessageAttachment {
 	id: string;
 	createdAt: string;
-	updatedAt: string;
 	name: string;
 	mimeType: string;
 	checksumSha256: string;
@@ -15,21 +14,17 @@ export interface ApiMessageAttachment {
 export class MessageAttachment {
 	public readonly id;
 	public readonly createdAt: Date;
-	public readonly updatedAt: Date;
 	public readonly name: string;
 	public readonly mimeType: string;
 	public readonly checksumSha256: string;
-	public readonly driver: string;
 	public readonly sizeBytes: number;
 
 	constructor(private readonly http: HttpApi, apiMessageAttachment: ApiMessageAttachment) {
 		this.id = apiMessageAttachment.id;
 		this.createdAt = new Date(apiMessageAttachment.createdAt);
-		this.updatedAt = new Date(apiMessageAttachment.updatedAt);
 		this.name = apiMessageAttachment.name;
 		this.mimeType = apiMessageAttachment.mimeType;
 		this.checksumSha256 = apiMessageAttachment.checksumSha256;
-		this.driver = apiMessageAttachment.driver;
 		this.sizeBytes = apiMessageAttachment.sizeBytes;
 	}
 
