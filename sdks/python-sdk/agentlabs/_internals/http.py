@@ -30,5 +30,11 @@ class HttpApi:
 
         return response.json()
 
+    def download(self, path: str) -> bytes:
+        response = self.client.get(self._make_url(path))
+        response.raise_for_status()
+
+        return response.content
+
     def _make_url(self, path: str):
         return f"{self.agentlabs_url}/api{path}"
