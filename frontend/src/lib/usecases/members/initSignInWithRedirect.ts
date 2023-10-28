@@ -81,8 +81,7 @@ export const initSignInWithPopup = async (authMethod: PublicAuthMethodDto, proje
 			try {
 				await loginWithOAuthCode({
 					providerId: authMethod.provider.toLowerCase(),
-					redirectUri:
-						data.redirectUri ?? `${window.location.origin}${window.location.pathname}`,
+					redirectUri: data.redirectUri,
 					state: data.state,
 					code: data.code,
 					projectId

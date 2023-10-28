@@ -32,7 +32,7 @@
 	}
 
 	const redirectUri =
-		`https://${project.slug}.${environment.PUBLIC_AI_AGENT_DOMAIN}/auth/handler/${$page.data.authMethod.providerId}`.toLowerCase();
+		`https://${project.slug}.${environment.PUBLIC_AI_AGENT_DOMAIN}/oauth/handler/${$page.data.authMethod.providerId}`.toLowerCase();
 
 	const { form, errors, validate } = superForm($page.data.form, {
 		validators: zod.object({

@@ -5,6 +5,7 @@
 	import { getRedirectResult } from "$lib/utils/oauthUtils";
 	import { homeRoute } from "$lib/routes/routes";
 	import { mainContextStore } from "$lib/stores/main-context";
+	import { page } from "$app/stores";
 
 	onMount(async () => {
 		const projectId = $mainContextStore.publicProjectConfig?.id;
@@ -17,9 +18,12 @@
 		try {
 			const { code, state } = await getRedirectResult();
 
+			let redirectUri =
+				`${window.location.protocol}//${window.location.host}/oauth/handler/${$page.params.providerId}`.toLowerCase();
+
 			window.opener.postMessage(
 				{
-					redirectUri: null,
+					redirectUri,
 					code,
 					state,
 					messageType: "OAuthRedirectResult"
