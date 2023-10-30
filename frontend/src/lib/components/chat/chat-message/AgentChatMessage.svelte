@@ -3,7 +3,7 @@
 	import { getAgentById } from "$lib/stores/agent";
 	import type { ChatMessageFormat } from "$lib/stores/chat";
 	import TypingLoader from "$lib/components/chat/chat-message/TypingLoader.svelte";
-	import type {  MessageAttachmentWrapper } from "$lib/entities/message/message";
+	import type { MessageAttachmentWrapper } from "$lib/entities/message/message";
 	import MarkdownRenderer from "$lib/components/markdown/markdown-renderer.svelte";
 	import Attachment from "./Attachment.svelte";
 	import Spacer from "$lib/components/common/spacer/Spacer.svelte";
@@ -46,7 +46,7 @@
 			</div>
 
 			<div>
-				<div class="flex flex-col flex-grow relative overflow-x-scroll">
+				<div class="flex flex-col flex-grow relative overflow-x-auto">
 					<div class="text-body-subdued dark:text-body-subdued-dark text-xs mb-3">
 						{time} - {agent.name}
 					</div>

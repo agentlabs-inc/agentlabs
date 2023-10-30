@@ -66,7 +66,7 @@
 				<LetterAvatar>{letter}</LetterAvatar>
 			</div>
 
-			<div class="flex flex-col flex-grow relative overflow-x-scroll">
+			<div class="flex flex-col flex-grow relative overflow-x-auto">
 				<div class="text-body-subdued dark:text-body-subdued-dark text-xs mb-3">
 					{time} - {agent.name}
 				</div>
