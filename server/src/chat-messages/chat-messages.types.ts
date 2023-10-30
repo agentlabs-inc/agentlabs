@@ -7,13 +7,10 @@ export interface BaseChatMessagePayload {
   metadata?: any;
   type: MessageType;
   source: ChatMessageSource;
+  agentId?: string;
 }
 
 export type CreateUserChatMessagePayload = BaseChatMessagePayload;
-
-export interface CreateAgentChatMessagePayload extends BaseChatMessagePayload {
-  agentId: string;
-}
 
 export type CreateSystemChatMessagePayload = BaseChatMessagePayload;
 
