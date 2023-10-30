@@ -78,7 +78,7 @@ export class ProjectsController {
     });
 
     if (result.ok) {
-      this.telemetryService.track({
+      this.telemetryService.trackConsoleUser({
         userId: user.id,
         event: 'Project Created',
       });

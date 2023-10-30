@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { ChatMessage } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import {
-  CreateAgentChatMessagePayload,
-  CreateSystemChatMessagePayload,
-  CreateUserChatMessagePayload,
-} from './chat-messages.types';
+import { TelemetryService } from 'src/telemetry/telemetry.service';
+import { BaseChatMessagePayload } from './chat-messages.types';
 
 @Injectable()
 export class ChatMessagesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly telemetryService: TelemetryService,
+  ) {}
 
   async findMessageAttachment(attachmentId: string) {
     return this.prisma.chatMessageAttachment.findUnique({
@@ -59,51 +59,51 @@ export class ChatMessagesService {
     });
   }
 
+  async createMessage(payload: BaseChatMessagePayload) {
+    const message = await this.prisma.chatMessage.create({
+      data: {
+        text: payload.text,
+        source: payload.source,
+        conversationId: payload.conversationId,
+        format: payload.format,
+        type: payload.type,
+        metadata: payload.metadata,
+      },
+      include: {
+        conversation: {
+          include: {
+            project: true,
+          },
+        },
+      },
+    });
+
+    this.telemetryService.trackConsoleUser({
+      userId: message.conversation.project.creatorId,
+      event: 'Message Sent',
+      properties: {
+        projectId: message.conversation.projectId,
+        conversationId: message.conversationId,
+        messageId: message.id,
+        messageType: message.type,
+        messageSource: message.source,
+      },
+    });
+
+    return message;
+  }
+
   async createUserMessage(
-    payload: CreateUserChatMessagePayload,
+    payload: Omit<BaseChatMessagePayload, 'source'>,
   ): Promise<ChatMessage> {
-    const message = await this.prisma.chatMessage.create({
-      data: {
-        text: payload.text,
-        source: 'USER',
-        conversationId: payload.conversationId,
-        format: payload.format,
-        type: payload.type,
-        metadata: payload.metadata,
-      },
-    });
-
-    return message;
+    return this.createMessage({ ...payload, source: 'USER' });
   }
 
-  async createAgentMessage(payload: CreateAgentChatMessagePayload) {
-    const message = await this.prisma.chatMessage.create({
-      data: {
-        text: payload.text,
-        source: 'AGENT',
-        conversationId: payload.conversationId,
-        format: payload.format,
-        agentId: payload.agentId,
-        type: payload.type,
-        metadata: payload.metadata,
-      },
-    });
-
-    return message;
+  async createAgentMessage(payload: Omit<BaseChatMessagePayload, 'source'>) {
+    return this.createMessage({ ...payload, source: 'AGENT' });
   }
 
-  async createSystemMessage(payload: CreateSystemChatMessagePayload) {
-    const message = await this.prisma.chatMessage.create({
-      data: {
-        text: payload.text,
-        source: 'SYSTEM',
-        conversationId: payload.conversationId,
-        format: payload.format,
-        type: payload.type,
-        metadata: payload.metadata,
-      },
-    });
-
-    return message;
+  async createSystemMessage(payload: Omit<BaseChatMessagePayload, 'source'>) {
+    return this.createMessage({ ...payload, source: 'SYSTEM' });
   }
 }
