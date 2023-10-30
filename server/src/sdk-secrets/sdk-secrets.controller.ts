@@ -48,7 +48,7 @@ export class SdkSecretsController {
     });
 
     if (result.ok) {
-      this.telemetryService.track({
+      this.telemetryService.trackConsoleUser({
         event: 'SDK Secret Created',
         userId: user.id,
         properties: {

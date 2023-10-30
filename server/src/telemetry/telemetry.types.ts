@@ -8,5 +8,6 @@ export const TelemetryEvents = [
   'Agent Updated',
   'Agent Deleted',
   'SDK Secret Created',
+  'Project Backend Connected',
 ] as const;
 export type TelemetryEvent = (typeof TelemetryEvents)[number];

@@ -56,7 +56,7 @@ export class UsersController {
       }
     }
 
-    this.telemetryService.track({
+    this.telemetryService.trackConsoleUser({
       userId: result.value.id,
       event: 'User Created',
     });
@@ -103,7 +103,7 @@ export class UsersController {
       }
     }
 
-    this.telemetryService.track({
+    this.telemetryService.trackConsoleUser({
       userId: result.value.user.id,
       event: 'User Logged In',
     });
@@ -131,12 +131,12 @@ export class UsersController {
     }
 
     if (result.value.created) {
-      this.telemetryService.track({
+      this.telemetryService.trackConsoleUser({
         userId: result.value.user.id,
         event: 'User Created',
       });
     } else {
-      this.telemetryService.track({
+      this.telemetryService.trackConsoleUser({
         userId: result.value.user.id,
         event: 'User Logged In',
       });

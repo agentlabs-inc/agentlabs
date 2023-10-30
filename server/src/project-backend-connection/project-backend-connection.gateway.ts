@@ -14,7 +14,9 @@ import { BaseRealtimeMessageDto } from 'src/common/base-realtime-message.dto';
 import { ConversationsService } from 'src/conversations/conversations.service';
 import { FrontendConnectionManagerService } from 'src/frontend-connection-manager/frontend-connection-manager.service';
 import { ProjectBackendConnectionManagerService } from 'src/project-backend-connection-manager/project-backend-connection-manager.service';
+import { ProjectsService } from 'src/projects/projects.service';
 import { SdkSecretsService } from 'src/sdk-secrets/sdk-secrets.service';
+import { TelemetryService } from 'src/telemetry/telemetry.service';
 import { v4 as uuid } from 'uuid';
 import { AgentStreamManagerService } from './agent-stream-manager/agent-stream-manager.service';
 import { ConversationMutexManager } from './conversation-mutex-manager';
@@ -35,6 +37,8 @@ export class ProjectBackendConnectionGateway
     private readonly streamManager: AgentStreamManagerService,
     private readonly sdkSecretsService: SdkSecretsService,
     private readonly agentsService: AgentsService,
+    private readonly telemetryService: TelemetryService,
+    private readonly projectsService: ProjectsService,
   ) {}
 
   private readonly logger = new Logger(ProjectBackendConnectionGateway.name);
@@ -52,32 +56,34 @@ export class ProjectBackendConnectionGateway
   async handleConnection(client: Socket) {
     const projectId = client.handshake.headers['x-agentlabs-project-id'];
     const secret = client.handshake.headers['x-agentlabs-sdk-secret'];
+    const closeWithError = (message: string) => {
+      this.logger.error(message);
+      client.send({
+        message,
+      });
+      client.disconnect(true);
+    };
 
     this.logger.debug(
       `Client connected: SID=${client.id},PROJECT=${projectId}`,
     );
 
     if (typeof projectId !== 'string') {
-      const message =
-        'Missing header: X-AgentLabs-Project-Id, closing connection';
-
-      this.logger.error('Client disconnected: MISSING_PROJECT_ID');
-      client.send({
-        message,
-      });
-      client.disconnect(true);
-      return;
+      return closeWithError(
+        'Missing header: X-AgentLabs-Project-Id, closing connection',
+      );
     }
 
     if (typeof secret !== 'string') {
-      const message =
-        'Missing header: x-agentlabs-sdk-secret, closing connection';
-      this.logger.error('Client disconnected: MISSING_SDK_SECRET');
-      client.send({
-        message,
-      });
-      client.disconnect(true);
-      return;
+      return closeWithError(
+        'Missing header: X-AgentLabs-Sdk-Secret, closing connection',
+      );
+    }
+
+    const project = await this.projectsService.getById(projectId);
+
+    if (!project.ok) {
+      return closeWithError('Project not found, closing connection.');
     }
 
     const isAuthorized = await this.sdkSecretsService.verifySdkSecret(
@@ -86,25 +92,13 @@ export class ProjectBackendConnectionGateway
     );
 
     if (!isAuthorized) {
-      const message = 'Invalid credentials, closing connection.';
-      this.logger.error('Client disconnected: INVALID_CREDENTIALS');
-      client.send({
-        message,
-      });
-      client.disconnect(true);
-      return;
+      return closeWithError('Invalid credentials, closing connection.');
     }
 
     if (this.agentConnectionManagerService.hasConnection(projectId)) {
-      const message = `Backend is already connected to project ${projectId}`;
-
-      this.logger.error('Client disconnected: ALREADY_CONNECTED');
-      client.send({
-        message,
-      });
-      client.disconnect(true);
-
-      return;
+      return closeWithError(
+        `Backend is already connected to project ${projectId}. Use multiple project backends are not yet supported.`,
+      );
     }
 
     const originAddress = this.parseOriginIp(client);
@@ -113,6 +107,14 @@ export class ProjectBackendConnectionGateway
       projectId,
       socket: client,
       ip: originAddress,
+    });
+
+    this.telemetryService.trackConsoleUser({
+      event: 'Project Backend Connected',
+      userId: project.value.creatorId,
+      properties: {
+        projectId: project.value.id,
+      },
     });
 
     client.send({

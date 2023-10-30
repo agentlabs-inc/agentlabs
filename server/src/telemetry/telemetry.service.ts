@@ -19,7 +19,7 @@ export class TelemetryService {
       });
     }
   }
-  public track(params: {
+  public trackConsoleUser(params: {
     userId: string;
     event: TelemetryEvent;
     properties?: Record<string, any>;

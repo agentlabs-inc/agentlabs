@@ -37,7 +37,7 @@ export class AuthMethodsController {
     });
 
     if (result.ok) {
-      this.telemetryService.track({
+      this.telemetryService.trackConsoleUser({
         event: 'AuthMethod Configured',
         userId: req.user.id,
         properties: {

@@ -53,7 +53,7 @@ export class AgentsController {
     });
 
     if (result.ok) {
-      this.telemetryService.track({
+      this.telemetryService.trackConsoleUser({
         event: 'Agent Created',
         userId: user.id,
       });
@@ -138,7 +138,7 @@ export class AgentsController {
     });
 
     if (result.ok) {
-      this.telemetryService.track({
+      this.telemetryService.trackConsoleUser({
         event: 'Agent Updated',
         userId: req.user.id,
       });
@@ -181,7 +181,7 @@ export class AgentsController {
     });
 
     if (result.ok) {
-      this.telemetryService.track({
+      this.telemetryService.trackConsoleUser({
         event: 'Agent Deleted',
         userId: req.user.id,
       });
