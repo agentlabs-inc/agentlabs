@@ -4,11 +4,34 @@ import { OnChatMessageHandler, RawChatMessage } from "./types";
 import { IncomingChatMessage } from "./incoming-chat-message";
 import { Logger } from "./logger";
 import { HttpApi } from "./http";
+import { MessageFormat, SendMessageOptions, SendMessagePayload } from "./types"
+import { localMessageFormatToRemote } from "./constants";
 
 export interface ProjectConfig {
 	url: string;
 	projectId: string;
 	secret: string;
+}
+
+
+class System {
+	constructor(private readonly realtime: RealtimeClient) {}
+
+	send(
+		{ text, conversationId }: Omit<SendMessagePayload, 'attachments'>,
+        options: SendMessageOptions = {}
+	) {
+		const format: MessageFormat = options.format ?? 'PlainText';
+
+        this.realtime.emit('chat-message', {
+            text,
+            conversationId,
+            format: localMessageFormatToRemote[format],
+			attachments: [],
+			source: 'SYSTEM',
+			type: 'TEXT',
+        });
+	}
 }
 
 export class Project {
@@ -21,6 +44,7 @@ export class Project {
 		name: 'Server',
 	})
 	private readonly http: HttpApi;
+	public readonly system: System;
 
 	constructor(
 	 	config: ProjectConfig,
@@ -42,6 +66,7 @@ export class Project {
 			});
 		})
 		this.http = new HttpApi(config);
+		this.system = new System(this.realtime);
 	}
 
 	async connect() {
@@ -52,12 +77,16 @@ export class Project {
 	onChatMessage(handler: OnChatMessageHandler) {
 		this.realtime.on('chat-message', async (data: any) => {
 			const rawChatMessage = data.data as RawChatMessage;
+			const message = new IncomingChatMessage(this.http, rawChatMessage);
 
 			try {
-				await handler(new IncomingChatMessage(this.http, rawChatMessage));
+				await handler(message);
 			} catch (err: any) {
 				this.clientLogger.error('onChatMessage: got uncaught exception while running handler. Consider handling errors in your handler directly.');
-				console.error(err);
+				this.system.send({
+					conversationId: message.conversationId,
+					text: 'An error occured while processing your request. Please try again.'
+				})
 			}
 		});
 	}

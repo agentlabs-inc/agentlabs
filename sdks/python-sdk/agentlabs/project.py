@@ -2,11 +2,25 @@ import os
 from typing import Any, Callable, Dict
 
 from .agent import Agent
-from .chat import IncomingChatMessage
+from .chat import IncomingChatMessage, MessageFormat
 
 from ._internals.http import HttpApi
 from ._internals.logger import Logger
 from ._internals.realtime import RealtimeClient
+
+class System:
+    def __init__(self, realtime: RealtimeClient):
+        self._realtime = realtime
+
+    def send(self, text: str, conversation_id: str, format: MessageFormat = MessageFormat.PLAIN_TEXT):
+        """Sends a system message to a conversation."""
+        self._realtime.emit('chat-message', {
+            "conversationId": conversation_id,
+            "text": text,
+            "source": "SYSTEM",
+            "format": format.value,
+            "attachments": []
+        })
 
 class Project:
     """Represents a project on the AgentLabs server.
@@ -41,6 +55,7 @@ class Project:
             secret=secret
         )
         self._realtime = RealtimeClient(project_id=project_id, secret=secret, url=agentlabs_url)
+        self.system = System(realtime=self._realtime)
         self._realtime.on('message', self._log_message)
         self._realtime.on('heartbeat', self._handle_hearbeat)
    
@@ -50,7 +65,16 @@ class Project:
         """
         def wrapper(payload: Any):
             chat_message = IncomingChatMessage(self._http, message=payload['data'])
-            fn(chat_message)
+
+            try:
+                fn(chat_message)
+            except Exception as e:
+                self._client_logger.error("An uncaught exception occurred while executing the handler. In order to provide a better user experience, consider handling exceptions from inside your handler.")
+                self._client_logger.error(str(e))
+                self.system.send(
+                        text="An error occured while processing your request. Please try again.",
+                        conversation_id=chat_message.conversation_id
+                )
 
         self._realtime.on('chat-message', wrapper)
 
