@@ -133,6 +133,14 @@ export class ProjectBackendConnectionGateway
     @MessageBody()
     payload: AgentMessageDto,
   ): Promise<BaseRealtimeMessageDto> {
+    if (!payload.data.agentId) {
+      return {
+        message: 'Agent id is missing',
+        timestamp: new Date().toISOString(),
+        data: {},
+      };
+    }
+
     const conversation =
       await this.conversationsService.findConversationByIdWithAgent(
         payload.data.conversationId,
@@ -226,15 +234,9 @@ export class ProjectBackendConnectionGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() payload: AgentMessageDto,
   ): Promise<BaseRealtimeMessageDto> {
-    const conversation =
-      await this.conversationsService.findConversationByIdWithAgent(
-        payload.data.conversationId,
-      );
-
-    if (!conversation) {
-      const message = `Conversation not found: ID=${payload.data.conversationId}`;
-
+    const error = (code: string, message: string): BaseRealtimeMessageDto => {
       this.logger.error(message);
+
       client.send({
         message,
       });
@@ -244,45 +246,49 @@ export class ProjectBackendConnectionGateway
         timestamp: new Date().toISOString(),
         data: {},
         error: {
-          code: 'CONVERSATION_NOT_FOUND',
+          code,
           message,
         },
       };
+    };
+
+    const conversation =
+      await this.conversationsService.findConversationByIdWithAgent(
+        payload.data.conversationId,
+      );
+
+    if (!conversation) {
+      return error(
+        'CONVERSATION_NOT_FOUND',
+        `Conversation not found: ID=${payload.data.conversationId}`,
+      );
     }
 
     try {
       await this.conversationMutexManager.acquire(conversation.id);
 
-      const isProjectAgent = await this.agentsService.isProjectAgent(
-        conversation.projectId,
-        payload.data.agentId,
-      );
+      if (payload.data.agentId) {
+        const isProjectAgent = await this.agentsService.isProjectAgent(
+          conversation.projectId,
+          payload.data.agentId,
+        );
 
-      if (!isProjectAgent) {
-        const message = `Message rejected: agent ${payload.data.agentId} is not an agent of project ${conversation.projectId}.`;
-
-        client.send({
-          message,
-        });
-
-        return {
-          message,
-          timestamp: new Date().toISOString(),
-          data: {},
-          error: {
-            code: 'AGENT_NOT_FOUND',
-            message,
-          },
-        };
+        if (!isProjectAgent) {
+          return error(
+            'AGENT_NOT_FOUND',
+            `Message rejected: agent ${payload.data.agentId} is not an agent of project ${conversation.projectId}.`,
+          );
+        }
       }
 
-      const message = await this.messagesService.createAgentMessage({
+      const message = await this.messagesService.createMessage({
         conversationId: conversation.id,
         text: payload.data.text,
         format: payload.data.format,
         agentId: payload.data.agentId,
         type: payload.data.type,
         metadata: payload.data.metadata,
+        source: payload.data.source,
       });
 
       const linkAttachmentPromises = payload.data.attachments.map(
@@ -299,19 +305,10 @@ export class ProjectBackendConnectionGateway
         });
 
       if (!frontendConnection) {
-        const message = `Frontend connection not found: MEMBER_ID=${conversation.memberId},PROJECT_ID=${conversation.projectId},AGENT_ID=${payload.data.agentId}`;
-
-        this.logger.error(message);
-
-        return {
-          message,
-          timestamp: new Date().toISOString(),
-          data: {},
-          error: {
-            code: 'FRONTEND_CONNECTION_NOT_FOUND',
-            message,
-          },
-        };
+        return error(
+          'FRONTEND_CONNECTION_NOT_FOUND',
+          `Frontend connection not found: MEMBER_ID=${conversation.memberId},PROJECT_ID=${conversation.projectId},AGENT_ID=${payload.data.agentId}`,
+        );
       }
 
       frontendConnection.socket.emit('chat-message', {
@@ -320,7 +317,7 @@ export class ProjectBackendConnectionGateway
           conversationId: conversation.id,
           text: payload.data.text,
           format: payload.data.format,
-          source: 'AGENT',
+          source: payload.data.source,
           messageId: message.id,
           agentId: payload.data.agentId,
           attachments: messageAttachments,

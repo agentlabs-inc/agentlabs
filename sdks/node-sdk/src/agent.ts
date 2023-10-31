@@ -72,6 +72,8 @@ export class Agent {
             format: localMessageFormatToRemote[format],
             agentId: this.config.agentId,
 			attachments: uploadedAttachments,
+			source: 'AGENT',
+			type: 'TEXT',
         });
     }
 
