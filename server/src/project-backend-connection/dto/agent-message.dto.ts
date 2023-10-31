@@ -1,4 +1,4 @@
-import { MessageFormat } from '@prisma/client';
+import { ChatMessageSource, MessageFormat } from '@prisma/client';
 import { Type } from 'class-transformer';
 import {
   IsEnum,
@@ -30,7 +30,8 @@ class AgentMessageDataDto {
   messageId: string;
 
   @IsString()
-  agentId: string;
+  @IsOptional()
+  agentId?: string;
 
   @IsEnum(MessageFormat)
   format: MessageFormat;
@@ -38,6 +39,9 @@ class AgentMessageDataDto {
   @ValidateNested({ each: true })
   @Type(() => AttachmentDto)
   attachments: AttachmentDto[];
+
+  @IsIn(['AGENT', 'SYSTEM'] satisfies ChatMessageSource[])
+  source: 'AGENT' | 'SYSTEM';
 
   @IsIn(MessageTypes)
   type: MessageType;
