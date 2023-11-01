@@ -123,7 +123,18 @@ class Agent:
             "attachments": [],
             "type": "ECHART",
             "metadata": echart
-        });
+        })
+
+    def request_login(self, text: str, conversation_id: str, format: MessageFormat = MessageFormat.PLAIN_TEXT):
+        """Sends a login request to a conversation.
+        Such message will be communicated instantly to the conversation.
+        """
+        self._realtime.emit('login-request', {
+            "conversationId": conversation_id,
+            "text": text,
+            "agentId": self.id,
+            "format": format.value,
+        })
 
     def send(self, text: str, conversation_id: str, format: MessageFormat = MessageFormat.PLAIN_TEXT, attachments: list[AttachmentItem] = []):
         """Sends a message to a conversation.
